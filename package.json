@@ -1,0 +1,12 @@
+{
+  "name": "matchya",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "serverless": "^3.36.0"
+  }
+}
