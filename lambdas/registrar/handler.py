@@ -1,8 +1,6 @@
 import json
 import datetime
 
-# # serverless invoke local --function hello --data '{"body": {"company_name": "matchya", "email": "mathcyateam@gmail.com", "github_account_url": "https://github.com/takeshi8989"}}'
-
 
 # # define the DynamoDB table that Lambda will connect to
 # tableName = "lambda-apigateway"
@@ -12,9 +10,10 @@ import datetime
 
 def register(event, context):
 
-    company_name = event['body']['company_name']
-    email = event['body']['email']
-    github_account_url = event['body']['github_account_url']
+    body = json.loads(event['body'])
+    company_name = body['company_name']
+    email = body['email']
+    github_account_url = body['github_account_url']
     created_at = str(datetime.datetime.now())
 
     # save to dynamodb
@@ -28,6 +27,6 @@ def register(event, context):
         "created_at": created_at
     }
 
-    response = {"status": 200, "payload": json.dumps(body)}
+    response = {"statusCode": 200, "body": json.dumps(body)}
 
     return response
