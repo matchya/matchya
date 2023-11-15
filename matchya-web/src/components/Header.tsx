@@ -3,6 +3,7 @@ import matchyaIcon from '../assets/matchya-icon.png'
 import AuthModal from './AuthModal'
 import { useNavigate } from 'react-router'
 import { Link } from 'react-router-dom'
+import Button from './Button'
 
 const Header = () => {
     const navigate = useNavigate();
@@ -11,7 +12,6 @@ const Header = () => {
     const [showSignupModal, setShowSignupModal] = useState(false)
 
     const switchModal = () => {
-        console.log("swtich")
         setShowLoginModal(!showLoginModal);
         setShowSignupModal(!showSignupModal);
     }
@@ -65,14 +65,14 @@ const Header = () => {
                 isAuthenticated ? 
                 ( 
                     <>
-                        <HeaderButton text='Settings' onClick={navigateToSettings} />
-                        <HeaderButton text={'Logout'} onClick={logout} />
+                        <Button text='Settings' color='green' border={false} hover={false} className='my-auto py-2  m-6' onClick={navigateToSettings} />
+                        <Button text='Logout' color='green' border={false} hover={false} className='my-auto py-2 mx-6 mr-6' onClick={logout} />
                     </>
                 ) : 
                 ( 
                     <>
-                        <HeaderButton text='Sign Up' onClick={showSignupModalHandler} /> 
-                        <HeaderButton text={'Login'} onClick={showLoginModalHandler} />
+                        <Button text='Login' color='green' border={false} hover={false} className='my-auto py-2  m-6' onClick={showLoginModalHandler} />
+                        <Button text='Sign Up' color='green' className='my-auto py-2 mx-6 mr-6' onClick={showSignupModalHandler} />
                     </>
                 )
             }
@@ -82,15 +82,3 @@ const Header = () => {
 }
 
 export default Header
-
-
-
-const HeaderButton = ({ text, onClick }: { text: string, onClick: () => void }) => {
-    return (
-        <button 
-            className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full m-6'
-            onClick={onClick}>
-            { text }
-        </button>
-    )
-}
