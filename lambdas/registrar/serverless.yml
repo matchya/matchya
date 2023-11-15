@@ -10,12 +10,12 @@ provider:
     name: ${self:provider.stage}-sls-registrar
 
 functions:
-  hello:
-    handler: handler.hello
+  register:
+    handler: handler.register
     events:
       - http:
           path: /
-          method: GET
+          method: POST
 
 plugins:
   - serverless-python-requirements
