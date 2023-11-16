@@ -1,11 +1,7 @@
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route
-} from 'react-router-dom';
-import Header from './components/Header'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './screens/Home'
 import Settings from './screens/Settings';
+import Header from './components/Header'
 
 
 function App() {

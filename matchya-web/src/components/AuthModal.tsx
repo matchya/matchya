@@ -1,7 +1,7 @@
+import { useState } from "react";
+import matchIcon from "../assets/matchya-icon.png";
 import FormInput from "./FormInput";
 import Button from "./Button";
-import matchIcon from "../assets/matchya-icon.png";
-import { useState } from "react";
 
 interface Props {
   type: string // 'login' or 'signup'

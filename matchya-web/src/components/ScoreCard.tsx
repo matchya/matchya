@@ -1,5 +1,5 @@
-import { Score } from "../types"
 import { useState } from "react"
+import { Score } from "../types"
 
 
 const ScoreCard = ({ score } : {score: Score}) => {

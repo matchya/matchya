@@ -1,8 +1,8 @@
+import { useState } from "react";
+import { candidates, criteria } from "../data";
 import Button from "../components/Button";
 import FormInput from "../components/FormInput";
 import ScoreCard from "../components/ScoreCard";
-import { candidates, criteria } from "../data";
-import { useState } from "react";
 
 const Home = () => {
   const [showModal, setShowModal] = useState(false);
