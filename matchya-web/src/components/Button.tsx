@@ -8,7 +8,7 @@ interface ButtonProps {
     onClick?: (e?: React.MouseEvent) => void;
 }
 
-const Button = ({ text, color, border = true, hover = true, outline = true, className, onClick }: ButtonProps) => {
+const Button = ({ text = "Click", color = "green", border = true, hover = true, outline = true, className = "", onClick = () => {} }: ButtonProps) => {
     if (!outline) {
         return <DefaultButton text={text} color={color} className={className} onClick={onClick} />
     }
