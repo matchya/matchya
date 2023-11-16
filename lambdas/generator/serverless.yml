@@ -9,12 +9,12 @@ provider:
     name: ${self:provider.stage}-sls-generator
 
 functions:
-  hello:
-    handler: handler.hello
+  generate_criteria:
+    handler: handler.generate_criteria
     events:
       - httpApi:
           path: /
-          method: get
+          method: POST
 
 
 plugins:
