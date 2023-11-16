@@ -4,11 +4,15 @@ const Settings = () => {
   const [companyName, setCompanyName] = useState('');
   const [githubUrl, setGithubUrl] = useState('');
 
-  const handleCompanyNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCompanyNameChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setCompanyName(event.target.value);
   };
 
-  const handleGithubUrlChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleGithubUrlChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setGithubUrl(event.target.value);
   };
 
@@ -24,7 +28,10 @@ const Settings = () => {
       <div className="p-8 bg-white shadow-md rounded-lg w-full max-w-md">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="company-name" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="company-name"
+              className="block text-sm font-medium text-gray-700"
+            >
               Company Name:
             </label>
             <input
@@ -36,7 +43,10 @@ const Settings = () => {
             />
           </div>
           <div>
-            <label htmlFor="github-url" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="github-url"
+              className="block text-sm font-medium text-gray-700"
+            >
               GitHub Account URL:
             </label>
             <input
