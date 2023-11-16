@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { candidates, criteria } from "../data";
+import { mockCandidates, mockCriteria } from "../data";
 import Button from "../components/Button";
 import FormInput from "../components/FormInput";
 import ScoreCard from "../components/ScoreCard";
@@ -22,7 +22,7 @@ const Home = () => {
 
         <div className="h-full flex flex-col lg:flex-row gap-4">
           <div className="w-2/3 overflow-hidden sm:rounded-md">
-            {candidates.map((candidate, index) => (
+            {mockCandidates.map((candidate, index) => (
               <ScoreCard key={index} score={candidate} />
             ))}
           </div>
@@ -43,7 +43,7 @@ const CriteriaBox = () => {
     <div className="px-6 py-4 h-full">
       <h3 className="text-lg font-bold">Generated Criteria</h3>
       <ul className="list-disc pl-6 mt-4">
-        {criteria.map((criterion, index) => (
+        {mockCriteria.map((criterion, index) => (
           <li key={index} className="text-sm text-gray-600">{criterion}</li>
         ))}
       </ul>

@@ -1,11 +1,11 @@
 import { Score } from '../types';
 
-export const criteria: string[] = [
+export const mockCriteria: string[] = [
     'Knows Python',
     'Used Django before'
 ];
 
-export const candidates: Score[] = [
+export const mockCandidates: Score[] = [
     { 
         name: 'Ben Parker', value: 8.0, 
         details: 'Ben Parker\'s problem-solving acumen is evident in his diverse project portfolio, which underscores his adaptability and mastery of software development principles. His commitment to clean, maintainable code and best practices contributes to project scalability and success. Moreover, his collaborative approach and strong communication skills make him an invaluable asset to any development team.',

@@ -1,5 +1,4 @@
 export interface Score {
-    // id: string;
     name: string;
     value: number;
     details: string;
@@ -7,7 +6,6 @@ export interface Score {
 }
 
 export interface Evaluation {
-    // id: string;
     criteria: string;
     score: number;
     reason: string;
