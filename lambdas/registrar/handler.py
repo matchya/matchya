@@ -20,7 +20,7 @@ def register(event, context):
     # dynamo.save(company_name, email, github_account_url, created_at)
     # dynamo.put_item()
 
-    company_id = 1  # get from dynamodb
+    company_id = '1'  # get from dynamodb
 
     body = {
         "company_id": company_id,
