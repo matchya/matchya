@@ -1,4 +1,6 @@
+# javascript
 **/node_modules
+**/dist
 
 # serverless
 **/.serverless
