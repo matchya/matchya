@@ -9,8 +9,13 @@
   "scripts": {
     "prepare": "husky install"
   },
+  "lint-staged": {
+    "matchya-web/**/*.{js,jsx,ts,tsx}": "cd matchya-web && npm run lint && npm run format",
+    "lambdas/**/*.py": "cd lambdas && flake8"
+  },
   "devDependencies": {
     "husky": "^8.0.3",
+    "lint-staged": "^15.1.0",
     "serverless": "^3.36.0"
   }
 }
