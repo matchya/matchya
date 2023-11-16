@@ -1,7 +1,11 @@
 import { useState } from "react"
 import { Score } from "../types"
 
-const ScoreCard = ({ score } : {score: Score}) => {
+interface ScoreCardProps {
+    score: Score
+}
+
+const ScoreCard = ({ score } : ScoreCardProps) => {
     const [showDetails, setShowDetails] = useState<boolean>(false)
 
     const toggleDetail = () => {
