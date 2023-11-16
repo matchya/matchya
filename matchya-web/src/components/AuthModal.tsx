@@ -3,14 +3,14 @@ import matchIcon from "../assets/matchya-icon.png";
 import FormInput from "./FormInput";
 import Button from "./Button";
 
-interface Props {
+interface AuthModalProps {
   type: string // 'login' or 'signup'
   action: (...args: string[]) => void // login or signup function
   close: () => void
   switchModal: () => void
 }
 
-const AuthModal = ({ type, action, close, switchModal }: Props) => {
+const AuthModal = ({ type, action, close, switchModal }: AuthModalProps) => {
   const [companyName, setCompanyName] = useState('');
   const [email, setEmail] = useState('');
   const [githubUrl, setGithubUrl] = useState('');

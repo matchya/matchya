@@ -1,4 +1,4 @@
-interface Props {
+interface FormInputProps {
     label?: string;
     placeholder?: string;
     id: string;
@@ -8,7 +8,7 @@ interface Props {
     onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
   
-const FormInput = ({ label, placeholder, id, type, className, value, onChange }: Props ) => {
+const FormInput = ({ label, placeholder, id, type, className, value, onChange }: FormInputProps ) => {
     return (
         <div className={className}>
             {

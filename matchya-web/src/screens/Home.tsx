@@ -54,11 +54,11 @@ const CriteriaBox = () => {
 
 // Modal
 
-interface ModalProps {
+interface AddCandidateModalProps {
   close: () => void;
 }
 
-const AddCandidateModal = ({ close }: ModalProps) => {
+const AddCandidateModal = ({ close }: AddCandidateModalProps) => {
   const [name, setName] = useState('');
   const [githubUrl, setGithubUrl] = useState('');
 
