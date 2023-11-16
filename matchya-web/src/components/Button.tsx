@@ -3,11 +3,16 @@ interface Props {
     color?: string;
     border?: boolean;
     hover?: boolean;
+    outline?: boolean;
     className?: string;
-    onClick?: () => void;
+    onClick?: (e?: React.MouseEvent) => void;
 }
 
-const Button = ({ text, color, border = true, hover = true, className, onClick }: Props) => {
+const Button = ({ text, color, border = true, hover = true, outline = true, className, onClick }: Props) => {
+    if (!outline) {
+        return <DefaultButton text={text} color={color} className={className} onClick={onClick} />
+    }
+
     return (
         <button 
             className={
@@ -19,10 +24,28 @@ const Button = ({ text, color, border = true, hover = true, className, onClick }
                 dark:text-${color}-500   
                 ${className}`
             }
-            onClick={onClick}>
+            onClick={
+                onClick ? (e) => onClick(e) : () => {}
+            }>
             {text}
         </button>
     );
 }
 
 export default Button;
+
+const DefaultButton = ({ text, color, className, onClick }: Props) => {
+    return (
+        <button 
+            className={
+                `focus:outline-none text-white bg-${color}-500 
+                hover:bg-${color}-600  font-medium 
+                rounded-lg text-sm px-5 py-2.5 me-2 mb-2 
+                ${className}`
+            }
+            onClick={onClick}>
+
+            {text}
+        </button>
+    );
+}
