@@ -1,8 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-import Header from './components/Header';
-import Home from './screens/Home';
-import Settings from './screens/Settings';
+import Header from './components/Header/Header';
+import Home from './screens/Home/Home';
+import Settings from './screens/Settings/Settings';
 
 function App() {
   return (
