@@ -2,3 +2,7 @@
 
 # serverless
 **/.serverless
+
+# terraform
+**/.terraform
+**/terraform.tfstate.backup
