@@ -1,12 +1,9 @@
 import json
 import datetime
+import boto3
 
-
-# # define the DynamoDB table that Lambda will connect to
-# tableName = "lambda-apigateway"
-
-# # create the DynamoDB resource
-# dynamo = boto3.resource('dynamodb').Table(tableName)
+tableName = "CompanyInfo"
+dynamo = boto3.resource('dynamodb').Table(tableName)
 
 def register(event, context):
 
@@ -17,8 +14,7 @@ def register(event, context):
     created_at = str(datetime.datetime.now())
 
     # save to dynamodb
-    # dynamo.save(company_name, email, github_account_url, created_at)
-    # dynamo.put_item()
+    # ...
 
     company_id = '1'  # get from dynamodb
 
