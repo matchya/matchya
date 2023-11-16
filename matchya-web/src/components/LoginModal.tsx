@@ -1,11 +1,8 @@
-
 interface Props {
-    login: () => void
+  login: () => void;
 }
 
-const LoginModal = ({login}: Props) => {
-
-
+const LoginModal = ({ login }: Props) => {
   return (
     // This outer div could be your modal's background overlay
     <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center">
@@ -18,7 +15,10 @@ const LoginModal = ({login}: Props) => {
               <span className="text-gray-500">Logo</span>
             </div>
             <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-              <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+              <h3
+                className="text-lg leading-6 font-medium text-gray-900"
+                id="modal-title"
+              >
                 Log in
               </h3>
               <div className="mt-2">
