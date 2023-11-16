@@ -10,7 +10,7 @@
     "prepare": "husky install"
   },
   "lint-staged": {
-    "matchya-web/**/*.{js,jsx,ts,tsx}": "cd matchya-web && npm run lint && npm run format",
+    "web/**/*.{js,jsx,ts,tsx}": "cd web && npm run lint && npm run format",
     "lambdas/**/*.py": "cd lambdas && flake8"
   },
   "devDependencies": {
