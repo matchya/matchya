@@ -3,7 +3,7 @@ import { Score } from "../types"
 
 
 const ScoreCard = ({ score } : {score: Score}) => {
-    const [showDetails, setShowDetails] = useState(false)
+    const [showDetails, setShowDetails] = useState<boolean>(false)
 
     const toggleDetail = () => {
         setShowDetails(!showDetails)

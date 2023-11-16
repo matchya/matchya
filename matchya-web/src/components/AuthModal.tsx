@@ -11,10 +11,10 @@ interface AuthModalProps {
 }
 
 const AuthModal = ({ type, action, close, switchModal }: AuthModalProps) => {
-  const [companyName, setCompanyName] = useState('');
-  const [email, setEmail] = useState('');
-  const [githubUrl, setGithubUrl] = useState('');
-  const [password, setPassword] = useState('');
+  const [companyName, setCompanyName] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
+  const [githubUrl, setGithubUrl] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
 
 
   const clickOutside = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {

@@ -7,9 +7,9 @@ import Button from './Button'
 
 const Header = () => {
     const navigate = useNavigate();
-    const [isAuthenticated, setIsAuthenticated] = useState(false)
-    const [showLoginModal, setShowLoginModal] = useState(false)
-    const [showSignupModal, setShowSignupModal] = useState(false)
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
+    const [showLoginModal, setShowLoginModal] = useState<boolean>(false)
+    const [showSignupModal, setShowSignupModal] = useState<boolean>(false)
 
     const switchModal = () => {
         setShowLoginModal(!showLoginModal);

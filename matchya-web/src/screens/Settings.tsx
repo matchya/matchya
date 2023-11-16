@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import FormInput from '../components/FormInput';
 
 const Settings = () => {
-  const [companyName, setCompanyName] = useState('');
-  const [email, setEmail] = useState('');
-  const [githubUrl, setGithubUrl] = useState('');
+  const [companyName, setCompanyName] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
+  const [githubUrl, setGithubUrl] = useState<string>('');
 
   const handleCompanyNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCompanyName(event.target.value);

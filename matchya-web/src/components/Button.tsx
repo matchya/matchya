@@ -34,7 +34,7 @@ const Button = ({ text, color, border = true, hover = true, outline = true, clas
 
 export default Button;
 
-const DefaultButton = ({ text, color, className, onClick }: Props) => {
+const DefaultButton = ({ text, color, className, onClick }: ButtonProps) => {
     return (
         <button 
             className={

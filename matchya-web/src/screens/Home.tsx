@@ -5,7 +5,7 @@ import FormInput from "../components/FormInput";
 import ScoreCard from "../components/ScoreCard";
 
 const Home = () => {
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   const showModalHandler = () => {
     setShowModal(true);
