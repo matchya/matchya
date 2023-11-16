@@ -53,7 +53,6 @@ const CriteriaBox = () => {
 
 
 // Modal
-
 interface AddCandidateModalProps {
   close: () => void;
 }

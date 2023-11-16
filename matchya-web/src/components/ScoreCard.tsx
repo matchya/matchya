@@ -1,7 +1,6 @@
 import { useState } from "react"
 import { Score } from "../types"
 
-
 const ScoreCard = ({ score } : {score: Score}) => {
     const [showDetails, setShowDetails] = useState<boolean>(false)
 

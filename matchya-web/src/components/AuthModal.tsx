@@ -16,7 +16,6 @@ const AuthModal = ({ type, action, close, switchModal }: AuthModalProps) => {
   const [githubUrl, setGithubUrl] = useState<string>('');
   const [password, setPassword] = useState<string>('');
 
-
   const clickOutside = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if ((event.target as HTMLDivElement).id === 'outside') {
       close();

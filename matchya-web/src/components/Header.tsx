@@ -49,7 +49,6 @@ const Header = () => {
         navigate('/settings');
     }
 
-
   return (
     <div className='w-full h-16 absolute bg-white border-2 flex justify-between'>
         { showLoginModal && <AuthModal type="login" action={login} close={() => setShowLoginModal(false)} switchModal={switchModal}  />}

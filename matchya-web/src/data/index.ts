@@ -22,4 +22,4 @@ export const candidates: Score[] = [
             { criteria: 'Used Django before', score: 6.0, reason: 'Paul has hands-on experience with Django, capable of handling typical web development tasks. He understands the framework\'s structure and conventions and can navigate its documentation to implement required functionality.' },
         ]
     },
-  ];
+];
