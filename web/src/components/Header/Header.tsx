@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
 
-import matchyaIcon from '../assets/matchya-icon.png';
+import matchyaIcon from '/matchya-icon.png';
 
-import LoginModal from './LoginModal';
+import LoginModal from '../LoginModal/LoginModal';
 
 const Header = () => {
   const navigate = useNavigate();
