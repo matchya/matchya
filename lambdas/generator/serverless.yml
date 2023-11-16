@@ -1,0 +1,22 @@
+service: generator
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: python3.9
+  stage: dev
+  deploymentBucket:
+    name: ${self:provider.stage}-sls-generator
+
+functions:
+  hello:
+    handler: handler.hello
+    events:
+      - httpApi:
+          path: /
+          method: get
+
+
+plugins:
+  - serverless-python-requirements
+  - serverless-deployment-bucket
