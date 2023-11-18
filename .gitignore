@@ -2,3 +2,5 @@
 
 # serverless
 **/.serverless
+
+**/.venv
