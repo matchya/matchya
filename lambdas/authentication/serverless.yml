@@ -10,6 +10,9 @@ provider:
     name: ${self:provider.stage}-sls-authentication
   iam:
     role: ${ssm:/terraform/iam/lambda-role-arn}
+  apiGateway:
+    restApiId: ${ssm:/terraform/api_gateway/id}
+    restApiRootResourceId: ${ssm:/terraform/api_gateway/root_resource_id}
 
 functions:
   register:
