@@ -1,0 +1,30 @@
+service: authentication
+
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: python3.9
+  stage: dev
+  deploymentBucket:
+    name: ${self:provider.stage}-sls-authentication
+  iam:
+    role: ${ssm:/terraform/iam/lambda-role-arn}
+  apiGateway:
+    restApiId: ${ssm:/terraform/api_gateway/id}
+    restApiRootResourceId: ${ssm:/terraform/api_gateway/root_resource_id}
+
+functions:
+  register:
+    name: ${self:provider.stage}-authentication-register
+    handler: handler.register
+    environment:
+      ENVIRONMENT: ${self:provider.stage}
+    events:
+      - http:
+          path: /register
+          method: POST
+
+plugins:
+  - serverless-python-requirements
+  - serverless-deployment-bucket
