@@ -1,22 +1,35 @@
 service: generator
 frameworkVersion: '3'
 
+useDotenv: true
+
 provider:
   name: aws
   runtime: python3.9
   stage: dev
-  deploymentBucket:
-    name: ${self:provider.stage}-sls-generator
+  ecr:
+    images:
+      generator_lambda:
+        path: ./
+        file: Dockerfile
+  architecture: arm64
+  environment:
+    OPENAI_API_KEY: ${env:OPENAI_API_KEY}
+    GITHUB_TOKEN: ${env:GITHUB_TOKEN}
 
 functions:
   generate_criteria:
-    handler: handler.generate_criteria
+    image: 
+      name: generator_lambda
+      command:
+        - handler.generate_criteria
+
     events:
       - httpApi:
           path: /
           method: POST
 
-
-plugins:
-  - serverless-python-requirements
-  - serverless-deployment-bucket
+custom:
+  export-env:
+    filename: .env
+    overwrite: true

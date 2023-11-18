@@ -5,7 +5,7 @@ import os
 from os.path import join, dirname
 from dotenv import load_dotenv
 from openai import OpenAI
-import urllib3
+import requests
 
 
 dotenv_path = join(dirname(__file__), '.env')
@@ -16,9 +16,9 @@ chat_client = OpenAI()
 
 def generate_criteria(event, context):
 
-    # body = json.loads(event['body'])
-    # company_id = body['company_id']
-    # position = body.get('position', 'default')
+    body = json.loads(event['body'])
+    company_id = body['company_id']
+    position = body.get('position', 'default')
 
     # TODO: get company github url from db
     github_repo_url = "https://github.com/kokiebisu/rental-storage" # mock
@@ -36,11 +36,9 @@ def generate_criteria(event, context):
     for file_path in file_paths:
         prompt = prompt + file_path + ":\n" + get_file_contents(github_user_name, repository_name, file_path) + "\n"
 
-    # print("Generated Prompt: ", prompt)
     criteria = get_criteria(prompt, languages)
     print("Generated Criteria: ", criteria)
 
-    # print("Generated Criteria: ", criteria)
     # # TODO: save criteria to db
     # # ...
 
@@ -61,11 +59,9 @@ def generate_criteria(event, context):
 
 def get_programming_languages_used(github_username, repository_name):
     url = "https://api.github.com/repos/" + github_username + "/" + repository_name + "/languages"
-    res = urllib3.request('GET',
-                        url,
-                        headers = {'Authorization-Type': "Bearer " + os.environ['GITHUB_TOKEN'], "X-GitHub-Api-Version": "2022-11-28"},
-                        retries = False)
-    data = json.loads(res.data)
+    res = requests.get(url, headers={'Authorization-Type': "Bearer " + os.environ['GITHUB_TOKEN'], "X-GitHub-Api-Version": "2022-11-28"})
+
+    data = json.loads(res.content)
     languages = []
     for language in data:
         languages.append({"name": language, "bytes": data[language]})
@@ -102,11 +98,9 @@ def get_important_file_names(github_username, repository_name, languages):
 def get_repository_names(github_username):
     # GitHub API
     url = "https://api.github.com/users/" + github_username + "/repos"
-    res = urllib3.request('GET',
-                        url,
-                        headers = {'Authorization-Type': "Bearer " + os.environ['GITHUB_TOKEN'], "X-GitHub-Api-Version": "2022-11-28"},
-                        retries = False)
-    data = json.loads(res.data)
+    res = requests.get(url, headers={'Authorization-Type': "Bearer " + os.environ['GITHUB_TOKEN'], "X-GitHub-Api-Version": "2022-11-28"})
+
+    data = json.loads(res.content)
     repository_urls = []
     for repo in data:
         repository_urls.append(repo['name'])
@@ -118,11 +112,9 @@ def get_important_file_urls(user_name, repo_name, important_file_names):
     branch = get_default_branch(user_name, repo_name)
 
     url = "https://api.github.com/repos/" + user_name + "/" + repo_name + "/git/trees/" + branch + "?recursive=1"
-    res = urllib3.request('GET',
-                        url,
-                        headers = {"Authorization": "Bearer " + os.environ['GITHUB_TOKEN'], "X-GitHub-Api-Version": "2022-11-28"},
-                        retries = False)
-    data = json.loads(res.data)
+    res = requests.get(url, headers={'Authorization-Type': "Bearer " + os.environ['GITHUB_TOKEN'], "X-GitHub-Api-Version": "2022-11-28"})
+
+    data = json.loads(res.content)
     tree = data['tree']
     file_paths = []
     for file in tree:
@@ -134,11 +126,9 @@ def get_important_file_urls(user_name, repo_name, important_file_names):
 def get_default_branch(user_name, repo_name):
     # GitHub API
     url = "https://api.github.com/repos/" + user_name + "/" + repo_name
-    res = urllib3.request('GET',
-                        url,
-                        headers = {"Authorization": "Bearer " + os.environ['GITHUB_TOKEN'], "X-GitHub-Api-Version": "2022-11-28"},
-                        retries = False)
-    data = json.loads(res.data)
+    res = requests.get(url, headers={'Authorization-Type': "Bearer " + os.environ['GITHUB_TOKEN'], "X-GitHub-Api-Version": "2022-11-28"})
+
+    data = json.loads(res.content)
     return data['default_branch']
 
 
@@ -152,11 +142,9 @@ def is_important_file(path, important_file_names):
 
 def get_file_contents(github_user_name, repository_name, file_path):
     url = "https://api.github.com/repos/" + github_user_name + "/" + repository_name + "/contents/" + file_path
-    res = urllib3.request('GET',
-                        url,
-                        headers = {"Authorization": "Bearer " + os.environ['GITHUB_TOKEN'], "X-GitHub-Api-Version": "2022-11-28"},
-                        retries = False)
-    data = json.loads(res.data)
+    res = requests.get(url, headers={'Authorization-Type': "Bearer " + os.environ['GITHUB_TOKEN'], "X-GitHub-Api-Version": "2022-11-28"})
+
+    data = json.loads(res.content)
     content_encoded = data['content']
     content = str(base64.b64decode(content_encoded))
     return content
