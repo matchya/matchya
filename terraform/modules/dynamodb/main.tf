@@ -22,3 +22,14 @@ resource "aws_dynamodb_table" "access_token" {
     type = "S"
   }
 }
+
+resource "aws_dynamodb_table" "criteria" {
+  name           = "${terraform.workspace}-Criteria"
+  billing_mode   = "PAY_PER_REQUEST"
+  hash_key       = "criteria_id"
+
+  attribute {
+    name = "criteria_id"
+    type = "S"
+  }
+}
