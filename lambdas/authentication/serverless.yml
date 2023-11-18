@@ -18,6 +18,8 @@ functions:
   register:
     name: ${self:provider.stage}-authentication-register
     handler: handler.register
+    environment:
+      ENVIRONMENT: ${self:provider.stage}
     events:
       - http:
           path: /register
