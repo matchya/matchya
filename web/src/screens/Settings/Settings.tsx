@@ -1,13 +1,20 @@
 import React, { useState } from 'react';
 
+import FormInput from '../../components/LoginModal/FormInput';
+
 const Settings = () => {
-  const [companyName, setCompanyName] = useState('');
-  const [githubUrl, setGithubUrl] = useState('');
+  const [companyName, setCompanyName] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
+  const [githubUrl, setGithubUrl] = useState<string>('');
 
   const handleCompanyNameChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setCompanyName(event.target.value);
+  };
+
+  const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(event.target.value);
   };
 
   const handleGithubUrlChange = (
@@ -20,6 +27,7 @@ const Settings = () => {
     event.preventDefault();
     // Handle the submission logic here
     console.log('Company Name:', companyName);
+    console.log('Email:', email);
     console.log('GitHub URL:', githubUrl);
   };
 
@@ -27,36 +35,27 @@ const Settings = () => {
     <div className="flex items-center justify-center h-screen bg-gray-100">
       <div className="p-8 bg-white shadow-md rounded-lg w-full max-w-md">
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label
-              htmlFor="company-name"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Company Name:
-            </label>
-            <input
-              type="text"
-              id="company-name"
-              className="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-lime-300 focus:border-lime-300"
-              value={companyName}
-              onChange={handleCompanyNameChange}
-            />
-          </div>
-          <div>
-            <label
-              htmlFor="github-url"
-              className="block text-sm font-medium text-gray-700"
-            >
-              GitHub Account URL:
-            </label>
-            <input
-              type="text"
-              id="github-url"
-              className="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-lime-300 focus:border-lime-300"
-              value={githubUrl}
-              onChange={handleGithubUrlChange}
-            />
-          </div>
+          <FormInput
+            label="Company Name"
+            id="company-name"
+            type="text"
+            value={companyName}
+            onChange={handleCompanyNameChange}
+          />
+          <FormInput
+            label="Email"
+            id="email"
+            type="email"
+            value={email}
+            onChange={handleEmailChange}
+          />
+          <FormInput
+            label="GitHub Account URL"
+            id="github-url"
+            type="url"
+            value={githubUrl}
+            onChange={handleGithubUrlChange}
+          />
           <button
             type="submit"
             className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-lime-300 hover:bg-lime-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-lime-300"
