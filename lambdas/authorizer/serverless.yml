@@ -1,0 +1,17 @@
+service: authorizer
+
+provider:
+  name: aws
+  runtime: python3.9
+  stage: dev
+  region: us-east-1
+  deploymentBucket:
+    name: ${self:provider.stage}-sls-authorizer
+
+functions:
+  authorizer:
+    name: ${self:provider.stage}-authorizer
+    handler: handler.authorize
+
+plugins:
+  - serverless-deployment-bucket
