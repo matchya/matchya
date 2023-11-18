@@ -40,4 +40,7 @@ dist-ssr
 *.sln
 *.sw?
 
+# macos
+**/.DS_Store
+
 **/.env
