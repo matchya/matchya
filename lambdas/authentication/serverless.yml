@@ -1,4 +1,4 @@
-service: registrar
+service: authentication
 
 frameworkVersion: "3"
 
@@ -7,10 +7,11 @@ provider:
   runtime: python3.9
   stage: dev
   deploymentBucket:
-    name: ${self:provider.stage}-sls-registrar
+    name: ${self:provider.stage}-sls-authentication
 
 functions:
   register:
+    name: ${self:provider.stage}-authentication-register
     handler: handler.register
     events:
       - http:
