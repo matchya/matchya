@@ -1,5 +1,5 @@
 service: generator
-frameworkVersion: '3'
+frameworkVersion: "3"
 
 useDotenv: true
 
@@ -12,6 +12,7 @@ provider:
       generator_lambda:
         path: ./
         file: Dockerfile
+        buildArgs:
   architecture: arm64
   environment:
     OPENAI_API_KEY: ${env:OPENAI_API_KEY}
@@ -19,14 +20,14 @@ provider:
 
 functions:
   generate_criteria:
-    image: 
-      name: generator_lambda
+    image:
+      name: ${self:provider.stage}-generator
       command:
         - handler.generate_criteria
 
     events:
-      - httpApi:
-          path: /
+      - http:
+          path: /generate
           method: POST
 
 custom:

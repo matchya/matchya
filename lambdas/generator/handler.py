@@ -3,6 +3,7 @@ import datetime
 import base64
 import os
 from os.path import join, dirname
+
 from dotenv import load_dotenv
 from openai import OpenAI
 import requests
@@ -21,7 +22,7 @@ def generate_criteria(event, context):
     position = body.get('position', 'default')
 
     # TODO: get company github url from db
-    github_repo_url = "https://github.com/kokiebisu/rental-storage" # mock
+    github_repo_url = "https://github.com/kokiebisu/rental-storage"  # mock
 
     github_user_name = github_repo_url.split('/')[-2]
     repository_name = github_repo_url.split('/')[-1]
@@ -32,7 +33,7 @@ def generate_criteria(event, context):
 
     prompt = "Please review the following files.\n"
     file_paths = get_important_file_urls(github_user_name, repository_name, important_file_names)
-   
+
     for file_path in file_paths:
         prompt = prompt + file_path + ":\n" + get_file_contents(github_user_name, repository_name, file_path) + "\n"
 
@@ -42,7 +43,7 @@ def generate_criteria(event, context):
     # # TODO: save criteria to db
     # # ...
 
-    criteria_id = '1' # mock
+    criteria_id = '1'  # mock
     created_at = str(datetime.datetime.now())
 
     body = {
@@ -55,8 +56,6 @@ def generate_criteria(event, context):
     return response
 
 
-
-
 def get_programming_languages_used(github_username, repository_name):
     url = "https://api.github.com/repos/" + github_username + "/" + repository_name + "/languages"
     res = requests.get(url, headers={'Authorization-Type': "Bearer " + os.environ['GITHUB_TOKEN'], "X-GitHub-Api-Version": "2022-11-28"})
@@ -66,6 +65,7 @@ def get_programming_languages_used(github_username, repository_name):
     for language in data:
         languages.append({"name": language, "bytes": data[language]})
     return languages
+
 
 def get_important_file_names(github_username, repository_name, languages):
     important_file_names = ["README.md"]
@@ -90,9 +90,8 @@ def get_important_file_names(github_username, repository_name, languages):
     for language in languages:
         if language['name'] in package_file_names:
             important_file_names.append(package_file_names[language['name']])
-    
-    return important_file_names
 
+    return important_file_names
 
 
 def get_repository_names(github_username):
@@ -157,9 +156,9 @@ def get_criteria(prompt, languages):
 
     completion = chat_client.chat.completions.create(
         model="gpt-3.5-turbo-1106",
-        response_format={ "type": "json_object" },
+        response_format={"type": "json_object"},
         messages=[
-            {"role": "system", "content": system_message },
+            {"role": "system", "content": system_message},
             {"role": "user", "content": "Generate a list of string in json format. the list contains programming languages, libraries, and other technologies used in the project as 1d string list. name the list \"criteria\".\n\n" + prompt}
         ]
     )
