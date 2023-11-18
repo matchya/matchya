@@ -20,7 +20,7 @@ functions:
     handler: handler.register
     events:
       - http:
-          path: /
+          path: /register
           method: POST
 
 plugins:
