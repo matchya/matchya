@@ -1,0 +1,36 @@
+service: generator
+frameworkVersion: "3"
+
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: python3.9
+  stage: dev
+  ecr:
+    images:
+      generator_lambda:
+        path: ./
+        file: Dockerfile
+        buildArgs:
+  architecture: arm64
+  environment:
+    OPENAI_API_KEY: ${env:OPENAI_API_KEY}
+    GITHUB_TOKEN: ${env:GITHUB_TOKEN}
+
+functions:
+  generate_criteria:
+    image:
+      name: ${self:provider.stage}-generator
+      command:
+        - handler.generate_criteria
+
+    events:
+      - http:
+          path: /generate
+          method: POST
+
+custom:
+  export-env:
+    filename: .env
+    overwrite: true
