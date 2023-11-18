@@ -49,9 +49,19 @@ def register(event, context):
     try:
         company_table.put_item(Item=company_info)
     except Exception:
-        return {'statusCode': 400, 'body': 'Something went wrong while saving to db'}
+        return {'statusCode': 400, 'body': 'Something went wrong while saving to company table'}
 
     access_token = _generate_access_token(company_id)
+
+    access_token_info = {
+        'token_id': access_token,
+        'company_id': company_id
+    }
+
+    try:
+        access_token_table.put_item(Item=access_token_info)
+    except Exception:
+        return {'statusCode': 400, 'body': 'Something weng wrong while saving to access token table'}
 
     body = {
         'status': 'success',
