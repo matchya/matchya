@@ -7,19 +7,26 @@ from os.path import join, dirname
 from dotenv import load_dotenv
 from openai import OpenAI
 import requests
+import uuid
+import boto3
 
 
 dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path)
+
+environment = os.environ.get('ENVIRONMENT')
+dynamodb = boto3.resource('dynamodb')
+company_table = dynamodb.Table(f'{environment}-Criteria')
 
 chat_client = OpenAI()
 
 
 def generate_criteria(event, context):
 
-    body = json.loads(event['body'])
-    company_id = body['company_id']
-    position = body.get('position', 'default')
+    # body = json.loads(event['body'])
+    # company_id = body['company_id']
+    company_id = "1234"  # mock
+    # position = body.get('position', 'default')
 
     # TODO: get company github url from db
     github_repo_url = "https://github.com/kokiebisu/rental-storage"  # mock
@@ -37,14 +44,26 @@ def generate_criteria(event, context):
     for file_path in file_paths:
         prompt = prompt + file_path + ":\n" + get_file_contents(github_user_name, repository_name, file_path) + "\n"
 
-    criteria = get_criteria(prompt, languages)
-    print("Generated Criteria: ", criteria)
+    tech_stack = get_criteria(prompt, languages)
 
     # # TODO: save criteria to db
-    # # ...
-
-    criteria_id = '1'  # mock
+    # Generate a unique companyId
+    criteria_id = str(uuid.uuid4())
     created_at = str(datetime.datetime.now())
+
+    criteria_info = {
+        'criteria_id': criteria_id,
+        'company_id': company_id,
+        'repository_url': github_repo_url,
+        'tech_stack': tech_stack,
+        'created_at': created_at
+    }
+
+    try:
+        company_table.put_item(Item=criteria_info)
+    except Exception:
+        return {'statusCode': 400, 'body': 'Something went wrong while saving to company table'}
+
 
     body = {
         "critria_id": criteria_id,
