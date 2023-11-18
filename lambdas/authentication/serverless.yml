@@ -8,6 +8,8 @@ provider:
   stage: dev
   deploymentBucket:
     name: ${self:provider.stage}-sls-authentication
+  iam:
+    role: ${ssm:/terraform/iam/lambda-role-arn}
 
 functions:
   register:
