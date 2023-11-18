@@ -1,0 +1,31 @@
+service: hello
+
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: python3.9
+  stage: dev
+  deploymentBucket:
+    name: ${self:provider.stage}-sls-hello
+  apiGateway:
+    restApiId: ${ssm:/terraform/api_gateway/id}
+    restApiRootResourceId: ${ssm:/terraform/api_gateway/root_resource_id}
+
+functions:
+  hello:
+    name: ${self:provider.stage}-hello
+    handler: handler.hello
+    events:
+      - http:
+          path: /hello
+          method: GET
+          authorizer:
+            type: TOKEN
+            name: ${self:provider.stage}-authorizer
+            arn: arn:aws:lambda:${aws:region}:${aws:accountId}:function:${self:provider.stage}-authorizer
+            identitySource: method.request.header.Authorization
+
+plugins:
+  - serverless-python-requirements
+  - serverless-deployment-bucket
