@@ -14,14 +14,17 @@ provider:
         file: Dockerfile
         buildArgs:
   architecture: arm64
+  iam:
+    role: ${ssm:/terraform/iam/lambda-role-arn}
   environment:
     OPENAI_API_KEY: ${env:OPENAI_API_KEY}
     GITHUB_TOKEN: ${env:GITHUB_TOKEN}
+    ENVIRONMENT: ${env:ENVIRONMENT}
 
 functions:
   generate_criteria:
     image:
-      name: ${self:provider.stage}-generator
+      name: generator_lambda
       command:
         - handler.generate_criteria
 
