@@ -1,17 +1,29 @@
 service: authorizer
 
+frameworkVersion: "3"
+
 provider:
   name: aws
   runtime: python3.9
+  architecture: arm64
   stage: dev
   region: us-east-1
   deploymentBucket:
     name: ${self:provider.stage}-sls-authorizer
+  ecr:
+    images:
+      default:
+        path: ./
+        file: Dockerfile
+        buildArgs:
 
 functions:
   authorizer:
     name: ${self:provider.stage}-authorizer
-    handler: handler.authorize
+    image:
+      name: default
+      command:
+        - handler.authorize
 
 plugins:
   - serverless-deployment-bucket

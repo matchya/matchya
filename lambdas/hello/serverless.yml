@@ -5,17 +5,28 @@ frameworkVersion: "3"
 provider:
   name: aws
   runtime: python3.9
+  architecture: arm64
   stage: dev
+  region: us-east-1
   deploymentBucket:
     name: ${self:provider.stage}-sls-hello
   apiGateway:
     restApiId: ${ssm:/terraform/api_gateway/id}
     restApiRootResourceId: ${ssm:/terraform/api_gateway/root_resource_id}
+  ecr:
+    images:
+      default:
+        path: ./
+        file: Dockerfile
+        buildArgs:
 
 functions:
   hello:
     name: ${self:provider.stage}-hello
-    handler: handler.hello
+    image:
+      name: default
+      command:
+        - handler.hello
     events:
       - http:
           path: /hello
@@ -27,5 +38,4 @@ functions:
             identitySource: method.request.header.Authorization
 
 plugins:
-  - serverless-python-requirements
   - serverless-deployment-bucket
