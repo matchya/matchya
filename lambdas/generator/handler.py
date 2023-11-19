@@ -1,27 +1,60 @@
 import json
 import datetime
 import base64
+import requests
+import uuid
+import boto3
 import os
 from os.path import join, dirname
 
 from dotenv import load_dotenv
 from openai import OpenAI
-import requests
 
 
+# Load environment variables
 dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path)
 
+# DynamoDB
+environment = os.environ.get('ENVIRONMENT')
+dynamodb = boto3.resource('dynamodb')
+dynamodb_client = boto3.client('dynamodb')
+criteria_table = dynamodb.Table(f'{environment}-Criteria')
+
+# OpenAI API
 chat_client = OpenAI()
 
 
 def generate_criteria(event, context):
 
-    body = json.loads(event['body'])
-    company_id = body['company_id']
+    try:
+        body = event.get('body', '')
+        if not body:
+            raise json.JSONDecodeError
+        body = json.loads(event.get('body', ''))
+    except json.JSONDecodeError:
+        return {'statusCode': 400, 'body': 'Invalid JSON in request body'}
+
+
+    # Validate that required fields are present
+    company_id = body.get('company_id')
     position = body.get('position', 'default')
 
-    # TODO: get company github url from db
+
+    # get company github url from db
+    try:
+        response = dynamodb_client.get_item(
+            TableName=f'{environment}-Company',
+            Key={'company_id': {'S': company_id}},
+        )
+        if 'Item' not in response:
+            return {'statusCode': 400, 'body': 'Company does not exist'}
+        github_account_url = response['Item']['github_account_url']
+        print("github_account_url from db: ", github_account_url)
+
+    except Exception:
+        return {'statusCode': 400, 'body': 'Something went wrong while getting company github url'}
+    
     github_repo_url = "https://github.com/kokiebisu/rental-storage"  # mock
 
     github_user_name = github_repo_url.split('/')[-2]
@@ -37,14 +70,17 @@ def generate_criteria(event, context):
     for file_path in file_paths:
         prompt = prompt + file_path + ":\n" + get_file_contents(github_user_name, repository_name, file_path) + "\n"
 
-    criteria = get_criteria(prompt, languages)
-    print("Generated Criteria: ", criteria)
+    tech_stack = get_criteria(prompt, languages)
+    print("tech_stack: ", tech_stack)
 
-    # # TODO: save criteria to db
-    # # ...
-
-    criteria_id = '1'  # mock
+    # save criteria to db
+    criteria_id = str(uuid.uuid4())
     created_at = str(datetime.datetime.now())
+
+    try:
+        store_criteria_in_db(criteria_id, company_id, position, github_repo_url, tech_stack, created_at)
+    except Exception:
+        return {'statusCode': 400, 'body': 'Something went wrong while saving to criteria table'}
 
     body = {
         "critria_id": criteria_id,
@@ -165,3 +201,16 @@ def get_criteria(prompt, languages):
     content = json.loads(completion.choices[0].message.content)
     criteria = content['criteria']
     return criteria
+
+
+def store_criteria_in_db(criteria_id, company_id, position, github_repo_url, tech_stack, created_at):
+    criteria_info = {
+        'criteria_id': criteria_id,
+        'company_id': company_id,
+        'position': position,
+        'repository_url': github_repo_url,
+        'tech_stack': tech_stack,
+        'created_at': created_at
+    }
+
+    criteria_table.put_item(Item=criteria_info)
