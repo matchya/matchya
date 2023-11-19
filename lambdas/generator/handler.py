@@ -1,14 +1,14 @@
 import json
 import datetime
 import base64
+import requests
+import uuid
+import boto3
 import os
 from os.path import join, dirname
 
 from dotenv import load_dotenv
 from openai import OpenAI
-import requests
-import uuid
-import boto3
 
 
 # Load environment variables
