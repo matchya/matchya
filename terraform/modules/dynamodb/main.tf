@@ -10,6 +10,19 @@ resource "aws_dynamodb_table" "company" {
     name = "company_id"
     type = "S"
   }
+
+  attribute {
+    name = "email"
+    type = "S"
+  }
+
+  global_secondary_index {
+    name               = "EmailIndex"
+    hash_key           = "email"
+    read_capacity      = 10
+    write_capacity     = 10
+    projection_type    = "ALL"
+  }
 }
 
 resource "aws_dynamodb_table" "access_token" {

@@ -3,7 +3,9 @@ import datetime
 import os
 import uuid
 
+import bcrypt
 import boto3
+from boto3.dynamodb.types import Binary
 
 environment = os.environ.get('ENVIRONMENT')
 
@@ -33,8 +35,6 @@ def register(event, context):
 
     body = json.loads(event['body'])
 
-    created_at = str(datetime.datetime.now())
-
     # Generate a unique companyId
     company_id = str(uuid.uuid4())
 
@@ -43,7 +43,7 @@ def register(event, context):
         'company_name': company_name,
         'email': email,
         'github_account_url': github_account_url,
-        'password': event.get('password')  # Ensure this is securely hashed
+        'password': _hash_password(password)  # Ensure this is securely hashed
     }
 
     try:
@@ -67,7 +67,58 @@ def register(event, context):
         'status': 'success',
         'payload': {
             'access_token': access_token,
-            'created_at': created_at
+            'created_at': str(datetime.datetime.now())
+        }
+    }
+
+    response = {"statusCode": 200, "body": json.dumps(body)}
+
+    return response
+
+
+def login(event, context):
+    # Parse the JSON body from the event
+    try:
+        body = event.get('body', '')
+        if not body:
+            raise json.JSONDecodeError
+        body = json.loads(event.get('body', ''))
+    except json.JSONDecodeError:
+        return {'statusCode': 400, 'body': 'Invalid JSON in request body'}
+    # Validate that required fields are present
+    email = body.get('email')
+    password = body.get('password')
+
+    # retrieve the company info by email
+    response = company_table.query(
+        IndexName='EmailIndex',
+        KeyConditionExpression=boto3.dynamodb.conditions.Key('email').eq(email)
+    )
+    company_info = response['Items']
+
+    # Assuming there is only one company per email
+    if not company_info:
+        return {'statusCode': 400, 'body': 'Email is invalid'}
+
+    company = company_info[0]
+    company_id = company['company_id']
+
+    if isinstance(company['password'], Binary):
+        retrieved_password = company['password'].value
+    else:
+        retrieved_password = company['password']
+    # compare password
+    if not _check_password(password, retrieved_password):
+        return {'statusCode': 400, 'body': 'Password is invalid'}
+
+    # generate access token
+    access_token = _generate_access_token(company_id)
+
+    body = {
+        'status': 'success',
+        'payload': {
+            'access_token': access_token,
+            'created_at': str(datetime.datetime.now())
         }
     }
 

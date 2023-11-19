@@ -35,6 +35,18 @@ functions:
       - http:
           path: /register
           method: POST
+  login:
+    name: ${self:provider.stage}-authentication-login
+    image:
+      name: default
+      command:
+        - handler.login
+    environment:
+      ENVIRONMENT: ${self:provider.stage}
+    events:
+      - http:
+          path: /login
+          method: POST
 
 plugins:
   - serverless-deployment-bucket
