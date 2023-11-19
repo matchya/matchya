@@ -42,7 +42,7 @@ def retrieve_criteria(event, context):
     if criteria is None:
         return {'statusCode': 400, 'body': 'Something went wrong while getting company github url'}
     
-
+    criteria = criteria['SS']
     body = {
         "criteria": criteria,
     }
