@@ -209,7 +209,7 @@ def store_criteria_in_db(criteria_id, company_id, position, github_repo_url, tec
         'company_id': company_id,
         'position': position,
         'repository_url': github_repo_url,
-        'tech_stack': tech_stack,
+        'tech_stack': set(tech_stack),
         'created_at': created_at
     }
 
