@@ -78,3 +78,26 @@ def register(event, context):
 
 def _generate_access_token(company_id):
     return f'{company_id}_access_token'
+
+
+def _hash_password(password):
+    # Convert the password to bytes
+    password_bytes = password.encode('utf-8')
+    # Generate a salt
+    salt = bcrypt.gensalt()
+
+    # Check if salt is generated
+    if salt is None:
+        raise ValueError("Failed to generate salt")
+
+    # Generate the hashed password
+    hashed_password = bcrypt.hashpw(password_bytes, salt)
+
+    return hashed_password
+
+
+def _check_password(plain_password, hashed_password):
+    # Convert the plain password to bytes
+    password_bytes = plain_password.encode('utf-8')
+    # Check if the password matches the hash
+    return bcrypt.checkpw(password_bytes, hashed_password)
