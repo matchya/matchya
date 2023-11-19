@@ -1,7 +1,4 @@
 import json
-import datetime
-import base64
-import uuid
 import boto3
 import os
 from os.path import join, dirname
@@ -17,7 +14,6 @@ dynamodb_client = boto3.client('dynamodb')
 
 
 def retrieve_criteria(event, context):
-    # Validate that required fields are present
     parameter = event.get('pathParameters')
     if parameter is None:
         return {'statusCode': 400, 'body': 'Missing required parameters'}
@@ -26,7 +22,6 @@ def retrieve_criteria(event, context):
     if criteria_id is None:
         return {'statusCode': 400, 'body': 'Criteria id is required'}
 
-    # get company github url from db
     criteria = None
     try:
         response = dynamodb_client.get_item(
