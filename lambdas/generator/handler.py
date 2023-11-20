@@ -21,11 +21,9 @@ dynamodb = boto3.resource('dynamodb')
 dynamodb_client = boto3.client('dynamodb')
 criteria_table = dynamodb.Table(f'{environment}-Criteria')
 
-# OpenAI API
 chat_client = OpenAI()
 
-# GitHub API Headers
-github_api_headers = {'Authorization-Type': "Bearer " + os.environ['GITHUB_TOKEN'], "X-GitHub-Api-Version": "2022-11-28"}
+GITHUB_API_HEADERS = {'Authorization-Type': "Bearer " + os.environ['GITHUB_TOKEN'], "X-GitHub-Api-Version": "2022-11-28"}
 
 
 def generate_criteria(event, context):
@@ -42,17 +40,17 @@ def generate_criteria(event, context):
     # Validate that required fields are present
     position_id = body.get('position_id', '')
 
-    # TODO:Get github_username and repo names from database by position_id
+    # TODO: Get github_username and repo names from database by position_id
     github_username = "kokiebisu"
     repo_names = ["rental-storage"]
     repository_name = repo_names[0]     # TODO: For loop
 
 
     programming_languages = get_programming_languages_used(github_username, repository_name)
-    important_file_names = get_important_file_names(programming_languages)
+    file_names_containing_repo_tech_stack = get_readme_and_package_files(programming_languages)
 
     prompt = "Please review the following files.\n"
-    file_paths = get_important_file_paths(github_username, repository_name, important_file_names)
+    file_paths = get_file_paths_in_repo(github_username, repository_name, file_names_containing_repo_tech_stack)
 
     for file_path in file_paths:
         prompt = prompt + file_path + ":\n" + get_file_content(github_username, repository_name, file_path) + "\n"
@@ -66,7 +64,7 @@ def generate_criteria(event, context):
     #TODO: Save criteria to database
 
     body = {
-        "critrion_id": criterion_id,
+        "criterion_id": criterion_id,
         "created_at": created_at,
     }
 
@@ -77,7 +75,7 @@ def generate_criteria(event, context):
 
 def get_programming_languages_used(github_username, repository_name):
     url = "https://api.github.com/repos/" + github_username + "/" + repository_name + "/languages"
-    res = requests.get(url, headers=github_api_headers)
+    res = requests.get(url, headers=GITHUB_API_HEADERS)
 
     data = json.loads(res.content)
     languages = []
@@ -85,8 +83,8 @@ def get_programming_languages_used(github_username, repository_name):
         languages.append({"name": language, "bytes": data[language]})
     return languages
 
-
-def get_important_file_names(languages):
+# get README.md and other important file names according to the programming languages used
+def get_readme_and_package_files(languages):
     important_file_names = ["README.md"]
 
     package_file_names = {
@@ -113,40 +111,42 @@ def get_important_file_names(languages):
     return important_file_names
 
 
-def get_important_file_paths(github_username, repo_name, important_file_names):
-    branch = get_default_branch(github_username, repo_name)
+def get_file_paths_in_repo(github_username, repo_name, file_names_containing_repo_tech_stack):
+    branch = _get_default_branch(github_username, repo_name)
 
     url = "https://api.github.com/repos/" + github_username + "/" + repo_name + "/git/trees/" + branch + "?recursive=1"
-    res = requests.get(url, headers=github_api_headers)
+    res = requests.get(url, headers=GITHUB_API_HEADERS)
 
     data = json.loads(res.content)
     tree = data['tree']
     file_paths = []
-    for file in tree:
-        if file['type'] == 'blob' and is_important_file(file['path'], important_file_names):
-            file_paths.append(file['path'])
+    for branch in tree:
+        if should_include_the_branch(branch, file_names_containing_repo_tech_stack):
+            file_paths.append(branch['path'])
     return file_paths
 
 
-def get_default_branch(github_username, repo_name):
+def _get_default_branch(github_username, repo_name):
     url = "https://api.github.com/repos/" + github_username + "/" + repo_name
-    res = requests.get(url, headers=github_api_headers)
+    res = requests.get(url, headers=GITHUB_API_HEADERS)
 
     data = json.loads(res.content)
     return data['default_branch']
 
 
-def is_important_file(path, important_file_names):
-    # get files with names in important_file_names, and only contains ~ 1 / (not in a subdirectory)
-    for file_name in important_file_names:
-        if file_name in path and path.count('/') <= 1:
-            return True
-    return False
+# This function is used to filter out the branches that are not needed
+def should_include_the_branch(branch, file_names_containing_repo_tech_stack):
+    branch_name = branch['path'].split('/')[-1]
+    is_file = branch['type'] == 'blob'
+    does_contain_info = branch_name in file_names_containing_repo_tech_stack
+    in_root_or_subroot_dir = branch['path'].count('/') <= 1
 
+    return is_file and does_contain_info and in_root_or_subroot_dir
 
+# Read file content
 def get_file_content(github_username, repository_name, file_path):
     url = "https://api.github.com/repos/" + github_username + "/" + repository_name + "/contents/" + file_path
-    res = requests.get(url, headers=github_api_headers)
+    res = requests.get(url, headers=GITHUB_API_HEADERS)
 
     data = json.loads(res.content)
     content_encoded = data['content']
@@ -168,5 +168,5 @@ def get_criteria_keywords(prompt, languages):
         ]
     )
     content = json.loads(completion.choices[0].message.content)
-    criteria_keywords = content['criteria']
+    criteria_keywords = content['criteria']     # The array of keywords, string[]
     return criteria_keywords
