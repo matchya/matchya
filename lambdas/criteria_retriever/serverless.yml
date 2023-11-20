@@ -1,0 +1,41 @@
+service: criteria-retriever
+
+frameworkVersion: '3'
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: python3.9
+  stage: dev
+  ecr:
+    images:
+      criteria_retriever_lambda:
+        path: ./
+        file: Dockerfile
+        buildArgs:
+  architecture: arm64
+  iam:
+    role: ${ssm:/terraform/iam/lambda-role-arn}
+  environment:
+    ENVIRONMENT: ${env:ENVIRONMENT}
+
+functions:
+  criteria_retriever_lambda:
+    image:
+      name: criteria_retriever_lambda
+      command:
+        - handler.retrieve_criteria
+
+    events:
+      - http:
+          path: /criteria/{id}
+          method: GET
+          request: 
+            parameters: 
+              paths: 
+                id: true
+
+custom:
+  export-env:
+    filename: .env
+    overwrite: true
