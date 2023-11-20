@@ -1,11 +1,38 @@
 service: evaluator
+frameworkVersion: "3"
 
-frameworkVersion: '3'
+useDotenv: true
 
 provider:
   name: aws
   runtime: python3.9
+  stage: dev
+  ecr:
+    images:
+      evaluator-lambda:
+        path: ./
+        file: Dockerfile
+        buildArgs:
+  architecture: arm64
+  iam:
+    role: ${ssm:/terraform/iam/lambda-role-arn}
+  environment:
+    OPENAI_API_KEY: ${env:OPENAI_API_KEY}
+    GITHUB_TOKEN: ${env:GITHUB_TOKEN}
 
 functions:
-  hello:
-    handler: handler.hello
+  evaluate_candidate:
+    image:
+      name: evaluator-lambda
+      command:
+        - handler.evaluate_candidate
+
+    events:
+      - http:
+          path: /
+          method: POST
+
+custom:
+  export-env:
+    filename: .env
+    overwrite: true

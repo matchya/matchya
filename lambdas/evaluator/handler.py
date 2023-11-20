@@ -14,7 +14,7 @@ chat_client = OpenAI()
 
 github_rest_api_headers = {'Authorization-Type': "Bearer " + os.environ['GITHUB_TOKEN'], "X-GitHub-Api-Version": "2022-11-28"}
 
-def hello(event, context):
+def evaluate_candidate(event, context):
     # body = json.loads(event.get("body"))
     # position_id = body.get("position_id")
     # first_name = body.get("candidate_first_name")
