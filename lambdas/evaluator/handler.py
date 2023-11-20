@@ -1,18 +1,20 @@
 import json
-import requests
 import base64
 import os
 from os.path import join, dirname
+import requests
 from dotenv import load_dotenv
+from openai import OpenAI
 
 dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path)
 
-from openai import OpenAI
 chat_client = OpenAI()
 
 
-github_rest_api_headers = {'Authorization-Type': "Bearer " + os.environ['GITHUB_TOKEN'], "X-GitHub-Api-Version": "2022-11-28"}
+GITHUB_REST_API_HEADERS = {'Authorization-Type': "Bearer " + os.environ['GITHUB_TOKEN'], "X-GitHub-Api-Version": "2022-11-28"}
+GITHUB_API_REPO_URL = "https://api.github.com/repos/"
+GITHUB_GRAPHQL_API_URL = "https://api.github.com/graphql"
 
 def evaluate_candidate(event, context):
     # body = json.loads(event.get("body"))
@@ -43,7 +45,7 @@ def get_criteria_full_messages(position_id):
 def evaluate_candidate(criteria_full_messages, github_username):
     pinned_repositories = get_pinned_repositories_name(github_username)
     repos_content = get_repos_content_all(github_username, pinned_repositories)
-    chatgpt_evaluation = get_evaluation(criteria_full_messages, repos_content)
+    chatgpt_evaluation = get_candidate_evaluation(criteria_full_messages, repos_content)
 
     return chatgpt_evaluation
 
@@ -70,7 +72,7 @@ def get_pinned_repositories_name(github_username):
         }
     }
     """ % github_username
-    data = run_query(query)
+    data = run_github_query(query)
 
     edges = data.get("repositoryOwner").get("pinnableItems").get("edges")
     for edge in edges:
@@ -82,12 +84,11 @@ def get_pinned_repositories_name(github_username):
     return repo_names
 
 
-def run_query(query):
+def run_github_query(query):
     try:
-        url = 'https://api.github.com/graphql'
         api_token = os.environ['GITHUB_TOKEN']
         graphql_headers = {'Authorization': 'token %s' % api_token}
-        res = requests.post(url=url, json={'query': query}, headers=graphql_headers)
+        res = requests.post(url=GITHUB_GRAPHQL_API_URL, json={'query': query}, headers=graphql_headers)
         content = json.loads(res.content)
         return content.get("data") 
     except Exception as e:
@@ -97,12 +98,12 @@ def run_query(query):
 def get_repos_content_all(github_username, repo_names):
     content = ""
     for repo_name in repo_names:
-        content += get_repo_content(github_username, repo_name)
+        content += get_repo_file_content(github_username, repo_name)
     
     return content
 
 
-def get_repo_content(github_username, repo_name):
+def get_repo_file_content(github_username, repo_name):
     content = ""
     languages = get_programming_languages_used(github_username, repo_name)
     important_file_names = get_important_file_names(languages)
@@ -113,7 +114,7 @@ def get_repo_content(github_username, repo_name):
     return content
 
 
-def get_evaluation(criteria_full_messages, repos_content):
+def get_candidate_evaluation(criteria_full_messages, repos_content):
     system_message = "A company is looking for promising employees as software engineers. Candidates need to have a skillset to work on the company's project in terms of programming languages and other technologies. These are criteria that the company needs candidates to have. You need to assess candidates on each criteria : "
     
     for criterion in criteria_full_messages:
@@ -159,9 +160,8 @@ def get_evaluation(criteria_full_messages, repos_content):
 ### Also used in generator lambda ###
 
 def get_default_branch(github_username, repo_name):
-    # GitHub API
-    url = "https://api.github.com/repos/" + github_username + "/" + repo_name
-    res = requests.get(url, headers=github_rest_api_headers)
+    url = GITHUB_API_REPO_URL + github_username + "/" + repo_name
+    res = requests.get(url, headers=GITHUB_REST_API_HEADERS)
 
     data = json.loads(res.content)
     if data is None or data.get('default_branch') is None:
@@ -172,8 +172,8 @@ def get_default_branch(github_username, repo_name):
 
 
 def get_programming_languages_used(github_username, repository_name):
-    url = "https://api.github.com/repos/" + github_username + "/" + repository_name + "/languages"
-    res = requests.get(url, headers=github_rest_api_headers)
+    url = GITHUB_API_REPO_URL + github_username + "/" + repository_name + "/languages"
+    res = requests.get(url, headers=GITHUB_REST_API_HEADERS)
 
     data = json.loads(res.content)
     languages = []
@@ -211,8 +211,8 @@ def get_important_file_names(languages):
 def get_important_file_urls(github_username, repo_name, important_file_names):
     branch = get_default_branch(github_username, repo_name)
 
-    url = "https://api.github.com/repos/" + github_username + "/" + repo_name + "/git/trees/" + branch + "?recursive=1"
-    res = requests.get(url, headers=github_rest_api_headers)
+    url = GITHUB_API_REPO_URL + github_username + "/" + repo_name + "/git/trees/" + branch + "?recursive=1"
+    res = requests.get(url, headers=GITHUB_REST_API_HEADERS)
 
     data = json.loads(res.content)
     tree = data['tree']
@@ -230,8 +230,8 @@ def is_important_file(path, important_file_names):
 
 
 def get_file_contents(github_username, repository_name, file_path):
-    url = "https://api.github.com/repos/" + github_username + "/" + repository_name + "/contents/" + file_path
-    res = requests.get(url, headers=github_rest_api_headers)
+    url = GITHUB_API_REPO_URL + github_username + "/" + repository_name + "/contents/" + file_path
+    res = requests.get(url, headers=GITHUB_REST_API_HEADERS)
 
     data = json.loads(res.content)
     if data is None or data.get('content') is None:
