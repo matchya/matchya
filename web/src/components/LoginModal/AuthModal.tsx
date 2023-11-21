@@ -5,6 +5,18 @@ import matchyaIcon from '/matchya-icon.png';
 import Button from './Button';
 import FormInput from './FormInput';
 
+export interface LoginInput {
+  email: string;
+  password: string;
+}
+
+export interface RegisterInput {
+  email: string;
+  password: string;
+  company_name: string;
+  github_account_url: string;
+}
+
 interface AuthModalProps {
   type: string; // 'login' or 'signup'
   action: (...args: string[]) => void; // login or signup function
