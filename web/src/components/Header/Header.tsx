@@ -4,18 +4,36 @@ import { Link } from 'react-router-dom';
 
 import matchyaIcon from '/matchya-icon.png';
 
-import LoginModal from '../LoginModal/LoginModal';
+import AuthModal from '../LoginModal/AuthModal';
 
 const Header = () => {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [authenticationType, setAuthenticationType] = useState<
+    'signup' | 'login'
+  >('login');
+
+  const handleAuthenticationSwitch = () => {
+    if (authenticationType == 'signup') {
+      setAuthenticationType('login');
+    } else {
+      setAuthenticationType('signup');
+    }
+  };
 
   const showLoginModalHandler = () => {
     setShowLoginModal(true);
   };
 
-  const login = () => {
+  const handleLogin = () => {
+    // handle login logic here...
+    setShowLoginModal(false);
+    setIsAuthenticated(true);
+  };
+
+  const handleRegister = () => {
+    // handle register logic here
     setShowLoginModal(false);
     setIsAuthenticated(true);
   };
@@ -30,9 +48,20 @@ const Header = () => {
     navigate('/settings');
   };
 
+  const handleCloseModal = () => {
+    setShowLoginModal(false);
+  };
+
   return (
     <div className="w-full h-16 absolute bg-white border-2 flex justify-between">
-      {showLoginModal && <LoginModal login={login} />}
+      {showLoginModal && (
+        <AuthModal
+          type={authenticationType}
+          action={authenticationType == 'login' ? handleLogin : handleRegister}
+          close={handleCloseModal}
+          switchModal={handleAuthenticationSwitch}
+        />
+      )}
       <div className="w-1/5 flex justify-center items-center">
         <img className="h-3/4 rounded-full m-6" src={matchyaIcon} />
         <Link to="/">
