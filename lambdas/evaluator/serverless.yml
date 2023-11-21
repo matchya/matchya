@@ -6,6 +6,7 @@ useDotenv: true
 provider:
   name: aws
   runtime: python3.9
+  timeout: 60
   stage: dev
   ecr:
     images:
