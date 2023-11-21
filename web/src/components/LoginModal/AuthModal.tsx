@@ -19,7 +19,7 @@ export interface RegisterInput {
 
 interface AuthModalProps {
   type: string; // 'login' or 'signup'
-  action: (...args: string[]) => void; // login or signup function
+  action: (args: LoginInput | RegisterInput) => void; // login or signup function
   close: () => void;
   switchModal: () => void;
 }
@@ -27,7 +27,7 @@ interface AuthModalProps {
 const AuthModal = ({ type, action, close, switchModal }: AuthModalProps) => {
   const [companyName, setCompanyName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
-  const [githubUrl, setGithubUrl] = useState<string>('');
+  const [githubAccountUrl, setGithubAccountUrl] = useState<string>('');
   const [password, setPassword] = useState<string>('');
 
   const clickOutside = (
@@ -41,9 +41,14 @@ const AuthModal = ({ type, action, close, switchModal }: AuthModalProps) => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (type === 'login') {
-      action(email, password);
+      action({ email, password });
     } else {
-      action(companyName, email, githubUrl, password);
+      action({
+        company_name: companyName,
+        email,
+        github_account_url: githubAccountUrl,
+        password,
+      });
     }
   };
 
@@ -114,9 +119,9 @@ const AuthModal = ({ type, action, close, switchModal }: AuthModalProps) => {
               id="github-url"
               type="url"
               className="mt-3"
-              value={githubUrl}
+              value={githubAccountUrl}
               onChange={e => {
-                setGithubUrl(e.target.value);
+                setGithubAccountUrl(e.target.value);
               }}
             />
           )}
