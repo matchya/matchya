@@ -21,12 +21,19 @@ dynamodb = boto3.resource('dynamodb')
 dynamodb_client = boto3.client('dynamodb')
 criteria_table = dynamodb.Table(f'{environment}-Criteria')
 
-# OpenAI API
 chat_client = OpenAI()
+
+GITHUB_API_HEADERS = {'Authorization-Type': "Bearer " + os.environ['GITHUB_TOKEN'], "X-GitHub-Api-Version": "2022-11-28"}
 
 
 def generate_criteria(event, context):
+    """
+    Lambda function entry point to generate criteria from GitHub repositories.
 
+    :param event: The event triggering the lambda, contains request data.
+    :param context: The runtime context of the lambda.
+    :return: A dictionary with HTTP status code and response body.
+    """
     try:
         body = event.get('body', '')
         if not body:
@@ -35,75 +42,56 @@ def generate_criteria(event, context):
     except json.JSONDecodeError:
         return {'statusCode': 400, 'body': 'Invalid JSON in request body'}
 
-
     # Validate that required fields are present
-    company_id = body.get('company_id')
-    position = body.get('position', 'default')
+    # position_id = body.get('position_id', '')
 
+    # TODO: Get github_username and repo names from database by position_id
+    github_username = "kokiebisu"
+    repo_names = ["rental-storage"]
+    repository_name = repo_names[0]
 
-    # get company github url from db
-    try:
-        response = dynamodb_client.get_item(
-            TableName=f'{environment}-Company',
-            Key={'company_id': {'S': company_id}},
-        )
-        if 'Item' not in response:
-            return {'statusCode': 400, 'body': 'Company does not exist'}
-        github_account_url = response['Item']['github_account_url']
-        print("github_account_url from db: ", github_account_url)
-
-    except Exception:
-        return {'statusCode': 400, 'body': 'Something went wrong while getting company github url'}
-    
-    github_repo_url = "https://github.com/kokiebisu/rental-storage"  # mock
-
-    github_user_name = github_repo_url.split('/')[-2]
-    repository_name = github_repo_url.split('/')[-1]
-
-    languages = get_programming_languages_used(github_user_name, repository_name)
-
-    important_file_names = get_important_file_names(github_user_name, repository_name, languages)
+    programming_languages = get_programming_languages_used(github_username, repository_name)
+    file_names_containing_repo_tech_stack = get_readme_and_package_files(programming_languages)
 
     prompt = "Please review the following files.\n"
-    file_paths = get_important_file_urls(github_user_name, repository_name, important_file_names)
+    file_paths = get_file_paths_in_repo(github_username, repository_name, file_names_containing_repo_tech_stack)
 
     for file_path in file_paths:
-        prompt = prompt + file_path + ":\n" + get_file_contents(github_user_name, repository_name, file_path) + "\n"
+        prompt = prompt + file_path + ":\n" + get_file_content(github_username, repository_name, file_path) + "\n"
 
-    tech_stack = get_criteria(prompt, languages)
-    print("tech_stack: ", tech_stack)
+    criteria_keywords = get_criteria_keywords(prompt, programming_languages)
+    print("criteria: ", criteria_keywords)
 
-    # save criteria to db
-    criteria_id = str(uuid.uuid4())
+    criterion_id = str(uuid.uuid4())
     created_at = str(datetime.datetime.now())
 
-    try:
-        store_criteria_in_db(criteria_id, company_id, position, github_repo_url, tech_stack, created_at)
-    except Exception:
-        return {'statusCode': 400, 'body': 'Something went wrong while saving to criteria table'}
+    # TODO: Save criteria to database logic here...
 
-    body = {
-        "critria_id": criteria_id,
-        "created_at": created_at,
-    }
-
-    response = {"statusCode": 200, "body": json.dumps(body)}
-
+    response = {"statusCode": 200, "body": json.dumps({"criterion_id": criterion_id, "created_at": created_at})}
     return response
 
 
 def get_programming_languages_used(github_username, repository_name):
+    """
+    Retrieves programming languages used in a specified GitHub repository.
+
+    :param github_username: GitHub username of the repository owner.
+    :param repository_name: Name of the GitHub repository.
+    :return: A list of programming languages used in the repository.
+    """
     url = "https://api.github.com/repos/" + github_username + "/" + repository_name + "/languages"
-    res = requests.get(url, headers={'Authorization-Type': "Bearer " + os.environ['GITHUB_TOKEN'], "X-GitHub-Api-Version": "2022-11-28"})
-
+    res = requests.get(url, headers=GITHUB_API_HEADERS)
     data = json.loads(res.content)
-    languages = []
-    for language in data:
-        languages.append({"name": language, "bytes": data[language]})
-    return languages
+    return [{"name": language, "bytes": data[language]} for language in data]
 
 
-def get_important_file_names(github_username, repository_name, languages):
+def get_readme_and_package_files(languages):
+    """
+    Determines important file names based on the programming languages used in a repository.
+
+    :param languages: A list of programming languages used in the repository.
+    :return: A list of important file names like README.md, requirements.txt, etc.
+    """
     important_file_names = ["README.md"]
 
     package_file_names = {
@@ -130,65 +118,82 @@ def get_important_file_names(github_username, repository_name, languages):
     return important_file_names
 
 
-def get_repository_names(github_username):
-    # GitHub API
-    url = "https://api.github.com/users/" + github_username + "/repos"
-    res = requests.get(url, headers={'Authorization-Type': "Bearer " + os.environ['GITHUB_TOKEN'], "X-GitHub-Api-Version": "2022-11-28"})
+def get_file_paths_in_repo(github_username, repo_name, file_names_containing_repo_tech_stack):
+    """
+    Retrieves the file paths of important files in a GitHub repository.
 
-    data = json.loads(res.content)
-    repository_urls = []
-    for repo in data:
-        repository_urls.append(repo['name'])
-    return repository_urls
+    :param github_username: GitHub username of the repository owner.
+    :param repo_name: Name of the GitHub repository.
+    :param file_names_containing_repo_tech_stack: List of important file names to find in the repository.
+    :return: A list of file paths for important files in the repository.
+    """
+    branch = _get_default_branch(github_username, repo_name)
 
-
-def get_important_file_urls(user_name, repo_name, important_file_names):
-    # GitHub API
-    branch = get_default_branch(user_name, repo_name)
-
-    url = "https://api.github.com/repos/" + user_name + "/" + repo_name + "/git/trees/" + branch + "?recursive=1"
-    res = requests.get(url, headers={'Authorization-Type': "Bearer " + os.environ['GITHUB_TOKEN'], "X-GitHub-Api-Version": "2022-11-28"})
-
+    url = "https://api.github.com/repos/" + github_username + "/" + repo_name + "/git/trees/" + branch + "?recursive=1"
+    res = requests.get(url, headers=GITHUB_API_HEADERS)
     data = json.loads(res.content)
     tree = data['tree']
-    file_paths = []
-    for file in tree:
-        if file['type'] == 'blob' and is_important_file(file['path'], important_file_names):
-            file_paths.append(file['path'])
-    return file_paths
+    return [branch['path'] for branch in tree if should_include_the_branch(branch, file_names_containing_repo_tech_stack)]
 
 
-def get_default_branch(user_name, repo_name):
-    # GitHub API
-    url = "https://api.github.com/repos/" + user_name + "/" + repo_name
-    res = requests.get(url, headers={'Authorization-Type': "Bearer " + os.environ['GITHUB_TOKEN'], "X-GitHub-Api-Version": "2022-11-28"})
+def _get_default_branch(github_username, repo_name):
+    """
+    Fetches the default branch of a GitHub repository.
+
+    :param github_username: GitHub username of the repository owner.
+    :param repo_name: Name of the GitHub repository.
+    :return: The name of the default branch of the repository.
+    """
+    url = "https://api.github.com/repos/" + github_username + "/" + repo_name
+    res = requests.get(url, headers=GITHUB_API_HEADERS)
 
     data = json.loads(res.content)
     return data['default_branch']
 
 
-def is_important_file(path, important_file_names):
-    # get files with names in important_file_names, and only contains ~2 / (not in a subdirectory)
-    for file_name in important_file_names:
-        if file_name in path and path.count('/') <= 1:
-            return True
-    return False
+def should_include_the_branch(branch, file_names_containing_repo_tech_stack):
+    """
+    Determines if a branch contains important files based on their names.
+
+    :param branch: A branch object from the GitHub repository tree.
+    :param file_names_containing_repo_tech_stack: List of important file names.
+    :return: Boolean indicating whether the branch should be included or not.
+    """
+    branch_name = branch['path'].split('/')[-1]
+    is_file = branch['type'] == 'blob'
+    does_contain_info = branch_name in file_names_containing_repo_tech_stack
+    in_root_or_subroot_dir = branch['path'].count('/') <= 1
+
+    return is_file and does_contain_info and in_root_or_subroot_dir
 
 
-def get_file_contents(github_user_name, repository_name, file_path):
-    url = "https://api.github.com/repos/" + github_user_name + "/" + repository_name + "/contents/" + file_path
-    res = requests.get(url, headers={'Authorization-Type': "Bearer " + os.environ['GITHUB_TOKEN'], "X-GitHub-Api-Version": "2022-11-28"})
+def get_file_content(github_username, repository_name, file_path):
+    """
+    Retrieves the content of a specific file from a GitHub repository.
 
+    :param github_username: GitHub username of the repository owner.
+    :param repository_name: Name of the GitHub repository.
+    :param file_path: Path of the file within the repository.
+    :return: The content of the specified file.
+    """
+    url = "https://api.github.com/repos/" + github_username + "/" + repository_name + "/contents/" + file_path
+    res = requests.get(url, headers=GITHUB_API_HEADERS)
     data = json.loads(res.content)
     content_encoded = data['content']
-    content = str(base64.b64decode(content_encoded))
-    return content
+    return str(base64.b64decode(content_encoded))
 
 
-def get_criteria(prompt, languages):
+def get_criteria_keywords(prompt, languages):
+    """
+    Generates a list of criteria keywords using OpenAI's ChatGPT based on given prompt and programming languages.
+
+    :param prompt: A string prompt containing file contents and information.
+    :param languages: A list of programming languages used in the project.
+    :return: A list of criteria keywords extracted from the prompt and language list.
+    """
     system_message = "You read the following files. Please review them and generate a list of programming languages, libraries, and other technologies used in the project. You should always put these languages first in the head of the list in order." + "Languages:"
     for language in languages:
-        system_message = system_message + language['name'] + ", "
+        system_message += language['name'] + ", "
 
     completion = chat_client.chat.completions.create(
         model="gpt-3.5-turbo-1106",
@@ -199,18 +204,4 @@ def get_criteria(prompt, languages):
         ]
     )
     content = json.loads(completion.choices[0].message.content)
-    criteria = content['criteria']
-    return criteria
-
-
-def store_criteria_in_db(criteria_id, company_id, position, github_repo_url, tech_stack, created_at):
-    criteria_info = {
-        'criteria_id': criteria_id,
-        'company_id': company_id,
-        'position': position,
-        'repository_url': github_repo_url,
-        'tech_stack': tech_stack,
-        'created_at': created_at
-    }
-
-    criteria_table.put_item(Item=criteria_info)
+    return content['criteria']  # The array of keywords, string[]
