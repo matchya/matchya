@@ -1,10 +1,12 @@
+import axios from 'axios';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
 
 import matchyaIcon from '/matchya-icon.png';
 
-import AuthModal from '../LoginModal/AuthModal';
+import { apiEndpoint } from '../../config';
+import AuthModal, { LoginInput, RegisterInput } from '../LoginModal/AuthModal';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -32,9 +34,18 @@ const Header = () => {
     setIsAuthenticated(true);
   };
 
-  const handleRegister = () => {
-    // handle register logic here
-    setShowLoginModal(false);
+  const handleRegister = async (userData: LoginInput | RegisterInput) => {
+    try {
+      const response = await axios.post(`${apiEndpoint}/register`, userData);
+      if (response.data.status == 'success') {
+        setIsAuthenticated(true);
+        setShowLoginModal(false);
+        navigate('/dashboard');
+      }
+    } catch (error) {
+      console.error('Registration failed:', error);
+      // Handle error (e.g., show error message to the user)
+    }
     setIsAuthenticated(true);
   };
 
