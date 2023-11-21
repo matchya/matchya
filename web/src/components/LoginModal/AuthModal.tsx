@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import matchIcon from '../assets/matchya-icon.png';
+import matchyaIcon from '/matchya-icon.png';
 
 import Button from './Button';
 import FormInput from './FormInput';
@@ -42,7 +42,7 @@ const AuthModal = ({ type, action, close, switchModal }: AuthModalProps) => {
       onClick={clickOutside}
     >
       <div className="p-8 bg-white shadow-md rounded-lg w-full max-w-md">
-        <img className="h-16 w-16 rounded-full mx-auto" src={matchIcon} />
+        <img className="h-16 w-16 rounded-full mx-auto" src={matchyaIcon} />
         <h1 className="text-3xl font-bold text-center">
           {type === 'login' ? 'Log in' : 'Sign up'}
         </h1>
