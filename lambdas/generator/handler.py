@@ -28,11 +28,11 @@ GITHUB_API_HEADERS = {'Authorization-Type': "Bearer " + os.environ['GITHUB_TOKEN
 
 def generate_criteria(event, context):
     """
-    Entrypoint to the lambda
+    Lambda function entry point to generate criteria from GitHub repositories.
 
-    :param event:
-    :param context:
-    :return:
+    :param event: The event triggering the lambda, contains request data.
+    :param context: The runtime context of the lambda.
+    :return: A dictionary with HTTP status code and response body.
     """
     try:
         body = event.get('body', '')
@@ -79,11 +79,11 @@ def generate_criteria(event, context):
 
 def get_programming_languages_used(github_username, repository_name):
     """
-    Retrieves all the programming languages used in a repo
+    Retrieves programming languages used in a specified GitHub repository.
 
-    :param github_username:
-    :param repository_name:
-    :return: a list of strings
+    :param github_username: GitHub username of the repository owner.
+    :param repository_name: Name of the GitHub repository.
+    :return: A list of programming languages used in the repository.
     """
     url = "https://api.github.com/repos/" + github_username + "/" + repository_name + "/languages"
     res = requests.get(url, headers=GITHUB_API_HEADERS)
@@ -97,10 +97,10 @@ def get_programming_languages_used(github_username, repository_name):
 
 def get_readme_and_package_files(languages):
     """
-    Generates a list of file names that include dependency information based on the given programming languages.
+    Determines important file names based on the programming languages used in a repository.
 
-    :param languages: a list of programming languages to be looked into
-    :return: a list of strings
+    :param languages: A list of programming languages used in the repository.
+    :return: A list of important file names like README.md, requirements.txt, etc.
     """
     important_file_names = ["README.md"]
 
@@ -130,13 +130,12 @@ def get_readme_and_package_files(languages):
 
 def get_file_paths_in_repo(github_username, repo_name, file_names_containing_repo_tech_stack):
     """
-    Retrieve file paths from a specified GitHub repository that contain certain technology stack information
+    Retrieves the file paths of important files in a GitHub repository.
 
-    :param github_username:
-    :path repo_name:
-    :path file_names_containing_repo_tech_stack:
-
-    :return: list of strings
+    :param github_username: GitHub username of the repository owner.
+    :param repo_name: Name of the GitHub repository.
+    :param file_names_containing_repo_tech_stack: List of important file names to find in the repository.
+    :return: A list of file paths for important files in the repository.
     """
     branch = _get_default_branch(github_username, repo_name)
 
@@ -153,6 +152,13 @@ def get_file_paths_in_repo(github_username, repo_name, file_names_containing_rep
 
 
 def _get_default_branch(github_username, repo_name):
+    """
+    Fetches the default branch of a GitHub repository.
+
+    :param github_username: GitHub username of the repository owner.
+    :param repo_name: Name of the GitHub repository.
+    :return: The name of the default branch of the repository.
+    """
     url = "https://api.github.com/repos/" + github_username + "/" + repo_name
     res = requests.get(url, headers=GITHUB_API_HEADERS)
 
@@ -162,12 +168,11 @@ def _get_default_branch(github_username, repo_name):
 
 def should_include_the_branch(branch, file_names_containing_repo_tech_stack):
     """
-    Retrieves the name of the default branch (like master or main) for a given GitHub repository.
-    It is used to filter out the branches that are not needed.
+    Determines if a branch contains important files based on their names.
 
-    :param branch:
-    :param file_names_containing_repo_tech_stack:
-    :return: a bool
+    :param branch: A branch object from the GitHub repository tree.
+    :param file_names_containing_repo_tech_stack: List of important file names.
+    :return: Boolean indicating whether the branch should be included or not.
     """
     branch_name = branch['path'].split('/')[-1]
     is_file = branch['type'] == 'blob'
@@ -179,12 +184,12 @@ def should_include_the_branch(branch, file_names_containing_repo_tech_stack):
 
 def get_file_content(github_username, repository_name, file_path):
     """
-    Retrieves the content of a specific file from a GitHub repository
+    Retrieves the content of a specific file from a GitHub repository.
 
-    :param github_username:
-    :param repository_name:
-    :param file_path:
-    :return: a string
+    :param github_username: GitHub username of the repository owner.
+    :param repository_name: Name of the GitHub repository.
+    :param file_path: Path of the file within the repository.
+    :return: The content of the specified file.
     """
     url = "https://api.github.com/repos/" + github_username + "/" + repository_name + "/contents/" + file_path
     res = requests.get(url, headers=GITHUB_API_HEADERS)
@@ -197,11 +202,11 @@ def get_file_content(github_username, repository_name, file_path):
 
 def get_criteria_keywords(prompt, languages):
     """
-    Generates a list of programming languages, libraries, and other technologies used in a project, based on a given prompt and a list of languages.
+    Generates a list of criteria keywords using OpenAI's ChatGPT based on given prompt and programming languages.
 
-    :param prompt:
-    :param languages:
-    :return: a list of string
+    :param prompt: A string prompt containing file contents and information.
+    :param languages: A list of programming languages used in the project.
+    :return: A list of criteria keywords extracted from the prompt and language list.
     """
     system_message = "You read the following files. Please review them and generate a list of programming languages, libraries, and other technologies used in the project. You should always put these languages first in the head of the list in order." + "Languages:"
     for language in languages:
