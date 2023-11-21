@@ -43,12 +43,12 @@ def generate_criteria(event, context):
         return {'statusCode': 400, 'body': 'Invalid JSON in request body'}
 
     # Validate that required fields are present
-    position_id = body.get('position_id', '')
+    # position_id = body.get('position_id', '')
 
     # TODO: Get github_username and repo names from database by position_id
     github_username = "kokiebisu"
     repo_names = ["rental-storage"]
-    repository_name = repo_names[0]     # TODO: For loop
+    repository_name = repo_names[0]
 
     programming_languages = get_programming_languages_used(github_username, repository_name)
     file_names_containing_repo_tech_stack = get_readme_and_package_files(programming_languages)
@@ -65,15 +65,9 @@ def generate_criteria(event, context):
     criterion_id = str(uuid.uuid4())
     created_at = str(datetime.datetime.now())
 
-    # TODO: Save criteria to database
+    # TODO: Save criteria to database logic here...
 
-    body = {
-        "criterion_id": criterion_id,
-        "created_at": created_at,
-    }
-
-    response = {"statusCode": 200, "body": json.dumps(body)}
-
+    response = {"statusCode": 200, "body": json.dumps({"criterion_id": criterion_id, "created_at": created_at})}
     return response
 
 
@@ -87,12 +81,8 @@ def get_programming_languages_used(github_username, repository_name):
     """
     url = "https://api.github.com/repos/" + github_username + "/" + repository_name + "/languages"
     res = requests.get(url, headers=GITHUB_API_HEADERS)
-
     data = json.loads(res.content)
-    languages = []
-    for language in data:
-        languages.append({"name": language, "bytes": data[language]})
-    return languages
+    return [{"name": language, "bytes": data[language]} for language in data]
 
 
 def get_readme_and_package_files(languages):
@@ -141,14 +131,9 @@ def get_file_paths_in_repo(github_username, repo_name, file_names_containing_rep
 
     url = "https://api.github.com/repos/" + github_username + "/" + repo_name + "/git/trees/" + branch + "?recursive=1"
     res = requests.get(url, headers=GITHUB_API_HEADERS)
-
     data = json.loads(res.content)
     tree = data['tree']
-    file_paths = []
-    for branch in tree:
-        if should_include_the_branch(branch, file_names_containing_repo_tech_stack):
-            file_paths.append(branch['path'])
-    return file_paths
+    return [branch['path'] for branch in tree if should_include_the_branch(branch, file_names_containing_repo_tech_stack)]
 
 
 def _get_default_branch(github_username, repo_name):
@@ -193,11 +178,9 @@ def get_file_content(github_username, repository_name, file_path):
     """
     url = "https://api.github.com/repos/" + github_username + "/" + repository_name + "/contents/" + file_path
     res = requests.get(url, headers=GITHUB_API_HEADERS)
-
     data = json.loads(res.content)
     content_encoded = data['content']
-    content = str(base64.b64decode(content_encoded))
-    return content
+    return str(base64.b64decode(content_encoded))
 
 
 def get_criteria_keywords(prompt, languages):
@@ -210,7 +193,7 @@ def get_criteria_keywords(prompt, languages):
     """
     system_message = "You read the following files. Please review them and generate a list of programming languages, libraries, and other technologies used in the project. You should always put these languages first in the head of the list in order." + "Languages:"
     for language in languages:
-        system_message = system_message + language['name'] + ", "
+        system_message += language['name'] + ", "
 
     completion = chat_client.chat.completions.create(
         model="gpt-3.5-turbo-1106",
@@ -221,5 +204,4 @@ def get_criteria_keywords(prompt, languages):
         ]
     )
     content = json.loads(completion.choices[0].message.content)
-    criteria_keywords = content['criteria']     # The array of keywords, string[]
-    return criteria_keywords
+    return content['criteria']  # The array of keywords, string[]
