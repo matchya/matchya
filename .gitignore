@@ -15,6 +15,7 @@
 # terraform
 **/.terraform
 **/terraform.tfstate.backup
+**/terraform.tfvars
 
 # Logs
 logs
