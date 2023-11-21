@@ -29,9 +29,8 @@ def register(event, context):
     company_name = body.get('company_name')
     github_account_url = body.get('github_account_url')
     password = body.get('password')
-
     if not all([email, company_name, github_account_url, password]):
-        return {'statusCode': 400, 'body': 'Missing required fields'}
+        return _generate_response(status_code=400, body='Missing required fields')
 
     body = json.loads(event['body'])
 
@@ -45,11 +44,10 @@ def register(event, context):
         'github_account_url': github_account_url,
         'password': _hash_password(password)  # Ensure this is securely hashed
     }
-
     try:
         company_table.put_item(Item=company_info)
     except Exception:
-        return {'statusCode': 400, 'body': 'Something went wrong while saving to company table'}
+        return _generate_response(status_code=400, body='Something went wrong while saving to company table')
 
     access_token = _generate_access_token(company_id)
 
@@ -57,11 +55,10 @@ def register(event, context):
         'token_id': access_token,
         'company_id': company_id
     }
-
     try:
         access_token_table.put_item(Item=access_token_info)
     except Exception:
-        return {'statusCode': 400, 'body': 'Something weng wrong while saving to access token table'}
+        return _generate_response(status_code=400, body='Something weng wrong while saving to access token table')
 
     body = {
         'status': 'success',
@@ -71,9 +68,7 @@ def register(event, context):
         }
     }
 
-    response = {"statusCode": 200, "body": json.dumps(body)}
-
-    return response
+    return _generate_response(status_code=200, body=json.dumps(body))
 
 
 def login(event, context):
@@ -152,3 +147,12 @@ def _check_password(plain_password, hashed_password):
     password_bytes = plain_password.encode('utf-8')
     # Check if the password matches the hash
     return bcrypt.checkpw(password_bytes, hashed_password)
+
+
+def _generate_response(status_code, body):
+    return {"statusCode": status_code, "body": body, 'headers': {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Credentials': True,
+    }}

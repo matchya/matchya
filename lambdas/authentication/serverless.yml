@@ -35,6 +35,8 @@ functions:
       - http:
           path: /register
           method: POST
+          cors: true
+
   login:
     name: ${self:provider.stage}-authentication-login
     image:
