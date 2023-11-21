@@ -69,7 +69,7 @@ def evaluate(criteria_full_messages, github_username):
     """
     pinned_repositories = get_pinned_repositories_name(github_username)
     repos_content = get_repos_content_all(github_username, pinned_repositories)
-    chatgpt_evaluation = get_candidate_evaluation(criteria_full_messages, repos_content)
+    chatgpt_evaluation = get_candidate_evaluation_from_chatgpt(criteria_full_messages, repos_content)
 
     return chatgpt_evaluation
 
@@ -159,14 +159,14 @@ def get_repo_file_content(github_username, repo_name):
     content = ""
     languages = get_programming_languages_used(github_username, repo_name)
     important_file_names = get_important_file_names(languages)
-    file_paths = get_important_file_urls(github_username, repo_name, important_file_names)
+    file_paths = get_important_file_paths(github_username, repo_name, important_file_names)
     for file_path in file_paths:
         content += "repository (" + repo_name + "), file: (" + file_path + "):\n" + get_file_contents(github_username, repo_name, file_path) + "\n"
 
     return content
 
 
-def get_candidate_evaluation(criteria_full_messages, repos_content):
+def get_candidate_evaluation_from_chatgpt(criteria_full_messages, repos_content):
     """
     Evaluates a candidate's GitHub repository contents against specified criteria using ChatGPT.
 
@@ -284,7 +284,7 @@ def get_important_file_names(languages):
     return important_file_names
 
 
-def get_important_file_urls(github_username, repo_name, important_file_names):
+def get_important_file_paths(github_username, repo_name, important_file_names):
     """
     Fetches URLs of important files from a GitHub repository.
 
