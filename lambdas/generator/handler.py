@@ -27,7 +27,13 @@ GITHUB_API_HEADERS = {'Authorization-Type': "Bearer " + os.environ['GITHUB_TOKEN
 
 
 def generate_criteria(event, context):
+    """
+    Entrypoint to the lambda
 
+    :param event:
+    :param context:
+    :return:
+    """
     try:
         body = event.get('body', '')
         if not body:
@@ -36,7 +42,6 @@ def generate_criteria(event, context):
     except json.JSONDecodeError:
         return {'statusCode': 400, 'body': 'Invalid JSON in request body'}
 
-
     # Validate that required fields are present
     position_id = body.get('position_id', '')
 
@@ -44,7 +49,6 @@ def generate_criteria(event, context):
     github_username = "kokiebisu"
     repo_names = ["rental-storage"]
     repository_name = repo_names[0]     # TODO: For loop
-
 
     programming_languages = get_programming_languages_used(github_username, repository_name)
     file_names_containing_repo_tech_stack = get_readme_and_package_files(programming_languages)
@@ -61,7 +65,7 @@ def generate_criteria(event, context):
     criterion_id = str(uuid.uuid4())
     created_at = str(datetime.datetime.now())
 
-    #TODO: Save criteria to database
+    # TODO: Save criteria to database
 
     body = {
         "criterion_id": criterion_id,
@@ -74,6 +78,13 @@ def generate_criteria(event, context):
 
 
 def get_programming_languages_used(github_username, repository_name):
+    """
+    Retrieves all the programming languages used in a repo
+
+    :param github_username:
+    :param repository_name:
+    :return: a list of strings
+    """
     url = "https://api.github.com/repos/" + github_username + "/" + repository_name + "/languages"
     res = requests.get(url, headers=GITHUB_API_HEADERS)
 
@@ -83,8 +94,14 @@ def get_programming_languages_used(github_username, repository_name):
         languages.append({"name": language, "bytes": data[language]})
     return languages
 
-# get README.md and other important file names according to the programming languages used
+
 def get_readme_and_package_files(languages):
+    """
+    Generates a list of file names that include dependency information based on the given programming languages.
+
+    :param languages: a list of programming languages to be looked into
+    :return: a list of strings
+    """
     important_file_names = ["README.md"]
 
     package_file_names = {
@@ -112,6 +129,15 @@ def get_readme_and_package_files(languages):
 
 
 def get_file_paths_in_repo(github_username, repo_name, file_names_containing_repo_tech_stack):
+    """
+    Retrieve file paths from a specified GitHub repository that contain certain technology stack information
+
+    :param github_username:
+    :path repo_name:
+    :path file_names_containing_repo_tech_stack:
+
+    :return: list of strings
+    """
     branch = _get_default_branch(github_username, repo_name)
 
     url = "https://api.github.com/repos/" + github_username + "/" + repo_name + "/git/trees/" + branch + "?recursive=1"
@@ -134,8 +160,15 @@ def _get_default_branch(github_username, repo_name):
     return data['default_branch']
 
 
-# This function is used to filter out the branches that are not needed
 def should_include_the_branch(branch, file_names_containing_repo_tech_stack):
+    """
+    Retrieves the name of the default branch (like master or main) for a given GitHub repository.
+    It is used to filter out the branches that are not needed.
+
+    :param branch:
+    :param file_names_containing_repo_tech_stack:
+    :return: a bool
+    """
     branch_name = branch['path'].split('/')[-1]
     is_file = branch['type'] == 'blob'
     does_contain_info = branch_name in file_names_containing_repo_tech_stack
@@ -143,8 +176,16 @@ def should_include_the_branch(branch, file_names_containing_repo_tech_stack):
 
     return is_file and does_contain_info and in_root_or_subroot_dir
 
-# Read file content
+
 def get_file_content(github_username, repository_name, file_path):
+    """
+    Retrieves the content of a specific file from a GitHub repository
+
+    :param github_username:
+    :param repository_name:
+    :param file_path:
+    :return: a string
+    """
     url = "https://api.github.com/repos/" + github_username + "/" + repository_name + "/contents/" + file_path
     res = requests.get(url, headers=GITHUB_API_HEADERS)
 
@@ -155,6 +196,13 @@ def get_file_content(github_username, repository_name, file_path):
 
 
 def get_criteria_keywords(prompt, languages):
+    """
+    Generates a list of programming languages, libraries, and other technologies used in a project, based on a given prompt and a list of languages.
+
+    :param prompt:
+    :param languages:
+    :return: a list of string
+    """
     system_message = "You read the following files. Please review them and generate a list of programming languages, libraries, and other technologies used in the project. You should always put these languages first in the head of the list in order." + "Languages:"
     for language in languages:
         system_message = system_message + language['name'] + ", "
