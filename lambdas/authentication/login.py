@@ -1,17 +1,17 @@
 import json
-import datetime
 
 import boto3
 from boto3.dynamodb.types import Binary
 
 from config import Config
+from utils.response import generate_success_response
 from utils.password import check_password
 from utils.token import generate_access_token
 
 dynamodb = boto3.resource('dynamodb')
 
-access_token_table = dynamodb.Table(f'{Config.environment}-AccessToken')
-company_table = dynamodb.Table(f'{Config.environment}-Company')
+access_token_table = dynamodb.Table(f'{Config.ENVIRONMENT}-AccessToken')
+company_table = dynamodb.Table(f'{Config.ENVIRONMENT}-Company')
 
 
 def parse_request_body(event):
@@ -59,24 +59,6 @@ def validate_password(password, stored_password):
         raise ValueError('Password is invalid')
 
 
-def generate_login_response(company_id):
-    """
-    Generates a login response including an access token.
-
-    :param company_id: The unique identifier for the company.
-    :return: A response dictionary with status code, body containing the access token, and the creation timestamp.
-    """
-    access_token = generate_access_token(company_id)
-    body = {
-        'status': 'success',
-        'payload': {
-            'access_token': access_token,
-            'created_at': str(datetime.datetime.now())
-        }
-    }
-    return {"statusCode": 200, "body": json.dumps(body)}
-
-
 def handler(event, context):
     """
     Handles user login by validating credentials and generating an access token.
@@ -94,7 +76,7 @@ def handler(event, context):
 
         company = get_company_info(email)
         validate_password(password, company['password'])
-
-        return generate_login_response(company['company_id'])
+        access_token = generate_access_token(company['company_id'])
+        return generate_success_response(access_token)
     except ValueError as e:
         return {'statusCode': 400, 'body': str(e)}
