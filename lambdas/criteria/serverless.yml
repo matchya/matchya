@@ -25,6 +25,7 @@ provider:
 
 functions:
   evaluate:
+    name: ${self:provider.stage}-criteria-evaluate
     image:
       name: default
       command:
@@ -35,6 +36,7 @@ functions:
           method: POST
 
   generate:
+    name: ${self:provider.stage}-criteria-generate
     image:
       name: default
       command:
@@ -45,6 +47,7 @@ functions:
           method: POST
 
   retrieve:
+    name: ${self:provider.stage}-criteria-retrieve
     image:
       name: default
       command:
