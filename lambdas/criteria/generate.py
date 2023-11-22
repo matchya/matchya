@@ -9,8 +9,8 @@ from os.path import join, dirname
 from dotenv import load_dotenv
 from openai import OpenAI
 
-from lambdas.criteria.config import Config
-from lambdas.criteria.client.github import GithubClient
+from config import Config
+from client.github import GithubClient
 
 
 # Load environment variables
@@ -50,7 +50,7 @@ def handler(event, context):
     repository_name = repo_names[0]
     github_client = GithubClient(github_username)
 
-    programming_languages = github_client.get_programming_languages_used(github_username, repository_name)
+    programming_languages = github_client.get_programming_languages_used(repository_name)
     file_names_containing_repo_tech_stack = get_readme_and_package_files(programming_languages)
 
     prompt = "Please review the following files.\n"
@@ -114,7 +114,7 @@ def get_file_content(github_username, repository_name, file_path):
     :return: The content of the specified file.
     """
     url = "https://api.github.com/repos/" + github_username + "/" + repository_name + "/contents/" + file_path
-    res = requests.get(url, headers=Config.GITHUB_API_HEADERS)
+    res = requests.get(url, headers=Config.GITHUB_REST_API_HEADERS)
     data = json.loads(res.content)
     content_encoded = data['content']
     return str(base64.b64decode(content_encoded))

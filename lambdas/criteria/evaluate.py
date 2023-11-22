@@ -6,8 +6,8 @@ import requests
 from dotenv import load_dotenv
 from openai import OpenAI
 
-from lambdas.criteria.config import Config
-from lambdas.criteria.client.github import GithubClient
+from config import Config
+from client.github import GithubClient
 
 dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path)
@@ -59,7 +59,7 @@ def evaluate_candidate(github_client: GithubClient, criteria_full_messages, gith
     :return: A dictionary representing the evaluation of the candidate.
     """
     pinned_repositories = get_pinned_repositories_name(github_username)
-    repos_content = get_repos_content_all(github_username, pinned_repositories)
+    repos_content = get_repos_content_all(github_client, github_username, pinned_repositories)
     chatgpt_evaluation = get_candidate_evaluation(criteria_full_messages, repos_content)
 
     return chatgpt_evaluation
@@ -122,7 +122,7 @@ def run_github_query(query):
         return None
 
 
-def get_repos_content_all(github_username, repo_names):
+def get_repos_content_all(github_client, github_username, repo_names):
     """
     Aggregates content from multiple repositories for a given GitHub user.
 
@@ -132,12 +132,12 @@ def get_repos_content_all(github_username, repo_names):
     """
     content = ""
     for repo_name in repo_names:
-        content += get_repo_file_content(github_username, repo_name)
+        content += get_repo_file_content(github_client, repo_name)
 
     return content
 
 
-def get_repo_file_content(github_client: GithubClient, github_username, repo_name):
+def get_repo_file_content(github_client: GithubClient, repo_name):
     """
     Retrieves the content of important files from a specified repository.
 
