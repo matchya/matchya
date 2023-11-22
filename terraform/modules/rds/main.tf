@@ -9,4 +9,6 @@ resource "aws_db_instance" "this" {
   parameter_group_name = "default.postgres14"
   skip_final_snapshot  = true
   publicly_accessible = true
+
+  vpc_security_group_ids = [var.rds_security_group_id]
 }
