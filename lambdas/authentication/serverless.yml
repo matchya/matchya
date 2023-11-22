@@ -28,7 +28,7 @@ functions:
     image:
       name: default
       command:
-        - handler.register
+        - register.handler
     environment:
       ENVIRONMENT: ${self:provider.stage}
     events:
@@ -42,13 +42,14 @@ functions:
     image:
       name: default
       command:
-        - handler.login
+        - login.handler
     environment:
       ENVIRONMENT: ${self:provider.stage}
     events:
       - http:
           path: /login
           method: POST
+          cors: true
 
 plugins:
   - serverless-deployment-bucket
