@@ -2,23 +2,22 @@ import base64
 import json
 import requests
 
-from lambdas.criteria.config import Config
+from config import Config
 
 
 class GithubClient:
     def __init__(self, github_username):
         self.github_username = github_username
 
-    def get_programming_languages_used(github_username, repository_name):
+    def get_programming_languages_used(self, repository_name):
         """
         Retrieves programming languages used in a specified GitHub repository.
 
-        :param github_username: GitHub username of the repository owner.
         :param repository_name: Name of the GitHub repository.
         :return: A list of programming languages used in the repository.
         """
-        url = "https://api.github.com/repos/" + github_username + "/" + repository_name + "/languages"
-        res = requests.get(url, headers=Config.GITHUB_API_HEADERS)
+        url = "https://api.github.com/repos/" + self.github_username + "/" + repository_name + "/languages"
+        res = requests.get(url, headers=Config.GITHUB_REST_API_HEADERS)
         data = json.loads(res.content)
         return [{"name": language, "bytes": data[language]} for language in data]
 
@@ -31,7 +30,7 @@ class GithubClient:
         :param important_file_names: A list of important file names to look for.
         :return: A list of file paths for important files in the repository.
         """
-        branch = self._get_default_branch(self.github_username, repo_name)
+        branch = self._get_default_branch(repo_name)
 
         url = Config.GITHUB_API_REPO_URL + self.github_username + "/" + repo_name + "/git/trees/" + branch + "?recursive=1"
         res = requests.get(url, headers=Config.GITHUB_REST_API_HEADERS)
@@ -53,10 +52,10 @@ class GithubClient:
         :param file_names_containing_repo_tech_stack: List of important file names to find in the repository.
         :return: A list of file paths for important files in the repository.
         """
-        branch = self._get_default_branch(github_username, repo_name)
+        branch = self._get_default_branch(repo_name)
 
         url = "https://api.github.com/repos/" + github_username + "/" + repo_name + "/git/trees/" + branch + "?recursive=1"
-        res = requests.get(url, headers=Config.GITHUB_API_HEADERS)
+        res = requests.get(url, headers=Config.GITHUB_REST_API_HEADERS)
         data = json.loads(res.content)
         tree = data['tree']
         return [branch['path'] for branch in tree if self._should_include_the_branch(branch, file_names_containing_repo_tech_stack)]
@@ -113,7 +112,7 @@ class GithubClient:
 
         return important_file_names
 
-    def _get_default_branch(self):
+    def _get_default_branch(self, repo_name):
         """
         Fetches the default branch name of a given GitHub repository.
 
@@ -121,17 +120,17 @@ class GithubClient:
         :param repo_name: Name of the repository.
         :return: The name of the default branch for the repository.
         """
-        url = Config.GITHUB_API_REPO_URL + self.github_username + "/" + self.repo_name
+        url = Config.GITHUB_API_REPO_URL + self.github_username + "/" + repo_name
         res = requests.get(url, headers=Config.GITHUB_REST_API_HEADERS)
 
         data = json.loads(res.content)
         if data is None or data.get('default_branch') is None:
-            print("default branch not found / api limit exceeded", self.repo_name)
+            print("default branch not found / api limit exceeded", repo_name)
             print(data)
             exit(1)
         return data['default_branch']
 
-    def _is_important_file(path, important_file_names):
+    def _is_important_file(self, path, important_file_names):
         """
         Determines whether a given file path corresponds to an important file.
 
@@ -144,7 +143,7 @@ class GithubClient:
                 return True
         return False
 
-    def _should_include_the_branch(branch, file_names_containing_repo_tech_stack):
+    def _should_include_the_branch(self, branch, file_names_containing_repo_tech_stack):
         """
         Determines if a branch contains important files based on their names.
 
