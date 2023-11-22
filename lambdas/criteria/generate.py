@@ -113,7 +113,7 @@ def get_file_content(github_username, repository_name, file_path):
     :param file_path: Path of the file within the repository.
     :return: The content of the specified file.
     """
-    url = "https://api.github.com/repos/" + github_username + "/" + repository_name + "/contents/" + file_path
+    url = Config.GITHUB_API_REPO_URL + github_username + "/" + repository_name + "/contents/" + file_path
     res = requests.get(url, headers=Config.GITHUB_REST_API_HEADERS)
     data = json.loads(res.content)
     content_encoded = data['content']

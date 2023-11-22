@@ -16,7 +16,7 @@ class GithubClient:
         :param repository_name: Name of the GitHub repository.
         :return: A list of programming languages used in the repository.
         """
-        url = "https://api.github.com/repos/" + self.github_username + "/" + repository_name + "/languages"
+        url = Config.GITHUB_API_REPO_URL + self.github_username + "/" + repository_name + "/languages"
         res = requests.get(url, headers=Config.GITHUB_REST_API_HEADERS)
         data = json.loads(res.content)
         return [{"name": language, "bytes": data[language]} for language in data]
@@ -54,7 +54,7 @@ class GithubClient:
         """
         branch = self._get_default_branch(repo_name)
 
-        url = "https://api.github.com/repos/" + github_username + "/" + repo_name + "/git/trees/" + branch + "?recursive=1"
+        url = Config.GITHUB_API_REPO_URL + github_username + "/" + repo_name + "/git/trees/" + branch + "?recursive=1"
         res = requests.get(url, headers=Config.GITHUB_REST_API_HEADERS)
         data = json.loads(res.content)
         tree = data['tree']
