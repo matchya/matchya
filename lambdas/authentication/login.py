@@ -1,11 +1,11 @@
 import json
-import datetime
 
 import psycopg2
 import boto3
 from boto3.dynamodb.types import Binary
 
 from config import Config
+from utils.response import generate_success_response
 from utils.password import check_password
 from utils.token import generate_access_token
 
@@ -72,23 +72,6 @@ def validate_password(password, stored_password):
         raise ValueError('Password is invalid')
 
 
-def generate_login_response(company_id):
-    """
-    Generates a login response including an access token.
-
-    :param company_id: The unique identifier for the company.
-    :return: A response dictionary with status code, body containing the access token, and the creation timestamp.
-    """
-    access_token = generate_access_token(company_id)
-    body = {
-        'status': 'success',
-        'payload': {
-            'access_token': access_token,
-            'created_at': str(datetime.datetime.now())
-        }
-    }
-    return {"statusCode": 200, "body": json.dumps(body)}
-
 
 def handler(event, context):
     """
@@ -107,7 +90,8 @@ def handler(event, context):
 
         company = get_company_info(email)
         validate_password(password, company['password'])
+        access_token = generate_access_token(company['id'])
 
-        return generate_login_response(company['id'])
+        return generate_success_response(access_token)
     except ValueError as e:
         return {'statusCode': 400, 'body': str(e)}

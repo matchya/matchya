@@ -1,5 +1,4 @@
 import json
-import datetime
 import uuid
 
 import boto3
@@ -7,7 +6,7 @@ import psycopg2
 
 from config import Config
 from utils.password import hash_password
-from utils.response import generate_response
+from utils.response import generate_response, generate_success_response
 from utils.token import generate_access_token
 
 dynamodb = boto3.resource('dynamodb')
@@ -76,23 +75,6 @@ def create_access_token_record(company_id, access_token):
         access_token_table.put_item(Item=access_token_info)
     except Exception as e:
         raise RuntimeError(f"Error saving to access token table: {e}")
-
-
-def generate_success_response(access_token):
-    """
-    Generates a success response with the access token.
-
-    :param access_token: The generated access token.
-    :return: A success response containing the access token and current timestamp.
-    """
-    body = {
-        'status': 'success',
-        'payload': {
-            'access_token': access_token,
-            'created_at': str(datetime.datetime.now())
-        }
-    }
-    return generate_response(status_code=200, body=json.dumps(body))
 
 
 def handler(event, context):
