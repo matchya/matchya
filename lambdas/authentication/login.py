@@ -1,5 +1,6 @@
 import json
 
+import psycopg2
 import boto3
 from boto3.dynamodb.types import Binary
 
@@ -11,7 +12,9 @@ from utils.token import generate_access_token
 dynamodb = boto3.resource('dynamodb')
 
 access_token_table = dynamodb.Table(f'{Config.ENVIRONMENT}-AccessToken')
-company_table = dynamodb.Table(f'{Config.ENVIRONMENT}-Company')
+
+db_conn = psycopg2.connect(host=Config.POSTGRES_HOST, database=Config.POSTGRES_DB, user=Config.POSTGRES_USER, password=Config.POSTGRES_PASSWORD)
+db_cursor = db_conn.cursor()
 
 
 def parse_request_body(event):
@@ -37,13 +40,23 @@ def get_company_info(email):
     :param email: The email address used to query the company information.
     :return: The first item from the database query result.
     """
-    response = company_table.query(
-        IndexName='EmailIndex',
-        KeyConditionExpression=boto3.dynamodb.conditions.Key('email').eq(email)
-    )
-    if not response['Items']:
+    try:
+        db_cursor.execute('SELECT * FROM Company WHERE email = %s', (email,))
+        result = db_cursor.fetchall()
+    except Exception as e:
+        raise RuntimeError(f"Error retrieving company info: {e}")
+    if not result:
         raise ValueError('Email is invalid')
-    return response['Items'][0]
+    
+    company_res = result[0]
+    company_info = {
+        'id': company_res[0],
+        'name': company_res[1],
+        'email': company_res[2],
+        'github_username': company_res[3],
+        'password': company_res[4]
+    }
+    return company_info
 
 
 def validate_password(password, stored_password):
@@ -55,6 +68,8 @@ def validate_password(password, stored_password):
     """
     if isinstance(stored_password, Binary):
         stored_password = stored_password.value
+    if isinstance(stored_password, memoryview):
+        stored_password = stored_password.tobytes()
     if not check_password(password, stored_password):
         raise ValueError('Password is invalid')
 
@@ -76,7 +91,8 @@ def handler(event, context):
 
         company = get_company_info(email)
         validate_password(password, company['password'])
-        access_token = generate_access_token(company['company_id'])
+        access_token = generate_access_token(company['id'])
+
         return generate_success_response(access_token)
     except ValueError as e:
         return {'statusCode': 400, 'body': str(e)}
