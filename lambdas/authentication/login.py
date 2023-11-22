@@ -72,7 +72,6 @@ def validate_password(password, stored_password):
         raise ValueError('Password is invalid')
 
 
-
 def handler(event, context):
     """
     Handles user login by validating credentials and generating an access token.
