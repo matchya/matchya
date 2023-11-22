@@ -1,0 +1,67 @@
+service: criteria
+frameworkVersion: "3"
+
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: python3.9
+  stage: dev
+  deploymentBucket:
+    name: ${self:provider.stage}-sls-criteria
+  ecr:
+    images:
+      default:
+        path: ./
+        file: Dockerfile
+        buildArgs:
+
+  architecture: arm64
+  iam:
+    role: ${ssm:/terraform/iam/lambda-role-arn}
+  environment:
+    OPENAI_API_KEY: ${env:OPENAI_API_KEY}
+    GITHUB_TOKEN: ${env:GITHUB_TOKEN}
+
+functions:
+  evaluate:
+    image:
+      name: default
+      command:
+        - evaluate.handler
+    events:
+      - http:
+          path: /
+          method: POST
+
+  generate:
+    image:
+      name: default
+      command:
+        - generate.handler
+    events:
+      - http:
+          path: /generate
+          method: POST
+
+  retrieve:
+    image:
+      name: default
+      command:
+        - retrieve.handler
+    events:
+      - http:
+          path: /criteria/{id}
+          method: GET
+          request:
+            parameters:
+              paths:
+                id: true
+
+custom:
+  export-env:
+    filename: .env
+    overwrite: true
+
+plugins:
+  - serverless-deployment-bucket
