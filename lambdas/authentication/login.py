@@ -68,6 +68,8 @@ def validate_password(password, stored_password):
     """
     if isinstance(stored_password, Binary):
         stored_password = stored_password.value
+    if isinstance(stored_password, memoryview):
+        stored_password = stored_password.tobytes()
     if not check_password(password, stored_password):
         raise ValueError('Password is invalid')
 
