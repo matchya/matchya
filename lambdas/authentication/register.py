@@ -1,17 +1,20 @@
 import json
+import datetime
 import uuid
 
 import boto3
+import psycopg2
 
 from config import Config
 from utils.password import hash_password
-from utils.response import generate_response, generate_success_response
+from utils.response import generate_response
 from utils.token import generate_access_token
 
 dynamodb = boto3.resource('dynamodb')
 access_token_table = dynamodb.Table(f'{Config.ENVIRONMENT}-AccessToken')
-company_table = dynamodb.Table(f'{Config.ENVIRONMENT}-Company')
 
+db_conn = psycopg2.connect(host=Config.POSTGRES_HOST, database=Config.POSTGRES_DB, user=Config.POSTGRES_USER, password=Config.POSTGRES_PASSWORD)
+db_cursor = db_conn.cursor()
 
 def parse_request_body(event):
     """
@@ -35,7 +38,7 @@ def validate_company_data(body):
 
     :param body: The request body containing company data.
     """
-    required_fields = ['email', 'company_name', 'github_account_url', 'password']
+    required_fields = ['email', 'name', 'github_username', 'password']
     if not all(body.get(field) for field in required_fields):
         raise ValueError('Missing required fields')
 
@@ -47,15 +50,13 @@ def create_company_record(company_id, body):
     :param company_id: Unique identifier for the company.
     :param body: The request body containing company data.
     """
-    company_info = {
-        'company_id': company_id,
-        'company_name': body['company_name'],
-        'email': body['email'],
-        'github_account_url': body['github_account_url'],
-        'password': hash_password(body['password'])  # Securely hashed
-    }
+
+    sql = """
+            INSERT INTO Company (id, name, email, github_username, password) VALUES (%s, %s, %s, %s, %s);
+          """
     try:
-        company_table.put_item(Item=company_info)
+        db_cursor.execute(sql, (company_id, body['name'], body['email'], body['github_username'], hash_password(body['password'])))
+        db_conn.commit()
     except Exception as e:
         raise RuntimeError(f"Error saving to company table: {e}")
 
@@ -75,6 +76,23 @@ def create_access_token_record(company_id, access_token):
         access_token_table.put_item(Item=access_token_info)
     except Exception as e:
         raise RuntimeError(f"Error saving to access token table: {e}")
+
+
+def generate_success_response(access_token):
+    """
+    Generates a success response with the access token.
+
+    :param access_token: The generated access token.
+    :return: A success response containing the access token and current timestamp.
+    """
+    body = {
+        'status': 'success',
+        'payload': {
+            'access_token': access_token,
+            'created_at': str(datetime.datetime.now())
+        }
+    }
+    return generate_response(status_code=200, body=json.dumps(body))
 
 
 def handler(event, context):
