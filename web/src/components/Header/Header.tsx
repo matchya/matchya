@@ -28,10 +28,19 @@ const Header = () => {
     setShowLoginModal(true);
   };
 
-  const handleLogin = () => {
-    // handle login logic here...
-    setShowLoginModal(false);
-    setIsAuthenticated(true);
+  const handleLogin = async (userData: LoginInput | RegisterInput) => {
+    try {
+      const response = await axios.post(`${apiEndpoint}/login`, userData);
+      if (response.data.status == 'success') {
+        setIsAuthenticated(true);
+        // TODO: We need logic to set the access token in the global state
+        setShowLoginModal(false);
+        navigate('/dashboard');
+      }
+    } catch (error) {
+      console.error('Login failed:', error);
+      // Handle error (e.g., show error message to the user)
+    }
   };
 
   const handleRegister = async (userData: LoginInput | RegisterInput) => {
