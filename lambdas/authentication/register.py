@@ -15,6 +15,12 @@ company_table = dynamodb.Table(f'{Config.ENVIRONMENT}-Company')
 
 
 def parse_request_body(event):
+    """
+    Parses the request body from an event and returns it as a JSON object.
+
+    :param event: The event object containing the request data.
+    :return: Parsed JSON object from the request body.
+    """
     try:
         body = event.get('body', '')
         if not body:
@@ -25,12 +31,23 @@ def parse_request_body(event):
 
 
 def validate_company_data(body):
+    """
+    Validates the necessary fields in the company data.
+
+    :param body: The request body containing company data.
+    """
     required_fields = ['email', 'company_name', 'github_account_url', 'password']
     if not all(body.get(field) for field in required_fields):
         raise ValueError('Missing required fields')
 
 
 def create_company_record(company_id, body):
+    """
+    Creates a new company record in the database.
+
+    :param company_id: Unique identifier for the company.
+    :param body: The request body containing company data.
+    """
     company_info = {
         'company_id': company_id,
         'company_name': body['company_name'],
@@ -45,6 +62,12 @@ def create_company_record(company_id, body):
 
 
 def create_access_token_record(company_id, access_token):
+    """
+    Creates a new access token record in the database.
+
+    :param company_id: Unique identifier for the company associated with the token.
+    :param access_token: The access token to be saved.
+    """
     access_token_info = {
         'token_id': access_token,
         'company_id': company_id
@@ -56,6 +79,12 @@ def create_access_token_record(company_id, access_token):
 
 
 def generate_success_response(access_token):
+    """
+    Generates a success response with the access token.
+
+    :param access_token: The generated access token.
+    :return: A success response containing the access token and current timestamp.
+    """
     body = {
         'status': 'success',
         'payload': {

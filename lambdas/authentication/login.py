@@ -15,6 +15,12 @@ company_table = dynamodb.Table(f'{Config.environment}-Company')
 
 
 def parse_request_body(event):
+    """
+    Parses the request body from an event and returns it as a JSON object.
+
+    :param event: The event object containing the request data.
+    :return: Parsed JSON object from the request body.
+    """
     try:
         body = event.get('body', '')
         if not body:
@@ -25,6 +31,12 @@ def parse_request_body(event):
 
 
 def get_company_info(email):
+    """
+    Retrieves company information from the database based on the provided email.
+
+    :param email: The email address used to query the company information.
+    :return: The first item from the database query result.
+    """
     response = company_table.query(
         IndexName='EmailIndex',
         KeyConditionExpression=boto3.dynamodb.conditions.Key('email').eq(email)
@@ -35,6 +47,12 @@ def get_company_info(email):
 
 
 def validate_password(password, stored_password):
+    """
+    Validates a password against its stored (hashed) counterpart.
+
+    :param password: The plaintext password to validate.
+    :param stored_password: The stored (hashed) password for comparison.
+    """
     if isinstance(stored_password, Binary):
         stored_password = stored_password.value
     if not check_password(password, stored_password):
@@ -42,6 +60,12 @@ def validate_password(password, stored_password):
 
 
 def generate_login_response(company_id):
+    """
+    Generates a login response including an access token.
+
+    :param company_id: The unique identifier for the company.
+    :return: A response dictionary with status code, body containing the access token, and the creation timestamp.
+    """
     access_token = generate_access_token(company_id)
     body = {
         'status': 'success',
