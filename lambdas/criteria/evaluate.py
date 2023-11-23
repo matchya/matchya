@@ -8,6 +8,13 @@ from client.github import GithubClient
 
 chat_client = OpenAI()
 
+COMMON_HEADERS = {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Credentials': True,
+}
+
 
 def handler(event, context):
     """
@@ -33,7 +40,11 @@ def handler(event, context):
 
     # TODO: Store data in DB (CandidateResult, AssessmentCriteria)
 
-    return {"statusCode": 200, "body": json.dumps(candidate_result)}
+    return {
+        "statusCode": 200, 
+        "headers": COMMON_HEADERS,
+        "body": json.dumps(candidate_result)
+    }
 
 
 def get_criteria_full_messages(position_id):

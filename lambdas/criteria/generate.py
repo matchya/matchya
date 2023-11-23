@@ -17,6 +17,13 @@ criteria_table = dynamodb.Table(f'{Config.ENVIRONMENT}-Criteria')
 
 chat_client = OpenAI()
 
+COMMON_HEADERS = {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Credentials': True,
+}
+
 
 def handler(event, context):
     """
@@ -60,7 +67,10 @@ def handler(event, context):
 
     # TODO: Save criteria to database logic here...
 
-    response = {"statusCode": 200, "body": json.dumps({"criterion_id": criterion_id, "created_at": created_at})}
+    response = {
+        "statusCode": 200, 
+        "headers": COMMON_HEADERS,
+        "body": json.dumps({"criterion_id": criterion_id, "created_at": created_at})}
     return response
 
 

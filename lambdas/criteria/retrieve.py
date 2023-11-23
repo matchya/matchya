@@ -1,5 +1,11 @@
 import json
 
+COMMON_HEADERS = {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Credentials': True,
+}
 
 def handler(event, context):
     parameter = event.get('pathParameters')
@@ -17,4 +23,8 @@ def handler(event, context):
         "criteria": criteria,
     }
 
-    return {"statusCode": 200, "body": json.dumps(body)}
+    return {
+        "statusCode": 200, 
+        "headers": COMMON_HEADERS,
+        "body": json.dumps(body)
+    }
