@@ -12,7 +12,7 @@ chat_client = OpenAI()
 COMMON_HEADERS = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'OPTIONS,GET',
+    'Access-Control-Allow-Methods': 'OPTIONS,POST',
 }
 
 
