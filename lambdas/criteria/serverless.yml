@@ -23,8 +23,8 @@ provider:
         buildArgs:
 
   environment:
-    OPENAI_API_KEY: ${ssm:/terraform/ssm/openai_api_key}
-    GITHUB_TOKEN: ${ssm:/terraform/ssm/github_token}
+    OPENAI_API_KEY: ${ssm:/api/openai_api_key}
+    GITHUB_TOKEN: ${ssm:/api/github_token}
 
 functions:
   evaluate:
