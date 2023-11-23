@@ -11,10 +11,9 @@ import AuthModal, { LoginInput, RegisterInput } from '../LoginModal/AuthModal';
 
 const Header = () => {
   const navigate = useNavigate();
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [authenticationType, setAuthenticationType] = useState<'signup' | 'login'>('login');
-  const { setAccessToken } = useAuthStore();
+  const { accessToken, setAccessToken, removeAccessToken } = useAuthStore();
 
   const handleAuthenticationSwitch = () => {
     if (authenticationType == 'signup') {
@@ -32,7 +31,6 @@ const Header = () => {
     try {
       const response = await axios.post(`${apiEndpoint}/login`, userData);
       if (response.data.status == 'success') {
-        setIsAuthenticated(true);
         setAccessToken(response.data.payload.access_token);
         setShowLoginModal(false);
         navigate('/dashboard');
@@ -47,7 +45,6 @@ const Header = () => {
     try {
       const response = await axios.post(`${apiEndpoint}/register`, userData);
       if (response.data.status == 'success') {
-        setIsAuthenticated(true);
         setAccessToken(response.data.payload.access_token);
         setShowLoginModal(false);
         navigate('/dashboard');
@@ -56,11 +53,10 @@ const Header = () => {
       console.error('Registration failed:', error);
       // Handle error (e.g., show error message to the user)
     }
-    setIsAuthenticated(true);
   };
 
   const logout = () => {
-    setIsAuthenticated(false);
+    removeAccessToken();
     navigate('/');
   };
 
@@ -90,7 +86,7 @@ const Header = () => {
         </Link>
       </div>
       <div className="w-1/4 flex justify-end items-center">
-        {isAuthenticated && (
+        {accessToken && (
           <button
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full m-6"
             onClick={navigateToSettings}
@@ -100,9 +96,9 @@ const Header = () => {
         )}
         <button
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full m-6"
-          onClick={isAuthenticated ? logout : showLoginModalHandler}
+          onClick={accessToken ? logout : showLoginModalHandler}
         >
-          {isAuthenticated ? 'Logout' : 'Login'}
+          {accessToken ? 'Logout' : 'Login'}
         </button>
       </div>
     </div>
