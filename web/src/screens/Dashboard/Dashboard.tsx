@@ -3,7 +3,9 @@ import { useState } from 'react';
 import Button from '../../components/LoginModal/Button';
 import FormInput from '../../components/LoginModal/FormInput';
 import ScoreCard from '../../components/LoginModal/ScoreCard';
-import { mockCandidates, mockCriteria } from '../../data';
+import { mockCandidates } from '../../data';
+
+import CriteriaBox from './CriteriaBox';
 
 const Dashboard = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -45,20 +47,6 @@ const Dashboard = () => {
 
 export default Dashboard;
 
-const CriteriaBox = () => {
-  return (
-    <div className="px-6 py-4 h-full">
-      <h3 className="text-lg font-bold">Generated Criteria</h3>
-      <ul className="list-disc pl-6 mt-4">
-        {mockCriteria.map((criterion, index) => (
-          <li key={index} className="text-sm text-gray-600">
-            {criterion}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-};
 
 // Modal
 interface AddCandidateModalProps {
