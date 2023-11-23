@@ -48,7 +48,7 @@ const Header = () => {
       const response = await axios.post(`${apiEndpoint}/register`, userData);
       if (response.data.status == 'success') {
         setIsAuthenticated(true);
-        // TODO: We need logic to set the access token in the global state
+        setAccessToken(response.data.payload.access_token);
         setShowLoginModal(false);
         navigate('/dashboard');
       }
