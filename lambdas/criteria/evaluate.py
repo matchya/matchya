@@ -6,7 +6,7 @@ from openai import OpenAI
 from config import Config
 from client.github import GithubClient
 
-from utils.response import generate_success_response
+from utils.response import generate_response, generate_success_response
 
 chat_client = OpenAI()
 
@@ -30,7 +30,7 @@ def handler(event, context):
         candidate_result = evaluate_candidate(github_client, criteria_full_messages, github_username)
     except Exception as e:
         print(e)
-        return {"statusCode": 500, "body": json.dumps({"message": "Evaluation failed."})}
+        return generate_response(500, json.dumps({"message": "Evaluation failed."}))
 
     # TODO: Store data in DB (CandidateResult, AssessmentCriteria)
 

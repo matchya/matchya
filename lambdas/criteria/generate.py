@@ -10,7 +10,7 @@ from openai import OpenAI
 from config import Config
 from client.github import GithubClient
 
-from utils.response import generate_success_response
+from utils.response import generate_response, generate_success_response
 
 # DynamoDB
 dynamodb = boto3.resource('dynamodb')
@@ -33,7 +33,7 @@ def handler(event, context):
             raise json.JSONDecodeError
         body = json.loads(event.get('body', ''))
     except json.JSONDecodeError:
-        return {'statusCode': 400, 'body': 'Invalid JSON in request body'}
+        return generate_response(400, json.dumps({"message": "Invalid JSON in request body"}))
 
     # Validate that required fields are present
     # position_id = body.get('position_id', '')
