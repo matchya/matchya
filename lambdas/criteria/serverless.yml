@@ -9,6 +9,9 @@ provider:
   stage: dev
   deploymentBucket:
     name: ${self:provider.stage}-sls-criteria
+  apiGateway:
+    restApiId: ${ssm:/terraform/api_gateway/id}
+    restApiRootResourceId: ${ssm:/terraform/api_gateway/root_resource_id}
   ecr:
     images:
       default:
