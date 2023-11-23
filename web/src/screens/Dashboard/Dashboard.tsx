@@ -8,7 +8,7 @@ import { mockCandidates, mockCriteria } from '../../data';
 const Dashboard = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
 
-  const showModalHandler = () => {
+  const handleModalDisplay = () => {
     setShowModal(true);
   };
 
@@ -24,7 +24,7 @@ const Dashboard = () => {
             text="Add candidate"
             color="green"
             outline={false}
-            onClick={showModalHandler}
+            onClick={handleModalDisplay}
           />
         </div>
 
