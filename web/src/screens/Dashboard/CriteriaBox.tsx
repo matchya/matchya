@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import Button from '../../components/LoginModal/Button';
 import FormInput from '../../components/LoginModal/FormInput';
-import { criteriaEndpoint } from '../../config';
+import { apiEndpoint } from '../../config';
 import { useAuthStore } from '../../store/useAuthStore';
 
 const CriteriaBox = () => {
@@ -14,11 +14,31 @@ const CriteriaBox = () => {
     const [criteria, setCriteria] = useState<string[]>([]);
     const { accessToken } = useAuthStore();
 
+    useEffect(() => {
+        getCriteria();
+    }, [])
+
+    const getCriteria = async () => {
+        try {
+            const response = await axios.get(
+                `${apiEndpoint}/criteria/id`, 
+                {headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${accessToken}`}}
+            );
+            if (response.data.status == 'success') {
+                setCriteria(response.data.payload.criteria)
+                setIsCriteriaGenerated(true);
+            }
+        } catch (error) {
+            console.error('Retrieving Criteria failed:', error);
+            // Handle error (e.g., show error message to the user)
+        }
+    }
+
     const generateCriteria = async () => {
         const userData = {"position_id": positionId, "repo_names": repositoryNames};
         try {
             const response = await axios.post(
-                `${criteriaEndpoint}/generate`,
+                `${apiEndpoint}/generate`,
                 userData,
                 {headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${accessToken}`}}
             );
