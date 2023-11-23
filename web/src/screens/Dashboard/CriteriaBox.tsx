@@ -24,7 +24,7 @@ const CriteriaBox = () => {
                 {headers: {'Content-Type': 'application/json', 'Authorization': `Bearer validToken`}}
             );
             if (response.data.status == 'success') {
-                // setCriteria(response.data.payload.criteria)
+              setCriteria(response.data.payload.criteria)
             }
         } catch (error) {
             console.error('Retrieving Criteria failed:', error);
