@@ -6,15 +6,15 @@ import { Link } from 'react-router-dom';
 import matchyaIcon from '/matchya-icon.png';
 
 import { apiEndpoint } from '../../config';
+import { useAuthStore } from '../../store/useAuthStore';
 import AuthModal, { LoginInput, RegisterInput } from '../LoginModal/AuthModal';
 
 const Header = () => {
   const navigate = useNavigate();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [authenticationType, setAuthenticationType] = useState<
-    'signup' | 'login'
-  >('login');
+  const [authenticationType, setAuthenticationType] = useState<'signup' | 'login'>('login');
+  const { setAccessToken } = useAuthStore();
 
   const handleAuthenticationSwitch = () => {
     if (authenticationType == 'signup') {
@@ -33,7 +33,7 @@ const Header = () => {
       const response = await axios.post(`${apiEndpoint}/login`, userData);
       if (response.data.status == 'success') {
         setIsAuthenticated(true);
-        // TODO: We need logic to set the access token in the global state
+        setAccessToken(response.data.payload.access_token);
         setShowLoginModal(false);
         navigate('/dashboard');
       }
