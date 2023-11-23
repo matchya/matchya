@@ -8,13 +8,11 @@ from client.github import GithubClient
 
 chat_client = OpenAI()
 
-
 COMMON_HEADERS = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Access-Control-Allow-Methods': 'OPTIONS,POST',
 }
-
 
 def handler(event, context):
     """
