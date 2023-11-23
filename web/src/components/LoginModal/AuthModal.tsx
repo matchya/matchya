@@ -11,10 +11,10 @@ export interface LoginInput {
 }
 
 export interface RegisterInput {
+  name: string;
   email: string;
   password: string;
-  company_name: string;
-  github_account_url: string;
+  github_username: string;
 }
 
 interface AuthModalProps {
@@ -27,7 +27,7 @@ interface AuthModalProps {
 const AuthModal = ({ type, action, close, switchModal }: AuthModalProps) => {
   const [companyName, setCompanyName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
-  const [githubAccountUrl, setGithubAccountUrl] = useState<string>('');
+  const [githubUsername, setGithubUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
 
   const clickOutside = (
@@ -44,9 +44,9 @@ const AuthModal = ({ type, action, close, switchModal }: AuthModalProps) => {
       action({ email, password });
     } else {
       action({
-        company_name: companyName,
+        name: companyName,
         email,
-        github_account_url: githubAccountUrl,
+        github_username: githubUsername,
         password,
       });
     }
@@ -115,13 +115,13 @@ const AuthModal = ({ type, action, close, switchModal }: AuthModalProps) => {
           />
           {type === 'signup' && (
             <FormInput
-              label="GitHub Account URL"
-              id="github-url"
-              type="url"
+              label="GitHub Username"
+              id="github-username"
+              type="text"
               className="mt-3"
-              value={githubAccountUrl}
+              value={githubUsername}
               onChange={e => {
-                setGithubAccountUrl(e.target.value);
+                setGithubUsername(e.target.value);
               }}
             />
           )}
