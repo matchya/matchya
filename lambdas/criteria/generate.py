@@ -10,18 +10,14 @@ from openai import OpenAI
 from config import Config
 from client.github import GithubClient
 
+from utils.response import generate_success_response
+
 # DynamoDB
 dynamodb = boto3.resource('dynamodb')
 dynamodb_client = boto3.client('dynamodb')
 criteria_table = dynamodb.Table(f'{Config.ENVIRONMENT}-Criteria')
 
 chat_client = OpenAI()
-
-COMMON_HEADERS = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'OPTIONS,POST',
-}
 
 def handler(event, context):
     """
@@ -62,15 +58,13 @@ def handler(event, context):
 
     criterion_id = str(uuid.uuid4())
     created_at = str(datetime.datetime.now())
-
     # TODO: Save criteria to database logic here...
 
-    response = {
-        "statusCode": 200, 
-        "headers": COMMON_HEADERS,
-        "body": json.dumps({"criterion_id": criterion_id, "created_at": created_at})
+    body = {
+        "criteria": criteria_keywords,
+        "created_at": created_at
     }
-    return response
+    return generate_success_response(body)
 
 
 def get_readme_and_package_files(languages):

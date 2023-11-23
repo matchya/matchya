@@ -6,13 +6,9 @@ from openai import OpenAI
 from config import Config
 from client.github import GithubClient
 
-chat_client = OpenAI()
+from utils.response import generate_success_response
 
-COMMON_HEADERS = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'OPTIONS,POST',
-}
+chat_client = OpenAI()
 
 def handler(event, context):
     """
@@ -38,11 +34,7 @@ def handler(event, context):
 
     # TODO: Store data in DB (CandidateResult, AssessmentCriteria)
 
-    return {
-        "statusCode": 200, 
-        "headers": COMMON_HEADERS,
-        "body": json.dumps(candidate_result)
-    }
+    return generate_success_response(candidate_result)
 
 
 def get_criteria_full_messages(position_id):

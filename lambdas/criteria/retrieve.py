@@ -1,10 +1,4 @@
-import json
-
-COMMON_HEADERS = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'OPTIONS,GET',
-}
+from utils.response import generate_success_response
 
 def handler(event, context):
     parameter = event.get('pathParameters')
@@ -22,8 +16,4 @@ def handler(event, context):
         "criteria": criteria,
     }
 
-    return {
-        "statusCode": 200, 
-        "headers": COMMON_HEADERS,
-        "body": json.dumps(body)
-    }
+    return generate_success_response(body)
