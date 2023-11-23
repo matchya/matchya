@@ -25,6 +25,7 @@ const CriteriaBox = () => {
                 {headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${accessToken}`}}
             );
             if (response.data.status == 'success') {
+                console.log(response.data.payload.criteria)
                 setCriteria(response.data.payload.criteria)
                 setIsCriteriaGenerated(true);
             }
