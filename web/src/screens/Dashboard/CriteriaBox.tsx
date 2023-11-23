@@ -23,8 +23,8 @@ const CriteriaBox = () => {
                 `${apiEndpoint}/criteria/${positionId}`, 
                 {headers: {'Content-Type': 'application/json', 'Authorization': `Bearer validToken`}}
             );
-            if (response.status == 200) {
-                setCriteria(response.data.criteria)
+            if (response.data.status == 'success') {
+              setCriteria(response.data.payload.criteria)
             }
         } catch (error) {
             console.error('Retrieving Criteria failed:', error);
@@ -40,8 +40,9 @@ const CriteriaBox = () => {
                 userData,
                 {headers: {'Content-Type': 'application/json', 'Authorization': `Bearer validToken`}}
             );
-            if (response.status == 200) {
-                setCriteria(response.data.criteria)
+            console.log(response)
+            if (response.data.status == 'success') {
+                setCriteria(response.data.payload.criteria)
             }
         } catch (error) {
             console.error('Generating Criteria failed:', error);
