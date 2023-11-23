@@ -4,28 +4,27 @@ import { useEffect, useState } from 'react';
 import Button from '../../components/LoginModal/Button';
 import FormInput from '../../components/LoginModal/FormInput';
 import { apiEndpoint } from '../../config';
-import { useAuthStore } from '../../store/useAuthStore';
 
 const CriteriaBox = () => {
-    const [positionId, ] = useState<string>('');
+    const [positionId, ] = useState<string>('id');
     const [inputRepository, setInputRepository] = useState<string>('');
     const [repositoryNames, setRepositoryNames] = useState<string[]>([]);
     const [criteria, setCriteria] = useState<string[]>([]);
-    const { accessToken } = useAuthStore();
 
     useEffect(() => {
+      if (!criteria.length) {
         getCriteria();
+      }
     }, [])
 
     const getCriteria = async () => {
         try {
             const response = await axios.get(
-                `${apiEndpoint}/criteria/id`, 
+                `${apiEndpoint}/criteria/${positionId}`, 
                 {headers: {'Content-Type': 'application/json', 'Authorization': `Bearer validToken`}}
             );
-            if (response.data.status == 'success') {
-                console.log(response.data.payload.criteria)
-                setCriteria(response.data.payload.criteria)
+            if (response.status == 200) {
+                setCriteria(response.data.criteria)
             }
         } catch (error) {
             console.error('Retrieving Criteria failed:', error);
@@ -39,11 +38,10 @@ const CriteriaBox = () => {
             const response = await axios.post(
                 `${apiEndpoint}/generate`,
                 userData,
-                {headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${accessToken}`}}
+                {headers: {'Content-Type': 'application/json', 'Authorization': `Bearer validToken`}}
             );
-            console.log(response.data)
-            if (response.data.status == 'success') {
-                setCriteria(response.data.payload.criteria)
+            if (response.status == 200) {
+                setCriteria(response.data.criteria)
             }
         } catch (error) {
             console.error('Generating Criteria failed:', error);
