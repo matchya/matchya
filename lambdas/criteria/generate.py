@@ -17,7 +17,6 @@ criteria_table = dynamodb.Table(f'{Config.ENVIRONMENT}-Criteria')
 
 chat_client = OpenAI()
 
-
 COMMON_HEADERS = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',
