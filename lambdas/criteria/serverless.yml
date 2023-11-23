@@ -1,7 +1,6 @@
 service: criteria
-frameworkVersion: "3"
 
-useDotenv: true
+frameworkVersion: "3"
 
 provider:
   name: aws
@@ -24,8 +23,8 @@ provider:
         buildArgs:
 
   environment:
-    OPENAI_API_KEY: ${env:OPENAI_API_KEY}
-    GITHUB_TOKEN: ${env:GITHUB_TOKEN}
+    OPENAI_API_KEY: ${ssm:/terraform/ssm/openai_api_key}
+    GITHUB_TOKEN: ${ssm:/terraform/ssm/github_token}
 
 functions:
   evaluate:
@@ -65,11 +64,6 @@ functions:
             parameters:
               paths:
                 id: true
-
-custom:
-  export-env:
-    filename: .env
-    overwrite: true
 
 plugins:
   - serverless-deployment-bucket

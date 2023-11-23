@@ -1,15 +1,10 @@
 import json
-from os.path import join, dirname
 
 import requests
-from dotenv import load_dotenv
 from openai import OpenAI
 
 from config import Config
 from client.github import GithubClient
-
-dotenv_path = join(dirname(__file__), '.env')
-load_dotenv(dotenv_path)
 
 chat_client = OpenAI()
 
