@@ -116,7 +116,7 @@ const AuthModal = ({ type, action, close, switchModal }: AuthModalProps) => {
           {type === 'signup' && (
             <FormInput
               label="GitHub Username"
-              id="github-url"
+              id="github-username"
               type="text"
               className="mt-3"
               value={githubUsername}
