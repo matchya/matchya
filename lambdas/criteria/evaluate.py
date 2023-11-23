@@ -6,8 +6,9 @@ from openai import OpenAI
 from config import Config
 from client.github import GithubClient
 
-chat_client = OpenAI()
+from utils.response import generate_success_response
 
+chat_client = OpenAI()
 
 def handler(event, context):
     """
@@ -33,7 +34,7 @@ def handler(event, context):
 
     # TODO: Store data in DB (CandidateResult, AssessmentCriteria)
 
-    return {"statusCode": 200, "body": json.dumps(candidate_result)}
+    return generate_success_response(candidate_result)
 
 
 def get_criteria_full_messages(position_id):

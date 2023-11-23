@@ -1,5 +1,4 @@
-import json
-
+from utils.response import generate_success_response
 
 def handler(event, context):
     parameter = event.get('pathParameters')
@@ -17,4 +16,4 @@ def handler(event, context):
         "criteria": criteria,
     }
 
-    return {"statusCode": 200, "body": json.dumps(body)}
+    return generate_success_response(body)

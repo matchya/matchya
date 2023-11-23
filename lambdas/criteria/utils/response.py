@@ -1,4 +1,3 @@
-import datetime
 import json
 from typing import Any, Dict
 
@@ -6,7 +5,7 @@ from typing import Any, Dict
 COMMON_HEADERS = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'OPTIONS,POST',
+    'Access-Control-Allow-Methods': '*',
 }
 
 
@@ -20,12 +19,12 @@ def generate_response(status_code: int, body: Any) -> Dict[str, Any]:
     """
     return {
         "statusCode": status_code,
-        "body": body,
-        "headers": COMMON_HEADERS
+        "headers": COMMON_HEADERS,
+        "body": body
     }
 
 
-def generate_success_response(access_token):
+def generate_success_response(body: Any) -> Dict[str, Any]:
     """
     Generates a success response with the access token.
 
@@ -34,9 +33,6 @@ def generate_success_response(access_token):
     """
     body = {
         'status': 'success',
-        'payload': {
-            'access_token': access_token,
-            'created_at': str(datetime.datetime.now())
-        }
+        'payload': body
     }
     return generate_response(status_code=200, body=json.dumps(body))
