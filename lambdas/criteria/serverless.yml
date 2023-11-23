@@ -32,7 +32,7 @@ functions:
         - evaluate.handler
     events:
       - http:
-          path: /
+          path: /evaluate
           method: POST
 
   generate:
