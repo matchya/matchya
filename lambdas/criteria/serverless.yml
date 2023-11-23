@@ -6,9 +6,13 @@ useDotenv: true
 provider:
   name: aws
   runtime: python3.9
+  architecture: arm64
   stage: dev
+  region: us-east-1
   deploymentBucket:
     name: ${self:provider.stage}-sls-criteria
+  iam:
+    role: ${ssm:/terraform/iam/lambda-role-arn}
   apiGateway:
     restApiId: ${ssm:/terraform/api_gateway/id}
     restApiRootResourceId: ${ssm:/terraform/api_gateway/root_resource_id}
@@ -19,9 +23,6 @@ provider:
         file: Dockerfile
         buildArgs:
 
-  architecture: arm64
-  iam:
-    role: ${ssm:/terraform/iam/lambda-role-arn}
   environment:
     OPENAI_API_KEY: ${env:OPENAI_API_KEY}
     GITHUB_TOKEN: ${env:GITHUB_TOKEN}
