@@ -5,7 +5,7 @@ import FormInput from '../../components/LoginModal/FormInput';
 const Settings = () => {
   const [companyName, setCompanyName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
-  const [githubUrl, setGithubUrl] = useState<string>('');
+  const [githubUsername, setGithubUsername] = useState<string>('');
 
   const handleCompanyNameChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -17,10 +17,10 @@ const Settings = () => {
     setEmail(event.target.value);
   };
 
-  const handleGithubUrlChange = (
+  const handleGithubUsernameChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setGithubUrl(event.target.value);
+    setGithubUsername(event.target.value);
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -28,7 +28,7 @@ const Settings = () => {
     // Handle the submission logic here
     console.log('Company Name:', companyName);
     console.log('Email:', email);
-    console.log('GitHub URL:', githubUrl);
+    console.log('GitHub Username:', githubUsername);
   };
 
   return (
@@ -50,11 +50,11 @@ const Settings = () => {
             onChange={handleEmailChange}
           />
           <FormInput
-            label="GitHub Account URL"
-            id="github-url"
-            type="url"
-            value={githubUrl}
-            onChange={handleGithubUrlChange}
+            label="GitHub Account Username"
+            id="github-username"
+            type="text"
+            value={githubUsername}
+            onChange={handleGithubUsernameChange}
           />
           <button
             type="submit"
