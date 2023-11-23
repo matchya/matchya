@@ -26,6 +26,7 @@ provider:
 functions:
   evaluate:
     name: ${self:provider.stage}-criteria-evaluate
+    timeout: 60
     image:
       name: default
       command:
