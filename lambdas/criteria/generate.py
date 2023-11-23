@@ -53,15 +53,20 @@ def handler(event, context):
     for file_path in file_paths:
         prompt = prompt + file_path + ":\n" + get_file_content(github_username, repository_name, file_path) + "\n"
 
-    criteria_keywords = get_criteria_keywords(prompt, programming_languages)
-    print("criteria: ", criteria_keywords)
+    criteria = get_criteria_from_gpt(prompt, programming_languages)
+    print("generated criteria:", criteria)
 
     criterion_id = str(uuid.uuid4())
     created_at = str(datetime.datetime.now())
     # TODO: Save criteria to database logic here...
 
+    criteria_messages = []
+    for criterion in criteria:
+        message = criterion['message']
+        criteria_messages.append(message)
+
     body = {
-        "criteria": criteria_keywords,
+        "criteria": criteria_messages,
         "created_at": created_at
     }
     return generate_success_response(body)
@@ -116,7 +121,7 @@ def get_file_content(github_username, repository_name, file_path):
     return str(base64.b64decode(content_encoded))
 
 
-def get_criteria_keywords(prompt, languages):
+def get_criteria_from_gpt(prompt, languages):
     """
     Generates a list of criteria keywords using OpenAI's ChatGPT based on given prompt and programming languages.
 
@@ -131,22 +136,24 @@ def get_criteria_keywords(prompt, languages):
         {
             "criteria": [
                 {
-                    "keywords": ["Python", "Django"]
-                    "sentence": "Python and Django for back-end development"
+                    "keywords": ["Python", "Django", "API"]
+                    "message": "Python and Django for back-end development"
                 },
                 {
                     "keywords": ["React", "Next.js"]
-                    "sentence": "React and Next.js for front-end development"
+                    "message": "React and Next.js for front-end development"
                 },
                 {
                     "keywords": ["Docker"]
-                    "sentence": "Docker for containerization"
+                    "message": "Docker for containerization"
                 }
             ]
         }
         \nIn the keywords section, include keywords from the relevant technologies (e.g Python and Django) as an array of strings. 
         If no other keywords are relevant, the keywords list can contain only one string.
-        The sentence section should contain all the keywords and a brief one-sentence description of what the technologies will be used for.
+        The message section should contain all the keywords and a brief one-sentence description of what the technologies will be used for.
+        The maximum number of keywords is 5, and the maximum number of criteria is 10. 
+        The same keyword can be used in multiple criteria. You must always use the proper spelling of the keywords.
         These are the programming languages used in the repositories to help you do this task.
     """
     for language in languages:
