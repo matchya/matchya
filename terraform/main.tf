@@ -18,6 +18,13 @@ module "rds" {
   rds_security_group_id = module.vpc.rds_security_group_id
 }
 
+module "ssm" {
+  source = "./modules/ssm"
+
+  open_api_key = var.openai_api_key
+  github_token = var.github_token
+}
+
 module "vpc" {
   source = "./modules/vpc"
 }
