@@ -2,10 +2,8 @@ import json
 
 COMMON_HEADERS = {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Credentials': True,
-    'Content-Type': 'application/json',
     'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'OPTIONS, GET',
+    'Access-Control-Allow-Methods': 'OPTIONS,GET',
 }
 
 def handler(event, context):
