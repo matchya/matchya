@@ -13,9 +13,11 @@ load_dotenv(dotenv_path)
 chat_client = OpenAI()
 
 
-GITHUB_REST_API_HEADERS = {'Authorization-Type': "Bearer " + os.environ['GITHUB_TOKEN'], "X-GitHub-Api-Version": "2022-11-28"}
+GITHUB_REST_API_HEADERS = {'Authorization-Type': "Bearer " + os.environ['GITHUB_TOKEN']}
 GITHUB_API_REPO_URL = "https://api.github.com/repos/"
+
 GITHUB_GRAPHQL_API_URL = "https://api.github.com/graphql"
+GITHUB_GRAPHQL_API_HEADERS = {"Authorization": "Bearer " + os.environ['GITHUB_TOKEN']}
 
 
 def evaluate_candidate(event, context):
@@ -31,9 +33,13 @@ def evaluate_candidate(event, context):
     position_id = "1"               # mock
 
     # TODO: Store Candidate Information in DB (Candidate)
-
-    criteria_full_messages = get_criteria_full_messages(position_id)
-    candidate_result = evaluate_candidate(criteria_full_messages, github_username)
+    candidate_result = {}
+    try:
+        criteria_full_messages = get_criteria_full_messages(position_id)
+        candidate_result = evaluate(criteria_full_messages, github_username)
+    except Exception as e:
+        print(e)
+        return {"statusCode": 500, "body": json.dumps({"message": "Evaluation failed."})}
 
     # TODO: Store data in DB (CandidateResult, AssessmentCriteria)
 
@@ -53,7 +59,7 @@ def get_criteria_full_messages(position_id):
     return full_messages
 
 
-def evaluate_candidate(criteria_full_messages, github_username):
+def evaluate(criteria_full_messages, github_username):
     """
     Evaluates a candidate's GitHub repositories against given criteria.
 
@@ -63,7 +69,7 @@ def evaluate_candidate(criteria_full_messages, github_username):
     """
     pinned_repositories = get_pinned_repositories_name(github_username)
     repos_content = get_repos_content_all(github_username, pinned_repositories)
-    chatgpt_evaluation = get_candidate_evaluation(criteria_full_messages, repos_content)
+    chatgpt_evaluation = get_candidate_evaluation_from_chatgpt(criteria_full_messages, repos_content)
 
     return chatgpt_evaluation
 
@@ -97,8 +103,12 @@ def get_pinned_repositories_name(github_username):
     }
     """ % github_username
     data = run_github_query(query)
+    edges = None
+    try:
+        edges = data.get("repositoryOwner").get("pinnableItems").get("edges")
+    except Exception as e:
+        raise Exception("Getting pinned repositories failed.")
 
-    edges = data.get("repositoryOwner").get("pinnableItems").get("edges")
     for edge in edges:
         name = edge.get("node").get("name")
         owner = edge.get("node").get("owner").get("login")
@@ -116,9 +126,7 @@ def run_github_query(query):
     :return: The data returned from the GitHub API.
     """
     try:
-        api_token = os.environ['GITHUB_TOKEN']
-        graphql_headers = {'Authorization': 'token %s' % api_token}
-        res = requests.post(url=GITHUB_GRAPHQL_API_URL, json={'query': query}, headers=graphql_headers)
+        res = requests.post(url=GITHUB_GRAPHQL_API_URL, json={'query': query}, headers=GITHUB_GRAPHQL_API_HEADERS)
         content = json.loads(res.content)
         return content.get("data")
     except Exception as e:
@@ -151,14 +159,14 @@ def get_repo_file_content(github_username, repo_name):
     content = ""
     languages = get_programming_languages_used(github_username, repo_name)
     important_file_names = get_important_file_names(languages)
-    file_paths = get_important_file_urls(github_username, repo_name, important_file_names)
+    file_paths = get_important_file_paths(github_username, repo_name, important_file_names)
     for file_path in file_paths:
         content += "repository (" + repo_name + "), file: (" + file_path + "):\n" + get_file_contents(github_username, repo_name, file_path) + "\n"
 
     return content
 
 
-def get_candidate_evaluation(criteria_full_messages, repos_content):
+def get_candidate_evaluation_from_chatgpt(criteria_full_messages, repos_content):
     """
     Evaluates a candidate's GitHub repository contents against specified criteria using ChatGPT.
 
@@ -276,7 +284,7 @@ def get_important_file_names(languages):
     return important_file_names
 
 
-def get_important_file_urls(github_username, repo_name, important_file_names):
+def get_important_file_paths(github_username, repo_name, important_file_names):
     """
     Fetches URLs of important files from a GitHub repository.
 
