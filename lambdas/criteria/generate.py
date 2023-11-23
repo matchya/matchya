@@ -68,7 +68,8 @@ def handler(event, context):
     response = {
         "statusCode": 200, 
         "headers": COMMON_HEADERS,
-        "body": json.dumps({"criterion_id": criterion_id, "created_at": created_at})}
+        "body": json.dumps({"criterion_id": criterion_id, "created_at": created_at})
+    }
     return response
 
 
