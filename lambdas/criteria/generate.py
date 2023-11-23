@@ -17,12 +17,11 @@ criteria_table = dynamodb.Table(f'{Config.ENVIRONMENT}-Criteria')
 
 chat_client = OpenAI()
 
+
 COMMON_HEADERS = {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Credentials': True,
-    'Content-Type': 'application/json',
     'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'OPTIONS, POST',
+    'Access-Control-Allow-Methods': 'OPTIONS,GET',
 }
 
 def handler(event, context):
