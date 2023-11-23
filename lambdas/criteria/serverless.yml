@@ -1,7 +1,6 @@
 service: criteria
-frameworkVersion: "3"
 
-useDotenv: true
+frameworkVersion: "3"
 
 provider:
   name: aws
@@ -65,11 +64,6 @@ functions:
             parameters:
               paths:
                 id: true
-
-custom:
-  export-env:
-    filename: .env
-    overwrite: true
 
 plugins:
   - serverless-deployment-bucket
