@@ -124,16 +124,41 @@ def get_criteria_keywords(prompt, languages):
     :param languages: A list of programming languages used in the project.
     :return: A list of criteria keywords extracted from the prompt and language list.
     """
-    system_message = "You read the following files. Please review them and generate a list of programming languages, libraries, and other technologies used in the project. You should always put these languages first in the head of the list in order." + "Languages:"
+    system_message = """
+        You are going to read the files contained in the company's repositories
+        and briefly and informatively summarize the skills you are looking for in the candidates who apply to your company.
+        Your response must be in JSON format as follows:\n
+        {
+            "criteria": [
+                {
+                    "keywords": ["Python", "Django"]
+                    "sentence": "Python and Django for back-end development"
+                },
+                {
+                    "keywords": ["React", "Next.js"]
+                    "sentence": "React and Next.js for front-end development"
+                },
+                {
+                    "keywords": ["Docker"]
+                    "sentence": "Docker for containerization"
+                }
+            ]
+        }
+        \nIn the keywords section, include keywords from the relevant technologies (e.g Python and Django) as an array of strings. 
+        If no other keywords are relevant, the keywords list can contain only one string.
+        The sentence section should contain all the keywords and a brief one-sentence description of what the technologies will be used for.
+        These are the programming languages used in the repositories to help you do this task.
+    """
     for language in languages:
         system_message += language['name'] + ", "
+
 
     completion = chat_client.chat.completions.create(
         model="gpt-3.5-turbo-1106",
         response_format={"type": "json_object"},
         messages=[
             {"role": "system", "content": system_message},
-            {"role": "user", "content": "Generate a list of string in json format. the list contains programming languages, libraries, and other technologies used in the project as 1d string list. name the list \"criteria\".\n\n" + prompt}
+            {"role": "user", "content": "Perform your task according to the system message. These are the company's repositories and the file contents." + prompt}
         ]
     )
     content = json.loads(completion.choices[0].message.content)
