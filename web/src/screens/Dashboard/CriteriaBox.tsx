@@ -8,7 +8,6 @@ import { useAuthStore } from '../../store/useAuthStore';
 
 const CriteriaBox = () => {
     const [positionId, ] = useState<string>('');
-    const [isCriteriaGenerated, setIsCriteriaGenerated] = useState<boolean>(false);
     const [inputRepository, setInputRepository] = useState<string>('');
     const [repositoryNames, setRepositoryNames] = useState<string[]>([]);
     const [criteria, setCriteria] = useState<string[]>([]);
@@ -22,12 +21,11 @@ const CriteriaBox = () => {
         try {
             const response = await axios.get(
                 `${apiEndpoint}/criteria/id`, 
-                {headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${accessToken}`}}
+                {headers: {'Content-Type': 'application/json', 'Authorization': `Bearer validToken`}}
             );
             if (response.data.status == 'success') {
                 console.log(response.data.payload.criteria)
                 setCriteria(response.data.payload.criteria)
-                setIsCriteriaGenerated(true);
             }
         } catch (error) {
             console.error('Retrieving Criteria failed:', error);
@@ -46,7 +44,6 @@ const CriteriaBox = () => {
             console.log(response.data)
             if (response.data.status == 'success') {
                 setCriteria(response.data.payload.criteria)
-                setIsCriteriaGenerated(true);
             }
         } catch (error) {
             console.error('Generating Criteria failed:', error);
@@ -54,7 +51,7 @@ const CriteriaBox = () => {
         }
     }
   
-    if (!isCriteriaGenerated) {
+    if (!criteria.length) {
       return (
         <div className="px-6 py-4 h-full flex flex-col justify-center items-center">
           <h3 className="text-lg font-bold">Generate Criteria</h3>
