@@ -21,7 +21,7 @@ class GithubClient:
         data = json.loads(res.content)
         return [{"name": language, "bytes": data[language]} for language in data]
 
-    def get_important_file_urls(self, repo_name, important_file_names):
+    def get_important_file_paths(self, repo_name, important_file_names):
         """
         Fetches URLs of important files from a GitHub repository.
 
