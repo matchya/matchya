@@ -1,21 +1,14 @@
 import json
 import datetime
 import base64
-import requests
 import uuid
-import boto3
-from os.path import join, dirname
 
-from dotenv import load_dotenv
+import requests
+import boto3
 from openai import OpenAI
 
 from config import Config
 from client.github import GithubClient
-
-
-# Load environment variables
-dotenv_path = join(dirname(__file__), '.env')
-load_dotenv(dotenv_path)
 
 # DynamoDB
 dynamodb = boto3.resource('dynamodb')
