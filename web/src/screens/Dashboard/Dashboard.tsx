@@ -5,10 +5,10 @@ import FormInput from '../../components/LoginModal/FormInput';
 import ScoreCard from '../../components/LoginModal/ScoreCard';
 import { mockCandidates, mockCriteria } from '../../data';
 
-const Home = () => {
+const Dashboard = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
 
-  const showModalHandler = () => {
+  const handleModalDisplay = () => {
     setShowModal(true);
   };
 
@@ -24,7 +24,7 @@ const Home = () => {
             text="Add candidate"
             color="green"
             outline={false}
-            onClick={showModalHandler}
+            onClick={handleModalDisplay}
           />
         </div>
 
@@ -43,7 +43,7 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Dashboard;
 
 const CriteriaBox = () => {
   return (
