@@ -4,18 +4,18 @@ import { useState } from 'react';
 import Button from '../../components/LoginModal/Button';
 import FormInput from '../../components/LoginModal/FormInput';
 import { criteriaEndpoint } from '../../config';
-import { mockCriteria } from '../../data';
 import { useAuthStore } from '../../store/useAuthStore';
 
 const CriteriaBox = () => {
-
-    const [criteriaGenerated, setCriteriaGenerated] = useState<boolean>(false);
+    const [positionId, ] = useState<string>('');
+    const [isCriteriaGenerated, setIsCriteriaGenerated] = useState<boolean>(false);
     const [inputRepository, setInputRepository] = useState<string>('');
     const [repositoryNames, setRepositoryNames] = useState<string[]>([]);
+    const [criteria, setCriteria] = useState<string[]>([]);
     const { accessToken } = useAuthStore();
 
     const generateCriteria = async () => {
-        const userData = {"position_id": "1", "repo_names": repositoryNames};
+        const userData = {"position_id": positionId, "repo_names": repositoryNames};
         try {
             const response = await axios.post(
                 `${criteriaEndpoint}/generate`,
@@ -24,8 +24,8 @@ const CriteriaBox = () => {
             );
             console.log(response.data)
             if (response.data.status == 'success') {
-              // do something
-              setCriteriaGenerated(true);
+                setCriteria(response.data.payload.criteria)
+                setIsCriteriaGenerated(true);
             }
         } catch (error) {
             console.error('Generating Criteria failed:', error);
@@ -33,7 +33,7 @@ const CriteriaBox = () => {
         }
     }
   
-    if (!criteriaGenerated) {
+    if (!isCriteriaGenerated) {
       return (
         <div className="px-6 py-4 h-full flex flex-col justify-center items-center">
           <h3 className="text-lg font-bold">Generate Criteria</h3>
@@ -79,7 +79,7 @@ const CriteriaBox = () => {
       <div className="px-6 py-4 h-full">
         <h3 className="text-lg font-bold">Generated Criteria</h3>
         <ul className="list-disc pl-6 mt-4">
-          {mockCriteria.map((criterion, index) => (
+          {criteria.map((criterion, index) => (
             <li key={index} className="text-sm text-gray-600">
               {criterion}
             </li>
