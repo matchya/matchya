@@ -1,5 +1,4 @@
 import json
-import os
 from os.path import join, dirname
 
 import requests
@@ -29,15 +28,20 @@ def handler(event, context):
     github_client = GithubClient(github_username)
     # TODO: Store Candidate Information in DB (Candidate)
 
-    criteria_full_messages = get_criteria_full_messages(github_client, position_id)
-    candidate_result = evaluate_candidate(github_client, criteria_full_messages, github_username)
+    candidate_result = {}
+    try:
+        criteria_full_messages = get_criteria_full_messages(position_id)
+        candidate_result = evaluate_candidate(github_client, criteria_full_messages, github_username)
+    except Exception as e:
+        print(e)
+        return {"statusCode": 500, "body": json.dumps({"message": "Evaluation failed."})}
 
     # TODO: Store data in DB (CandidateResult, AssessmentCriteria)
 
     return {"statusCode": 200, "body": json.dumps(candidate_result)}
 
 
-def get_criteria_full_messages(github_client, position_id):
+def get_criteria_full_messages(position_id):
     """
     Retrieves the full message criteria for a job position.
 
@@ -60,7 +64,7 @@ def evaluate_candidate(github_client: GithubClient, criteria_full_messages, gith
     """
     pinned_repositories = get_pinned_repositories_name(github_username)
     repos_content = get_repos_content_all(github_client, github_username, pinned_repositories)
-    chatgpt_evaluation = get_candidate_evaluation(criteria_full_messages, repos_content)
+    chatgpt_evaluation = get_candidate_evaluation_from_chatgpt(criteria_full_messages, repos_content)
 
     return chatgpt_evaluation
 
@@ -94,8 +98,12 @@ def get_pinned_repositories_name(github_username):
     }
     """ % github_username
     data = run_github_query(query)
+    edges = None
+    try:
+        edges = data.get("repositoryOwner").get("pinnableItems").get("edges")
+    except Exception:
+        raise Exception("Getting pinned repositories failed.")
 
-    edges = data.get("repositoryOwner").get("pinnableItems").get("edges")
     for edge in edges:
         name = edge.get("node").get("name")
         owner = edge.get("node").get("owner").get("login")
@@ -113,9 +121,7 @@ def run_github_query(query):
     :return: The data returned from the GitHub API.
     """
     try:
-        api_token = os.environ['GITHUB_TOKEN']
-        graphql_headers = {'Authorization': 'token %s' % api_token}
-        res = requests.post(url=Config.GITHUB_GRAPHQL_API_URL, json={'query': query}, headers=graphql_headers)
+        res = requests.post(url=Config.GITHUB_GRAPHQL_API_URL, json={'query': query}, headers=Config.GITHUB_GRAPHQL_API_HEADERS)
         content = json.loads(res.content)
         return content.get("data")
     except Exception:
@@ -148,14 +154,14 @@ def get_repo_file_content(github_client: GithubClient, repo_name):
     content = ""
     languages = github_client.get_programming_languages_used(repo_name)
     important_file_names = GithubClient.get_important_file_names(languages)
-    file_paths = github_client.get_important_file_urls(repo_name, important_file_names)
+    file_paths = github_client.get_important_file_paths(repo_name, important_file_names)
     for file_path in file_paths:
         content += "repository (" + repo_name + "), file: (" + file_path + "):\n" + github_client.get_file_contents(repo_name, file_path) + "\n"
 
     return content
 
 
-def get_candidate_evaluation(criteria_full_messages, repos_content):
+def get_candidate_evaluation_from_chatgpt(criteria_full_messages, repos_content):
     """
     Evaluates a candidate's GitHub repository contents against specified criteria using ChatGPT.
 
