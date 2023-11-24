@@ -47,7 +47,7 @@ def handler(event, context):
     programming_languages_map_all = {}
     for repository_name in repo_names:
         programming_languages_map = github_client.get_programming_languages_used(repository_name)
-        file_content += github_client.get_repo_file_content(github_client, repository_name, programming_languages_map)
+        file_content += github_client.get_repo_file_content(repository_name, programming_languages_map)
         accumulate_language_data(programming_languages_map_all, programming_languages_map)
 
     criteria = get_criteria_from_gpt(file_content, programming_languages_map_all)
