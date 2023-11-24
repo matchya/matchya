@@ -17,11 +17,18 @@ resource "aws_iam_role" "lambda_role" {
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_execute_policy" {
-  role       = aws_iam_role.lambda_role.name
+  count = var.create_new ? 1 : 0
+  role       = aws_iam_role.lambda_role[0].name
   policy_arn = "arn:aws:iam::aws:policy/AWSLambdaExecute"
 }
 
 resource "aws_iam_role_policy_attachment" "dynamodb_full_access" {
-  role       = aws_iam_role.lambda_role.name
+  count = var.create_new ? 1 : 0
+  role       = aws_iam_role.lambda_role[0].name
   policy_arn = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
+}
+
+data "aws_iam_role" "lambda_role" {
+  count = var.create_new ? 0 : 1
+  name = "lambda_role"
 }
