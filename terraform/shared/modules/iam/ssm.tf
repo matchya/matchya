@@ -1,6 +1,6 @@
-resource "aws_ssm_parameter" "service-lambda_role_arn" {
+resource "aws_ssm_parameter" "lambda_role_arn" {
   count = var.create_new ? 1 : 0
-  name  = "/terraform/iam/lambda-role-arn"
+  name  = "/terraform/shared/iam/lambda_role_arn"
   type  = "String"
-  value = aws_iam_role.lambda_role.arn
+  value = aws_iam_role.lambda_role[0].arn
 }
