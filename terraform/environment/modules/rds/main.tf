@@ -1,4 +1,5 @@
 resource "aws_db_instance" "this" {
+  db_name = "${terraform.workspace}"
   allocated_storage    = 20
   storage_type         = "gp2"
   engine               = "postgres"

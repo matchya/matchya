@@ -1,5 +1,5 @@
 resource "aws_api_gateway_rest_api" "default" {
-  name        = "web-api"
+  name        = "${terraform.workspace}-web-api"
 }
 
 output "api_gateway_id" {

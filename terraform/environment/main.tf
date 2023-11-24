@@ -7,7 +7,9 @@ module "dynamodb" {
 }
 
 module "iam" {
-  source = "./modules/iam"
+  source = "../shared/modules/iam"
+
+  create_new = false
 }
 
 module "rds" {
@@ -19,5 +21,7 @@ module "rds" {
 }
 
 module "vpc" {
-  source = "./modules/vpc"
+  source = "../shared/modules/vpc"
+
+  create_new = false
 }

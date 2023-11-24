@@ -1,4 +1,5 @@
 resource "aws_security_group" "rds" {
+  count      = var.create_new ? 1 : 0
   name        = "rds-security-group"
   description = "Security group for RDS instance"
   vpc_id      = data.aws_vpc.default.id
@@ -20,4 +21,9 @@ resource "aws_security_group" "rds" {
   tags = {
     Name = "rds-security-group"
   }
+}
+
+data "aws_security_group" "rds" {
+  count      = var.create_new ? 0 : 1
+  name = "rds-security-group"
 }
