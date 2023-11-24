@@ -39,10 +39,10 @@ resource "aws_dynamodb_table" "access_token" {
 resource "aws_dynamodb_table" "criterion" {
   name           = "${terraform.workspace}-Criterion"
   billing_mode   = "PAY_PER_REQUEST"
-  hash_key       = "criteria_id"
+  hash_key       = "id"
 
   attribute {
-    name = "criteria_id"
+    name = "id"
     type = "S"
   }
 }
