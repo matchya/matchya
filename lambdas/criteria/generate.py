@@ -154,6 +154,11 @@ def get_criteria_from_gpt(prompt, languages):
         The message section should contain all the keywords and a brief one-sentence description of what the technologies will be used for.
         The maximum number of keywords is 5, and the maximum number of criteria is 10. 
         The same keyword can be used in multiple criteria. You must always use the proper spelling of the keywords.
+        Be careful to focus on the CORE TECHNOLOGY that you will need to participate in the project. 
+        For example, a small front-end library is not necessary as a criterion, but only the major components of the project, such as programming languages, frameworks, infrastructure such as cloud services, etc.
+        And the criteria can be not only specific technologies, but also important aspects of software development. 
+        For example, micro services or design patterns. But at the same time, include them only if they are highly relevant to this project.
+        The relevance of keywords is of paramount importance, so never mix words that are not relevant. If this is the case, create multiple criteria.
         These are the programming languages used in the repositories to help you do this task.
     """
     for language in languages:
