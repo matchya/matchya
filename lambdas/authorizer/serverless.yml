@@ -16,6 +16,13 @@ provider:
         path: ./
         file: Dockerfile
         buildArgs:
+  environment:
+    ENVIRONMENT: ${self:provider.stage}
+    POSTGRES_HOST: ${ssm:/terraform/${self:provider.stage}/rds/endpoint}
+    POSTGRES_PORT: ${ssm:/terraform/${self:provider.stage}/rds/port}
+    POSTGRES_DB: ${ssm:/terraform/${self:provider.stage}/rds/db_name}
+    POSTGRES_USER: ${ssm:/terraform/${self:provider.stage}/rds/db_username}
+    POSTGRES_PASSWORD: ${ssm:/terraform/${self:provider.stage}/rds/db_password}
 
 functions:
   authorizer:
