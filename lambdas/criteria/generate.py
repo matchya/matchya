@@ -41,19 +41,19 @@ def handler(event, context):
     # TODO: Get github_username and repo names from database by position_id
     github_username = "kokiebisu"
     repo_names = ["rental-storage"]
-    repository_name = repo_names[0]
     github_client = GithubClient(github_username)
+    file_content = ""
+    for repository_name in repo_names:
+        programming_languages = github_client.get_programming_languages_used(repository_name)
+        file_names_containing_repo_tech_stack = get_readme_and_package_files(programming_languages)
 
-    programming_languages = github_client.get_programming_languages_used(repository_name)
-    file_names_containing_repo_tech_stack = get_readme_and_package_files(programming_languages)
+        file_content += "Repository: " + repository_name + "\n"
+        file_paths = github_client.get_file_paths_in_repo(github_username, repository_name, file_names_containing_repo_tech_stack)
 
-    prompt = "Please review the following files.\n"
-    file_paths = github_client.get_file_paths_in_repo(github_username, repository_name, file_names_containing_repo_tech_stack)
+        for file_path in file_paths:
+            file_content += file_path + ":\n" + get_file_content(github_username, repository_name, file_path) + "\n"
 
-    for file_path in file_paths:
-        prompt = prompt + file_path + ":\n" + get_file_content(github_username, repository_name, file_path) + "\n"
-
-    criteria = get_criteria_from_gpt(prompt, programming_languages)
+    criteria = get_criteria_from_gpt(file_content, programming_languages)
     print("generated criteria:", criteria)
 
     criterion_id = str(uuid.uuid4())
@@ -118,7 +118,7 @@ def get_file_content(github_username, repository_name, file_path):
     return str(base64.b64decode(content_encoded))
 
 
-def get_criteria_from_gpt(prompt, languages):
+def get_criteria_from_gpt(file_content, languages):
     """
     Generates a list of criteria keywords using OpenAI's ChatGPT based on given prompt and programming languages.
 
@@ -188,7 +188,7 @@ def get_criteria_from_gpt(prompt, languages):
         response_format={"type": "json_object"},
         messages=[
             {"role": "system", "content": system_message},
-            {"role": "user", "content": "Perform your task according to the system message. These are the company's repositories and the file contents." + prompt}
+            {"role": "user", "content": "Perform your task according to the system message. These are the company's repositories and the file contents." + file_content}
         ]
     )
     content = json.loads(completion.choices[0].message.content)
