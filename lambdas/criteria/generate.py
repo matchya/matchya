@@ -53,15 +53,17 @@ def handler(event, context):
     for file_path in file_paths:
         prompt = prompt + file_path + ":\n" + get_file_content(github_username, repository_name, file_path) + "\n"
 
-    criteria_keywords = get_criteria_keywords(prompt, programming_languages)
-    print("criteria: ", criteria_keywords)
+    criteria = get_criteria_from_gpt(prompt, programming_languages)
+    print("generated criteria:", criteria)
 
     criterion_id = str(uuid.uuid4())
     created_at = str(datetime.datetime.now())
     # TODO: Save criteria to database logic here...
 
+    criteria_messages = [criterion['message'] for criterion in criteria]
+
     body = {
-        "criteria": criteria_keywords,
+        "criteria": criteria_messages,
         "created_at": created_at
     }
     return generate_success_response(body)
@@ -116,7 +118,7 @@ def get_file_content(github_username, repository_name, file_path):
     return str(base64.b64decode(content_encoded))
 
 
-def get_criteria_keywords(prompt, languages):
+def get_criteria_from_gpt(prompt, languages):
     """
     Generates a list of criteria keywords using OpenAI's ChatGPT based on given prompt and programming languages.
 
@@ -124,16 +126,69 @@ def get_criteria_keywords(prompt, languages):
     :param languages: A list of programming languages used in the project.
     :return: A list of criteria keywords extracted from the prompt and language list.
     """
-    system_message = "You read the following files. Please review them and generate a list of programming languages, libraries, and other technologies used in the project. You should always put these languages first in the head of the list in order." + "Languages:"
+    system_message = """
+        You are tasked with analyzing our company's repository files to identify specific skills and technologies necessary for candidates applying to our company. 
+        The goal is to create a set of criteria that accurately reflect the core technologies and key aspects of software development pertinent to our projects. 
+        Your response must be in JSON format, with each essential skill or technology represented as an independent criterion. Please adhere to the following detailed instructions:
+
+        1. **Format Specification**: Structure the response in JSON format. Each entry should consist of a 'keywords' array and a 'message' string within a criterion object.
+
+        2. **Individual Major Technologies**: Each major technology must be treated as a distinct and separate criterion. 
+            This is imperative for technologies like Docker, AWS, Terraform, Kubernetes, Python, and JavaScript, among others. 
+            It is essential to understand that each of these technologies is a critical and standalone skill. 
+            For example, 'Docker' should form its own criterion focusing exclusively on containerization skills, 'AWS' on cloud services and infrastructure, and 'Terraform' on infrastructure as code. 
+            This approach is necessary because a candidate might have deep expertise in one of these areas (like Docker) but limited knowledge in another (like Terraform). 
+            Thus, creating separate criteria for each ensures a clear and accurate assessment of a candidate's specific skills in each of these significant technologies. 
+            Avoid grouping these major technologies under any circumstance to ensure precise evaluation of candidate abilities in each distinct area.
+        
+        3. **Grouping of Related Tools**: Combine technologies or tools that are closely related and often used together into a single criterion. 
+            For example, 'Git' and 'GitHub' can be grouped together for version control, and 'React' with 'Next.js' for front-end development. 
+            This grouping should be judicious, maintaining relevance and coherence.
+
+        4. **Descriptive Messages**: Each criterion should include a brief message, preferably within 5-6 words, describing the role and importance of the technology or skill in our projects. 
+            Never use too long message like 10 words, it's too long. For example, 'JavaScript for client-side scripting' or 'AWS for cloud services'.
+
+        5. **Focus on Relevance**: Prioritize technologies that are central to our projects, including key programming languages, frameworks, and infrastructure elements. 
+            Exclude minor tools or libraries unless they hold particular relevance.
+
+        6. **Clear Criteria for Each Technology**: Ensure each criterion is focused and revolves around a single, coherent concept, aiding in accurate candidate assessment.
+
+        7. **Number of Criteria**: Target around 8-10 criteria, but this can vary (6 to 12) depending on the repository's contents, ensuring comprehensive coverage without overcomplication.
+
+        8. **Guidance from Repository Data**: Utilize the provided details on programming languages and technologies in our repositories to guide the inclusion and emphasis of relevant languages and technologies in your criteria.
+
+        Your response must be in the following JSON format like this (example):
+        {
+            "criteria": [
+                {
+                    "keywords": ["Python", "API"],
+                    "message": "Python for back-end development and API creation"
+                },
+                {
+                    "keywords": ["React", "Next.js"],
+                    "message": "React and Next.js for front-end development"
+                },
+                {
+                    "keywords": ["Docker"],
+                    "message": "Docker for containerization"
+                },
+                // more criteria
+            ]
+        }
+
+        Ensure that the response strictly adheres to these guidelines to formulate a clear, relevant, and effective set of criteria for evaluating potential candidates.
+        Below is the data on programming languages used in our repositories, which should guide the inclusion of relevant languages in your criteria.
+    """
     for language in languages:
-        system_message += language['name'] + ", "
+        system_message += language['name'] + "(" + str(language['bytes']) + " bytes), "
+
 
     completion = chat_client.chat.completions.create(
         model="gpt-3.5-turbo-1106",
         response_format={"type": "json_object"},
         messages=[
             {"role": "system", "content": system_message},
-            {"role": "user", "content": "Generate a list of string in json format. the list contains programming languages, libraries, and other technologies used in the project as 1d string list. name the list \"criteria\".\n\n" + prompt}
+            {"role": "user", "content": "Perform your task according to the system message. These are the company's repositories and the file contents." + prompt}
         ]
     )
     content = json.loads(completion.choices[0].message.content)
