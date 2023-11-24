@@ -11,20 +11,25 @@ provider:
   deploymentBucket:
     name: ${self:provider.stage}-sls-criteria
   iam:
-    role: ${ssm:/terraform/iam/lambda-role-arn}
+    role: ${ssm:/terraform/shared/iam/lambda_role_arn}
   apiGateway:
-    restApiId: ${ssm:/terraform/api_gateway/id}
-    restApiRootResourceId: ${ssm:/terraform/api_gateway/root_resource_id}
+    restApiId: ${ssm:/terraform/${self:provider.stage}/api_gateway/id}
+    restApiRootResourceId: ${ssm:/terraform/${self:provider.stage}/api_gateway/root_resource_id}
   ecr:
     images:
       default:
         path: ./
         file: Dockerfile
         buildArgs:
-
   environment:
+    ENVIRONMENT: ${self:provider.stage}
     OPENAI_API_KEY: ${ssm:/api/openai_api_key}
     GITHUB_TOKEN: ${ssm:/api/github_token}
+    POSTGRES_HOST: ${ssm:/terraform/${self:provider.stage}/rds/endpoint}
+    POSTGRES_PORT: ${ssm:/terraform/${self:provider.stage}/rds/port}
+    POSTGRES_DB: ${ssm:/terraform/${self:provider.stage}/rds/db_name}
+    POSTGRES_USER: ${ssm:/terraform/${self:provider.stage}/rds/db_username}
+    POSTGRES_PASSWORD: ${ssm:/terraform/${self:provider.stage}/rds/db_password}
 
 functions:
   evaluate:
