@@ -1,9 +1,7 @@
 import json
 import datetime
-import base64
 import uuid
 
-import requests
 import boto3
 from openai import OpenAI
 
@@ -28,45 +26,84 @@ def handler(event, context):
     :return: A dictionary with HTTP status code and response body.
     """
     try:
+        body = parse_request_body(event)
+        validate_request_body(body)
+        position_id = body.get('position_id')
+        repository_names = body.get('repository_names')
+
+        github_username = get_github_username_from_position_id(position_id)
+        github_client = GithubClient(github_username)
+        criteria = generate_criteria(github_client, repository_names)
+
+        save_criteria_to_dynamodb(criteria, position_id)
+        body = { "criteria": criteria }
+        return generate_success_response(body)
+    except ValueError as e:
+        return generate_response(400, {"message": str(e)})
+    except Exception as e:
+        print(e)
+        return generate_response(500, {"message": "Failed to generate criteria."})
+
+
+def parse_request_body(event):
+    """
+    Parses the request body from an event and returns it as a JSON object.
+
+    :param event: The event object containing the request data.
+    :return: Parsed JSON object from the request body.
+    """
+    try:
         body = event.get('body', '')
         if not body:
-            raise json.JSONDecodeError
-        body = json.loads(event.get('body', ''))
-    except json.JSONDecodeError:
-        return generate_response(400, json.dumps({"message": "Invalid JSON in request body"}))
+            raise ValueError("Empty body")
+        return json.loads(body)
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Invalid JSON in request body: {e}")
 
-    # Validate that required fields are present
-    # position_id = body.get('position_id', '')
+def validate_request_body(body):
+    """
+    Validates the necessary fields in the company data.
 
-    # TODO: Get github_username and repo names from database by position_id
-    github_username = "kokiebisu"
-    repo_names = ["rental-storage"]
-    github_client = GithubClient(github_username)
+    :param body: The request body containing company data.
+    """
+    required_fields = ['position_id', 'repository_names']
+    if not all(body.get(field) for field in required_fields):
+        raise ValueError('Missing required fields')
 
+def get_github_username_from_position_id(position_id):
+    """
+    Retrieves the GitHub username of the company from the database.
+    
+    :param position_id: Unique identifier for the position.
+    :return: The GitHub username of the company.
+    """
+    # TODO: Get github_username from postgres by position_id
+    return 'kokiebisu'
+
+def generate_criteria(github_client: GithubClient, repository_names):
+    """
+    Generates criteria from GitHub repositories.
+    
+    :param github_client: A GitHub client object.
+    :param repository_names: A list of repository names.
+    :return: A list of criteria.
+    """
     file_content = ""
     programming_languages_map_all = {}
-    for repository_name in repo_names:
+    for repository_name in repository_names:
         programming_languages_map = github_client.get_programming_languages_used(repository_name)
         file_content += github_client.get_repo_file_content(repository_name, programming_languages_map)
         accumulate_language_data(programming_languages_map_all, programming_languages_map)
 
-    criteria = get_criteria_from_gpt(file_content, programming_languages_map_all)
-    print("generated criteria:", criteria)
-
-    criterion_id = str(uuid.uuid4())
-    created_at = str(datetime.datetime.now())
-    # TODO: Save criteria to database logic here...
-
-    criteria_messages = [criterion['message'] for criterion in criteria]
-
-    body = {
-        "criteria": criteria_messages,
-        "created_at": created_at
-    }
-    return generate_success_response(body)
-
+    return get_criteria_from_gpt(file_content, programming_languages_map_all)
 
 def accumulate_language_data(languages_map_all, repo_languages_map):
+    """
+    Accumulates the programming language data from multiple repositories.
+    
+    :param languages_map_all: A map of programming languages used in all repositories, key: name, value: byte.
+    :param repo_languages_map: A map of programming languages used in a repository, key: name, value: byte.
+    """
     for lang_name in repo_languages_map:
         if lang_name in languages_map_all:
             languages_map_all[lang_name] += repo_languages_map[lang_name]
@@ -148,4 +185,18 @@ def get_criteria_from_gpt(file_content, languages_map):
         ]
     )
     content = json.loads(completion.choices[0].message.content)
-    return content['criteria']  # The array of keywords, string[]
+    return content['criteria']
+
+
+def save_criteria_to_dynamodb(criteria, position_id):
+    """
+    Saves the generated criteria to the database.
+    
+    :param criteria: A list of criteria keywords.
+    :param position_id: Unique identifier for the position.
+    """
+    # TODO: Save criteria to database logic here...
+    for criterion in criteria:
+        id = str(uuid.uuid4())
+        created_at = datetime.datetime.now().isoformat()
+    return
