@@ -60,10 +60,7 @@ def handler(event, context):
     created_at = str(datetime.datetime.now())
     # TODO: Save criteria to database logic here...
 
-    criteria_messages = []
-    for criterion in criteria:
-        message = criterion['message']
-        criteria_messages.append(message)
+    criteria_messages = [criterion['message'] for criterion in criteria]
 
     body = {
         "criteria": criteria_messages,
