@@ -41,6 +41,8 @@ class GithubClient:
         for file in tree:
             if file['type'] == 'blob' and self._is_important_file(file['path'], important_file_names):
                 file_paths.append(file['path'])
+        
+        # TODO: If the list is too big, we need to filter out the files that are not important (depth > 2)
         return file_paths
 
     def get_file_paths_in_repo(self, github_username, repo_name, file_names_containing_repo_tech_stack):
@@ -130,7 +132,7 @@ class GithubClient:
             exit(1)
         return data['default_branch']
 
-    def _is_important_file(self, path, important_file_names):
+    def _is_important_file(self, path, important_file_names, depth=2):
         """
         Determines whether a given file path corresponds to an important file.
 
@@ -139,7 +141,7 @@ class GithubClient:
         :return: Boolean indicating if the file is considered important.
         """
         for file_name in important_file_names:
-            if file_name in path and path.count('/') <= 1:
+            if file_name in path and path.count('/') <= depth:
                 return True
         return False
 

@@ -130,39 +130,60 @@ def get_criteria_from_gpt(prompt, languages):
     :return: A list of criteria keywords extracted from the prompt and language list.
     """
     system_message = """
-        You are going to read the files contained in the company's repositories
-        and briefly and informatively summarize the skills you are looking for in the candidates who apply to your company.
-        Your response must be in JSON format as follows:\n
+        You are tasked with analyzing our company's repository files to identify specific skills and technologies necessary for candidates applying to our company. 
+        The goal is to create a set of criteria that accurately reflect the core technologies and key aspects of software development pertinent to our projects. 
+        Your response must be in JSON format, with each essential skill or technology represented as an independent criterion. Please adhere to the following detailed instructions:
+
+        1. **Format Specification**: Structure the response in JSON format. Each entry should consist of a 'keywords' array and a 'message' string within a criterion object.
+
+        2. **Individual Major Technologies**: Each major technology must be treated as a distinct and separate criterion. 
+            This is imperative for technologies like Docker, AWS, Terraform, Kubernetes, Python, and JavaScript, among others. 
+            It is essential to understand that each of these technologies is a critical and standalone skill. 
+            For example, 'Docker' should form its own criterion focusing exclusively on containerization skills, 'AWS' on cloud services and infrastructure, and 'Terraform' on infrastructure as code. 
+            This approach is necessary because a candidate might have deep expertise in one of these areas (like Docker) but limited knowledge in another (like Terraform). 
+            Thus, creating separate criteria for each ensures a clear and accurate assessment of a candidate's specific skills in each of these significant technologies. 
+            Avoid grouping these major technologies under any circumstance to ensure precise evaluation of candidate abilities in each distinct area.
+        
+        3. **Grouping of Related Tools**: Combine technologies or tools that are closely related and often used together into a single criterion. 
+            For example, 'Git' and 'GitHub' can be grouped together for version control, and 'React' with 'Next.js' for front-end development. 
+            This grouping should be judicious, maintaining relevance and coherence.
+
+        4. **Descriptive Messages**: Each criterion should include a brief message, preferably within 5-6 words, describing the role and importance of the technology or skill in our projects. 
+            Never use too long message like 10 words, it's too long. For example, 'JavaScript for client-side scripting' or 'AWS for cloud services'.
+
+        5. **Focus on Relevance**: Prioritize technologies that are central to our projects, including key programming languages, frameworks, and infrastructure elements. 
+            Exclude minor tools or libraries unless they hold particular relevance.
+
+        6. **Clear Criteria for Each Technology**: Ensure each criterion is focused and revolves around a single, coherent concept, aiding in accurate candidate assessment.
+
+        7. **Number of Criteria**: Target around 8-10 criteria, but this can vary (6 to 12) depending on the repository's contents, ensuring comprehensive coverage without overcomplication.
+
+        8. **Guidance from Repository Data**: Utilize the provided details on programming languages and technologies in our repositories to guide the inclusion and emphasis of relevant languages and technologies in your criteria.
+
+        Your response must be in the following JSON format like this (example):
         {
             "criteria": [
                 {
-                    "keywords": ["Python", "Django", "API"]
-                    "message": "Python and Django for back-end development"
+                    "keywords": ["Python", "API"],
+                    "message": "Python for back-end development and API creation"
                 },
                 {
-                    "keywords": ["React", "Next.js"]
+                    "keywords": ["React", "Next.js"],
                     "message": "React and Next.js for front-end development"
                 },
                 {
-                    "keywords": ["Docker"]
+                    "keywords": ["Docker"],
                     "message": "Docker for containerization"
-                }
+                },
+                // more criteria
             ]
         }
-        \nIn the keywords section, include keywords from the relevant technologies (e.g Python and Django) as an array of strings. 
-        If no other keywords are relevant, the keywords list can contain only one string.
-        The message section should contain all the keywords and a brief one-sentence description of what the technologies will be used for.
-        The maximum number of keywords is 5, and the maximum number of criteria is 10. 
-        The same keyword can be used in multiple criteria. You must always use the proper spelling of the keywords.
-        Be careful to focus on the CORE TECHNOLOGY that you will need to participate in the project. 
-        For example, a small front-end library is not necessary as a criterion, but only the major components of the project, such as programming languages, frameworks, infrastructure such as cloud services, etc.
-        And the criteria can be not only specific technologies, but also important aspects of software development. 
-        For example, micro services or design patterns. But at the same time, include them only if they are highly relevant to this project.
-        The relevance of keywords is of paramount importance, so never mix words that are not relevant. If this is the case, create multiple criteria.
-        These are the programming languages used in the repositories to help you do this task.
+
+        Ensure that the response strictly adheres to these guidelines to formulate a clear, relevant, and effective set of criteria for evaluating potential candidates.
+        Below is the data on programming languages used in our repositories, which should guide the inclusion of relevant languages in your criteria.
     """
     for language in languages:
-        system_message += language['name'] + ", "
+        system_message += language['name'] + "(" + str(language['bytes']) + " bytes), "
 
 
     completion = chat_client.chat.completions.create(
