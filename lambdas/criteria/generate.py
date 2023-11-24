@@ -42,18 +42,15 @@ def handler(event, context):
     github_username = "kokiebisu"
     repo_names = ["rental-storage"]
     github_client = GithubClient(github_username)
+
     file_content = ""
+    programming_languages_map_all = {}
     for repository_name in repo_names:
         programming_languages_map = github_client.get_programming_languages_used(repository_name)
-        file_names_containing_repo_tech_stack = get_readme_and_package_files(programming_languages_map)
+        file_content += get_repo_file_content(github_client, repository_name, programming_languages_map)
+        accumulate_language_data(programming_languages_map_all, programming_languages_map)
 
-        file_content += "Repository: " + repository_name + "\n"
-        file_paths = github_client.get_file_paths_in_repo(github_username, repository_name, file_names_containing_repo_tech_stack)
-
-        for file_path in file_paths:
-            file_content += file_path + ":\n" + get_file_content(github_username, repository_name, file_path) + "\n"
-
-    criteria = get_criteria_from_gpt(file_content, programming_languages_map)
+    criteria = get_criteria_from_gpt(file_content, programming_languages_map_all)
     print("generated criteria:", criteria)
 
     criterion_id = str(uuid.uuid4())
@@ -67,6 +64,33 @@ def handler(event, context):
         "created_at": created_at
     }
     return generate_success_response(body)
+
+
+def accumulate_language_data(languages_map_all, repo_languages_map):
+    for lang_name in repo_languages_map:
+        if lang_name in languages_map_all:
+            languages_map_all[lang_name] += repo_languages_map[lang_name]
+    else:
+        languages_map_all[lang_name] = repo_languages_map[lang_name]
+
+
+def get_repo_file_content(github_client: GithubClient, repo_name, languages_map):
+    """
+    Retrieves the content of important files from a specified repository.
+
+    :param github_username: GitHub username.
+    :param repo_name: Name of the repository.
+    :param languages_map: A map of programming languages used in the repository, key: name, value: byte.
+    :return: A string containing the content of important files from the repository, formatted with repository and file path information.
+    """
+    important_file_names = GithubClient.get_important_file_names(languages_map)
+    file_paths = github_client.get_important_file_paths(repo_name, important_file_names)
+
+    content = "repository: " + repo_name + "\n"
+    for file_path in file_paths:
+        content += "path: " + file_path + "\n" + github_client.get_file_contents(repo_name, file_path) + "\n"
+
+    return content
 
 
 def get_readme_and_package_files(languages_map):
