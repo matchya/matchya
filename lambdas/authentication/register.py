@@ -49,15 +49,27 @@ def create_company_record(company_id, body):
     :param company_id: Unique identifier for the company.
     :param body: The request body containing company data.
     """
-
-    sql = """
-            INSERT INTO Company (id, name, email, github_username, password) VALUES (%s, %s, %s, %s, %s);
-          """
+    sql = "INSERT INTO Company (id, name, email, github_username, password) VALUES (%s, %s, %s, %s, %s);"
     try:
-        db_cursor.execute(sql, (company_id, body['name'], body['email'], body['github_username'], hash_password(body['password'])))
+        db_cursor.execute(sql % (company_id, body['name'], body['email'], body['github_username'], hash_password(body['password'])))
         db_conn.commit()
     except Exception as e:
         raise RuntimeError(f"Error saving to company table: {e}")
+    
+    
+def create_position_record(position_id, company_id, position_name='Software Engineer'):
+    """
+    Creates a new position record in the database.
+
+    :param position_id: Unique identifier for the position.
+    :param company_id: Unique identifier for the company.
+    """
+    sql = "INSERT INTO Position (id, company_id, name) VALUES (%s, %s, %s);"
+    try:
+        db_cursor.execute(sql % (position_id, company_id, position_name))
+        db_conn.commit()
+    except Exception as e:
+        raise RuntimeError(f"Error saving to position table: {e}")
 
 
 def create_access_token_record(company_id, access_token):
@@ -94,9 +106,14 @@ def handler(event, context):
         company_id = str(uuid.uuid4())
         create_company_record(company_id, body)
 
+        position_id = str(uuid.uuid4())
+        create_position_record(position_id, company_id)
+
         access_token = generate_access_token(company_id)
         create_access_token_record(company_id, access_token)
 
         return generate_success_response(access_token)
     except (ValueError, RuntimeError) as e:
         return generate_response(status_code=400, body=str(e))
+    finally:
+        db_conn.close()

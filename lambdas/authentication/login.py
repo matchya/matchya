@@ -5,7 +5,7 @@ import boto3
 from boto3.dynamodb.types import Binary
 
 from config import Config
-from utils.response import generate_success_response
+from utils.response import generate_response, generate_success_response
 from utils.password import check_password
 from utils.token import generate_access_token
 
@@ -94,5 +94,7 @@ def handler(event, context):
         access_token = generate_access_token(company['id'])
 
         return generate_success_response(access_token)
-    except ValueError as e:
-        return {'statusCode': 400, 'body': str(e)}
+    except (ValueError, RuntimeError) as e:
+        return generate_response(status_code=400, body=str(e))
+    finally:
+        db_conn.close()
