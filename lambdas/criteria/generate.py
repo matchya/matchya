@@ -47,7 +47,7 @@ def handler(event, context):
     programming_languages_map_all = {}
     for repository_name in repo_names:
         programming_languages_map = github_client.get_programming_languages_used(repository_name)
-        file_content += get_repo_file_content(github_client, repository_name, programming_languages_map)
+        file_content += github_client.get_repo_file_content(github_client, repository_name, programming_languages_map)
         accumulate_language_data(programming_languages_map_all, programming_languages_map)
 
     criteria = get_criteria_from_gpt(file_content, programming_languages_map_all)
@@ -72,74 +72,6 @@ def accumulate_language_data(languages_map_all, repo_languages_map):
             languages_map_all[lang_name] += repo_languages_map[lang_name]
     else:
         languages_map_all[lang_name] = repo_languages_map[lang_name]
-
-
-def get_repo_file_content(github_client: GithubClient, repo_name, languages_map):
-    """
-    Retrieves the content of important files from a specified repository.
-
-    :param github_username: GitHub username.
-    :param repo_name: Name of the repository.
-    :param languages_map: A map of programming languages used in the repository, key: name, value: byte.
-    :return: A string containing the content of important files from the repository, formatted with repository and file path information.
-    """
-    important_file_names = GithubClient.get_important_file_names(languages_map)
-    file_paths = github_client.get_important_file_paths(repo_name, important_file_names)
-
-    content = "repository: " + repo_name + "\n"
-    for file_path in file_paths:
-        content += "path: " + file_path + "\n" + github_client.get_file_contents(repo_name, file_path) + "\n"
-
-    return content
-
-
-def get_readme_and_package_files(languages_map):
-    """
-    Determines important file names based on the programming languages used in a repository.
-
-    :param languages: A list of programming languages used in the repository.
-    :return: A list of important file names like README.md, requirements.txt, etc.
-    """
-    important_file_names = ["README.md"]
-
-    package_file_names = {
-        "Python": "requirements.txt",
-        "JavaScript": "package.json",
-        "Ruby": "Gemfile",
-        "Java": "pom.xml",
-        "Go": "go.mod",
-        "php": "composer.json",
-        "C#": "packages.config",
-        "C++": "CMakeLists.txt",
-        "C": "Makefile",
-        "TypeScript": "package.json",
-        "Shell": "package.json",
-        "Kotlin": "build.gradle",
-        "Rust": "Cargo.toml",
-        "Swift": "Package.swift",
-    }
-
-    for language in languages_map:
-        if language in package_file_names:
-            important_file_names.append(package_file_names[language])
-
-    return important_file_names
-
-
-def get_file_content(github_username, repository_name, file_path):
-    """
-    Retrieves the content of a specific file from a GitHub repository.
-
-    :param github_username: GitHub username of the repository owner.
-    :param repository_name: Name of the GitHub repository.
-    :param file_path: Path of the file within the repository.
-    :return: The content of the specified file.
-    """
-    url = Config.GITHUB_API_REPO_URL + github_username + "/" + repository_name + "/contents/" + file_path
-    res = requests.get(url, headers=Config.GITHUB_REST_API_HEADERS)
-    data = json.loads(res.content)
-    content_encoded = data['content']
-    return str(base64.b64decode(content_encoded))
 
 
 def get_criteria_from_gpt(file_content, languages_map):

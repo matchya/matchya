@@ -80,6 +80,26 @@ class GithubClient:
         content_encoded = data['content']
         content = str(base64.b64decode(content_encoded))
         return content
+    
+    def get_repo_file_content(self, repo_name, languages_map=None):
+        """
+        Retrieves the content of important files from a specified repository.
+
+        :param github_username: GitHub username.
+        :param repo_name: Name of the repository.
+        :param languages_map: A map of programming languages used in the repository, key: name, value: byte.
+        :return: A string containing the content of important files from the repository, formatted with repository and file path information.
+        """
+        if languages_map is None:
+            languages_map = self.get_programming_languages_used(repo_name)
+        important_file_names = GithubClient.get_important_file_names(languages_map)
+        file_paths = self.get_important_file_paths(repo_name, important_file_names)
+
+        content = "repository: " + repo_name + "\n"
+        for file_path in file_paths:
+            content += "path: " + file_path + "\n" + self.get_file_contents(repo_name, file_path) + "\n"
+
+        return content
 
     @staticmethod
     def get_important_file_names(languages_map):
