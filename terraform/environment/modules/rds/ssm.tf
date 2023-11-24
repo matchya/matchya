@@ -1,7 +1,7 @@
 resource "aws_ssm_parameter" "db_instance_endpoint" {
   name  = "/terraform/${terraform.workspace}/rds/endpoint"
   type  = "String"
-  value = aws_db_instance.this.endpoint
+  value = element(split(":", aws_db_instance.this.endpoint), 0)
 }
 
 resource "aws_ssm_parameter" "db_instance_name" {
