@@ -11,7 +11,7 @@ provider:
   deploymentBucket:
     name: ${self:provider.stage}-sls-criteria
   iam:
-    role: ${ssm:/terraform/shared/iam/role_lambda_arn}
+    role: ${ssm:/terraform/shared/iam/lambda_role_arn}
   apiGateway:
     restApiId: ${ssm:/terraform/${self:provider.stage}/api_gateway/id}
     restApiRootResourceId: ${ssm:/terraform/${self:provider.stage}/api_gateway/root_resource_id}
