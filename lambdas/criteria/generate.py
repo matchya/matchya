@@ -38,7 +38,7 @@ def handler(event, context):
         save_criteria_to_dynamodb(criteria, position_id)
         body = { "criteria": criteria }
         return generate_success_response(body)
-    except ValueError as e:
+    except (ValueError, RuntimeError) as e:
         return generate_response(400, {"message": str(e)})
     except Exception as e:
         print(e)
@@ -90,10 +90,13 @@ def generate_criteria(github_client: GithubClient, repository_names):
     """
     file_content = ""
     programming_languages_map_all = {}
-    for repository_name in repository_names:
-        programming_languages_map = github_client.get_programming_languages_used(repository_name)
-        file_content += github_client.get_repo_file_content(repository_name, programming_languages_map)
-        accumulate_language_data(programming_languages_map_all, programming_languages_map)
+    try:
+        for repository_name in repository_names:
+            programming_languages_map = github_client.get_programming_languages_used(repository_name)
+            file_content += github_client.get_repo_file_content(repository_name, programming_languages_map)
+            accumulate_language_data(programming_languages_map_all, programming_languages_map)
+    except Exception as e:
+        raise RuntimeError(f"Error Reading files: {e}")
 
     return get_criteria_from_gpt(file_content, programming_languages_map_all)
 
@@ -175,17 +178,19 @@ def get_criteria_from_gpt(file_content, languages_map):
     for language_name_key in languages_map:
         system_message += language_name_key + "(" + str(languages_map[language_name_key]) + " bytes), "
 
-
-    completion = chat_client.chat.completions.create(
-        model="gpt-3.5-turbo-1106",
-        response_format={"type": "json_object"},
-        messages=[
-            {"role": "system", "content": system_message},
-            {"role": "user", "content": "Perform your task according to the system message. These are the company's repositories and the file contents." + file_content}
-        ]
-    )
-    content = json.loads(completion.choices[0].message.content)
-    return content['criteria']
+    try:
+        completion = chat_client.chat.completions.create(
+            model="gpt-3.5-turbo-1106",
+            response_format={"type": "json_object"},
+            messages=[
+                {"role": "system", "content": system_message},
+                {"role": "user", "content": "Perform your task according to the system message. These are the company's repositories and the file contents." + file_content}
+            ]
+        )
+        content = json.loads(completion.choices[0].message.content)
+        return content['criteria']
+    except Exception as e:
+        raise RuntimeError(f"Error generating criteria with OpenAI API: {e}")
 
 
 def save_criteria_to_dynamodb(criteria, position_id):
