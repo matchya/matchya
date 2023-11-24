@@ -19,7 +19,7 @@ class GithubClient:
         url = Config.GITHUB_API_REPO_URL + self.github_username + "/" + repository_name + "/languages"
         res = requests.get(url, headers=Config.GITHUB_REST_API_HEADERS)
         data = json.loads(res.content)
-        return [{"name": language, "bytes": data[language]} for language in data]
+        return data
 
     def get_important_file_paths(self, repo_name, important_file_names):
         """
@@ -82,7 +82,7 @@ class GithubClient:
         return content
 
     @staticmethod
-    def get_important_file_names(languages):
+    def get_important_file_names(languages_map):
         """
         Determines important file names based on programming languages used in a repository.
 
@@ -108,9 +108,9 @@ class GithubClient:
             "Swift": "Package.swift",
         }
 
-        for language in languages:
-            if language['name'] in package_file_names:
-                important_file_names.append(package_file_names[language['name']])
+        for language_name in languages_map:
+            if language_name in package_file_names:
+                important_file_names.append(package_file_names[language_name])
 
         return important_file_names
 

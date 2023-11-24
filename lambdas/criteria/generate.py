@@ -44,8 +44,8 @@ def handler(event, context):
     github_client = GithubClient(github_username)
     file_content = ""
     for repository_name in repo_names:
-        programming_languages = github_client.get_programming_languages_used(repository_name)
-        file_names_containing_repo_tech_stack = get_readme_and_package_files(programming_languages)
+        programming_languages_map = github_client.get_programming_languages_used(repository_name)
+        file_names_containing_repo_tech_stack = get_readme_and_package_files(programming_languages_map)
 
         file_content += "Repository: " + repository_name + "\n"
         file_paths = github_client.get_file_paths_in_repo(github_username, repository_name, file_names_containing_repo_tech_stack)
@@ -53,7 +53,7 @@ def handler(event, context):
         for file_path in file_paths:
             file_content += file_path + ":\n" + get_file_content(github_username, repository_name, file_path) + "\n"
 
-    criteria = get_criteria_from_gpt(file_content, programming_languages)
+    criteria = get_criteria_from_gpt(file_content, programming_languages_map)
     print("generated criteria:", criteria)
 
     criterion_id = str(uuid.uuid4())
@@ -69,7 +69,7 @@ def handler(event, context):
     return generate_success_response(body)
 
 
-def get_readme_and_package_files(languages):
+def get_readme_and_package_files(languages_map):
     """
     Determines important file names based on the programming languages used in a repository.
 
@@ -95,9 +95,9 @@ def get_readme_and_package_files(languages):
         "Swift": "Package.swift",
     }
 
-    for language in languages:
-        if language['name'] in package_file_names:
-            important_file_names.append(package_file_names[language['name']])
+    for language in languages_map:
+        if language in package_file_names:
+            important_file_names.append(package_file_names[language])
 
     return important_file_names
 
@@ -118,7 +118,7 @@ def get_file_content(github_username, repository_name, file_path):
     return str(base64.b64decode(content_encoded))
 
 
-def get_criteria_from_gpt(file_content, languages):
+def get_criteria_from_gpt(file_content, languages_map):
     """
     Generates a list of criteria keywords using OpenAI's ChatGPT based on given prompt and programming languages.
 
@@ -179,8 +179,8 @@ def get_criteria_from_gpt(file_content, languages):
         Ensure that the response strictly adheres to these guidelines to formulate a clear, relevant, and effective set of criteria for evaluating potential candidates.
         Below is the data on programming languages used in our repositories, which should guide the inclusion of relevant languages in your criteria.
     """
-    for language in languages:
-        system_message += language['name'] + "(" + str(language['bytes']) + " bytes), "
+    for language_name_key in languages_map:
+        system_message += language_name_key + "(" + str(languages_map[language_name_key]) + " bytes), "
 
 
     completion = chat_client.chat.completions.create(
