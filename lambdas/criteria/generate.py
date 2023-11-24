@@ -56,6 +56,8 @@ def parse_request_body(event):
         body = event.get('body', '')
         if not body:
             raise ValueError("Empty body")
+        if len(body['repository_names']) == 0:
+            raise ValueError("Empty repository_names")
         return json.loads(body)
     except json.JSONDecodeError as e:
         raise ValueError(f"Invalid JSON in request body: {e}")
