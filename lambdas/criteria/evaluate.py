@@ -1,11 +1,19 @@
 import json
 import uuid
 
+import boto3
+
 from openai import OpenAI
 
+from config import Config
 from client.github import GithubClient
+
 from utils.response import generate_response, generate_success_response
 from utils.request import parse_request_body, validate_request_body
+
+dynamodb = boto3.resource('dynamodb')
+dynamodb_client = boto3.client('dynamodb')
+criterion_table = dynamodb.Table(f'{Config.ENVIRONMENT}-Criterion')
 
 chat_client = OpenAI()
 
@@ -43,12 +51,6 @@ def save_candidate_info_to_db(body):
 
     :param body: The request body containing candidate information.
     """
-    id = str(uuid.uuid4())
-    first_name = body.get('candidate_first_name', '')
-    last_name = body.get('candidate_last_name', '')
-    github_username = body.get('candidate_github_username')
-    email = body.get('candidate_email', '')
-    # TODO: Store Candidate Information in DB (Candidate)
     return
 
 def get_criteria_from_dynamodb(position_id):
@@ -58,15 +60,18 @@ def get_criteria_from_dynamodb(position_id):
     :param position_id: The ID of the job position.
     :return: A list of criteria with keywords and message
     """
-    # TODO: Get Criteria keywords and message by Position ID from Database
-    criteria = [
-        {"keywords": ["Python", "API"], "message": "Ability to build API using Python"},
-        {"keywords": ["React", "JavaScript"], "message": "Ability to build web application using React and JavaScript"},
-        {"keywords": ["Docker", "Kubernetes"], "message": "Ability to build and deploy application using Docker and Kubernetes"},
-    ]
-
-    return criteria
-
+    try:
+        response = criterion_table.query(
+            IndexName='position-id-index',
+            KeyConditionExpression=boto3.dynamodb.conditions.Key('position_id').eq(position_id),
+            ProjectionExpression='message, keywords'
+        )
+        criteria = [{'message': item['message'], 'keywords': item.get('keywords', [])} for item in response.get('Items', [])]
+        if not criteria:
+            raise RuntimeError(f"No criteria found for position_id {position_id}")
+        return criteria
+    except Exception as e:
+        raise RuntimeError(f"Failed to retrieve criteria: {e}")
 
 def evaluate_candidate(github_client: GithubClient, repository_names, criteria):
     """
