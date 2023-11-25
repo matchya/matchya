@@ -158,6 +158,30 @@ resource "aws_security_group" "ec2_public" {
   }
 }
 
+resource "aws_security_group" "vpc_endpoint" {
+  count      = var.create_new ? 1 : 0
+  description = "Security group for VPC Endpoint"
+  vpc_id      = aws_vpc.main[0].id
+
+  ingress {
+    from_port       = 0
+    to_port         = 0
+    protocol        = -1
+    security_groups = [aws_security_group.lambda[0].id]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    "Name" = "vpc-endpoint"
+  }
+}
+
 data "aws_security_group" "rds" {
   count      = var.create_new ? 0 : 1
   name = "rds-security-group"
