@@ -14,7 +14,7 @@ from utils.request import parse_request_body, validate_request_body
 # DynamoDB
 dynamodb = boto3.resource('dynamodb')
 dynamodb_client = boto3.client('dynamodb')
-criteria_table = dynamodb.Table(f'{Config.ENVIRONMENT}-Criterion')
+CRITERIA_TABLE_NAME = f'{Config.ENVIRONMENT}-Criterion'
 
 chat_client = OpenAI()
 
@@ -159,17 +159,29 @@ def save_criteria_to_dynamodb(criteria, position_id, repository_names):
     :param position_id: Unique identifier for the position.
     :param repository_names: A list of repository names.
     """
-    try:
-        for criterion in criteria:
-            criteria_info = {
-                'id': str(uuid.uuid4()),
-                'position_id': position_id,
-                'keywords': criterion['keywords'],
-                'message': criterion['message'],
-                'repository_names': repository_names,
-                'created_at': datetime.datetime.now().isoformat()
+    transact_items = []
+    for criterion in criteria:
+        criteria_info = {
+            'id': {'S': str(uuid.uuid4())},
+            'position_id': {'S': position_id},
+            'keywords': {'L': [{'S': keyword} for keyword in criterion['keywords']]},
+            'message': {'S': criterion['message']},
+            'repository_names': {'L': [{'S': name} for name in repository_names]},
+            'created_at': {'S': datetime.datetime.now().isoformat()}
+        }
+        transact_items.append({
+            'Put': {
+                'TableName': CRITERIA_TABLE_NAME,
+                'Item': criteria_info
             }
-            criteria_table.put_item(Item=criteria_info)
+        })
+
+    try:
+        response = dynamodb_client.transact_write_items(
+            TransactItems=transact_items
+        )
+        if response['ResponseMetadata']['HTTPStatusCode'] != 200:
+            raise RuntimeError(f"Error saving criteria to DynamoDB: {response}")
     except Exception as e:
         raise RuntimeError(f"Error saving criteria to DynamoDB: {e}")
     return
