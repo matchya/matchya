@@ -212,7 +212,7 @@ def handler(event, context):
         github_username = get_github_username_from_position_id(position_id)
         github_client = GithubClient(github_username)
         criteria = generate_criteria_by_repositories(github_client, repository_names)
-        logger.info('Criteria generated successfully', criteria)
+        logger.info(f'Criteria generated successfully for position: {position_id}')
 
         save_criteria_to_dynamodb(criteria, position_id, repository_names)
         body = { "criteria": [criterion["message"] for criterion in criteria]}
