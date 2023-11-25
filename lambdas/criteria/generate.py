@@ -9,6 +9,7 @@ from config import Config
 from client.github import GithubClient
 
 from utils.response import generate_response, generate_success_response
+from utils.request import parse_request_body, validate_request_body
 
 # DynamoDB
 dynamodb = boto3.resource('dynamodb')
@@ -27,7 +28,7 @@ def handler(event, context):
     """
     try:
         body = parse_request_body(event)
-        validate_request_body(body)
+        validate_request_body(body, ['position_id', 'repository_names'])
         position_id = body.get('position_id')
         repository_names = body.get('repository_names')
 
@@ -44,33 +45,6 @@ def handler(event, context):
         print(e)
         return generate_response(500, {"message": f"Failed to generate criteria: {e}"})
 
-
-def parse_request_body(event):
-    """
-    Parses the request body from an event and returns it as a JSON object.
-
-    :param event: The event object containing the request data.
-    :return: Parsed JSON object from the request body.
-    """
-    try:
-        body = event.get('body', '')
-        if not body:
-            raise ValueError("Empty body")
-        return json.loads(body)
-    except json.JSONDecodeError as e:
-        raise ValueError(f"Invalid JSON in request body: {e}")
-
-def validate_request_body(body):
-    """
-    Validates the necessary fields in the company data.
-
-    :param body: The request body containing company data.
-    """
-    required_fields = ['position_id', 'repository_names']
-    if not all(body.get(field) for field in required_fields):
-        raise ValueError('Missing required fields')
-    if len(body['repository_names']) < 1:
-        raise ValueError('At least one repository name is required')
 
 def get_github_username_from_position_id(position_id):
     """

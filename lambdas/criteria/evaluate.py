@@ -5,6 +5,7 @@ from openai import OpenAI
 
 from client.github import GithubClient
 from utils.response import generate_response, generate_success_response
+from utils.request import parse_request_body, validate_request_body
 
 chat_client = OpenAI()
 
@@ -18,7 +19,7 @@ def handler(event, context):
     """
     try:
         body = parse_request_body(event)
-        validate_request_body(body)
+        validate_request_body(body, ['position_id', 'candidate_github_username'])
         save_candidate_info_to_db(body)
 
         position_id = body.get('position_id')
@@ -34,32 +35,6 @@ def handler(event, context):
     except Exception as e:
         print(e)
         return generate_response(500, json.dumps({"message": "Evaluation failed."}))
-
-
-def parse_request_body(event):
-    """
-    Parses the request body from an event and returns it as a JSON object.
-
-    :param event: The event object containing the request data.
-    :return: Parsed JSON object from the request body.
-    """
-    try:
-        body = event.get('body', '')
-        if not body:
-            raise ValueError("Empty body")
-        return json.loads(body)
-    except json.JSONDecodeError as e:
-        raise ValueError(f"Invalid JSON in request body: {e}")
-    
-def validate_request_body(body):
-    """
-    Validates the necessary fields in the company data.
-
-    :param body: The request body containing company data.
-    """
-    required_fields = ['position_id', 'candidate_github_username']
-    if not all(body.get(field) for field in required_fields):
-        raise ValueError('Missing required fields')
 
 
 def save_candidate_info_to_db(body):
