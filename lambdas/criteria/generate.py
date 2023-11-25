@@ -9,7 +9,7 @@ from openai import OpenAI
 from config import Config
 from client.github import GithubClient
 
-from utils.response import generate_response, generate_success_response
+from utils.response import generate_success_response, generate_error_response
 from utils.request import parse_request_body, validate_request_body
 
 # DynamoDB
@@ -44,10 +44,9 @@ def handler(event, context):
         body = { "criteria": [criterion["message"] for criterion in criteria]}
         return generate_success_response(body)
     except (ValueError, RuntimeError) as e:
-        return generate_response(400, {"message": str(e)})
+        return generate_error_response(400, str(e))
     except Exception as e:
-        print(e)
-        return generate_response(500, {"message": f"Failed to generate criteria: {e}"})
+        return generate_error_response(500, str(e))
     finally:
         db_cursor.close()
         db_conn.close()
