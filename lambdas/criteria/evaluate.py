@@ -1,4 +1,5 @@
 import json
+import uuid
 
 from openai import OpenAI
 
@@ -15,24 +16,66 @@ def handler(event, context):
     :param context: Lambda runtime information object.
     :return: A dictionary with status code and the candidate's evaluation result in JSON format.
     """
-    # Mock data for testing
-    github_username = "takeshi8989"  # mock
-    position_id = "1"               # mock
-    github_client = GithubClient(github_username)
-    # TODO: Store Candidate Information in DB (Candidate)
-
-    candidate_result = {}
     try:
+        body = parse_request_body(event)
+        validate_request_body(body)
+        save_candidate_info_to_db(body)
+
+        position_id = body.get('position_id')
+        github_username = body.get('candidate_github_username')
+        github_client = GithubClient(github_username)
+
         criteria = get_criteria_from_dynamodb(position_id)
         pinned_repositories = github_client.get_pinned_repositories_name()
         candidate_result = evaluate_candidate(github_client, pinned_repositories, criteria)
+
+        save_candidate_result_to_db(candidate_result)
+        return generate_success_response(candidate_result)
     except Exception as e:
         print(e)
         return generate_response(500, json.dumps({"message": "Evaluation failed."}))
 
-    # TODO: Store data in DB (CandidateResult, AssessmentCriteria)
-    return generate_success_response(candidate_result)
 
+def parse_request_body(event):
+    """
+    Parses the request body from an event and returns it as a JSON object.
+
+    :param event: The event object containing the request data.
+    :return: Parsed JSON object from the request body.
+    """
+    try:
+        body = event.get('body', '')
+        if not body:
+            raise ValueError("Empty body")
+        return json.loads(body)
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Invalid JSON in request body: {e}")
+    
+def validate_request_body(body):
+    """
+    Validates the necessary fields in the company data.
+
+    :param body: The request body containing company data.
+    """
+    required_fields = ['position_id', 'candidate_github_username']
+    if not all(body.get(field) for field in required_fields):
+        raise ValueError('Missing required fields')
+
+
+def save_candidate_info_to_db(body):
+    """
+    Saves candidate information to database.
+
+    :param position_id: The ID of the job position.
+    :param github_username: The GitHub username of the candidate.
+    """
+    id = str(uuid.uuid4())
+    first_name = body.get('candidate_first_name', '')
+    last_name = body.get('candidate_last_name', '')
+    github_username = body.get('candidate_github_username')
+    email = body.get('candidate_email', '')
+    # TODO: Store Candidate Information in DB (Candidate)
+    return
 
 def get_criteria_from_dynamodb(position_id):
     """
@@ -115,3 +158,13 @@ def get_candidate_evaluation_from_chatgpt(criteria, file_content):
     )
     candidate_score = json.loads(completion.choices[0].message.content)
     return candidate_score
+
+
+def save_candidate_result_to_db(candidate_result):
+    """
+    Saves candidate evaluation result to database.
+
+    :param candidate_result: The candidate's evaluation result.
+    """
+    # TODO: Store data in DB (CandidateResult, AssessmentCriteria)
+    return
