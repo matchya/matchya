@@ -33,7 +33,7 @@ def get_criteria_by_position_id(position_id):
     """
     try:
         response = criterion_table.query(
-            IndexName='position-id-index',
+            IndexName='PositionIdIndex',
             KeyConditionExpression=boto3.dynamodb.conditions.Key('position_id').eq(position_id),
             ProjectionExpression='message'
         )
