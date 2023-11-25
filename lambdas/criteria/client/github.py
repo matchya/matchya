@@ -19,7 +19,7 @@ class GithubClient:
         url = Config.GITHUB_API_REPO_URL + self.github_username + "/" + repository_name + "/languages"
         res = requests.get(url, headers=Config.GITHUB_REST_API_HEADERS)
         data = json.loads(res.content)
-        return [{"name": language, "bytes": data[language]} for language in data]
+        return data
 
     def get_important_file_paths(self, repo_name, important_file_names):
         """
@@ -80,9 +80,29 @@ class GithubClient:
         content_encoded = data['content']
         content = str(base64.b64decode(content_encoded))
         return content
+    
+    def get_repo_file_content(self, repo_name, languages_map=None):
+        """
+        Retrieves the content of important files from a specified repository.
+
+        :param github_username: GitHub username.
+        :param repo_name: Name of the repository.
+        :param languages_map: A map of programming languages used in the repository, key: name, value: byte.
+        :return: A string containing the content of important files from the repository, formatted with repository and file path information.
+        """
+        if languages_map is None:
+            languages_map = self.get_programming_languages_used(repo_name)
+        important_file_names = GithubClient.get_important_file_names(languages_map)
+        file_paths = self.get_important_file_paths(repo_name, important_file_names)
+
+        content = "repository: " + repo_name + "\n"
+        for file_path in file_paths:
+            content += "path: " + file_path + "\n" + self.get_file_contents(repo_name, file_path) + "\n"
+
+        return content
 
     @staticmethod
-    def get_important_file_names(languages):
+    def get_important_file_names(languages_map):
         """
         Determines important file names based on programming languages used in a repository.
 
@@ -108,9 +128,9 @@ class GithubClient:
             "Swift": "Package.swift",
         }
 
-        for language in languages:
-            if language['name'] in package_file_names:
-                important_file_names.append(package_file_names[language['name']])
+        for language_name in languages_map:
+            if language_name in package_file_names:
+                important_file_names.append(package_file_names[language_name])
 
         return important_file_names
 

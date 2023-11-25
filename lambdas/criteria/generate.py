@@ -1,9 +1,7 @@
 import json
 import datetime
-import base64
 import uuid
 
-import requests
 import boto3
 from openai import OpenAI
 
@@ -28,97 +26,97 @@ def handler(event, context):
     :return: A dictionary with HTTP status code and response body.
     """
     try:
+        body = parse_request_body(event)
+        validate_request_body(body)
+        position_id = body.get('position_id')
+        repository_names = body.get('repository_names')
+
+        github_username = get_github_username_from_position_id(position_id)
+        github_client = GithubClient(github_username)
+        criteria = generate_criteria(github_client, repository_names)
+
+        save_criteria_to_dynamodb(criteria, position_id)
+        body = { "criteria": criteria }
+        return generate_success_response(body)
+    except (ValueError, RuntimeError) as e:
+        return generate_response(400, {"message": str(e)})
+    except Exception as e:
+        print(e)
+        return generate_response(500, {"message": "Failed to generate criteria."})
+
+
+def parse_request_body(event):
+    """
+    Parses the request body from an event and returns it as a JSON object.
+
+    :param event: The event object containing the request data.
+    :return: Parsed JSON object from the request body.
+    """
+    try:
         body = event.get('body', '')
         if not body:
-            raise json.JSONDecodeError
-        body = json.loads(event.get('body', ''))
-    except json.JSONDecodeError:
-        return generate_response(400, json.dumps({"message": "Invalid JSON in request body"}))
+            raise ValueError("Empty body")
+        if len(body['repository_names']) == 0:
+            raise ValueError("Empty repository_names")
+        return json.loads(body)
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Invalid JSON in request body: {e}")
 
-    # Validate that required fields are present
-    # position_id = body.get('position_id', '')
-
-    # TODO: Get github_username and repo names from database by position_id
-    github_username = "kokiebisu"
-    repo_names = ["rental-storage"]
-    repository_name = repo_names[0]
-    github_client = GithubClient(github_username)
-
-    programming_languages = github_client.get_programming_languages_used(repository_name)
-    file_names_containing_repo_tech_stack = get_readme_and_package_files(programming_languages)
-
-    prompt = "Please review the following files.\n"
-    file_paths = github_client.get_file_paths_in_repo(github_username, repository_name, file_names_containing_repo_tech_stack)
-
-    for file_path in file_paths:
-        prompt = prompt + file_path + ":\n" + get_file_content(github_username, repository_name, file_path) + "\n"
-
-    criteria = get_criteria_from_gpt(prompt, programming_languages)
-    print("generated criteria:", criteria)
-
-    criterion_id = str(uuid.uuid4())
-    created_at = str(datetime.datetime.now())
-    # TODO: Save criteria to database logic here...
-
-    criteria_messages = [criterion['message'] for criterion in criteria]
-
-    body = {
-        "criteria": criteria_messages,
-        "created_at": created_at
-    }
-    return generate_success_response(body)
-
-
-def get_readme_and_package_files(languages):
+def validate_request_body(body):
     """
-    Determines important file names based on the programming languages used in a repository.
+    Validates the necessary fields in the company data.
 
-    :param languages: A list of programming languages used in the repository.
-    :return: A list of important file names like README.md, requirements.txt, etc.
+    :param body: The request body containing company data.
     """
-    important_file_names = ["README.md"]
+    required_fields = ['position_id', 'repository_names']
+    if not all(body.get(field) for field in required_fields):
+        raise ValueError('Missing required fields')
 
-    package_file_names = {
-        "Python": "requirements.txt",
-        "JavaScript": "package.json",
-        "Ruby": "Gemfile",
-        "Java": "pom.xml",
-        "Go": "go.mod",
-        "php": "composer.json",
-        "C#": "packages.config",
-        "C++": "CMakeLists.txt",
-        "C": "Makefile",
-        "TypeScript": "package.json",
-        "Shell": "package.json",
-        "Kotlin": "build.gradle",
-        "Rust": "Cargo.toml",
-        "Swift": "Package.swift",
-    }
-
-    for language in languages:
-        if language['name'] in package_file_names:
-            important_file_names.append(package_file_names[language['name']])
-
-    return important_file_names
-
-
-def get_file_content(github_username, repository_name, file_path):
+def get_github_username_from_position_id(position_id):
     """
-    Retrieves the content of a specific file from a GitHub repository.
-
-    :param github_username: GitHub username of the repository owner.
-    :param repository_name: Name of the GitHub repository.
-    :param file_path: Path of the file within the repository.
-    :return: The content of the specified file.
+    Retrieves the GitHub username of the company from the database.
+    
+    :param position_id: Unique identifier for the position.
+    :return: The GitHub username of the company.
     """
-    url = Config.GITHUB_API_REPO_URL + github_username + "/" + repository_name + "/contents/" + file_path
-    res = requests.get(url, headers=Config.GITHUB_REST_API_HEADERS)
-    data = json.loads(res.content)
-    content_encoded = data['content']
-    return str(base64.b64decode(content_encoded))
+    # TODO: Get github_username from postgres by position_id
+    return 'kokiebisu'
+
+def generate_criteria(github_client: GithubClient, repository_names):
+    """
+    Generates criteria from GitHub repositories.
+    
+    :param github_client: A GitHub client object.
+    :param repository_names: A list of repository names.
+    :return: A list of criteria.
+    """
+    file_content = ""
+    programming_languages_map_all = {}
+    try:
+        for repository_name in repository_names:
+            programming_languages_map = github_client.get_programming_languages_used(repository_name)
+            file_content += github_client.get_repo_file_content(repository_name, programming_languages_map)
+            accumulate_language_data(programming_languages_map_all, programming_languages_map)
+    except Exception as e:
+        raise RuntimeError(f"Error Reading files: {e}")
+
+    return get_criteria_from_gpt(file_content, programming_languages_map_all)
+
+def accumulate_language_data(languages_map_all, repo_languages_map):
+    """
+    Accumulates the programming language data from multiple repositories.
+    
+    :param languages_map_all: A map of programming languages used in all repositories, key: name, value: byte.
+    :param repo_languages_map: A map of programming languages used in a repository, key: name, value: byte.
+    """
+    for lang_name in repo_languages_map:
+        if lang_name in languages_map_all:
+            languages_map_all[lang_name] += repo_languages_map[lang_name]
+    else:
+        languages_map_all[lang_name] = repo_languages_map[lang_name]
 
 
-def get_criteria_from_gpt(prompt, languages):
+def get_criteria_from_gpt(file_content, languages_map):
     """
     Generates a list of criteria keywords using OpenAI's ChatGPT based on given prompt and programming languages.
 
@@ -179,17 +177,33 @@ def get_criteria_from_gpt(prompt, languages):
         Ensure that the response strictly adheres to these guidelines to formulate a clear, relevant, and effective set of criteria for evaluating potential candidates.
         Below is the data on programming languages used in our repositories, which should guide the inclusion of relevant languages in your criteria.
     """
-    for language in languages:
-        system_message += language['name'] + "(" + str(language['bytes']) + " bytes), "
+    for language_name_key in languages_map:
+        system_message += language_name_key + "(" + str(languages_map[language_name_key]) + " bytes), "
+
+    try:
+        completion = chat_client.chat.completions.create(
+            model="gpt-3.5-turbo-1106",
+            response_format={"type": "json_object"},
+            messages=[
+                {"role": "system", "content": system_message},
+                {"role": "user", "content": "Perform your task according to the system message. These are the company's repositories and the file contents." + file_content}
+            ]
+        )
+        content = json.loads(completion.choices[0].message.content)
+        return content['criteria']
+    except Exception as e:
+        raise RuntimeError(f"Error generating criteria with OpenAI API: {e}")
 
 
-    completion = chat_client.chat.completions.create(
-        model="gpt-3.5-turbo-1106",
-        response_format={"type": "json_object"},
-        messages=[
-            {"role": "system", "content": system_message},
-            {"role": "user", "content": "Perform your task according to the system message. These are the company's repositories and the file contents." + prompt}
-        ]
-    )
-    content = json.loads(completion.choices[0].message.content)
-    return content['criteria']  # The array of keywords, string[]
+def save_criteria_to_dynamodb(criteria, position_id):
+    """
+    Saves the generated criteria to the database.
+    
+    :param criteria: A list of criteria keywords.
+    :param position_id: Unique identifier for the position.
+    """
+    # TODO: Save criteria to database logic here...
+    for criterion in criteria:
+        id = str(uuid.uuid4())
+        created_at = datetime.datetime.now().isoformat()
+    return

@@ -148,8 +148,8 @@ def get_repo_file_content(github_client: GithubClient, repo_name):
     :return: A string containing the content of important files from the repository, formatted with repository and file path information.
     """
     content = ""
-    languages = github_client.get_programming_languages_used(repo_name)
-    important_file_names = GithubClient.get_important_file_names(languages)
+    languages_map = github_client.get_programming_languages_used(repo_name)
+    important_file_names = GithubClient.get_important_file_names(languages_map)
     file_paths = github_client.get_important_file_paths(repo_name, important_file_names)
     for file_path in file_paths:
         content += "repository (" + repo_name + "), file: (" + file_path + "):\n" + github_client.get_file_contents(repo_name, file_path) + "\n"

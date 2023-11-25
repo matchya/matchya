@@ -46,6 +46,7 @@ functions:
 
   generate:
     name: ${self:provider.stage}-criteria-generate
+    timeout: 30
     image:
       name: default
       command:
