@@ -41,8 +41,7 @@ def save_candidate_info_to_db(body):
     """
     Saves candidate information to database.
 
-    :param position_id: The ID of the job position.
-    :param github_username: The GitHub username of the candidate.
+    :param body: The request body containing candidate information.
     """
     id = str(uuid.uuid4())
     first_name = body.get('candidate_first_name', '')
@@ -75,10 +74,11 @@ def evaluate_candidate(github_client: GithubClient, repository_names, criteria):
     
     :param github_client: A GitHub client object.
     :param repository_names: A list of repository names.
+    :param criteria: A list of criteria with keywords and message
     :return: A list of criteria.
     """
     try:
-        contents_and_languages = github_client.get_multi_repo_contents_and_languages(repository_names)
+        contents_and_languages = github_client.get_repos_file_contents_and_languages(repository_names)
     except Exception as e:
         raise RuntimeError(f"Error Reading files: {e}")
 
@@ -91,6 +91,7 @@ def get_candidate_evaluation_from_gpt(criteria, file_content, languages):
 
     :param criteria_full_messages: A list of criteria messages.
     :param repos_content: Content from the candidate's GitHub repositories.
+    :param languages: A dictionary of programming languages and their byte sizes.
     :return: A JSON object representing the candidate's evaluation scores and reasons, based on the criteria.
     """
     system_message = "A company is looking for promising employees as software engineers. Candidates need to have a skillset to work on the company's project in terms of programming languages and other technologies. These are criteria that the company needs candidates to have. You need to assess candidates on each criteria with keywords and a message : "
@@ -120,16 +121,16 @@ def get_candidate_evaluation_from_gpt(criteria, file_content, languages):
         }
     """
 
-    message_about_languages = "\nHere is the list of programming languages this candidate used. If you can use this as helpful information, use it:"
-    for key, value in languages.items():
-        message_about_languages += key + "(" + str(value) + " bytes), "
+    languages_info = "\nHere is the list of programming languages this candidate used. If you can use this as helpful information, use it:"
+    for name, bytes in languages.items():
+        languages_info += name + "(" + str(bytes) + " bytes), "
 
     completion = chat_client.chat.completions.create(
         model="gpt-3.5-turbo-1106",
         response_format={"type": "json_object"},
         messages=[
             {"role": "system", "content": system_message},
-            {"role": "user", "content": "Follow system message instruction. Here are the files from the candidate's GitHub Account: " + file_content + message_about_languages}
+            {"role": "user", "content": "Follow system message instruction. Here are the files from the candidate's GitHub Account: " + file_content + languages_info}
         ]
     )
     candidate_score = json.loads(completion.choices[0].message.content)

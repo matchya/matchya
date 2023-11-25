@@ -24,3 +24,4 @@ def validate_request_body(body, required_fields):
     """
     if not all(body.get(field) for field in required_fields):
         raise ValueError('Missing required fields')
+    
