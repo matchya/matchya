@@ -15,6 +15,7 @@ access_token_table = dynamodb.Table(f'{Config.ENVIRONMENT}-AccessToken')
 db_conn = psycopg2.connect(host=Config.POSTGRES_HOST, database=Config.POSTGRES_DB, user=Config.POSTGRES_USER, password=Config.POSTGRES_PASSWORD)
 db_cursor = db_conn.cursor()
 
+
 def parse_request_body(event):
     """
     Parses the request body from an event and returns it as a JSON object.
@@ -55,8 +56,8 @@ def create_company_record(company_id, body):
         db_conn.commit()
     except Exception as e:
         raise RuntimeError(f"Error saving to company table: {e}")
-    
-    
+
+
 def create_position_record(position_id, company_id, position_name='Software Engineer'):
     """
     Creates a new position record in the database.

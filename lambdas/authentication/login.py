@@ -47,7 +47,7 @@ def get_company_info(email):
         raise RuntimeError(f"Error retrieving company info: {e}")
     if not result:
         raise ValueError('Email is invalid')
-    
+
     company_res = result[0]
     company_info = {
         'id': company_res[0],
