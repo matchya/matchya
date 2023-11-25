@@ -2,6 +2,7 @@ import json
 import uuid
 
 import boto3
+import psycopg2
 
 from openai import OpenAI
 
@@ -14,6 +15,9 @@ from utils.request import parse_request_body, validate_request_body
 dynamodb = boto3.resource('dynamodb')
 dynamodb_client = boto3.client('dynamodb')
 criterion_table = dynamodb.Table(f'{Config.ENVIRONMENT}-Criterion')
+
+db_conn = psycopg2.connect(host=Config.POSTGRES_HOST, database=Config.POSTGRES_DB, user=Config.POSTGRES_USER, password=Config.POSTGRES_PASSWORD)
+db_cursor = db_conn.cursor()
 
 chat_client = OpenAI()
 
@@ -43,6 +47,8 @@ def handler(event, context):
     except Exception as e:
         print(e)
         return generate_response(500, json.dumps({"message": f"Evaluation failed.{e}"}))
+    finally:
+        db_conn.close()
 
 
 def save_candidate_info_to_db(body):
@@ -51,7 +57,17 @@ def save_candidate_info_to_db(body):
 
     :param body: The request body containing candidate information.
     """
-    return
+    try:
+        id = str(uuid.uuid4())
+        first_name = body.get('candidate_first_name', '')
+        last_name = body.get('candidate_last_name', '')
+        github_username = body.get('candidate_github_username', '')
+        email = body.get('candidate_email', '')
+        sql = "INSERT INTO candidate (id, first_name, last_name, github_username, email) VALUES (%s, %s, %s, %s, %s)"
+        db_cursor.execute(sql, (id, first_name, last_name, github_username, email))
+        db_conn.commit()
+    except Exception as e:
+        raise RuntimeError(f"Failed to save candidate info: {e}")
 
 def get_criteria_from_dynamodb(position_id):
     """
