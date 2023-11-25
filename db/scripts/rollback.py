@@ -1,5 +1,6 @@
 import subprocess
 import logging
+import argparse
 
 import boto3
 
@@ -17,6 +18,7 @@ def build_request(rds_endpoint, rds_port, db_name, db_username, db_password):
         "docker", "run", "--rm",
         "liquibase",
         f"--changeLogFile={changelog_file_name}",
+        "--defaultsFile=/liquibase/config/liquibase.properties",
         "--url", f"jdbc:postgresql://{rds_endpoint}:{rds_port}/{db_name}",
         "--username", db_username,
         "--password", db_password
@@ -69,6 +71,10 @@ if __name__ == "__main__":
     - Builds the Docker image.
     - Runs the Liquibase changelog with the retrieved database details.
     """
+    parser = argparse.ArgumentParser(description="Rollback database changes by a specified count using Liquibase.")
+    parser.add_argument("count", type=int, help="Number of changesets to roll back")
+    args = parser.parse_args()
+
     kwargs = {}
     kwargs['rds_endpoint'] = get_ssm_parameter('/terraform/dev/rds/endpoint')
     kwargs['rds_port'] = get_ssm_parameter('/terraform/dev/rds/port')
@@ -79,4 +85,4 @@ if __name__ == "__main__":
     logger.info(f'Retrieving SSM params: {kwargs}')
 
     build_docker_image()
-    rollback_by_count(count=1, **kwargs)
+    rollback_by_count(count=args.count, **kwargs)

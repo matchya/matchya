@@ -56,6 +56,7 @@ def build_request(rds_endpoint, rds_port, db_name, db_username, db_password):
     return [
         "docker", "run", "--rm",
         "liquibase",
+        "--defaultsFile=/liquibase/config/liquibase.properties",
         f"--changeLogFile={changelog_file_name}",
         "--url", f"jdbc:postgresql://{rds_endpoint}:{rds_port}/{db_name}",
         "--username", db_username,
