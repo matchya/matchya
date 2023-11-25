@@ -3,6 +3,9 @@ import os
 
 class Config:
     ENVIRONMENT = os.environ.get('ENVIRONMENT')
+
+    DYNAMO_CRITERIA_TABLE_NAME = f'{ENVIRONMENT}-Criterion'
+
     POSTGRES_HOST = os.environ.get('POSTGRES_HOST')
     POSTGRES_PORT = os.environ.get('POSTGRES_PORT')
     POSTGRES_DB = os.environ.get('POSTGRES_DB')
