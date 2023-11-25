@@ -3,6 +3,7 @@ import datetime
 import uuid
 
 import boto3
+import psycopg2
 from openai import OpenAI
 
 from config import Config
@@ -16,6 +17,11 @@ dynamodb = boto3.resource('dynamodb')
 dynamodb_client = boto3.client('dynamodb')
 CRITERIA_TABLE_NAME = f'{Config.ENVIRONMENT}-Criterion'
 
+# PostgreSQL
+db_conn = psycopg2.connect(host=Config.POSTGRES_HOST, database=Config.POSTGRES_DB, user=Config.POSTGRES_USER, password=Config.POSTGRES_PASSWORD)
+db_cursor = db_conn.cursor()
+
+# OpenAI
 chat_client = OpenAI()
 
 def handler(event, context):
@@ -44,6 +50,9 @@ def handler(event, context):
     except Exception as e:
         print(e)
         return generate_response(500, {"message": f"Failed to generate criteria: {e}"})
+    finally:
+        db_cursor.close()
+        db_conn.close()
 
 
 def get_github_username_from_position_id(position_id):
@@ -53,8 +62,16 @@ def get_github_username_from_position_id(position_id):
     :param position_id: Unique identifier for the position.
     :return: The GitHub username of the company.
     """
-    # TODO: Get github_username from postgres by position_id
-    return 'kokiebisu'
+    sql = """
+            SELECT Company.github_username FROM Company
+            INNER JOIN Position ON Company.id = Position.company_id
+            WHERE Position.id = '%s';
+        """
+    try:
+        db_cursor.execute(sql % (position_id))
+        return db_cursor.fetchone()[0]
+    except Exception as e:
+        raise RuntimeError(f"Error getting github_username from postgres: {e}")
 
 def generate_criteria_by_repositories(github_client: GithubClient, repository_names):
     """
