@@ -15,6 +15,7 @@ access_token_table = dynamodb.Table(f'{Config.ENVIRONMENT}-AccessToken')
 db_conn = psycopg2.connect(host=Config.POSTGRES_HOST, database=Config.POSTGRES_DB, user=Config.POSTGRES_USER, password=Config.POSTGRES_PASSWORD)
 db_cursor = db_conn.cursor()
 
+
 def parse_request_body(event):
     """
     Parses the request body from an event and returns it as a JSON object.
@@ -49,14 +50,14 @@ def create_company_record(company_id, body):
     :param company_id: Unique identifier for the company.
     :param body: The request body containing company data.
     """
-    sql = "INSERT INTO Company (id, name, email, github_username, password) VALUES (%s, %s, %s, %s, %s);"
+    sql = "INSERT INTO company (id, name, email, github_username, password) VALUES (%s, %s, %s, %s, %s);"
     try:
         db_cursor.execute(sql % (company_id, body['name'], body['email'], body['github_username'], hash_password(body['password'])))
         db_conn.commit()
     except Exception as e:
         raise RuntimeError(f"Error saving to company table: {e}")
-    
-    
+
+
 def create_position_record(position_id, company_id, position_name='Software Engineer'):
     """
     Creates a new position record in the database.
@@ -64,7 +65,7 @@ def create_position_record(position_id, company_id, position_name='Software Engi
     :param position_id: Unique identifier for the position.
     :param company_id: Unique identifier for the company.
     """
-    sql = "INSERT INTO Position (id, company_id, name) VALUES (%s, %s, %s);"
+    sql = "INSERT INTO position (id, company_id, name) VALUES (%s, %s, %s);"
     try:
         db_cursor.execute(sql % (position_id, company_id, position_name))
         db_conn.commit()
