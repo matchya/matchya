@@ -10,7 +10,7 @@ from utils.response import generate_response, generate_success_response
 from utils.password import check_password
 from utils.token import generate_access_token
 
-logger = logging.getLogger('setup')
+logger = logging.getLogger('login')
 logger.setLevel(logging.INFO)
 
 formatter = logging.Formatter('%(asctime)s:%(name)s:%(levelname)s:%(message)s')
@@ -40,6 +40,7 @@ def parse_request_body(event):
             raise ValueError("Empty body")
         return json.loads(body)
     except json.JSONDecodeError as e:
+        logger.error(f"Invalid JSON in request body: {e}")
         raise ValueError(f"Invalid JSON in request body: {e}")
 
 
@@ -54,9 +55,11 @@ def get_company_info(email):
         db_cursor.execute('SELECT * FROM Company WHERE email = %s', (email,))
         result = db_cursor.fetchall()
     except Exception as e:
+        logger.error(f"Error retrieving company info: {e}")
         raise RuntimeError(f"Error retrieving company info: {e}")
     if not result:
-        raise ValueError('Email is invalid')
+        logger.error('Company not found')
+        raise ValueError('Company not found')
     
     company_res = result[0]
     company_info = {
@@ -81,6 +84,7 @@ def validate_password(password, stored_password):
     if isinstance(stored_password, memoryview):
         stored_password = stored_password.tobytes()
     if not check_password(password, stored_password):
+        logger.error('Password is invalid')
         raise ValueError('Password is invalid')
 
 
@@ -95,7 +99,7 @@ def handler(event, context):
              in case of a successful login, or an error message in case of failure.
     """
     try:
-        logger.info('Received event: %s', event)
+        logger.info('Received login request')
         body = parse_request_body(event)
         email = body.get('email')
         password = body.get('password')
@@ -104,8 +108,10 @@ def handler(event, context):
         validate_password(password, company['password'])
         access_token = generate_access_token(company['id'])
 
+        logger.info('Login successful: %s', email)
         return generate_success_response(access_token)
     except (ValueError, RuntimeError) as e:
-        return generate_response(status_code=400, body=str(e))
+        logger.error('Login failed: %s', e)
+        return generate_response(status_code=400, body={"message": str(e)})
     finally:
         db_conn.close()
