@@ -15,7 +15,7 @@ from utils.request import parse_request_body, validate_request_body
 # DynamoDB
 dynamodb = boto3.resource('dynamodb')
 dynamodb_client = boto3.client('dynamodb')
-CRITERIA_TABLE_NAME = f'{Config.ENVIRONMENT}-Criterion'
+CRITERION_TABLE_NAME = f'{Config.ENVIRONMENT}-Criterion'
 
 # PostgreSQL
 db_conn = psycopg2.connect(host=Config.POSTGRES_HOST, database=Config.POSTGRES_DB, user=Config.POSTGRES_USER, password=Config.POSTGRES_PASSWORD)
@@ -188,7 +188,7 @@ def save_criteria_to_dynamodb(criteria, position_id, repository_names):
         }
         transact_items.append({
             'Put': {
-                'TableName': CRITERIA_TABLE_NAME,
+                'TableName': CRITERION_TABLE_NAME,
                 'Item': criteria_info
             }
         })
