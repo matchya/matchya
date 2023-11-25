@@ -15,12 +15,24 @@ from utils.request import parse_request_body, validate_request_body
 # DynamoDB
 dynamodb_client = boto3.client('dynamodb')
 
-# PostgreSQL
-db_conn = psycopg2.connect(host=Config.POSTGRES_HOST, database=Config.POSTGRES_DB, user=Config.POSTGRES_USER, password=Config.POSTGRES_PASSWORD)
-db_cursor = db_conn.cursor()
+# Postgres
+db_conn = None
+db_cursor = None
 
 # OpenAI
 chat_client = OpenAI()
+
+
+
+def connect_to_db():
+    """
+    Reconnects to the database.
+    """
+    global db_conn
+    global db_cursor
+    if not db_conn or db_conn.closed:
+        db_conn = psycopg2.connect(host=Config.POSTGRES_HOST, database=Config.POSTGRES_DB, user=Config.POSTGRES_USER, password=Config.POSTGRES_PASSWORD)
+    db_cursor = db_conn.cursor()
 
 def handler(event, context):
     """
@@ -31,6 +43,7 @@ def handler(event, context):
     :return: A dictionary with HTTP status code and response body.
     """
     try:
+        connect_to_db()
         body = parse_request_body(event)
         validate_request_body(body, ['position_id', 'repository_names'])
         position_id = body.get('position_id')

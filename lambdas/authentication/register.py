@@ -120,7 +120,7 @@ def handler(event, context):
              in case of success, or an error message in case of failure.
     """
     try:
-        logger.info('Received login request')
+        logger.info('Received register request')
         connect_to_db()
         body = parse_request_body(event)
         validate_company_data(body)
@@ -135,6 +135,7 @@ def handler(event, context):
         create_access_token_record(company_id, access_token)
 
         db_conn.commit()
+        logger.info('Registration successful: %s', body['email'])
         return generate_success_response(access_token)
     except (ValueError, RuntimeError) as e:
         logger.error(f'Registration failed (status 400): {e}')
