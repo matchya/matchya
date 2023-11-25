@@ -1,6 +1,7 @@
 import json
 import datetime
 import uuid
+import logging
 
 import boto3
 import psycopg2
@@ -11,6 +12,15 @@ from client.github import GithubClient
 
 from utils.response import generate_success_response, generate_error_response
 from utils.request import parse_request_body, validate_request_body
+
+# Logger
+logger = logging.getLogger('generate criteria')
+logger.setLevel(logging.INFO)
+
+formatter = logging.Formatter('%(asctime)s:%(name)s:%(levelname)s:%(message)s')
+ch = logging.StreamHandler()
+ch.setFormatter(formatter)
+logger.addHandler(ch)
 
 # DynamoDB
 dynamodb_client = boto3.client('dynamodb')
@@ -23,7 +33,6 @@ db_cursor = None
 chat_client = OpenAI()
 
 
-
 def connect_to_db():
     """
     Reconnects to the database.
@@ -33,36 +42,6 @@ def connect_to_db():
     if not db_conn or db_conn.closed:
         db_conn = psycopg2.connect(host=Config.POSTGRES_HOST, database=Config.POSTGRES_DB, user=Config.POSTGRES_USER, password=Config.POSTGRES_PASSWORD)
     db_cursor = db_conn.cursor()
-
-def handler(event, context):
-    """
-    Lambda function entry point to generate criteria from GitHub repositories.
-
-    :param event: The event triggering the lambda, contains request data.
-    :param context: The runtime context of the lambda.
-    :return: A dictionary with HTTP status code and response body.
-    """
-    try:
-        connect_to_db()
-        body = parse_request_body(event)
-        validate_request_body(body, ['position_id', 'repository_names'])
-        position_id = body.get('position_id')
-        repository_names = body.get('repository_names')
-
-        github_username = get_github_username_from_position_id(position_id)
-        github_client = GithubClient(github_username)
-        criteria = generate_criteria_by_repositories(github_client, repository_names)
-
-        save_criteria_to_dynamodb(criteria, position_id, repository_names)
-        body = { "criteria": [criterion["message"] for criterion in criteria]}
-        return generate_success_response(body)
-    except (ValueError, RuntimeError) as e:
-        return generate_error_response(400, str(e))
-    except Exception as e:
-        return generate_error_response(500, str(e))
-    finally:
-        db_cursor.close()
-        db_conn.close()
 
 
 def get_github_username_from_position_id(position_id):
@@ -211,3 +190,38 @@ def save_criteria_to_dynamodb(criteria, position_id, repository_names):
             raise RuntimeError(f"Error saving criteria to DynamoDB: {response}")
     except Exception as e:
         raise RuntimeError(f"Error saving criteria to DynamoDB: {e}")
+
+
+def handler(event, context):
+    """
+    Lambda function entry point to generate criteria from GitHub repositories.
+
+    :param event: The event triggering the lambda, contains request data.
+    :param context: The runtime context of the lambda.
+    :return: A dictionary with HTTP status code and response body.
+    """
+    try:
+        logger.info('Received generate criteria request')
+        connect_to_db()
+        body = parse_request_body(event)
+        validate_request_body(body, ['position_id', 'repository_names'])
+        position_id = body.get('position_id')
+        repository_names = body.get('repository_names')
+
+        github_username = get_github_username_from_position_id(position_id)
+        github_client = GithubClient(github_username)
+        criteria = generate_criteria_by_repositories(github_client, repository_names)
+
+        save_criteria_to_dynamodb(criteria, position_id, repository_names)
+
+        body = { "criteria": [criterion["message"] for criterion in criteria]}
+        logger.info('Criteria generated successfully')
+        return generate_success_response(body)
+    except (ValueError, RuntimeError) as e:
+        logger.error(f'Criteria generation failed (status 400): {e}')
+        return generate_error_response(400, str(e))
+    except Exception as e:
+        logger.error(f'Criteria generation failed (status 500): {e}')
+        return generate_error_response(500, str(e))
+    finally:
+        db_conn.close()
