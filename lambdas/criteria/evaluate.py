@@ -49,6 +49,7 @@ def handler(event, context):
         print(e)
         return generate_response(500, json.dumps({"message": f"Evaluation failed.{e}"}))
     finally:
+        db_conn.commit()
         db_conn.close()
 
 
@@ -66,7 +67,6 @@ def save_candidate_info_to_db(body):
         email = body.get('candidate_email', '')
         sql = "INSERT INTO candidate (id, first_name, last_name, github_username, email) VALUES (%s, %s, %s, %s, %s)"
         db_cursor.execute(sql, (id, first_name, last_name, github_username, email))
-        db_conn.commit()
         return id
     except Exception as e:
         raise RuntimeError(f"Failed to save candidate info: {e}")
@@ -158,6 +158,7 @@ def get_candidate_evaluation_from_gpt(criteria, file_content, languages):
         ]
     )
     candidate_score = json.loads(completion.choices[0].message.content)
+    
     return candidate_score
 
 
@@ -192,7 +193,6 @@ def save_candidate_result(position_id, candidate_id, candidate_result):
         summary = candidate_result['summary'].replace("'", "''")
         sql = "INSERT INTO CandidateResult (id, position_id, candidate_id, total_score, summary) VALUES (%s, %s, %s, %s, %s)"
         db_cursor.execute(sql, (id, position_id, candidate_id, total_score, summary))
-        db_conn.commit()
         return id
     except Exception as e:
         raise RuntimeError(f"Failed to save candidate result: {e}")
@@ -214,8 +214,6 @@ def save_candidate_assessments(candidate_result_id, assessments):
             sql += f" ('{id}', '{candidate_result_id}', '{criterion_id}', {score}, '{reason}'),"
 
         sql = sql[:-1] + ";"
-        print(sql)
         db_cursor.execute(sql)
-        db_conn.commit()
     except Exception as e:
         raise RuntimeError(f"Failed to save candidate assessments: {e}")
