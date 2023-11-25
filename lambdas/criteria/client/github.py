@@ -16,16 +16,18 @@ class GithubClient:
         :param repository_name: Name of the GitHub repository.
         :return: A list of programming languages used in the repository.
         """
-        url = Config.GITHUB_API_REPO_URL + self.github_username + "/" + repository_name + "/languages"
-        res = requests.get(url, headers=Config.GITHUB_REST_API_HEADERS)
-        data = json.loads(res.content)
-        return data
+        try:
+            url = Config.GITHUB_API_REPO_URL + self.github_username + "/" + repository_name + "/languages"
+            res = requests.get(url, headers=Config.GITHUB_REST_API_HEADERS)
+            data = json.loads(res.content)
+            return data
+        except Exception as e:
+            return RuntimeError(f"Error getting programming languages used in repository. {e}")
 
     def get_important_file_paths(self, repo_name, important_file_names):
         """
         Fetches URLs of important files from a GitHub repository.
 
-        :param github_username: GitHub username.
         :param repo_name: Repository name.
         :param important_file_names: A list of important file names to look for.
         :return: A list of file paths for important files in the repository.
@@ -38,35 +40,17 @@ class GithubClient:
         data = json.loads(res.content)
         tree = data['tree']
         file_paths = []
-        for file in tree:
-            if file['type'] == 'blob' and self._is_important_file(file['path'], important_file_names):
-                file_paths.append(file['path'])
+        for branch in tree:
+            if branch['type'] == 'blob' and self._is_important_file(branch['path'], important_file_names):
+                file_paths.append(branch['path'])
         
         # TODO: If the list is too big, we need to filter out the files that are not important (depth > 2)
         return file_paths
-
-    def get_file_paths_in_repo(self, github_username, repo_name, file_names_containing_repo_tech_stack):
-        """
-        Retrieves the file paths of important files in a GitHub repository.
-
-        :param github_username: GitHub username of the repository owner.
-        :param repo_name: Name of the GitHub repository.
-        :param file_names_containing_repo_tech_stack: List of important file names to find in the repository.
-        :return: A list of file paths for important files in the repository.
-        """
-        branch = self._get_default_branch(repo_name)
-
-        url = Config.GITHUB_API_REPO_URL + github_username + "/" + repo_name + "/git/trees/" + branch + "?recursive=1"
-        res = requests.get(url, headers=Config.GITHUB_REST_API_HEADERS)
-        data = json.loads(res.content)
-        tree = data['tree']
-        return [branch['path'] for branch in tree if self._should_include_the_branch(branch, file_names_containing_repo_tech_stack)]
 
     def get_file_contents(self, repo_name, file_path):
         """
         Retrieves the contents of a file from a GitHub repository.
 
-        :param github_username: GitHub username.
         :param repository_name: Repository name.
         :param file_path: Path of the file in the repository.
         :return: The content of the file as a string.
@@ -81,18 +65,17 @@ class GithubClient:
         content = str(base64.b64decode(content_encoded))
         return content
     
-    def get_repo_file_content(self, repo_name, languages_map=None):
+    def get_repo_file_content(self, repo_name, languages=None):
         """
         Retrieves the content of important files from a specified repository.
 
-        :param github_username: GitHub username.
         :param repo_name: Name of the repository.
-        :param languages_map: A map of programming languages used in the repository, key: name, value: byte.
+        :param languages: A map of programming languages used in the repository, key: name, value: byte.
         :return: A string containing the content of important files from the repository, formatted with repository and file path information.
         """
-        if languages_map is None:
-            languages_map = self.get_programming_languages_used(repo_name)
-        important_file_names = GithubClient.get_important_file_names(languages_map)
+        if languages is None:
+            languages = self.get_programming_languages_used(repo_name)
+        important_file_names = GithubClient.get_important_file_names(languages)
         file_paths = self.get_important_file_paths(repo_name, important_file_names)
 
         content = "repository: " + repo_name + "\n"
@@ -100,9 +83,85 @@ class GithubClient:
             content += "path: " + file_path + "\n" + self.get_file_contents(repo_name, file_path) + "\n"
 
         return content
+    
+    def get_pinned_repositories_name(self):
+        """
+        Fetches names of pinned repositories for a given GitHub username.
+
+        :param github_username: The GitHub username.
+        :return: A list of names of pinned repositories.
+        """
+        repo_names = []
+        query = """
+        {
+            repositoryOwner(login: "%s") {
+                ... on User {
+                    pinnableItems(first: 6, types: REPOSITORY) {
+                        edges {
+                            node {
+                                ... on Repository {
+                                    name
+                                    owner {
+                                        login
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        """ % self.github_username
+        data = self._run_github_query(query)
+        edges = None
+        try:
+            edges = data.get("repositoryOwner").get("pinnableItems").get("edges")
+        except Exception:
+            raise Exception("Getting pinned repositories failed.")
+
+        for edge in edges:
+            name = edge.get("node").get("name")
+            owner = edge.get("node").get("owner").get("login")
+            if owner == self.github_username:
+                repo_names.append(name)
+
+        return repo_names
+    
+    def get_repos_file_contents_and_languages(self, repository_names):
+        """
+        Retrieves the content of important files from multiple repositories. and programming languages used in the repositories with bytes.
+
+        :param repository_names: A list of repository names.
+        :return: A dictionary containing the content of important files from the repositories and programming languages used in the repositories.
+        """
+        file_content = ""
+        all_languages_in_repos = {}
+        try:
+            for repository_name in repository_names:
+                languages_in_a_repo = self.get_programming_languages_used(repository_name)
+                file_content += self.get_repo_file_content(repository_name, languages_in_a_repo)
+                GithubClient.accumulate_language_data(all_languages_in_repos, languages_in_a_repo)
+        except Exception as e:
+            raise RuntimeError(f"Error Reading files: {e}")
+
+        return {"file_content": file_content, "languages": all_languages_in_repos}
+    
+    @staticmethod
+    def accumulate_language_data(all_languages_in_repos, repo_languages):
+        """
+        Accumulates the programming language data from multiple repositories.
+        
+        :param all_languages_in_repos: A dictionary containing the programming languages used in the repositories and their bytes.
+        :param repo_languages: A dictionary containing the programming languages used in a repository and their bytes.
+        """
+        for name, bytes in repo_languages.items():
+            if name in all_languages_in_repos:
+                all_languages_in_repos[name] += bytes
+            else:
+                all_languages_in_repos[name] = bytes
 
     @staticmethod
-    def get_important_file_names(languages_map):
+    def get_important_file_names(languages):
         """
         Determines important file names based on programming languages used in a repository.
 
@@ -128,7 +187,7 @@ class GithubClient:
             "Swift": "Package.swift",
         }
 
-        for language_name in languages_map:
+        for language_name in languages:
             if language_name in package_file_names:
                 important_file_names.append(package_file_names[language_name])
 
@@ -147,10 +206,8 @@ class GithubClient:
 
         data = json.loads(res.content)
         if data is None or data.get('default_branch') is None:
-            print("default branch not found / api limit exceeded", repo_name)
-            print(data)
-            exit(1)
-        return data['default_branch']
+            raise RuntimeError("Error getting default branch name.")
+        return data.get('default_branch')
 
     def _is_important_file(self, path, important_file_names, depth=2):
         """
@@ -165,17 +222,16 @@ class GithubClient:
                 return True
         return False
 
-    def _should_include_the_branch(self, branch, file_names_containing_repo_tech_stack):
+    def _run_github_query(self, query):
         """
-        Determines if a branch contains important files based on their names.
+        Executes a GraphQL query on GitHub's API.
 
-        :param branch: A branch object from the GitHub repository tree.
-        :param file_names_containing_repo_tech_stack: List of important file names.
-        :return: Boolean indicating whether the branch should be included or not.
+        :param query: The GraphQL query string.
+        :return: The data returned from the GitHub API.
         """
-        branch_name = branch['path'].split('/')[-1]
-        is_file = branch['type'] == 'blob'
-        does_contain_info = branch_name in file_names_containing_repo_tech_stack
-        in_root_or_subroot_dir = branch['path'].count('/') <= 1
-
-        return is_file and does_contain_info and in_root_or_subroot_dir
+        try:
+            res = requests.post(url=Config.GITHUB_GRAPHQL_API_URL, json={'query': query}, headers=Config.GITHUB_GRAPHQL_API_HEADERS)
+            content = json.loads(res.content)
+            return content.get("data")
+        except Exception:
+            return None
