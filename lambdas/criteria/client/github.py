@@ -16,10 +16,13 @@ class GithubClient:
         :param repository_name: Name of the GitHub repository.
         :return: A list of programming languages used in the repository.
         """
-        url = Config.GITHUB_API_REPO_URL + self.github_username + "/" + repository_name + "/languages"
-        res = requests.get(url, headers=Config.GITHUB_REST_API_HEADERS)
-        data = json.loads(res.content)
-        return data
+        try:
+            url = Config.GITHUB_API_REPO_URL + self.github_username + "/" + repository_name + "/languages"
+            res = requests.get(url, headers=Config.GITHUB_REST_API_HEADERS)
+            data = json.loads(res.content)
+            return data
+        except Exception as e:
+            return RuntimeError(f"Error getting programming languages used in repository. {e}")
 
     def get_important_file_paths(self, repo_name, important_file_names):
         """
@@ -44,23 +47,6 @@ class GithubClient:
         
         # TODO: If the list is too big, we need to filter out the files that are not important (depth > 2)
         return file_paths
-
-    def get_file_paths_in_repo(self, github_username, repo_name, file_names_containing_repo_tech_stack):
-        """
-        Retrieves the file paths of important files in a GitHub repository.
-
-        :param github_username: GitHub username of the repository owner.
-        :param repo_name: Name of the GitHub repository.
-        :param file_names_containing_repo_tech_stack: List of important file names to find in the repository.
-        :return: A list of file paths for important files in the repository.
-        """
-        branch = self._get_default_branch(repo_name)
-
-        url = Config.GITHUB_API_REPO_URL + github_username + "/" + repo_name + "/git/trees/" + branch + "?recursive=1"
-        res = requests.get(url, headers=Config.GITHUB_REST_API_HEADERS)
-        data = json.loads(res.content)
-        tree = data['tree']
-        return [branch['path'] for branch in tree if self._should_include_the_branch(branch, file_names_containing_repo_tech_stack)]
 
     def get_file_contents(self, repo_name, file_path):
         """
@@ -100,6 +86,49 @@ class GithubClient:
             content += "path: " + file_path + "\n" + self.get_file_contents(repo_name, file_path) + "\n"
 
         return content
+    
+    def get_pinned_repositories_name(self):
+        """
+        Fetches names of pinned repositories for a given GitHub username.
+
+        :param github_username: The GitHub username.
+        :return: A list of names of pinned repositories.
+        """
+        repo_names = []
+        query = """
+        {
+            repositoryOwner(login: "%s") {
+                ... on User {
+                    pinnableItems(first: 6, types: REPOSITORY) {
+                        edges {
+                            node {
+                                ... on Repository {
+                                    name
+                                    owner {
+                                        login
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        """ % self.github_username
+        data = self._run_github_query(query)
+        edges = None
+        try:
+            edges = data.get("repositoryOwner").get("pinnableItems").get("edges")
+        except Exception:
+            raise Exception("Getting pinned repositories failed.")
+
+        for edge in edges:
+            name = edge.get("node").get("name")
+            owner = edge.get("node").get("owner").get("login")
+            if owner == self.github_username:
+                repo_names.append(name)
+
+        return repo_names
 
     @staticmethod
     def get_important_file_names(languages_map):
@@ -179,3 +208,18 @@ class GithubClient:
         in_root_or_subroot_dir = branch['path'].count('/') <= 1
 
         return is_file and does_contain_info and in_root_or_subroot_dir
+
+
+    def _run_github_query(self, query):
+        """
+        Executes a GraphQL query on GitHub's API.
+
+        :param query: The GraphQL query string.
+        :return: The data returned from the GitHub API.
+        """
+        try:
+            res = requests.post(url=Config.GITHUB_GRAPHQL_API_URL, json={'query': query}, headers=Config.GITHUB_GRAPHQL_API_HEADERS)
+            content = json.loads(res.content)
+            return content.get("data")
+        except Exception:
+            return None

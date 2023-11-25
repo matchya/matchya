@@ -42,7 +42,7 @@ def handler(event, context):
         return generate_response(400, {"message": str(e)})
     except Exception as e:
         print(e)
-        return generate_response(500, {"message": "Failed to generate criteria."})
+        return generate_response(500, {"message": f"Failed to generate criteria: {e}"})
 
 
 def parse_request_body(event):
@@ -56,8 +56,6 @@ def parse_request_body(event):
         body = event.get('body', '')
         if not body:
             raise ValueError("Empty body")
-        if len(body['repository_names']) == 0:
-            raise ValueError("Empty repository_names")
         return json.loads(body)
     except json.JSONDecodeError as e:
         raise ValueError(f"Invalid JSON in request body: {e}")
@@ -71,6 +69,8 @@ def validate_request_body(body):
     required_fields = ['position_id', 'repository_names']
     if not all(body.get(field) for field in required_fields):
         raise ValueError('Missing required fields')
+    if len(body['repository_names']) < 1:
+        raise ValueError('At least one repository name is required')
 
 def get_github_username_from_position_id(position_id):
     """
@@ -91,16 +91,16 @@ def generate_criteria(github_client: GithubClient, repository_names):
     :return: A list of criteria.
     """
     file_content = ""
-    programming_languages_map_all = {}
+    programming_languages_map_all_in_repo = {}
     try:
         for repository_name in repository_names:
             programming_languages_map = github_client.get_programming_languages_used(repository_name)
             file_content += github_client.get_repo_file_content(repository_name, programming_languages_map)
-            accumulate_language_data(programming_languages_map_all, programming_languages_map)
+            accumulate_language_data(programming_languages_map_all_in_repo, programming_languages_map)
     except Exception as e:
         raise RuntimeError(f"Error Reading files: {e}")
 
-    return get_criteria_from_gpt(file_content, programming_languages_map_all)
+    return get_criteria_from_gpt(file_content, programming_languages_map_all_in_repo)
 
 def accumulate_language_data(languages_map_all, repo_languages_map):
     """

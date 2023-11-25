@@ -1,11 +1,8 @@
 import json
 
-import requests
 from openai import OpenAI
 
-from config import Config
 from client.github import GithubClient
-
 from utils.response import generate_response, generate_success_response
 
 chat_client = OpenAI()
@@ -26,138 +23,54 @@ def handler(event, context):
 
     candidate_result = {}
     try:
-        criteria_full_messages = get_criteria_full_messages(position_id)
-        candidate_result = evaluate_candidate(github_client, criteria_full_messages, github_username)
+        criteria = get_criteria_from_dynamodb(position_id)
+        pinned_repositories = github_client.get_pinned_repositories_name()
+        candidate_result = evaluate_candidate(github_client, pinned_repositories, criteria)
     except Exception as e:
         print(e)
         return generate_response(500, json.dumps({"message": "Evaluation failed."}))
 
     # TODO: Store data in DB (CandidateResult, AssessmentCriteria)
-
     return generate_success_response(candidate_result)
 
 
-def get_criteria_full_messages(position_id):
+def get_criteria_from_dynamodb(position_id):
     """
     Retrieves the full message criteria for a job position.
 
     :param position_id: The ID of the job position.
-    :return: A list of criteria in string format.
+    :return: A list of criteria with keywords and message
     """
-    # TODO: Get Criteria full_messages by Position ID from Database
-    full_messages = ["Proficiency in Python", "JavaScript Experience"]  # mock
+    # TODO: Get Criteria keywords and message by Position ID from Database
+    criteria = [
+        {"keywords": ["Python", "API"], "message": "Ability to build API using Python"},
+        {"keywords": ["React", "JavaScript"], "message": "Ability to build web application using React and JavaScript"},
+        {"keywords": ["Docker", "Kubernetes"], "message": "Ability to build and deploy application using Docker and Kubernetes"},
+    ]
 
-    return full_messages
+    return criteria
 
 
-def evaluate_candidate(github_client: GithubClient, criteria_full_messages, github_username):
+def evaluate_candidate(github_client: GithubClient, repository_names, criteria):
     """
-    Evaluates a candidate's GitHub repositories against given criteria.
-
-    :param criteria_full_messages: A list of criteria messages.
-    :param github_username: The GitHub username of the candidate.
-    :return: A dictionary representing the evaluation of the candidate.
+    Generates criteria from GitHub repositories.
+    
+    :param github_client: A GitHub client object.
+    :param repository_names: A list of repository names.
+    :return: A list of criteria.
     """
-    pinned_repositories = get_pinned_repositories_name(github_username)
-    repos_content = get_repos_content_all(github_client, github_username, pinned_repositories)
-    chatgpt_evaluation = get_candidate_evaluation_from_chatgpt(criteria_full_messages, repos_content)
-
-    return chatgpt_evaluation
-
-
-def get_pinned_repositories_name(github_username):
-    """
-    Fetches names of pinned repositories for a given GitHub username.
-
-    :param github_username: The GitHub username.
-    :return: A list of names of pinned repositories.
-    """
-    repo_names = []
-    query = """
-    {
-        repositoryOwner(login: "%s") {
-            ... on User {
-                pinnableItems(first: 6, types: REPOSITORY) {
-                    edges {
-                        node {
-                            ... on Repository {
-                                name
-                                owner {
-                                    login
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    """ % github_username
-    data = run_github_query(query)
-    edges = None
+    file_content = ""
     try:
-        edges = data.get("repositoryOwner").get("pinnableItems").get("edges")
-    except Exception:
-        raise Exception("Getting pinned repositories failed.")
+        for repository_name in repository_names:
+            programming_languages_map = github_client.get_programming_languages_used(repository_name)
+            file_content += github_client.get_repo_file_content(repository_name, programming_languages_map)
+    except Exception as e:
+        raise RuntimeError(f"Error Reading files: {e}")
 
-    for edge in edges:
-        name = edge.get("node").get("name")
-        owner = edge.get("node").get("owner").get("login")
-        if owner == github_username:
-            repo_names.append(name)
-
-    return repo_names
+    return get_candidate_evaluation_from_chatgpt(criteria, file_content)
 
 
-def run_github_query(query):
-    """
-    Executes a GraphQL query on GitHub's API.
-
-    :param query: The GraphQL query string.
-    :return: The data returned from the GitHub API.
-    """
-    try:
-        res = requests.post(url=Config.GITHUB_GRAPHQL_API_URL, json={'query': query}, headers=Config.GITHUB_GRAPHQL_API_HEADERS)
-        content = json.loads(res.content)
-        return content.get("data")
-    except Exception:
-        return None
-
-
-def get_repos_content_all(github_client, github_username, repo_names):
-    """
-    Aggregates content from multiple repositories for a given GitHub user.
-
-    :param github_username: The GitHub username.
-    :param repo_names: List of repository names to fetch content from.
-    :return: A concatenated string of all contents from the specified repositories.
-    """
-    content = ""
-    for repo_name in repo_names:
-        content += get_repo_file_content(github_client, repo_name)
-
-    return content
-
-
-def get_repo_file_content(github_client: GithubClient, repo_name):
-    """
-    Retrieves the content of important files from a specified repository.
-
-    :param github_username: GitHub username.
-    :param repo_name: Name of the repository.
-    :return: A string containing the content of important files from the repository, formatted with repository and file path information.
-    """
-    content = ""
-    languages_map = github_client.get_programming_languages_used(repo_name)
-    important_file_names = GithubClient.get_important_file_names(languages_map)
-    file_paths = github_client.get_important_file_paths(repo_name, important_file_names)
-    for file_path in file_paths:
-        content += "repository (" + repo_name + "), file: (" + file_path + "):\n" + github_client.get_file_contents(repo_name, file_path) + "\n"
-
-    return content
-
-
-def get_candidate_evaluation_from_chatgpt(criteria_full_messages, repos_content):
+def get_candidate_evaluation_from_chatgpt(criteria, file_content):
     """
     Evaluates a candidate's GitHub repository contents against specified criteria using ChatGPT.
 
@@ -165,10 +78,11 @@ def get_candidate_evaluation_from_chatgpt(criteria_full_messages, repos_content)
     :param repos_content: Content from the candidate's GitHub repositories.
     :return: A JSON object representing the candidate's evaluation scores and reasons, based on the criteria.
     """
-    system_message = "A company is looking for promising employees as software engineers. Candidates need to have a skillset to work on the company's project in terms of programming languages and other technologies. These are criteria that the company needs candidates to have. You need to assess candidates on each criteria : "
+    system_message = "A company is looking for promising employees as software engineers. Candidates need to have a skillset to work on the company's project in terms of programming languages and other technologies. These are criteria that the company needs candidates to have. You need to assess candidates on each criteria with keywords and a message : "
 
-    for criterion in criteria_full_messages:
-        system_message += criterion + ", "
+    for i in range(len(criteria)):
+        criterion = criteria[i]
+        system_message += "\n" + "criterion" + str(i+1) + ". " + criterion["message"] + " (keywords: " + ", ".join(criterion["keywords"]) + ")"
 
     system_message += """
         You will be given files from the candidate's GitHub repository. Please evaluate the candidate's skillset based on the files.
@@ -181,7 +95,7 @@ def get_candidate_evaluation_from_chatgpt(criteria_full_messages, repos_content)
             "summary": string, // general comment about the candidate's skillset
             "assessments": [
                 {
-                    "criterion": string, // criterion
+                    "criterion": string, // criterion's message
                     "score": number, // score from 0 to 10
                     "reason": string // reason for the score
                 },
@@ -196,7 +110,7 @@ def get_candidate_evaluation_from_chatgpt(criteria_full_messages, repos_content)
         response_format={"type": "json_object"},
         messages=[
             {"role": "system", "content": system_message},
-            {"role": "user", "content": "Follow system message instruction. Here are the files from the candidate's GitHub Account: " + repos_content}
+            {"role": "user", "content": "Follow system message instruction. Here are the files from the candidate's GitHub Account: " + file_content}
         ]
     )
     candidate_score = json.loads(completion.choices[0].message.content)
