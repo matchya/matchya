@@ -13,7 +13,7 @@ VALUES
 ('343bcae5-ada0-404c-be2c-7df34f7732a2', 'Ben Parker', 'random@hotmail.com', 'ben123', '\\x372acd0c024eb817d429939127af80ad260db8e306d48f1ea031ebf24941fd45', '2023-09-27 08:10:57');
 --rollback DELETE FROM company WHERE id IN ('343bcae5-ada0-404c-be2c-7df34f7732a2');
 
--- changeset author:3
+--changeset author:3
 INSERT INTO company (id, name, email, github_username, password, created_at)
 VALUES
 ('21bcae5-ada0-404c-be2c-7df34f7732a2', 'Alice Johnson', 'alicej@example.com', 'alicej', '\\x1a2b3c4d5e6f7181920a1b2c3d4e5f6g7h8i9j0k', '2023-10-05 14:20:00'),
