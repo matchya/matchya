@@ -52,6 +52,6 @@ create table AssessmentCriteria (
 	criterion_id varchar(255),
 	score int,
 	reason varchar(255),
-	foreign key (candidate_result_id) references CandidateResult(id),
+	foreign key (candidate_result_id) references CandidateResult(id)
 );
 --rollback DROP TABLE IF EXISTS AssessmentCriteria;
