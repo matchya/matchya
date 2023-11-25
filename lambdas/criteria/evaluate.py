@@ -1,11 +1,24 @@
 import json
 import uuid
+import datetime
+
+import boto3
+import psycopg2
 
 from openai import OpenAI
 
+from config import Config
 from client.github import GithubClient
+
 from utils.response import generate_response, generate_success_response
 from utils.request import parse_request_body, validate_request_body
+
+dynamodb = boto3.resource('dynamodb')
+dynamodb_client = boto3.client('dynamodb')
+criterion_table = dynamodb.Table(f'{Config.ENVIRONMENT}-Criterion')
+
+db_conn = psycopg2.connect(host=Config.POSTGRES_HOST, database=Config.POSTGRES_DB, user=Config.POSTGRES_USER, password=Config.POSTGRES_PASSWORD)
+db_cursor = db_conn.cursor()
 
 chat_client = OpenAI()
 
@@ -20,7 +33,7 @@ def handler(event, context):
     try:
         body = parse_request_body(event)
         validate_request_body(body, ['position_id', 'candidate_github_username'])
-        save_candidate_info_to_db(body)
+        candidate_id = save_candidate_info_to_db(body)
 
         position_id = body.get('position_id')
         github_username = body.get('candidate_github_username')
@@ -30,11 +43,14 @@ def handler(event, context):
         pinned_repositories = github_client.get_pinned_repositories_name()
         candidate_result = evaluate_candidate(github_client, pinned_repositories, criteria)
 
-        save_candidate_result_to_db(candidate_result)
+        save_candidate_evaluation_to_db(position_id, candidate_id, candidate_result)
         return generate_success_response(candidate_result)
     except Exception as e:
         print(e)
         return generate_response(500, json.dumps({"message": f"Evaluation failed.{e}"}))
+    finally:
+        db_conn.commit()
+        db_conn.close()
 
 
 def save_candidate_info_to_db(body):
@@ -43,13 +59,17 @@ def save_candidate_info_to_db(body):
 
     :param body: The request body containing candidate information.
     """
-    id = str(uuid.uuid4())
-    first_name = body.get('candidate_first_name', '')
-    last_name = body.get('candidate_last_name', '')
-    github_username = body.get('candidate_github_username')
-    email = body.get('candidate_email', '')
-    # TODO: Store Candidate Information in DB (Candidate)
-    return
+    try:
+        id = str(uuid.uuid4())
+        first_name = body.get('candidate_first_name', '')
+        last_name = body.get('candidate_last_name', '')
+        github_username = body.get('candidate_github_username', '')
+        email = body.get('candidate_email', '')
+        sql = "INSERT INTO candidate (id, first_name, last_name, github_username, email) VALUES (%s, %s, %s, %s, %s)"
+        db_cursor.execute(sql, (id, first_name, last_name, github_username, email))
+        return id
+    except Exception as e:
+        raise RuntimeError(f"Failed to save candidate info: {e}")
 
 def get_criteria_from_dynamodb(position_id):
     """
@@ -58,15 +78,18 @@ def get_criteria_from_dynamodb(position_id):
     :param position_id: The ID of the job position.
     :return: A list of criteria with keywords and message
     """
-    # TODO: Get Criteria keywords and message by Position ID from Database
-    criteria = [
-        {"keywords": ["Python", "API"], "message": "Ability to build API using Python"},
-        {"keywords": ["React", "JavaScript"], "message": "Ability to build web application using React and JavaScript"},
-        {"keywords": ["Docker", "Kubernetes"], "message": "Ability to build and deploy application using Docker and Kubernetes"},
-    ]
-
-    return criteria
-
+    try:
+        response = criterion_table.query(
+            IndexName='PositionIdIndex',
+            KeyConditionExpression=boto3.dynamodb.conditions.Key('position_id').eq(position_id),
+            ProjectionExpression='id, message, keywords'
+        )
+        criteria = [{'id': item['id'], 'message': item['message'], 'keywords': item.get('keywords', [])} for item in response.get('Items', [])]
+        if not criteria:
+            raise RuntimeError(f"No criteria found for position_id {position_id}")
+        return criteria
+    except Exception as e:
+        raise RuntimeError(f"Failed to retrieve criteria: {e}")
 
 def evaluate_candidate(github_client: GithubClient, repository_names, criteria):
     """
@@ -74,7 +97,7 @@ def evaluate_candidate(github_client: GithubClient, repository_names, criteria):
     
     :param github_client: A GitHub client object.
     :param repository_names: A list of repository names.
-    :param criteria: A list of criteria with keywords and message
+    :param criteria: A list of criteria with id, keywords and message
     :return: A list of criteria.
     """
     try:
@@ -89,7 +112,7 @@ def get_candidate_evaluation_from_gpt(criteria, file_content, languages):
     """
     Evaluates a candidate's GitHub repository contents against specified criteria using ChatGPT.
 
-    :param criteria_full_messages: A list of criteria messages.
+    :param criteria_full_messages: A list of criteria id, keywords, and messages.
     :param repos_content: Content from the candidate's GitHub repositories.
     :param languages: A dictionary of programming languages and their byte sizes.
     :return: A JSON object representing the candidate's evaluation scores and reasons, based on the criteria.
@@ -98,7 +121,7 @@ def get_candidate_evaluation_from_gpt(criteria, file_content, languages):
 
     for i in range(len(criteria)):
         criterion = criteria[i]
-        system_message += "\n" + "criterion" + str(i+1) + ". " + criterion["message"] + " (keywords: " + ", ".join(criterion["keywords"]) + ")"
+        system_message += "\n" + "criterion" + str(i+1) + ". id: " + criterion['id'] + criterion["message"] + " (keywords: " + ", ".join(criterion["keywords"]) + ")"
 
     system_message += """
         You will be given files from the candidate's GitHub repository. Please evaluate the candidate's skillset based on the files.
@@ -111,7 +134,8 @@ def get_candidate_evaluation_from_gpt(criteria, file_content, languages):
             "summary": string, // general comment about the candidate's skillset
             "assessments": [
                 {
-                    "criterion": string, // criterion's message
+                    "criterion_id": string, // criterion's id
+                    "criterion_message": string, // criterion's message
                     "score": number, // score from 0 to 10
                     "reason": string // reason for the score
                 },
@@ -133,15 +157,61 @@ def get_candidate_evaluation_from_gpt(criteria, file_content, languages):
             {"role": "user", "content": "Follow system message instruction. Here are the files from the candidate's GitHub Account: " + file_content + languages_info}
         ]
     )
-    candidate_score = json.loads(completion.choices[0].message.content)
-    return candidate_score
+
+    return json.loads(completion.choices[0].message.content)
 
 
-def save_candidate_result_to_db(candidate_result):
+def save_candidate_evaluation_to_db(position_id, candidate_id, candidate_result):
     """
     Saves candidate evaluation result to database.
 
+    :param position_id: The ID of the job position.
+    :param candidate_id: The ID of the candidate.
     :param candidate_result: The candidate's evaluation result.
     """
-    # TODO: Store data in DB (CandidateResult, AssessmentCriteria)
-    return
+    try:
+        candidate_result_id = save_candidate_result(position_id, candidate_id, candidate_result)
+        save_candidate_assessments(candidate_result_id, candidate_result['assessments'])
+        
+    except Exception as e:
+        raise RuntimeError(f"Failed to save candidate result: {e}")
+    
+
+def save_candidate_result(position_id, candidate_id, candidate_result):
+    """
+    Saves candidate evaluation result to database.
+
+    :param position_id: The ID of the job position.
+    :param candidate_id: The ID of the candidate.
+    :param candidate_result: The candidate's evaluation result.
+    """
+    try:
+        id = str(uuid.uuid4())
+        total_score = candidate_result['total_score']
+        summary = candidate_result['summary'].replace("'", "''")
+        sql = "INSERT INTO CandidateResult (id, position_id, candidate_id, total_score, summary) VALUES (%s, %s, %s, %s, %s)"
+        db_cursor.execute(sql, (id, position_id, candidate_id, total_score, summary))
+        return id
+    except Exception as e:
+        raise RuntimeError(f"Failed to save candidate result: {e}")
+    
+def save_candidate_assessments(candidate_result_id, assessments):
+    """
+    Saves candidate evaluation result to database.
+
+    :param candidate_result_id: The ID of the candidate result.
+    :param assessments: The candidate's assessments.
+    """
+    try:
+        sql = "INSERT INTO AssessmentCriteria (id, candidate_result_id, criterion_id, score, reason) VALUES"
+        for assessment in assessments:
+            id = str(uuid.uuid4())
+            criterion_id = assessment['criterion_id']
+            score = assessment['score']
+            reason = assessment['reason'].replace("'", "''")
+            sql += f" ('{id}', '{candidate_result_id}', '{criterion_id}', {score}, '{reason}'),"
+
+        sql = sql[:-1] + ";"
+        db_cursor.execute(sql)
+    except Exception as e:
+        raise RuntimeError(f"Failed to save candidate assessments: {e}")
