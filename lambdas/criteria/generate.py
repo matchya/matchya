@@ -14,7 +14,7 @@ from utils.request import parse_request_body, validate_request_body
 # DynamoDB
 dynamodb = boto3.resource('dynamodb')
 dynamodb_client = boto3.client('dynamodb')
-criteria_table = dynamodb.Table(f'{Config.ENVIRONMENT}-Criteria')
+criteria_table = dynamodb.Table(f'{Config.ENVIRONMENT}-Criterion')
 
 chat_client = OpenAI()
 
@@ -36,7 +36,7 @@ def handler(event, context):
         github_client = GithubClient(github_username)
         criteria = generate_criteria_by_repositories(github_client, repository_names)
 
-        save_criteria_to_dynamodb(criteria, position_id)
+        save_criteria_to_dynamodb(criteria, position_id, repository_names)
         body = { "criteria": [criterion["message"] for criterion in criteria]}
         return generate_success_response(body)
     except (ValueError, RuntimeError) as e:
@@ -151,15 +151,25 @@ def get_criteria_from_gpt(file_content, languages):
         raise RuntimeError(f"Error generating criteria with OpenAI API: {e}")
 
 
-def save_criteria_to_dynamodb(criteria, position_id):
+def save_criteria_to_dynamodb(criteria, position_id, repository_names):
     """
     Saves the generated criteria to the database.
     
     :param criteria: A list of criteria keywords.
     :param position_id: Unique identifier for the position.
+    :param repository_names: A list of repository names.
     """
-    # TODO: Save criteria to database logic here...
-    for criterion in criteria:
-        id = str(uuid.uuid4())
-        created_at = datetime.datetime.now().isoformat()
+    try:
+        for criterion in criteria:
+            criteria_info = {
+                'id': str(uuid.uuid4()),
+                'position_id': position_id,
+                'keywords': criterion['keywords'],
+                'message': criterion['message'],
+                'repository_names': repository_names,
+                'created_at': datetime.datetime.now().isoformat()
+            }
+            criteria_table.put_item(Item=criteria_info)
+    except Exception as e:
+        raise RuntimeError(f"Error saving criteria to DynamoDB: {e}")
     return
