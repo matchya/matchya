@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS position (
 --rollback DROP TABLE IF EXISTS position;
 
 --changeset author:3
-CREATE TABLE IF NOT EXISTS Candidate (
+CREATE TABLE IF NOT EXISTS candidate (
 	id varchar(255) not null primary key,
 	first_name varchar(255),
 	last_name varchar(255),
@@ -30,11 +30,11 @@ CREATE TABLE IF NOT EXISTS Candidate (
 	email varchar(255) unique,
 	created_at timestamp default current_timestamp
 );
---rollback DROP TABLE IF EXISTS Candidate;
+--rollback DROP TABLE IF EXISTS candidate;
 
 
 --changeset author:4
-create table CandidateResult (
+CREATE TABLE IF NOT EXISTS candidate_result (
 	id varchar(255) not null primary key,
 	position_id varchar(255),
 	candidate_id varchar(255),
@@ -42,17 +42,17 @@ create table CandidateResult (
 	summary varchar(1023),
 	created_at timestamp default CURRENT_TIMESTAMP,
 	foreign key (position_id) references Position(id),
-	foreign key (candidate_id) references Candidate(id)
+	foreign key (candidate_id) references candidate(id)
 );
---rollback DROP TABLE IF EXISTS CandidateResult;
+--rollback DROP TABLE IF EXISTS candidate_result;
 
 --changeset author:5
-create table AssessmentCriteria (
+CREATE TABLE IF NOT EXISTS assessment_criteria (
 	id varchar(255) not null primary key,
 	candidate_result_id varchar(255),
 	criterion_id varchar(255),
 	score int,
 	reason varchar(1023),
-	foreign key (candidate_result_id) references CandidateResult(id)
+	foreign key (candidate_result_id) references candidate_result(id)
 );
---rollback DROP TABLE IF EXISTS AssessmentCriteria;
+--rollback DROP TABLE IF EXISTS assessment_criteria;
