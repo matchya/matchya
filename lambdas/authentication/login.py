@@ -1,4 +1,5 @@
 import json
+import logging
 
 import psycopg2
 import boto3
@@ -8,6 +9,15 @@ from config import Config
 from utils.response import generate_response, generate_success_response
 from utils.password import check_password
 from utils.token import generate_access_token
+
+logger = logging.getLogger('setup')
+logger.setLevel(logging.INFO)
+
+formatter = logging.Formatter('%(asctime)s:%(name)s:%(levelname)s:%(message)s')
+ch = logging.StreamHandler()
+ch.setFormatter(formatter)
+
+logger.addHandler(ch)
 
 dynamodb = boto3.resource('dynamodb')
 
@@ -85,6 +95,7 @@ def handler(event, context):
              in case of a successful login, or an error message in case of failure.
     """
     try:
+        logger.info('Received event: %s', event)
         body = parse_request_body(event)
         email = body.get('email')
         password = body.get('password')
