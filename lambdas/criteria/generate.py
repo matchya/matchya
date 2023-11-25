@@ -57,7 +57,7 @@ def get_github_username_from_position_id(position_id):
             WHERE Position.id = '%s';
         """
     try:
-        db_cursor.execute(sql % (position_id))
+        db_cursor.execute(sql, (position_id,))
         return db_cursor.fetchone()[0]
     except Exception as e:
         raise RuntimeError(f"Error getting github_username from postgres: {e}")
