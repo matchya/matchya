@@ -182,7 +182,18 @@ resource "aws_security_group" "vpc_endpoint" {
   }
 }
 
+# DATA
 data "aws_security_group" "rds" {
   count      = var.create_new ? 0 : 1
   name = "rds-security-group"
+}
+
+data "aws_security_group" "rds_postgres" {
+  count      = var.create_new ? 0 : 1
+  name = "rds-security-group-new"
+}
+
+data "aws_security_group" "ec2_public" {
+  count      = var.create_new ? 0 : 1
+  name = "ec2-public"
 }
