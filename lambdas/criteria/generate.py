@@ -64,30 +64,12 @@ def generate_criteria(github_client: GithubClient, repository_names):
     :param repository_names: A list of repository names.
     :return: A list of criteria.
     """
-    file_content = ""
-    programming_languages_map_all_in_repo = {}
     try:
-        for repository_name in repository_names:
-            programming_languages_map = github_client.get_programming_languages_used(repository_name)
-            file_content += github_client.get_repo_file_content(repository_name, programming_languages_map)
-            accumulate_language_data(programming_languages_map_all_in_repo, programming_languages_map)
+        contents_and_languages = github_client.get_pinned_repositories_name(repository_names)
     except Exception as e:
         raise RuntimeError(f"Error Reading files: {e}")
 
-    return get_criteria_from_gpt(file_content, programming_languages_map_all_in_repo)
-
-def accumulate_language_data(languages_map_all, repo_languages_map):
-    """
-    Accumulates the programming language data from multiple repositories.
-    
-    :param languages_map_all: A map of programming languages used in all repositories, key: name, value: byte.
-    :param repo_languages_map: A map of programming languages used in a repository, key: name, value: byte.
-    """
-    for lang_name in repo_languages_map:
-        if lang_name in languages_map_all:
-            languages_map_all[lang_name] += repo_languages_map[lang_name]
-    else:
-        languages_map_all[lang_name] = repo_languages_map[lang_name]
+    return get_criteria_from_gpt(contents_and_languages['file_content'], contents_and_languages['languages'])
 
 
 def get_criteria_from_gpt(file_content, languages_map):

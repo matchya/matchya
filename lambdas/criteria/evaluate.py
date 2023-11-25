@@ -77,18 +77,15 @@ def evaluate_candidate(github_client: GithubClient, repository_names, criteria):
     :param repository_names: A list of repository names.
     :return: A list of criteria.
     """
-    file_content = ""
     try:
-        for repository_name in repository_names:
-            programming_languages_map = github_client.get_programming_languages_used(repository_name)
-            file_content += github_client.get_repo_file_content(repository_name, programming_languages_map)
+        contents_and_languages = github_client.get_multi_repo_contents_and_languages(repository_names)
     except Exception as e:
         raise RuntimeError(f"Error Reading files: {e}")
 
-    return get_candidate_evaluation_from_chatgpt(criteria, file_content)
+    return get_candidate_evaluation_from_gpt(criteria, contents_and_languages['file_content'], contents_and_languages['languages'])
 
 
-def get_candidate_evaluation_from_chatgpt(criteria, file_content):
+def get_candidate_evaluation_from_gpt(criteria, file_content, languages):
     """
     Evaluates a candidate's GitHub repository contents against specified criteria using ChatGPT.
 
@@ -123,12 +120,16 @@ def get_candidate_evaluation_from_chatgpt(criteria, file_content):
         }
     """
 
+    message_about_languages = "\nHere is the list of programming languages this candidate used. If you can use this as helpful information, use it:"
+    for key, value in languages:
+        message_about_languages += key + "(" + str(value) + " bytes), "
+
     completion = chat_client.chat.completions.create(
         model="gpt-3.5-turbo-1106",
         response_format={"type": "json_object"},
         messages=[
             {"role": "system", "content": system_message},
-            {"role": "user", "content": "Follow system message instruction. Here are the files from the candidate's GitHub Account: " + file_content}
+            {"role": "user", "content": "Follow system message instruction. Here are the files from the candidate's GitHub Account: " + file_content + message_about_languages}
         ]
     )
     candidate_score = json.loads(completion.choices[0].message.content)

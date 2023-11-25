@@ -129,6 +129,38 @@ class GithubClient:
                 repo_names.append(name)
 
         return repo_names
+    
+    def get_multi_repo_contents_and_languages(self, repository_names):
+        """
+        Retrieves the content of important files from multiple repositories. and programming languages used in the repositories with bytes.
+
+        :param repository_names: A list of repository names.
+        """
+        file_content = ""
+        programming_languages_map_all_in_repo = {}
+        try:
+            for repository_name in repository_names:
+                programming_languages_map = self.get_programming_languages_used(repository_name)
+                file_content += self.get_repo_file_content(repository_name, programming_languages_map)
+                GithubClient.accumulate_language_data(programming_languages_map_all_in_repo, programming_languages_map)
+        except Exception as e:
+            raise RuntimeError(f"Error Reading files: {e}")
+
+        return {"file_content": file_content, "languages": programming_languages_map_all_in_repo}
+    
+    @staticmethod
+    def accumulate_language_data(languages_map_all, repo_languages_map):
+        """
+        Accumulates the programming language data from multiple repositories.
+        
+        :param languages_map_all: A map of programming languages used in all repositories, key: name, value: byte.
+        :param repo_languages_map: A map of programming languages used in a repository, key: name, value: byte.
+        """
+        for lang_name in repo_languages_map:
+            if lang_name in languages_map_all:
+                languages_map_all[lang_name] += repo_languages_map[lang_name]
+        else:
+            languages_map_all[lang_name] = repo_languages_map[lang_name]
 
     @staticmethod
     def get_important_file_names(languages_map):
