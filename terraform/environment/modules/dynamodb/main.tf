@@ -45,4 +45,17 @@ resource "aws_dynamodb_table" "criterion" {
     name = "id"
     type = "S"
   }
+
+  attribute {
+    name = "position_id"
+    type = "S"
+  }
+
+  global_secondary_index {
+    name               = "PositionIdIndex"
+    hash_key           = "position_id"
+    projection_type    = "ALL"
+    read_capacity      = 10
+    write_capacity     = 10
+  }
 }
