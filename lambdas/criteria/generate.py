@@ -203,6 +203,7 @@ def handler(event, context):
     try:
         logger.info('Received generate criteria request')
         connect_to_db()
+
         body = parse_request_body(event)
         validate_request_body(body, ['position_id', 'repository_names'])
         position_id = body.get('position_id')
@@ -211,11 +212,11 @@ def handler(event, context):
         github_username = get_github_username_from_position_id(position_id)
         github_client = GithubClient(github_username)
         criteria = generate_criteria_by_repositories(github_client, repository_names)
+        logger.info('Criteria generated successfully', criteria)
 
         save_criteria_to_dynamodb(criteria, position_id, repository_names)
-
         body = { "criteria": [criterion["message"] for criterion in criteria]}
-        logger.info('Criteria generated successfully')
+        logger.info('Criteria saved successfully')
         return generate_success_response(body)
     except (ValueError, RuntimeError) as e:
         logger.error(f'Criteria generation failed (status 400): {e}')
