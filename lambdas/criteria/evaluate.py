@@ -80,7 +80,7 @@ def get_criteria_from_dynamodb(position_id):
     """
     try:
         response = criterion_table.query(
-            IndexName='position-id-index',
+            IndexName='PositionIdIndex',
             KeyConditionExpression=boto3.dynamodb.conditions.Key('position_id').eq(position_id),
             ProjectionExpression='id, message, keywords'
         )
@@ -157,9 +157,8 @@ def get_candidate_evaluation_from_gpt(criteria, file_content, languages):
             {"role": "user", "content": "Follow system message instruction. Here are the files from the candidate's GitHub Account: " + file_content + languages_info}
         ]
     )
-    candidate_score = json.loads(completion.choices[0].message.content)
-    
-    return candidate_score
+
+    return json.loads(completion.choices[0].message.content)
 
 
 def save_candidate_evaluation_to_db(position_id, candidate_id, candidate_result):
@@ -176,8 +175,7 @@ def save_candidate_evaluation_to_db(position_id, candidate_id, candidate_result)
         
     except Exception as e:
         raise RuntimeError(f"Failed to save candidate result: {e}")
-
-    return
+    
 
 def save_candidate_result(position_id, candidate_id, candidate_result):
     """
