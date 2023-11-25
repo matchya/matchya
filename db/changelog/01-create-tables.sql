@@ -32,13 +32,14 @@ CREATE TABLE IF NOT EXISTS Candidate (
 );
 --rollback DROP TABLE IF EXISTS Candidate;
 
+
 --changeset author:4
 create table CandidateResult (
 	id varchar(255) not null primary key,
 	position_id varchar(255),
 	candidate_id varchar(255),
 	total_score int,
-	summary varchar(255),
+	summary varchar(1023),
 	created_at timestamp default CURRENT_TIMESTAMP,
 	foreign key (position_id) references Position(id),
 	foreign key (candidate_id) references Candidate(id)
@@ -51,7 +52,7 @@ create table AssessmentCriteria (
 	candidate_result_id varchar(255),
 	criterion_id varchar(255),
 	score int,
-	reason varchar(255),
+	reason varchar(1023),
 	foreign key (candidate_result_id) references CandidateResult(id)
 );
 --rollback DROP TABLE IF EXISTS AssessmentCriteria;
