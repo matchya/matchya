@@ -6,26 +6,36 @@ import boto3
 from boto3.dynamodb.types import Binary
 
 from config import Config
-from utils.response import generate_response, generate_success_response
+from utils.response import generate_success_response, generate_error_response
 from utils.password import check_password
 from utils.token import generate_access_token
 
+# Logger
 logger = logging.getLogger('login')
 logger.setLevel(logging.INFO)
 
 formatter = logging.Formatter('%(asctime)s:%(name)s:%(levelname)s:%(message)s')
 ch = logging.StreamHandler()
 ch.setFormatter(formatter)
-
 logger.addHandler(ch)
 
+# DynamoDB
 dynamodb = boto3.resource('dynamodb')
-
 access_token_table = dynamodb.Table(f'{Config.ENVIRONMENT}-AccessToken')
 
-db_conn = psycopg2.connect(host=Config.POSTGRES_HOST, database=Config.POSTGRES_DB, user=Config.POSTGRES_USER, password=Config.POSTGRES_PASSWORD)
-db_cursor = db_conn.cursor()
+# Postgres
+db_conn = None
+db_cursor = None
 
+def connect_to_db():
+    """
+    Reconnects to the database.
+    """
+    global db_conn
+    global db_cursor
+    if not db_conn or db_conn.closed:
+        db_conn = psycopg2.connect(host=Config.POSTGRES_HOST, database=Config.POSTGRES_DB, user=Config.POSTGRES_USER, password=Config.POSTGRES_PASSWORD)
+    db_cursor = db_conn.cursor()
 
 def parse_request_body(event):
     """
@@ -40,7 +50,6 @@ def parse_request_body(event):
             raise ValueError("Empty body")
         return json.loads(body)
     except json.JSONDecodeError as e:
-        logger.error(f"Invalid JSON in request body: {e}")
         raise ValueError(f"Invalid JSON in request body: {e}")
 
 
@@ -55,10 +64,8 @@ def get_company_info(email):
         db_cursor.execute('SELECT * FROM Company WHERE email = %s', (email,))
         result = db_cursor.fetchall()
     except Exception as e:
-        logger.error(f"Error retrieving company info: {e}")
         raise RuntimeError(f"Error retrieving company info: {e}")
     if not result:
-        logger.error('Company not found')
         raise ValueError('Company not found')
     
     company_res = result[0]
@@ -84,7 +91,6 @@ def validate_password(password, stored_password):
     if isinstance(stored_password, memoryview):
         stored_password = stored_password.tobytes()
     if not check_password(password, stored_password):
-        logger.error('Password is invalid')
         raise ValueError('Password is invalid')
 
 
@@ -100,6 +106,8 @@ def handler(event, context):
     """
     try:
         logger.info('Received login request')
+        connect_to_db()
+
         body = parse_request_body(event)
         email = body.get('email')
         password = body.get('password')
@@ -111,7 +119,10 @@ def handler(event, context):
         logger.info('Login successful: %s', email)
         return generate_success_response(access_token)
     except (ValueError, RuntimeError) as e:
-        logger.error('Login failed: %s', e)
-        return generate_response(status_code=400, body={"message": str(e)})
+        logger.error(f'Login failed (status 400): {e}')
+        return generate_error_response(400, str(e))
+    except Exception as e:
+        logger.error(f'Login failed (status 500): {e}')
+        return generate_error_response(500, str(e))
     finally:
         db_conn.close()

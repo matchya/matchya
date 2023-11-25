@@ -24,6 +24,20 @@ def generate_response(status_code: int, body: Any) -> Dict[str, Any]:
         "headers": COMMON_HEADERS
     }
 
+def generate_error_response(status_code: int, message: str):
+    """
+    Generates an error response object.
+
+    :param status_code: The HTTP status code for the response.
+    :param message: The error message to be included in the response.
+    :return: A dictionary representing the HTTP response.
+    """
+    body = {
+        'status': 'error',
+        'message': message
+    }
+    return generate_response(status_code=status_code, body=json.dumps(body))
+
 
 def generate_success_response(access_token):
     """
