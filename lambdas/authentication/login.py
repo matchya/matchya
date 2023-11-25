@@ -1,21 +1,41 @@
 import json
+import logging
 
 import psycopg2
 import boto3
 from boto3.dynamodb.types import Binary
 
 from config import Config
-from utils.response import generate_response, generate_success_response
+from utils.response import generate_success_response, generate_error_response
 from utils.password import check_password
 from utils.token import generate_access_token
 
-dynamodb = boto3.resource('dynamodb')
+# Logger
+logger = logging.getLogger('login')
+logger.setLevel(logging.INFO)
 
+formatter = logging.Formatter('%(asctime)s:%(name)s:%(levelname)s:%(message)s')
+ch = logging.StreamHandler()
+ch.setFormatter(formatter)
+logger.addHandler(ch)
+
+# DynamoDB
+dynamodb = boto3.resource('dynamodb')
 access_token_table = dynamodb.Table(f'{Config.ENVIRONMENT}-AccessToken')
 
-db_conn = psycopg2.connect(host=Config.POSTGRES_HOST, database=Config.POSTGRES_DB, user=Config.POSTGRES_USER, password=Config.POSTGRES_PASSWORD)
-db_cursor = db_conn.cursor()
+# Postgres
+db_conn = None
+db_cursor = None
 
+def connect_to_db():
+    """
+    Reconnects to the database.
+    """
+    global db_conn
+    global db_cursor
+    if not db_conn or db_conn.closed:
+        db_conn = psycopg2.connect(host=Config.POSTGRES_HOST, database=Config.POSTGRES_DB, user=Config.POSTGRES_USER, password=Config.POSTGRES_PASSWORD)
+    db_cursor = db_conn.cursor()
 
 def parse_request_body(event):
     """
@@ -46,8 +66,8 @@ def get_company_info(email):
     except Exception as e:
         raise RuntimeError(f"Error retrieving company info: {e}")
     if not result:
-        raise ValueError('Email is invalid')
-
+        raise ValueError('Company not found')
+        
     company_res = result[0]
     company_info = {
         'id': company_res[0],
@@ -85,6 +105,9 @@ def handler(event, context):
              in case of a successful login, or an error message in case of failure.
     """
     try:
+        logger.info('Received login request')
+        connect_to_db()
+
         body = parse_request_body(event)
         email = body.get('email')
         password = body.get('password')
@@ -93,8 +116,13 @@ def handler(event, context):
         validate_password(password, company['password'])
         access_token = generate_access_token(company['id'])
 
+        logger.info('Login successful: %s', email)
         return generate_success_response(access_token)
     except (ValueError, RuntimeError) as e:
-        return generate_response(status_code=400, body=str(e))
+        logger.error(f'Login failed (status 400): {e}')
+        return generate_error_response(400, str(e))
+    except Exception as e:
+        logger.error(f'Login failed (status 500): {e}')
+        return generate_error_response(500, str(e))
     finally:
         db_conn.close()

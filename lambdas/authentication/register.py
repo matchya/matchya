@@ -43,7 +43,7 @@ def validate_company_data(body):
         raise ValueError('Missing required fields')
 
 
-def create_company_record(company_id, body):
+def create_company_record(company_id: str, body: dict):
     """
     Creates a new company record in the database.
 
@@ -52,9 +52,9 @@ def create_company_record(company_id, body):
     """
     sql = "INSERT INTO company (id, name, email, github_username, password) VALUES (%s, %s, %s, %s, %s);"
     try:
-        db_cursor.execute(sql % (company_id, body['name'], body['email'], body['github_username'], hash_password(body['password'])))
-        db_conn.commit()
+        db_cursor.execute(sql, (company_id, body['name'], body['email'], body['github_username'], hash_password(body['password'])))
     except Exception as e:
+        print(e)
         raise RuntimeError(f"Error saving to company table: {e}")
 
 
@@ -67,8 +67,7 @@ def create_position_record(position_id, company_id, position_name='Software Engi
     """
     sql = "INSERT INTO position (id, company_id, name) VALUES (%s, %s, %s);"
     try:
-        db_cursor.execute(sql % (position_id, company_id, position_name))
-        db_conn.commit()
+        db_cursor.execute(sql, (position_id, company_id, position_name))
     except Exception as e:
         raise RuntimeError(f"Error saving to position table: {e}")
 
@@ -113,6 +112,7 @@ def handler(event, context):
         access_token = generate_access_token(company_id)
         create_access_token_record(company_id, access_token)
 
+        db_conn.commit()
         return generate_success_response(access_token)
     except (ValueError, RuntimeError) as e:
         return generate_response(status_code=400, body=str(e))
