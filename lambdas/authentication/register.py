@@ -1,20 +1,41 @@
 import json
 import uuid
+import logging
 
 import boto3
 import psycopg2
 
 from config import Config
 from utils.password import hash_password
-from utils.response import generate_response, generate_success_response
+from utils.response import generate_error_response, generate_success_response
 from utils.token import generate_access_token
 
+# Logger
+logger = logging.getLogger('register')
+logger.setLevel(logging.INFO)
+
+formatter = logging.Formatter('%(asctime)s:%(name)s:%(levelname)s:%(message)s')
+ch = logging.StreamHandler()
+ch.setFormatter(formatter)
+logger.addHandler(ch)
+
+# DynamoDB
 dynamodb = boto3.resource('dynamodb')
 access_token_table = dynamodb.Table(f'{Config.ENVIRONMENT}-AccessToken')
 
-db_conn = psycopg2.connect(host=Config.POSTGRES_HOST, database=Config.POSTGRES_DB, user=Config.POSTGRES_USER, password=Config.POSTGRES_PASSWORD)
-db_cursor = db_conn.cursor()
+# Postgres
+db_conn = None
+db_cursor = None
 
+def connect_to_db():
+    """
+    Reconnects to the database.
+    """
+    global db_conn
+    global db_cursor
+    if not db_conn or db_conn.closed:
+        db_conn = psycopg2.connect(host=Config.POSTGRES_HOST, database=Config.POSTGRES_DB, user=Config.POSTGRES_USER, password=Config.POSTGRES_PASSWORD)
+    db_cursor = db_conn.cursor()
 
 def parse_request_body(event):
     """
@@ -54,7 +75,6 @@ def create_company_record(company_id: str, body: dict):
     try:
         db_cursor.execute(sql, (company_id, body['name'], body['email'], body['github_username'], hash_password(body['password'])))
     except Exception as e:
-        print(e)
         raise RuntimeError(f"Error saving to company table: {e}")
 
 
@@ -100,6 +120,8 @@ def handler(event, context):
              in case of success, or an error message in case of failure.
     """
     try:
+        logger.info('Received login request')
+        connect_to_db()
         body = parse_request_body(event)
         validate_company_data(body)
 
@@ -115,6 +137,10 @@ def handler(event, context):
         db_conn.commit()
         return generate_success_response(access_token)
     except (ValueError, RuntimeError) as e:
-        return generate_response(status_code=400, body=str(e))
+        logger.error(f'Registration failed (status 400): {e}')
+        return generate_error_response(400, str(e))
+    except Exception as e:
+        logger.error(f'Registration failed (status 500): {e}')
+        return generate_error_response(500, str(e))
     finally:
         db_conn.close()
