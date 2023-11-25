@@ -65,7 +65,7 @@ def generate_criteria(github_client: GithubClient, repository_names):
     :return: A list of criteria.
     """
     try:
-        contents_and_languages = github_client.get_pinned_repositories_name(repository_names)
+        contents_and_languages = github_client.get_multi_repo_contents_and_languages(repository_names)
     except Exception as e:
         raise RuntimeError(f"Error Reading files: {e}")
 

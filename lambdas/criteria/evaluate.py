@@ -34,7 +34,7 @@ def handler(event, context):
         return generate_success_response(candidate_result)
     except Exception as e:
         print(e)
-        return generate_response(500, json.dumps({"message": "Evaluation failed."}))
+        return generate_response(500, json.dumps({"message": f"Evaluation failed.{e}"}))
 
 
 def save_candidate_info_to_db(body):
@@ -121,7 +121,7 @@ def get_candidate_evaluation_from_gpt(criteria, file_content, languages):
     """
 
     message_about_languages = "\nHere is the list of programming languages this candidate used. If you can use this as helpful information, use it:"
-    for key, value in languages:
+    for key, value in languages.items():
         message_about_languages += key + "(" + str(value) + " bytes), "
 
     completion = chat_client.chat.completions.create(
