@@ -41,7 +41,7 @@ def get_company_info(email):
     :return: The first item from the database query result.
     """
     try:
-        db_cursor.execute('SELECT * FROM Company WHERE email = %s', (email,))
+        db_cursor.execute('SELECT * FROM company WHERE email = %s', (email,))
         result = db_cursor.fetchall()
     except Exception as e:
         raise RuntimeError(f"Error retrieving company info: {e}")
