@@ -3,6 +3,7 @@ import datetime
 import uuid
 
 import boto3
+import psycopg2
 from openai import OpenAI
 
 from config import Config
@@ -12,10 +13,13 @@ from utils.response import generate_response, generate_success_response
 from utils.request import parse_request_body, validate_request_body
 
 # DynamoDB
-dynamodb = boto3.resource('dynamodb')
 dynamodb_client = boto3.client('dynamodb')
-criteria_table = dynamodb.Table(f'{Config.ENVIRONMENT}-Criteria')
 
+# PostgreSQL
+db_conn = psycopg2.connect(host=Config.POSTGRES_HOST, database=Config.POSTGRES_DB, user=Config.POSTGRES_USER, password=Config.POSTGRES_PASSWORD)
+db_cursor = db_conn.cursor()
+
+# OpenAI
 chat_client = OpenAI()
 
 def handler(event, context):
@@ -36,7 +40,7 @@ def handler(event, context):
         github_client = GithubClient(github_username)
         criteria = generate_criteria_by_repositories(github_client, repository_names)
 
-        save_criteria_to_dynamodb(criteria, position_id)
+        save_criteria_to_dynamodb(criteria, position_id, repository_names)
         body = { "criteria": [criterion["message"] for criterion in criteria]}
         return generate_success_response(body)
     except (ValueError, RuntimeError) as e:
@@ -44,6 +48,9 @@ def handler(event, context):
     except Exception as e:
         print(e)
         return generate_response(500, {"message": f"Failed to generate criteria: {e}"})
+    finally:
+        db_cursor.close()
+        db_conn.close()
 
 
 def get_github_username_from_position_id(position_id):
@@ -53,8 +60,16 @@ def get_github_username_from_position_id(position_id):
     :param position_id: Unique identifier for the position.
     :return: The GitHub username of the company.
     """
-    # TODO: Get github_username from postgres by position_id
-    return 'kokiebisu'
+    sql = """
+            SELECT Company.github_username FROM Company
+            INNER JOIN Position ON Company.id = Position.company_id
+            WHERE Position.id = '%s';
+        """
+    try:
+        db_cursor.execute(sql % (position_id))
+        return db_cursor.fetchone()[0]
+    except Exception as e:
+        raise RuntimeError(f"Error getting github_username from postgres: {e}")
 
 def generate_criteria_by_repositories(github_client: GithubClient, repository_names):
     """
@@ -151,15 +166,36 @@ def get_criteria_from_gpt(file_content, languages):
         raise RuntimeError(f"Error generating criteria with OpenAI API: {e}")
 
 
-def save_criteria_to_dynamodb(criteria, position_id):
+def save_criteria_to_dynamodb(criteria, position_id, repository_names):
     """
     Saves the generated criteria to the database.
     
     :param criteria: A list of criteria keywords.
     :param position_id: Unique identifier for the position.
+    :param repository_names: A list of repository names.
     """
-    # TODO: Save criteria to database logic here...
+    transact_items = []
     for criterion in criteria:
-        id = str(uuid.uuid4())
-        created_at = datetime.datetime.now().isoformat()
-    return
+        criteria_info = {
+            'id': {'S': str(uuid.uuid4())},
+            'position_id': {'S': position_id},
+            'keywords': {'L': [{'S': keyword} for keyword in criterion['keywords']]},
+            'message': {'S': criterion['message']},
+            'repository_names': {'L': [{'S': name} for name in repository_names]},
+            'created_at': {'S': datetime.datetime.now().isoformat()}
+        }
+        transact_items.append({
+            'Put': {
+                'TableName': Config.DYNAMO_CRITERIA_TABLE_NAME,
+                'Item': criteria_info
+            }
+        })
+
+    try:
+        response = dynamodb_client.transact_write_items(
+            TransactItems=transact_items
+        )
+        if response['ResponseMetadata']['HTTPStatusCode'] != 200:
+            raise RuntimeError(f"Error saving criteria to DynamoDB: {response}")
+    except Exception as e:
+        raise RuntimeError(f"Error saving criteria to DynamoDB: {e}")
