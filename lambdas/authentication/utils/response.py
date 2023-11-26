@@ -1,5 +1,6 @@
 import datetime
 import json
+import http.cookies as Cookie
 from typing import Any, Dict
 
 
@@ -10,7 +11,7 @@ COMMON_HEADERS = {
 }
 
 
-def generate_response(status_code: int, body: Any) -> Dict[str, Any]:
+def generate_response(status_code: int, body: Any, cookie=None) -> Dict[str, Any]:
     """
     Generates a HTTP response object.
 
@@ -18,6 +19,8 @@ def generate_response(status_code: int, body: Any) -> Dict[str, Any]:
     :param body: The body of the response, can be any type that is convertible to a string.
     :return: A dictionary representing the HTTP response.
     """
+    if cookie:
+        COMMON_HEADERS['Set-Cookie'] = cookie.output(header='', sep='')
     return {
         "statusCode": status_code,
         "body": body,
@@ -46,11 +49,16 @@ def generate_success_response(access_token):
     :param access_token: The generated access token.
     :return: A success response containing the access token and current timestamp.
     """
+    cookie = Cookie.SimpleCookie()
+    cookie['session'] = access_token
+    cookie['session']['httponly'] = True
+    cookie['session']['path'] = '/'
+
+    # TODO: change this to 24 hours once it is functioning correctly
+    expiration = datetime.datetime.now() + datetime.timedelta(minutes=3)
+    cookie['session']['expires'] = expiration.strftime("%a, %d-%b-%Y %H:%M:%S GMT")
+
     body = {
         'status': 'success',
-        'payload': {
-            'access_token': access_token,
-            'created_at': str(datetime.datetime.now())
-        }
     }
-    return generate_response(status_code=200, body=json.dumps(body))
+    return generate_response(status_code=200, body=json.dumps(body), cookie=cookie)
