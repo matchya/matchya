@@ -14,7 +14,7 @@ from utils.response import generate_success_response, generate_error_response
 from utils.request import parse_request_body, validate_request_body
 
 # Logger
-logger = logging.getLogger('generate criteria')
+logger = logging.getLogger('evaluate candidate')
 logger.setLevel(logging.INFO)
 
 formatter = logging.Formatter('%(asctime)s:%(name)s:%(levelname)s:%(message)s')
