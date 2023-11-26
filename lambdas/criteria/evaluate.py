@@ -1,6 +1,6 @@
 import json
 import uuid
-import datetime
+import logging
 
 import boto3
 import psycopg2
@@ -10,48 +10,39 @@ from openai import OpenAI
 from config import Config
 from client.github import GithubClient
 
-from utils.response import generate_response, generate_success_response
+from utils.response import generate_success_response, generate_error_response
 from utils.request import parse_request_body, validate_request_body
 
+# Logger
+logger = logging.getLogger('evaluate candidate')
+logger.setLevel(logging.INFO)
+
+formatter = logging.Formatter('%(asctime)s:%(name)s:%(levelname)s:%(message)s')
+ch = logging.StreamHandler()
+ch.setFormatter(formatter)
+logger.addHandler(ch)
+
+# DynamoDB
 dynamodb = boto3.resource('dynamodb')
 dynamodb_client = boto3.client('dynamodb')
 criterion_table = dynamodb.Table(f'{Config.ENVIRONMENT}-Criterion')
 
-db_conn = psycopg2.connect(host=Config.POSTGRES_HOST, database=Config.POSTGRES_DB, user=Config.POSTGRES_USER, password=Config.POSTGRES_PASSWORD)
-db_cursor = db_conn.cursor()
+# Postgres
+db_conn = None
+db_cursor = None
 
 chat_client = OpenAI()
 
-def handler(event, context):
+
+def connect_to_db():
     """
-    Main entry point for the Lambda function.
-
-    :param event: The event object containing details about the Lambda call, such as input parameters.
-    :param context: Lambda runtime information object.
-    :return: A dictionary with status code and the candidate's evaluation result in JSON format.
+    Reconnects to the database.
     """
-    try:
-        body = parse_request_body(event)
-        validate_request_body(body, ['position_id', 'candidate_github_username'])
-        candidate_id = save_candidate_info_to_db(body)
-
-        position_id = body.get('position_id')
-        github_username = body.get('candidate_github_username')
-        github_client = GithubClient(github_username)
-
-        criteria = get_criteria_from_dynamodb(position_id)
-        pinned_repositories = github_client.get_pinned_repositories_name()
-        candidate_result = evaluate_candidate(github_client, pinned_repositories, criteria)
-
-        save_candidate_evaluation_to_db(position_id, candidate_id, candidate_result)
-        return generate_success_response(candidate_result)
-    except Exception as e:
-        print(e)
-        return generate_response(500, json.dumps({"message": f"Evaluation failed.{e}"}))
-    finally:
-        db_conn.commit()
-        db_conn.close()
-
+    global db_conn
+    global db_cursor
+    if not db_conn or db_conn.closed:
+        db_conn = psycopg2.connect(host=Config.POSTGRES_HOST, database=Config.POSTGRES_DB, user=Config.POSTGRES_USER, password=Config.POSTGRES_PASSWORD)
+    db_cursor = db_conn.cursor()
 
 def save_candidate_info_to_db(body):
     """
@@ -84,9 +75,9 @@ def get_criteria_from_dynamodb(position_id):
             KeyConditionExpression=boto3.dynamodb.conditions.Key('position_id').eq(position_id),
             ProjectionExpression='id, message, keywords'
         )
-        criteria = [{'id': item['id'], 'message': item['message'], 'keywords': item.get('keywords', [])} for item in response.get('Items', [])]
-        if not criteria:
+        if not response.get('Items'):
             raise RuntimeError(f"No criteria found for position_id {position_id}")
+        criteria = [{'id': item['id'], 'message': item['message'], 'keywords': item.get('keywords', [])} for item in response.get('Items')]
         return criteria
     except Exception as e:
         raise RuntimeError(f"Failed to retrieve criteria: {e}")
@@ -149,16 +140,19 @@ def get_candidate_evaluation_from_gpt(criteria, file_content, languages):
     for name, bytes in languages.items():
         languages_info += name + "(" + str(bytes) + " bytes), "
 
-    completion = chat_client.chat.completions.create(
-        model="gpt-3.5-turbo-1106",
-        response_format={"type": "json_object"},
-        messages=[
-            {"role": "system", "content": system_message},
-            {"role": "user", "content": "Follow system message instruction. Here are the files from the candidate's GitHub Account: " + file_content + languages_info}
-        ]
-    )
+    try:
+        completion = chat_client.chat.completions.create(
+            model="gpt-3.5-turbo-1106",
+            response_format={"type": "json_object"},
+            messages=[
+                {"role": "system", "content": system_message},
+                {"role": "user", "content": "Follow system message instruction. Here are the files from the candidate's GitHub Account: " + file_content + languages_info}
+            ]
+        )
 
-    return json.loads(completion.choices[0].message.content)
+        return json.loads(completion.choices[0].message.content)
+    except Exception as e:
+        raise RuntimeError(f"Failed to generate criteria from gpt: {e}")
 
 
 def save_candidate_evaluation_to_db(position_id, candidate_id, candidate_result):
@@ -169,12 +163,8 @@ def save_candidate_evaluation_to_db(position_id, candidate_id, candidate_result)
     :param candidate_id: The ID of the candidate.
     :param candidate_result: The candidate's evaluation result.
     """
-    try:
-        candidate_result_id = save_candidate_result(position_id, candidate_id, candidate_result)
-        save_candidate_assessments(candidate_result_id, candidate_result['assessments'])
-        
-    except Exception as e:
-        raise RuntimeError(f"Failed to save candidate result: {e}")
+    candidate_result_id = save_candidate_result(position_id, candidate_id, candidate_result)
+    save_candidate_assessments(candidate_result_id, candidate_result['assessments'])
     
 
 def save_candidate_result(position_id, candidate_id, candidate_result):
@@ -189,7 +179,7 @@ def save_candidate_result(position_id, candidate_id, candidate_result):
         id = str(uuid.uuid4())
         total_score = candidate_result['total_score']
         summary = candidate_result['summary'].replace("'", "''")
-        sql = "INSERT INTO CandidateResult (id, position_id, candidate_id, total_score, summary) VALUES (%s, %s, %s, %s, %s)"
+        sql = "INSERT INTO candidate_result (id, position_id, candidate_id, total_score, summary) VALUES (%s, %s, %s, %s, %s)"
         db_cursor.execute(sql, (id, position_id, candidate_id, total_score, summary))
         return id
     except Exception as e:
@@ -203,7 +193,7 @@ def save_candidate_assessments(candidate_result_id, assessments):
     :param assessments: The candidate's assessments.
     """
     try:
-        sql = "INSERT INTO AssessmentCriteria (id, candidate_result_id, criterion_id, score, reason) VALUES"
+        sql = "INSERT INTO assessment_criteria (id, candidate_result_id, criterion_id, score, reason) VALUES"
         for assessment in assessments:
             id = str(uuid.uuid4())
             criterion_id = assessment['criterion_id']
@@ -215,3 +205,45 @@ def save_candidate_assessments(candidate_result_id, assessments):
         db_cursor.execute(sql)
     except Exception as e:
         raise RuntimeError(f"Failed to save candidate assessments: {e}")
+    
+
+def handler(event, context):
+    """
+    Main entry point for the Lambda function.
+
+    :param event: The event object containing details about the Lambda call, such as input parameters.
+    :param context: Lambda runtime information object.
+    :return: A dictionary with status code and the candidate's evaluation result in JSON format.
+    """
+    try:
+        logger.info(f"Received evaluate candidate request")
+        connect_to_db()
+
+        body = parse_request_body(event)
+        validate_request_body(body, ['position_id', 'candidate_github_username'])
+        candidate_id = save_candidate_info_to_db(body)
+        logger.info(f"Saved candidate info to database successfully: {candidate_id}")
+
+        position_id = body.get('position_id')
+        github_username = body.get('candidate_github_username')
+        github_client = GithubClient(github_username)
+
+        criteria = get_criteria_from_dynamodb(position_id)
+        pinned_repositories = github_client.get_pinned_repositories_name()
+        candidate_result = evaluate_candidate(github_client, pinned_repositories, criteria)
+        logger.info(f"Generated candidate evaluation successfully: score {candidate_result.get('total_score')}")
+
+        save_candidate_evaluation_to_db(position_id, candidate_id, candidate_result)
+        logger.info(f"Saved candidate evaluation to database successfully")
+        db_conn.commit()
+        return generate_success_response(candidate_result)
+    except (ValueError, RuntimeError) as e:
+        status_code = 400
+        logger.error(f'Candidate evaluation failed (status {str(status_code)}): {e}')
+        return generate_error_response(status_code, str(e))
+    except Exception as e:
+        status_code = 400
+        logger.error(f'Candidate evaluation failed (status {str(status_code)}): {e}')
+        return generate_error_response(status_code, str(e))
+    finally:
+        db_conn.close()
