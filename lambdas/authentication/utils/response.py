@@ -27,6 +27,7 @@ def generate_response(status_code: int, body: Any, cookie=None) -> Dict[str, Any
         "headers": COMMON_HEADERS
     }
 
+
 def generate_error_response(status_code: int, message: str):
     """
     Generates an error response object.

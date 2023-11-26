@@ -27,6 +27,7 @@ access_token_table = dynamodb.Table(f'{Config.ENVIRONMENT}-AccessToken')
 db_conn = None
 db_cursor = None
 
+
 def connect_to_db():
     """
     Reconnects to the database.
@@ -36,6 +37,7 @@ def connect_to_db():
     if not db_conn or db_conn.closed:
         db_conn = psycopg2.connect(host=Config.POSTGRES_HOST, database=Config.POSTGRES_DB, user=Config.POSTGRES_USER, password=Config.POSTGRES_PASSWORD)
     db_cursor = db_conn.cursor()
+
 
 def parse_request_body(event):
     """
