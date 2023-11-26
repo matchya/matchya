@@ -119,10 +119,12 @@ def handler(event, context):
         logger.info('Login successful: %s', email)
         return generate_success_response(access_token)
     except (ValueError, RuntimeError) as e:
-        logger.error(f'Login failed (status 400): {e}')
-        return generate_error_response(400, str(e))
+        status_code = 400
+        logger.error(f'Login failed (status {str(status_code)}): {e}')
+        return generate_error_response(status_code, str(e))
     except Exception as e:
-        logger.error(f'Login failed (status 500): {e}')
-        return generate_error_response(500, str(e))
+        status_code = 500
+        logger.error(f'Login failed (status {str(status_code)}): {e}')
+        return generate_error_response(status_code, str(e))
     finally:
         db_conn.close()

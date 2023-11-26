@@ -16,13 +16,17 @@ class GithubClient:
         :param repository_name: Name of the GitHub repository.
         :return: A list of programming languages used in the repository.
         """
+        url = Config.GITHUB_API_REPO_URL + self.github_username + "/" + repository_name + "/languages"
         try:
-            url = Config.GITHUB_API_REPO_URL + self.github_username + "/" + repository_name + "/languages"
             res = requests.get(url, headers=Config.GITHUB_REST_API_HEADERS)
-            data = json.loads(res.content)
-            return data
-        except Exception as e:
-            return RuntimeError(f"Error getting programming languages used in repository. {e}")
+        except Exception:
+            raise RuntimeError("Error getting programming languages used in repository. Request to GitHub API failed.")
+        if res.status_code == 404:
+            raise RuntimeError("Error getting programming languages used in repository. Repository not found.")
+        data = json.loads(res.content)
+        if data == {}:
+            raise RuntimeError("Error getting programming languages used in repository. No languages found.")
+        return data
 
     def get_important_file_paths(self, repo_name, important_file_names):
         """
@@ -35,9 +39,15 @@ class GithubClient:
         branch = self._get_default_branch(repo_name)
 
         url = Config.GITHUB_API_REPO_URL + self.github_username + "/" + repo_name + "/git/trees/" + branch + "?recursive=1"
-        res = requests.get(url, headers=Config.GITHUB_REST_API_HEADERS)
+        try :
+            res = requests.get(url, headers=Config.GITHUB_REST_API_HEADERS)
+        except Exception:
+            raise RuntimeError("Error getting file tree. Request to GitHub API failed.")
 
         data = json.loads(res.content)
+        if data is None or data.get('tree') is None:
+            raise RuntimeError("Error getting file tree. No tree found.")
+        
         tree = data['tree']
         file_paths = []
         for branch in tree:
@@ -56,16 +66,20 @@ class GithubClient:
         :return: The content of the file as a string.
         """
         url = Config.GITHUB_API_REPO_URL + self.github_username + "/" + repo_name + "/contents/" + file_path
-        res = requests.get(url, headers=Config.GITHUB_REST_API_HEADERS)
+        try:
+            res = requests.get(url, headers=Config.GITHUB_REST_API_HEADERS)
+        except Exception:
+            raise RuntimeError("Error getting file contents. Request to GitHub API failed.")
 
         data = json.loads(res.content)
         if data is None or data.get('content') is None:
-            return ""
+            raise RuntimeError("Error getting file contents. No content found.")
+        
         content_encoded = data['content']
         content = str(base64.b64decode(content_encoded))
         return content
     
-    def get_repo_file_content(self, repo_name, languages=None):
+    def get_repo_file_content(self, repo_name, languages):
         """
         Retrieves the content of important files from a specified repository.
 
@@ -73,8 +87,6 @@ class GithubClient:
         :param languages: A map of programming languages used in the repository, key: name, value: byte.
         :return: A string containing the content of important files from the repository, formatted with repository and file path information.
         """
-        if languages is None:
-            languages = self.get_programming_languages_used(repo_name)
         important_file_names = GithubClient.get_important_file_names(languages)
         file_paths = self.get_important_file_paths(repo_name, important_file_names)
 
@@ -91,7 +103,6 @@ class GithubClient:
         :param github_username: The GitHub username.
         :return: A list of names of pinned repositories.
         """
-        repo_names = []
         query = """
         {
             repositoryOwner(login: "%s") {
@@ -113,17 +124,15 @@ class GithubClient:
         }
         """ % self.github_username
         data = self._run_github_query(query)
-        edges = None
-        try:
-            edges = data.get("repositoryOwner").get("pinnableItems").get("edges")
-        except Exception:
-            raise Exception("Getting pinned repositories failed.")
-
+        if data is None or data.get("repositoryOwner") is None or data.get("repositoryOwner").get("pinnableItems") is None:
+            raise Exception("Getting pinned repositories failed. No data found.")
+        
+        repo_names = []
+        edges = data.get("repositoryOwner").get("pinnableItems").get("edges")
         for edge in edges:
-            name = edge.get("node").get("name")
-            owner = edge.get("node").get("owner").get("login")
-            if owner == self.github_username:
-                repo_names.append(name)
+            node = edge.get("node")
+            if node.get("owner").get("login") == self.github_username:
+                repo_names.append(node.get("name"))
 
         return repo_names
     
@@ -202,7 +211,10 @@ class GithubClient:
         :return: The name of the default branch for the repository.
         """
         url = Config.GITHUB_API_REPO_URL + self.github_username + "/" + repo_name
-        res = requests.get(url, headers=Config.GITHUB_REST_API_HEADERS)
+        try:
+            res = requests.get(url, headers=Config.GITHUB_REST_API_HEADERS)
+        except Exception:
+            raise RuntimeError("Error getting default branch name. Request to GitHub API failed.")
 
         data = json.loads(res.content)
         if data is None or data.get('default_branch') is None:
@@ -234,4 +246,4 @@ class GithubClient:
             content = json.loads(res.content)
             return content.get("data")
         except Exception:
-            return None
+            raise RuntimeError("Error running GitHub query.")
