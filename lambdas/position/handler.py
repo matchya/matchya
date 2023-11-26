@@ -55,6 +55,24 @@ def get_position_by_id(position_id):
         return position
     except Exception as e:
         raise RuntimeError(f"Failed to retrieve position: {e}")
+    
+
+def get_repository_names_by_position_id(position_id):
+    """
+    Retrieves the 'message' attribute of criteria for a given position_id from dynamodb.
+    
+    :param position_id: Unique identifier for the position.
+    :return: List of messages for the given position_id.
+    """
+    try:
+        db_cursor.execute(f"SELECT repository_name FROM position_repository WHERE position_id = '{position_id}'")
+        result = db_cursor.fetchall()
+        if not result:
+            raise ValueError(f"Repository names not found for position_id: {position_id}")
+        repository_names = [item[0] for item in result]
+        return repository_names
+    except Exception as e:
+        raise RuntimeError(f"Failed to retrieve repository names: {e}")
 
 
 def get_criteria_by_position_id(position_id):
@@ -141,6 +159,7 @@ def retrieve(event, context):
         connect_to_db()
         position_id = parse_request_parameter(event, 'id')
         position = get_position_by_id(position_id)
+        repository_names = get_repository_names_by_position_id(position_id)
         criteria = get_criteria_by_position_id(position_id)
         criteria_messages = [criteria[key] for key in criteria]
         candidates = get_candidates_by_position_id(position_id, criteria)
@@ -148,7 +167,7 @@ def retrieve(event, context):
             "id": position["id"],
             "name": position["name"],
             "criteria": {
-                "repository_names": [], # position["repository_names"]
+                "repository_names": repository_names,
                 "messages": criteria_messages
             },
             "candidates": candidates

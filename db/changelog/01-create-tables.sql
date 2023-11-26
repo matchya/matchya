@@ -65,3 +65,12 @@ CREATE TABLE IF NOT EXISTS company_repository (
 	foreign key (company_id) references company(id)
 );
 --rollback DROP TABLE IF EXISTS company_repository;
+
+--changeset author:7
+CREATE TABLE IF NOT EXISTS position_repository (
+	id varchar(255) not null primary key,
+	position_id varchar(255),
+	repository_name varchar(255),
+	foreign key (position_id) references position(id)
+);
+--rollback DROP TABLE IF EXISTS position_repository;

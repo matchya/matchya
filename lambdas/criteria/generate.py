@@ -157,7 +157,7 @@ def get_criteria_from_gpt(file_content, languages):
         raise RuntimeError(f"Error generating criteria with OpenAI API: {e}")
 
 
-def save_criteria_to_dynamodb(criteria, position_id, repository_names):
+def save_criteria_to_dynamodb(criteria, position_id):
     """
     Saves the generated criteria to the database.
     
@@ -172,7 +172,6 @@ def save_criteria_to_dynamodb(criteria, position_id, repository_names):
             'position_id': {'S': position_id},
             'keywords': {'L': [{'S': keyword} for keyword in criterion['keywords']]},
             'message': {'S': criterion['message']},
-            'repository_names': {'L': [{'S': name} for name in repository_names]},
             'created_at': {'S': datetime.datetime.now().isoformat()}
         }
         transact_items.append({
@@ -191,6 +190,22 @@ def save_criteria_to_dynamodb(criteria, position_id, repository_names):
     except Exception as e:
         raise RuntimeError(f"Error saving criteria to DynamoDB: {e}")
 
+
+def save_repository_names_to_db(position_id, repository_names):
+    """
+    Saves the repository names to the database.
+    
+    :param position_id: Unique identifier for the position.
+    :param repository_names: A list of repository names.
+    """
+    sql = "INSERT INTO position_repository (id, position_id, repository_name) VALUES"
+    for repository_name in repository_names:
+        sql += f" ('{str(uuid.uuid4())}', '{position_id}', '{repository_name}'),"
+    sql = sql[:-1] + ";"
+    try:
+        db_cursor.execute(sql)
+    except Exception as e:
+        raise RuntimeError(f"Error saving repository names to postgres: {e}")
 
 def handler(event, context):
     """
@@ -214,8 +229,11 @@ def handler(event, context):
         criteria = generate_criteria_by_repositories(github_client, repository_names)
         logger.info(f'Criteria generated successfully for position: {position_id}')
 
-        save_criteria_to_dynamodb(criteria, position_id, repository_names)
+        save_criteria_to_dynamodb(criteria, position_id)
+        save_repository_names_to_db(position_id, repository_names)
         body = { "criteria": [criterion["message"] for criterion in criteria]}
+
+        db_conn.commit()
         logger.info('Criteria saved successfully')
         return generate_success_response(body)
     except (ValueError, RuntimeError) as e:
