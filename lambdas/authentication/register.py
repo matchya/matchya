@@ -78,7 +78,7 @@ def create_company_record(company_id: str, body: dict):
         raise RuntimeError(f"Error saving to company table: {e}")
 
 
-def create_position_record(position_id, company_id, position_name='Software Engineer'):
+def create_position_record(company_id, position_name='Software Engineer'):
     """
     Creates a new position record in the database.
 
@@ -87,6 +87,7 @@ def create_position_record(position_id, company_id, position_name='Software Engi
     """
     sql = "INSERT INTO position (id, company_id, name) VALUES (%s, %s, %s);"
     try:
+        position_id = str(uuid.uuid4())
         db_cursor.execute(sql, (position_id, company_id, position_name))
     except Exception as e:
         raise RuntimeError(f"Error saving to position table: {e}")
@@ -128,8 +129,7 @@ def handler(event, context):
         company_id = str(uuid.uuid4())
         create_company_record(company_id, body)
 
-        position_id = str(uuid.uuid4())
-        create_position_record(position_id, company_id)
+        create_position_record(company_id)
 
         access_token = generate_access_token(company_id)
         create_access_token_record(company_id, access_token)
