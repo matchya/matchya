@@ -3,7 +3,7 @@ import json
 
 def retrieve(event, context):
     body = {
-        "message": "Go Serverless v3.0! Your function executed successfully!",
+        "message": "Retrieve Company is called!",
         "input": event,
     }
 
