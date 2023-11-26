@@ -39,7 +39,7 @@ def get_company_by_id(company_id):
     :return: List of messages for the given position_id.
     """
     try:
-        db_cursor.execute(f"SELECT * FROM company WHERE id = '{company_id}'")
+        db_cursor.execute(f"SELECT id, name, email, github_username FROM company WHERE id = '{company_id}'")
         result = db_cursor.fetchone()
         if not result:
             raise ValueError(f"Company not found for id: {company_id}")
@@ -62,11 +62,11 @@ def get_repositories_by_company_id(company_id):
     :return: List of messages for the given position_id.
     """
     try:
-        db_cursor.execute(f"SELECT * FROM company_repository WHERE company_id = '{company_id}'")
+        db_cursor.execute(f"SELECT repository_name FROM company_repository WHERE company_id = '{company_id}'")
         result = db_cursor.fetchall()
         if not result:
             return []
-        repositories = [item[2] for item in result]
+        repositories = [item[0] for item in result]
         return repositories
     except Exception as e:
         raise RuntimeError(f"Failed to retrieve repositories: {e}")
@@ -80,11 +80,11 @@ def get_positions_by_company_id(company_id):
     :return: List of messages for the given position_id.
     """
     try:
-        db_cursor.execute(f"SELECT * FROM position WHERE company_id = '{company_id}'")
+        db_cursor.execute(f"SELECT id, name FROM position WHERE company_id = '{company_id}'")
         result = db_cursor.fetchall()
         if not result:
             return []
-        positions = [{"id": item[0], "name": item[2]} for item in result]
+        positions = [{"id": item[0], "name": item[1]} for item in result]
         return positions
     except Exception as e:
         raise RuntimeError(f"Failed to retrieve positions: {e}")
