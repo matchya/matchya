@@ -179,7 +179,7 @@ def save_candidate_result(position_id, candidate_id, candidate_result):
         id = str(uuid.uuid4())
         total_score = candidate_result['total_score']
         summary = candidate_result['summary'].replace("'", "''")
-        sql = "INSERT INTO CandidateResult (id, position_id, candidate_id, total_score, summary) VALUES (%s, %s, %s, %s, %s)"
+        sql = "INSERT INTO candidate_result (id, position_id, candidate_id, total_score, summary) VALUES (%s, %s, %s, %s, %s)"
         db_cursor.execute(sql, (id, position_id, candidate_id, total_score, summary))
         return id
     except Exception as e:
@@ -193,7 +193,7 @@ def save_candidate_assessments(candidate_result_id, assessments):
     :param assessments: The candidate's assessments.
     """
     try:
-        sql = "INSERT INTO AssessmentCriteria (id, candidate_result_id, criterion_id, score, reason) VALUES"
+        sql = "INSERT INTO assessment_criteria (id, candidate_result_id, criterion_id, score, reason) VALUES"
         for assessment in assessments:
             id = str(uuid.uuid4())
             criterion_id = assessment['criterion_id']
