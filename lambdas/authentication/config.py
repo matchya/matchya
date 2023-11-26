@@ -9,3 +9,5 @@ class Config:
     POSTGRES_USER = os.environ.get('POSTGRES_USER')
     POSTGRES_PASSWORD = os.environ.get('POSTGRES_PASSWORD')
 
+    JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY')
+
