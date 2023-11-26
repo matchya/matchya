@@ -1,6 +1,7 @@
 import json
 import uuid
 import logging
+import requests
 
 import boto3
 import psycopg2
@@ -76,9 +77,45 @@ def create_company_record(company_id: str, body: dict):
         db_cursor.execute(sql, (company_id, body['name'], body['email'], body['github_username'], hash_password(body['password'])))
     except Exception as e:
         raise RuntimeError(f"Error saving to company table: {e}")
+    
+
+def save_company_repositories(company_id: str, github_username: str):
+    """
+    Saves the repositories of the company to the database.
+
+    :param company_id: Unique identifier for the company.
+    :param github_username: The GitHub username of the company.
+    """
+    repositories = get_company_repository_names(github_username)
+    sql = "INSERT INTO company_repository (id, company_id, repository_name) VALUES"
+    for repository in repositories:
+        sql += f" ('{str(uuid.uuid4())}', '{company_id}', '{repository}'),"
+    sql = sql[:-1] + ';'
+    try:
+        db_cursor.execute(sql)
+    except Exception as e:
+        raise RuntimeError(f"Error saving to repository table: {e}")
+    
+
+def get_company_repository_names(github_username: str):
+    """
+    Gets the repositories of a company from GitHub.
+
+    :param company_id: The GitHub username of the company.
+    :return: A list of repositories of the company.
+    """
+    url = f"https://api.github.com/users/{github_username}/repos"
+    response = requests.get(url)
+    if response.status_code == 404:
+        raise RuntimeError(f"GitHub account not found: {github_username}")
+    if response.status_code != 200:
+        raise RuntimeError(f"Error getting repositories from GitHub account: {github_username}")
+    repositories = response.json()
+    repo_names = [repository['name'] for repository in repositories]
+    return repo_names
 
 
-def create_position_record(position_id, company_id, position_name='Software Engineer'):
+def create_position_record(company_id, position_name='Software Engineer'):
     """
     Creates a new position record in the database.
 
@@ -87,6 +124,7 @@ def create_position_record(position_id, company_id, position_name='Software Engi
     """
     sql = "INSERT INTO position (id, company_id, name) VALUES (%s, %s, %s);"
     try:
+        position_id = str(uuid.uuid4())
         db_cursor.execute(sql, (position_id, company_id, position_name))
     except Exception as e:
         raise RuntimeError(f"Error saving to position table: {e}")
@@ -128,8 +166,8 @@ def handler(event, context):
         company_id = str(uuid.uuid4())
         create_company_record(company_id, body)
 
-        position_id = str(uuid.uuid4())
-        create_position_record(position_id, company_id)
+        create_position_record(company_id)
+        save_company_repositories(company_id, body['github_username'])
 
         access_token = generate_access_token(company_id)
         create_access_token_record(company_id, access_token)
