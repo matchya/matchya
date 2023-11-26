@@ -36,8 +36,6 @@ functions:
       name: default
       command:
         - register.handler
-    environment:
-      ENVIRONMENT: ${self:provider.stage}
     events:
       - http:
           path: /register
@@ -50,8 +48,6 @@ functions:
       name: default
       command:
         - login.handler
-    environment:
-      ENVIRONMENT: ${self:provider.stage}
     events:
       - http:
           path: /login
