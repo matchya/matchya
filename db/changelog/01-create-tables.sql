@@ -56,3 +56,12 @@ CREATE TABLE IF NOT EXISTS assessment_criteria (
 	foreign key (candidate_result_id) references candidate_result(id)
 );
 --rollback DROP TABLE IF EXISTS assessment_criteria;
+
+--changeset author:6
+CREATE TABLE IF NOT EXISTS company_repository (
+	id varchar(255) not null primary key,
+	company_id varchar(255),
+	repository_name varchar(255),
+	foreign key (company_id) references company(id)
+);
+--rollback DROP TABLE IF EXISTS company_repository;
