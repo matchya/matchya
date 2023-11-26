@@ -1,0 +1,50 @@
+service: company
+
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: python3.9
+  architecture: arm64
+  stage: dev
+  region: us-east-1
+  deploymentBucket:
+    name: ${self:provider.stage}-sls-company
+  iam:
+    role: ${ssm:/terraform/shared/iam/lambda_role_arn}
+  apiGateway:
+    restApiId: ${ssm:/terraform/${self:provider.stage}/api_gateway/id}
+    restApiRootResourceId: ${ssm:/terraform/${self:provider.stage}/api_gateway/root_resource_id}
+  ecr:
+    images:
+      default:
+        path: ./
+        file: Dockerfile
+        buildArgs:
+  environment:
+    ENVIRONMENT: ${self:provider.stage}
+    POSTGRES_HOST: ${ssm:/terraform/${self:provider.stage}/rds/endpoint}
+    POSTGRES_PORT: ${ssm:/terraform/${self:provider.stage}/rds/port}
+    POSTGRES_DB: ${ssm:/terraform/${self:provider.stage}/rds/db_name}
+    POSTGRES_USER: ${ssm:/terraform/${self:provider.stage}/rds/db_username}
+    POSTGRES_PASSWORD: ${ssm:/terraform/${self:provider.stage}/rds/db_password}
+
+functions:
+  retrieve:
+    name: ${self:provider.stage}-company-retrieve
+    image:
+      name: default
+      command:
+        - handler.retrieve
+    events:
+      - http:
+          path: /companies/{id}
+          method: GET
+          request:
+            parameters:
+              paths:
+                id: true
+
+plugins:
+  - serverless-deployment-bucket
+  
