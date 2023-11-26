@@ -6,5 +6,8 @@
     "deploy": "sls deploy"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "serverless-deployment-bucket": "^1.6.0"
+  }
 }
