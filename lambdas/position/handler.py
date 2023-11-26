@@ -1,9 +1,20 @@
+import logging
+
 import psycopg2
 import boto3
 
 from config import Config
 from utils.request import parse_request_parameter
 from utils.response import generate_success_response, generate_error_response
+
+# Logger
+logger = logging.getLogger('position')
+logger.setLevel(logging.INFO)
+
+formatter = logging.Formatter('%(asctime)s:%(name)s:%(levelname)s:%(message)s')
+ch = logging.StreamHandler()
+ch.setFormatter(formatter)
+logger.addHandler(ch)
 
 # DynamoDB
 dynamodb = boto3.resource('dynamodb')
@@ -89,9 +100,9 @@ def get_candidates_by_position_id(position_id, criteria):
                 INNER JOIN
                     assessment_criteria ac ON cr.id = ac.candidate_result_id
                 WHERE
-                    cr.position_id = %s;
-            """
-        db_cursor.execute(sql % (position_id))
+                    cr.position_id = '%s';
+            """ % position_id
+        db_cursor.execute(sql)
         result = db_cursor.fetchall()
         if not result:
             return []
@@ -126,6 +137,7 @@ def get_candidates_by_position_id(position_id, criteria):
 
 def retrieve(event, context):
     try:
+        logger.info(f"Received event: {event}")
         connect_to_db()
         position_id = parse_request_parameter(event, 'id')
         position = get_position_by_id(position_id)
@@ -141,12 +153,15 @@ def retrieve(event, context):
             },
             "candidates": candidates
         }
+        logger.info(f"Retrieved position: {body}")
         return generate_success_response(body)
     except (ValueError, RuntimeError) as e:
         status_code = 400
+        logger.error(f"Failed to retrieve position (status {str(status_code)}): {e}")
         return generate_error_response(status_code, str(e))
     except Exception as e:
         status_code = 500
+        logger.error(f"Failed to retrieve position (status {str(status_code)}): {e}")
         return generate_error_response(status_code, str(e))
     finally:
         if db_conn:
