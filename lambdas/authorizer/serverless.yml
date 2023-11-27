@@ -31,7 +31,7 @@ functions:
     image:
       name: default
       command:
-        - handler.authorize
+        - authorize.handler
 
 plugins:
   - serverless-deployment-bucket
