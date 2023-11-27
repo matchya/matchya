@@ -42,7 +42,7 @@ def generate_success_response(body: Any) -> Dict[str, Any]:
     """
     Generates a success response with the access token.
 
-    :param access_token: The generated access token.
+    :param body: The generated access token.
     :return: A success response containing the access token and current timestamp.
     """
     body = {

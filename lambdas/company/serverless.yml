@@ -1,4 +1,4 @@
-service: authentication
+service: company
 
 frameworkVersion: "3"
 
@@ -9,7 +9,7 @@ provider:
   stage: dev
   region: us-east-1
   deploymentBucket:
-    name: ${self:provider.stage}-sls-authentication
+    name: ${self:provider.stage}-sls-company
   iam:
     role: ${ssm:/terraform/shared/iam/lambda_role_arn}
   apiGateway:
@@ -23,7 +23,6 @@ provider:
         buildArgs:
   environment:
     ENVIRONMENT: ${self:provider.stage}
-    JWT_SECRET_KEY: ${ssm:/secrets/${self:provider.stage}/jwt_secret_key}
     POSTGRES_HOST: ${ssm:/terraform/${self:provider.stage}/rds/endpoint}
     POSTGRES_PORT: ${ssm:/terraform/${self:provider.stage}/rds/port}
     POSTGRES_DB: ${ssm:/terraform/${self:provider.stage}/rds/db_name}
@@ -31,29 +30,21 @@ provider:
     POSTGRES_PASSWORD: ${ssm:/terraform/${self:provider.stage}/rds/db_password}
 
 functions:
-  register:
-    name: ${self:provider.stage}-authentication-register
+  retrieve:
+    name: ${self:provider.stage}-company-retrieve
     image:
       name: default
       command:
-        - register.handler
+        - handler.retrieve
     events:
       - http:
-          path: /register
-          method: POST
-          cors: true
-
-  login:
-    name: ${self:provider.stage}-authentication-login
-    image:
-      name: default
-      command:
-        - login.handler
-    events:
-      - http:
-          path: /login
-          method: POST
-          cors: true
+          path: /companies/{id}
+          method: GET
+          request:
+            parameters:
+              paths:
+                id: true
 
 plugins:
   - serverless-deployment-bucket
+  

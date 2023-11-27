@@ -1,6 +1,7 @@
 import json
 import datetime
 import uuid
+import logging
 
 import boto3
 import psycopg2
@@ -9,48 +10,38 @@ from openai import OpenAI
 from config import Config
 from client.github import GithubClient
 
-from utils.response import generate_response, generate_success_response
+from utils.response import generate_success_response, generate_error_response
 from utils.request import parse_request_body, validate_request_body
+
+# Logger
+logger = logging.getLogger('generate criteria')
+logger.setLevel(logging.INFO)
+
+formatter = logging.Formatter('%(asctime)s:%(name)s:%(levelname)s:%(message)s')
+ch = logging.StreamHandler()
+ch.setFormatter(formatter)
+logger.addHandler(ch)
 
 # DynamoDB
 dynamodb_client = boto3.client('dynamodb')
 
-# PostgreSQL
-db_conn = psycopg2.connect(host=Config.POSTGRES_HOST, database=Config.POSTGRES_DB, user=Config.POSTGRES_USER, password=Config.POSTGRES_PASSWORD)
-db_cursor = db_conn.cursor()
+# Postgres
+db_conn = None
+db_cursor = None
 
 # OpenAI
 chat_client = OpenAI()
 
-def handler(event, context):
+
+def connect_to_db():
     """
-    Lambda function entry point to generate criteria from GitHub repositories.
-
-    :param event: The event triggering the lambda, contains request data.
-    :param context: The runtime context of the lambda.
-    :return: A dictionary with HTTP status code and response body.
+    Reconnects to the database.
     """
-    try:
-        body = parse_request_body(event)
-        validate_request_body(body, ['position_id', 'repository_names'])
-        position_id = body.get('position_id')
-        repository_names = body.get('repository_names')
-
-        github_username = get_github_username_from_position_id(position_id)
-        github_client = GithubClient(github_username)
-        criteria = generate_criteria_by_repositories(github_client, repository_names)
-
-        save_criteria_to_dynamodb(criteria, position_id, repository_names)
-        body = { "criteria": [criterion["message"] for criterion in criteria]}
-        return generate_success_response(body)
-    except (ValueError, RuntimeError) as e:
-        return generate_response(400, {"message": str(e)})
-    except Exception as e:
-        print(e)
-        return generate_response(500, {"message": f"Failed to generate criteria: {e}"})
-    finally:
-        db_cursor.close()
-        db_conn.close()
+    global db_conn
+    global db_cursor
+    if not db_conn or db_conn.closed:
+        db_conn = psycopg2.connect(host=Config.POSTGRES_HOST, database=Config.POSTGRES_DB, user=Config.POSTGRES_USER, password=Config.POSTGRES_PASSWORD)
+    db_cursor = db_conn.cursor()
 
 
 def get_github_username_from_position_id(position_id):
@@ -166,7 +157,7 @@ def get_criteria_from_gpt(file_content, languages):
         raise RuntimeError(f"Error generating criteria with OpenAI API: {e}")
 
 
-def save_criteria_to_dynamodb(criteria, position_id, repository_names):
+def save_criteria_to_dynamodb(criteria, position_id):
     """
     Saves the generated criteria to the database.
     
@@ -181,7 +172,6 @@ def save_criteria_to_dynamodb(criteria, position_id, repository_names):
             'position_id': {'S': position_id},
             'keywords': {'L': [{'S': keyword} for keyword in criterion['keywords']]},
             'message': {'S': criterion['message']},
-            'repository_names': {'L': [{'S': name} for name in repository_names]},
             'created_at': {'S': datetime.datetime.now().isoformat()}
         }
         transact_items.append({
@@ -199,3 +189,60 @@ def save_criteria_to_dynamodb(criteria, position_id, repository_names):
             raise RuntimeError(f"Error saving criteria to DynamoDB: {response}")
     except Exception as e:
         raise RuntimeError(f"Error saving criteria to DynamoDB: {e}")
+
+
+def save_repository_names_to_db(position_id, repository_names):
+    """
+    Saves the repository names to the database.
+    
+    :param position_id: Unique identifier for the position.
+    :param repository_names: A list of repository names.
+    """
+    sql = "INSERT INTO position_repository (id, position_id, repository_name) VALUES"
+    for repository_name in repository_names:
+        sql += f" ('{str(uuid.uuid4())}', '{position_id}', '{repository_name}'),"
+    sql = sql[:-1] + ";"
+    try:
+        db_cursor.execute(sql)
+    except Exception as e:
+        raise RuntimeError(f"Error saving repository names to postgres: {e}")
+
+def handler(event, context):
+    """
+    Lambda function entry point to generate criteria from GitHub repositories.
+
+    :param event: The event triggering the lambda, contains request data.
+    :param context: The runtime context of the lambda.
+    :return: A dictionary with HTTP status code and response body.
+    """
+    try:
+        logger.info('Received generate criteria request')
+        connect_to_db()
+
+        body = parse_request_body(event)
+        validate_request_body(body, ['position_id', 'repository_names'])
+        position_id = body.get('position_id')
+        repository_names = body.get('repository_names')
+
+        github_username = get_github_username_from_position_id(position_id)
+        github_client = GithubClient(github_username)
+        criteria = generate_criteria_by_repositories(github_client, repository_names)
+        logger.info(f'Criteria generated successfully for position: {position_id}')
+
+        save_criteria_to_dynamodb(criteria, position_id)
+        save_repository_names_to_db(position_id, repository_names)
+        body = { "criteria": [criterion["message"] for criterion in criteria]}
+
+        db_conn.commit()
+        logger.info('Criteria saved successfully')
+        return generate_success_response(body)
+    except (ValueError, RuntimeError) as e:
+        status_code = 400
+        logger.error(f'Criteria generation failed (status {str(status_code)}): {e}')
+        return generate_error_response(status_code, str(e))
+    except Exception as e:
+        status_code = 500
+        logger.error(f'Criteria generation failed (status {str(status_code)}): {e}')
+        return generate_error_response(status_code, str(e))
+    finally:
+        db_conn.close()
