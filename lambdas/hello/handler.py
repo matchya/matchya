@@ -2,6 +2,8 @@ import json
 
 
 def hello(event, context):
+    # TODO: remove once cookie is confirmed working
+    print("EVENT: ", event)
     body = {
         "message": "Hello endpoint! Your function executed successfully!",
         "input": event,

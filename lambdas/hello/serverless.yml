@@ -11,8 +11,8 @@ provider:
   deploymentBucket:
     name: ${self:provider.stage}-sls-hello
   apiGateway:
-    restApiId: ${ssm:/terraform/api_gateway/id}
-    restApiRootResourceId: ${ssm:/terraform/api_gateway/root_resource_id}
+    restApiId: ${ssm:/terraform/${self:provider.stage}/api_gateway/id}
+    restApiRootResourceId: ${ssm:/terraform/${self:provider.stage}/api_gateway/root_resource_id}
   ecr:
     images:
       default:
@@ -32,10 +32,11 @@ functions:
           path: /hello
           method: GET
           authorizer:
-            type: TOKEN
+            type: request
+            identitySource: method.request.header.Cookie
+            resultTtlInSeconds: 0
             name: ${self:provider.stage}-authorizer
             arn: arn:aws:lambda:${aws:region}:${aws:accountId}:function:${self:provider.stage}-authorizer
-            identitySource: method.request.header.Authorization
 
 plugins:
   - serverless-deployment-bucket
