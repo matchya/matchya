@@ -25,8 +25,8 @@ criterion_table = dynamodb.Table(CRITERION_TABLE_NAME)
 def handler(event, context):
     try:
         logger.info(f"Received event: {event}")
-        position_id = parse_request_parameter(event, 'id')
-        criteria = get_criteria_by_position_id(position_id)
+        checklist_id = parse_request_parameter(event, 'id')
+        criteria = get_criteria_by_checklist_id(checklist_id)
         body = {
             "criteria": criteria,
         }
@@ -40,22 +40,22 @@ def handler(event, context):
         return generate_error_response(500, f"Failed to retrieve criteria: {e}")
 
 
-def get_criteria_by_position_id(position_id):
+def get_criteria_by_checklist_id(checklist_id):
     """
     Retrieves the 'message' attribute of criteria for a given position_id from the database.
     
-    :param position_id: Unique identifier for the position.
+    :param checklist_id: The checklist_id to retrieve criteria for.
     :return: List of messages for the given position_id.
     """
     try:
         response = criterion_table.query(
-            IndexName='PositionIdIndex',
-            KeyConditionExpression=boto3.dynamodb.conditions.Key('position_id').eq(position_id),
+            IndexName='ChecklistIdIndex',
+            KeyConditionExpression=boto3.dynamodb.conditions.Key('checklist_id').eq(checklist_id),
             ProjectionExpression='message'
         )
         messages = [item['message'] for item in response.get('Items', [])]
         if not messages:
-            raise ValueError(f"Criteria not found for position_id: {position_id}")
+            raise ValueError(f"Criteria not found for checklist_id: {checklist_id}")
         return messages
     except Exception as e:
         raise RuntimeError(f"Failed to retrieve criteria messages: {e}")
