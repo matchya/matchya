@@ -157,16 +157,17 @@ def get_criteria_from_gpt(file_content, languages):
         raise RuntimeError(f"Error generating criteria with OpenAI API: {e}")
 
 
-def save_checklist_to_db(position_id, checklist_id):
+def save_checklist_to_db(position_id):
     """
     Saves the generated checklist to the database.
     
     :param position_id: Unique identifier for the position.
-    :param checklist_id: Unique identifier for the checklist.
     """
+    checklist_id = str(uuid.uuid4())
     sql = f"INSERT INTO checklist (id, position_id) VALUES ('{checklist_id}', '{position_id}');"
     try:
         db_cursor.execute(sql)
+        return checklist_id
     except Exception as e:
         raise RuntimeError(f"Error saving checklist to postgres: {e}")
     
@@ -242,12 +243,15 @@ def handler(event, context):
         criteria = generate_criteria_by_repositories(github_client, repository_names)
         logger.info(f'Checklist and Criteria generated successfully for position: {position_id}')
 
-        checklist_id = str(uuid.uuid4())
-        save_checklist_to_db(position_id, checklist_id)
+        checklist_id = save_checklist_to_db(position_id)
         save_criteria_to_dynamodb(criteria, checklist_id)
         save_repository_names_to_db(checklist_id, repository_names)
-        body = { "criteria": [criterion["message"] for criterion in criteria]}
 
+        criteria_messages = [criterion['message'] for criterion in criteria]
+        body = { 
+            "checklist_id": checklist_id,
+            "criteria": criteria_messages
+        }
         db_conn.commit()
         logger.info('Criteria saved successfully')
         return generate_success_response(body)
