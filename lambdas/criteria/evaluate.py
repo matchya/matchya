@@ -220,7 +220,7 @@ def handler(event, context):
         connect_to_db()
 
         body = parse_request_body(event)
-        validate_request_body(body, ['checklist_id', 'candidate_github_username'])
+        validate_request_body(body, ['checklist_id', 'candidate_email', 'candidate_github_username'])
         candidate_id = save_candidate_info_to_db(body)
         logger.info(f"Saved candidate info to database successfully: {candidate_id}")
 
