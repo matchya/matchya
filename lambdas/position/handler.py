@@ -35,144 +35,15 @@ def connect_to_db():
         db_conn = psycopg2.connect(host=Config.POSTGRES_HOST, database=Config.POSTGRES_DB, user=Config.POSTGRES_USER, password=Config.POSTGRES_PASSWORD)
     db_cursor = db_conn.cursor()
 
-def get_position_by_id(position_id):
-    """
-    Retrieves the 'message' attribute of criteria for a given position_id from the database.
-    
-    :param position_id: Unique identifier for the position.
-    :return: List of messages for the given position_id.
-    """
-    # TODO: Get repository names as well
-    try:
-        db_cursor.execute(f"SELECT id, name FROM position WHERE id = '{position_id}'")
-        result = db_cursor.fetchone()
-        if not result:
-            raise ValueError(f"Position not found for id: {position_id}")
-        position = {
-            "id": result[0],
-            "name": result[1],
-        }
-        return position
-    except Exception as e:
-        raise RuntimeError(f"Failed to retrieve position: {e}")
-    
-
-def get_repository_names_by_position_id(position_id):
-    """
-    Retrieves the 'message' attribute of criteria for a given position_id from dynamodb.
-    
-    :param position_id: Unique identifier for the position.
-    :return: List of messages for the given position_id.
-    """
-    try:
-        db_cursor.execute(f"SELECT repository_name FROM position_repository WHERE position_id = '{position_id}'")
-        result = db_cursor.fetchall()
-        if not result:
-            raise ValueError(f"Repository names not found for position_id: {position_id}")
-        repository_names = [item[0] for item in result]
-        return repository_names
-    except Exception as e:
-        raise RuntimeError(f"Failed to retrieve repository names: {e}")
-
-
-def get_criteria_by_position_id(position_id):
-    """
-    Retrieves id and message attributes of criteria for a given position_id from dynamodb.
-    
-    :param position_id: Unique identifier for the position.
-    :return: List of messages for the given position_id.
-    """
-    try:
-        response = criterion_table.query(
-            IndexName='PositionIdIndex',
-            KeyConditionExpression=boto3.dynamodb.conditions.Key('position_id').eq(position_id),
-            ProjectionExpression='id, message'
-        )
-        criteria = {}
-        for item in response.get('Items', []):
-            criteria[item['id']] = item['message']
-        if criteria == {}:
-            raise ValueError(f"Criteria not found for position_id: {position_id}")
-        return criteria
-    except Exception as e:
-        raise RuntimeError(f"Failed to retrieve criteria messages: {e}")
-
-
-def get_candidates_by_position_id(position_id, criteria):
-    """
-    Retrieve candidates and their results for a given position_id from the database.
-    
-    :param position_id: Unique identifier for the position.
-    :return: List of candidates for the given position_id.
-    """
-    try:
-        sql = """
-                SELECT 
-                    c.first_name, c.last_name, c.email, c.github_username, 
-                    cr.total_score, cr.summary, 
-                    ac.criterion_id, ac.score, ac.reason
-                FROM 
-                    candidate c 
-                INNER JOIN 
-                    candidate_result cr ON c.id = cr.candidate_id 
-                INNER JOIN
-                    assessment_criteria ac ON cr.id = ac.candidate_result_id
-                WHERE
-                    cr.position_id = '%s';
-            """ % position_id
-        db_cursor.execute(sql)
-        result = db_cursor.fetchall()
-        if not result:
-            return []
-        candidates = []
-        email_index_map = {}
-        for item in result:
-            email = item[2]
-            if email not in email_index_map:
-                email_index_map[email] = len(candidates)
-                candidate = {
-                    "first_name": item[0],
-                    "last_name": item[1],
-                    "email": item[2],
-                    "github_username": item[3],
-                    "total_score": item[4],
-                    "summary": item[5],
-                    "assessments": [],
-                }
-                candidates.append(candidate)
-            else:
-                candidate = candidates[email_index_map[email]]
-            assessment = {
-                "criterion": criteria[item[6]],
-                "score": item[7],
-                "reason": item[8],
-            }
-            candidate["assessments"].append(assessment)
-        return candidates
-    except Exception as e:
-        raise RuntimeError(f"Failed to retrieve candidates: {e}")
-
 
 def retrieve(event, context):
     try:
         logger.info(f"Received event: {event}")
         connect_to_db()
         position_id = parse_request_parameter(event, 'id')
-        position = get_position_by_id(position_id)
-        repository_names = get_repository_names_by_position_id(position_id)
-        criteria = get_criteria_by_position_id(position_id)
-        criteria_messages = [criteria[key] for key in criteria]
-        candidates = get_candidates_by_position_id(position_id, criteria)
-        body = {
-            "id": position["id"],
-            "name": position["name"],
-            "criteria": {
-                "repository_names": repository_names,
-                "messages": criteria_messages
-            },
-            "candidates": candidates
-        }
-        logger.info(f"Retrieved position: {body}")
+        body = get_position_details_by_id(position_id)
+        if not body:
+            raise ValueError(f"Position not found for id: {position_id}")
         return generate_success_response(body)
     except (ValueError, RuntimeError) as e:
         status_code = 400
@@ -185,3 +56,116 @@ def retrieve(event, context):
     finally:
         if db_conn:
             db_conn.close()
+
+
+def get_position_details_by_id(position_id):
+    """
+    Retrieves the position details for a given position_id from the database.
+
+    :param position_id: The position_id to retrieve details for.
+    :return: Dictionary of position details.
+    """
+    sql = """
+        SELECT
+            p.id AS position_id, p.name AS position_name,
+            c.id AS checklist_id,
+            cr.repository_name,
+            can.first_name, can.last_name, can.email, can.github_username, 
+            can_res.id AS candidate_result_id, can_res.total_score, can_res.summary,
+            ass_crit.criterion_id, ass_crit.score, ass_crit.reason
+        FROM
+            position p
+        LEFT JOIN checklist c ON p.id = c.position_id
+        LEFT JOIN checklist_repository cr ON c.id = cr.checklist_id
+        LEFT JOIN candidate_result can_res ON c.id = can_res.checklist_id
+        LEFT JOIN candidate can ON can_res.candidate_id = can.id
+        LEFT JOIN assessment_criteria ass_crit ON can_res.id = ass_crit.candidate_result_id
+        WHERE
+            p.id = %s
+        ORDER BY
+            c.created_at DESC, can_res.id;
+    """ % position_id
+
+    sql_results = db_cursor.execute(sql)
+    return process_position_from_sql_results(sql_results)
+
+
+def get_criteria_dict_by_checklist_id(checklist_id):
+    """
+    Retrieves criteria dictionary {id: message} by checklist_id
+
+    :param checklist_id: The checklist_id to retrieve criteria
+    :return: Dictionay of criteria
+    """
+    try:
+        response = criterion_table.query(
+            IndexName='ChecklistIdIndex',
+            KeyConditionExpression=boto3.dynamodb.conditions.Key('checklist_id').eq(checklist_id),
+            ProjectionExpression='id, message'
+        )
+        criteria = {}
+        for item in response.get('Items', []):
+            criteria[item['id']] = item['message']
+        if criteria == {}:
+            raise ValueError(f"Criteria not found for checklist_id: {checklist_id}")
+        return criteria
+    except Exception as e:
+        raise RuntimeError(f"Failed to retrieve criteria messages: {e}")
+
+def process_position_from_sql_results(sql_results):
+    """
+    Processes sql results from db_cursor.execute(sql) and returns position_data
+    
+    :param sql_results: sql results from db_cursor.execute(sql)
+    :return: position_data
+    """
+    position_data = {}
+    for row in sql_results:
+        (position_id, position_name, checklist_id, repo_name, first_name, last_name, email, 
+         github_username, candidate_result_id, total_score, summary, criterion_id, score, reason) = row
+
+        if position_id not in position_data:
+            position_data[position_id] = {'name': position_name, 'checklists': {}}
+
+        if checklist_id not in position_data[position_id]['checklists']:
+            criteria_dict = get_criteria_dict_by_checklist_id(checklist_id)
+            position_data[position_id]['checklists'][checklist_id] = {
+                'id': checklist_id, 
+                'repository_names': set(),
+                'candidates': {},
+                'criteria': criteria_dict  # {id: message}
+            }
+
+        position_data[position_id]['checklists'][checklist_id]['repository_names'].add(repo_name)
+
+        candidates = position_data[position_id]['checklists'][checklist_id]['candidates']
+        if email not in candidates:
+            candidates[email] = {
+                'first_name': first_name,
+                'last_name': last_name,
+                'email': email,
+                'github_username': github_username,
+                'total_score': total_score,
+                'summary': summary,
+                'assessments': []
+            }
+
+        candidates[email]['assessments'].append({
+            'criterion_id': criterion_id,
+            'score': score,
+            'reason': reason
+        })
+
+    final_data = []
+    for pos_id, pos_info in position_data.items():
+        checklists = []
+        for chk_id, chk_info in pos_info['checklists'].items():
+            chk_info['repository_names'] = list(chk_info['repository_names'])
+            chk_info['candidates'] = list(chk_info['candidates'].values())
+            checklists.append(chk_info)
+        final_data.append({
+            'name': pos_info['name'],
+            'checklists': checklists
+        })
+
+    return final_data[0] if final_data else None
