@@ -42,10 +42,10 @@ def handler(event, context):
 
 def get_criteria_by_checklist_id(checklist_id):
     """
-    Retrieves the 'message' attribute of criteria for a given position_id from the database.
+    Retrieves the 'message' attribute of criteria for a given checklist_id from the database.
     
     :param checklist_id: The checklist_id to retrieve criteria for.
-    :return: List of messages for the given position_id.
+    :return: List of messages for the given checklist_id.
     """
     try:
         response = criterion_table.query(
