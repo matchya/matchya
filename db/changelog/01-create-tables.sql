@@ -74,3 +74,38 @@ CREATE TABLE IF NOT EXISTS position_repository (
 	foreign key (position_id) references position(id)
 );
 --rollback DROP TABLE IF EXISTS position_repository;
+
+--changeset author:8
+CREATE TABLE IF NOT EXISTS checklist (
+	id varchar(255) not null primary key,
+	position_id varchar(255),
+	name varchar(255),
+	created_at timestamp default CURRENT_TIMESTAMP,
+	foreign key (position_id) references position(id)
+);
+--rollback DROP TABLE IF EXISTS checklist;
+
+--changeset author:9
+ALTER TABLE candidate_result DROP COLUMN position_id;
+ALTER TABLE candidate_result ADD COLUMN checklist_id varchar(255);
+ALTER TABLE candidate_result ADD FOREIGN KEY (checklist_id) REFERENCES checklist(id);
+--rollback ALTER TABLE candidate_result DROP COLUMN checklist_id;
+--rollback ALTER TABLE candidate_result ADD COLUMN position_id varchar(255);
+--rollback ALTER TABLE candidate_result DROP FOREIGN KEY checklist_id;
+
+--changeset author:12
+DROP TABLE IF EXISTS position_repository;
+--rollback CREATE TABLE IF NOT EXISTS position_repository (
+--rollback 	id varchar(255) not null primary key,
+--rollback 	position_id varchar(255),
+--rollback 	repository_name varchar(255),
+--rollback 	foreign key (position_id) references position(id)
+--rollback );
+
+CREATE TABLE IF NOT EXISTS checklist_repository (
+	id varchar(255) not null primary key,
+	checklist_id varchar(255),
+	repository_name varchar(255),
+	foreign key (checklist_id) references checklist(id)
+);
+--rollback DROP TABLE IF EXISTS checklist_repository;
