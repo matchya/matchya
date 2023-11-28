@@ -102,7 +102,6 @@ def process_position_from_sql_results(sql_results):
     :param sql_results: sql results from db_cursor.execute(sql)
     :return: position_data
     """
-    print("HERE, running process_position_from_sql_results")
 
     # if no checklist, return empty checklist
     if sql_results[0][2] is None:
@@ -145,8 +144,6 @@ def process_position_from_sql_results(sql_results):
                 'score': score,
                 'reason': reason
             })
-
-    print("HERE, get position data")
 
     final_data = []
     for pos_id, pos_info in position_data.items():
