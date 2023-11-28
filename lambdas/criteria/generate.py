@@ -157,19 +157,32 @@ def get_criteria_from_gpt(file_content, languages):
         raise RuntimeError(f"Error generating criteria with OpenAI API: {e}")
 
 
-def save_criteria_to_dynamodb(criteria, position_id):
+def save_checklist_to_db(position_id, checklist_id):
+    """
+    Saves the generated checklist to the database.
+    
+    :param position_id: Unique identifier for the position.
+    :param checklist_id: Unique identifier for the checklist.
+    """
+    sql = f"INSERT INTO checklist (id, position_id) VALUES ('{checklist_id}', '{position_id}');"
+    try:
+        db_cursor.execute(sql)
+    except Exception as e:
+        raise RuntimeError(f"Error saving checklist to postgres: {e}")
+    
+
+def save_criteria_to_dynamodb(criteria, checklist_id):
     """
     Saves the generated criteria to the database.
     
     :param criteria: A list of criteria keywords.
-    :param position_id: Unique identifier for the position.
-    :param repository_names: A list of repository names.
+    :param checklist_id: Unique identifier for the checklist.
     """
     transact_items = []
     for criterion in criteria:
         criteria_info = {
             'id': {'S': str(uuid.uuid4())},
-            'position_id': {'S': position_id},
+            'checklist_id': {'S': checklist_id},
             'keywords': {'L': [{'S': keyword} for keyword in criterion['keywords']]},
             'message': {'S': criterion['message']},
             'created_at': {'S': datetime.datetime.now().isoformat()}
@@ -191,16 +204,16 @@ def save_criteria_to_dynamodb(criteria, position_id):
         raise RuntimeError(f"Error saving criteria to DynamoDB: {e}")
 
 
-def save_repository_names_to_db(position_id, repository_names):
+def save_repository_names_to_db(checklist_id, repository_names):
     """
     Saves the repository names to the database.
     
-    :param position_id: Unique identifier for the position.
+    :param checklist_id: Unique identifier for the checklist.
     :param repository_names: A list of repository names.
     """
-    sql = "INSERT INTO position_repository (id, position_id, repository_name) VALUES"
+    sql = "INSERT INTO checklist_repository (id, checklist_id, repository_name) VALUES"
     for repository_name in repository_names:
-        sql += f" ('{str(uuid.uuid4())}', '{position_id}', '{repository_name}'),"
+        sql += f" ('{str(uuid.uuid4())}', '{checklist_id}', '{repository_name}'),"
     sql = sql[:-1] + ";"
     try:
         db_cursor.execute(sql)
@@ -227,10 +240,12 @@ def handler(event, context):
         github_username = get_github_username_from_position_id(position_id)
         github_client = GithubClient(github_username)
         criteria = generate_criteria_by_repositories(github_client, repository_names)
-        logger.info(f'Criteria generated successfully for position: {position_id}')
+        logger.info(f'Checklist and Criteria generated successfully for position: {position_id}')
 
-        save_criteria_to_dynamodb(criteria, position_id)
-        save_repository_names_to_db(position_id, repository_names)
+        checklist_id = str(uuid.uuid4())
+        save_checklist_to_db(position_id, checklist_id)
+        save_criteria_to_dynamodb(criteria, checklist_id)
+        save_repository_names_to_db(checklist_id, repository_names)
         body = { "criteria": [criterion["message"] for criterion in criteria]}
 
         db_conn.commit()
