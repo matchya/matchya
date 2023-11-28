@@ -81,13 +81,18 @@ def get_position_details_by_id(position_id):
         LEFT JOIN candidate can ON can_res.candidate_id = can.id
         LEFT JOIN assessment_criteria ass_crit ON can_res.id = ass_crit.candidate_result_id
         WHERE
-            p.id = %s
+            p.id = '%s'
         ORDER BY
             c.created_at DESC, can_res.id;
     """ % position_id
-
-    sql_results = db_cursor.execute(sql)
-    return process_position_from_sql_results(sql_results)
+    try:
+        db_cursor.execute(sql)
+        results = db_cursor.fetchall()
+        if not results:
+            raise ValueError(f"Position not found for id: {position_id}")
+        return process_position_from_sql_results(results)
+    except Exception as e:
+        raise RuntimeError(f"Failed to retrieve position: {e}")
 
 
 def get_criteria_dict_by_checklist_id(checklist_id):
@@ -119,6 +124,7 @@ def process_position_from_sql_results(sql_results):
     :param sql_results: sql results from db_cursor.execute(sql)
     :return: position_data
     """
+    print("HERE, running process_position_from_sql_results")
     position_data = {}
     for row in sql_results:
         (position_id, position_name, checklist_id, repo_name, first_name, last_name, email, 
@@ -155,6 +161,8 @@ def process_position_from_sql_results(sql_results):
             'score': score,
             'reason': reason
         })
+
+    print("HERE, get position data")
 
     final_data = []
     for pos_id, pos_info in position_data.items():
