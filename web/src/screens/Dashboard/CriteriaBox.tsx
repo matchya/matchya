@@ -52,7 +52,7 @@ const CriteriaBox = () => {
   
     if (!criteria.length) {
       return (
-        <div className="px-6 py-4 h-full flex flex-col justify-center items-center">
+        <div className="px-6 py-4 flex flex-col justify-center items-center">
           <h3 className="text-lg font-bold">Generate Criteria</h3>
           <p className="text-sm text-gray-600 mt-4">
             Generate criteria to get started
@@ -93,7 +93,7 @@ const CriteriaBox = () => {
     }
   
     return (
-      <div className="px-6 py-4 h-full">
+      <div className="px-6 py-4">
         <h3 className="text-lg font-bold">Generated Criteria</h3>
         <ul className="list-disc pl-6 mt-4">
           {criteria.map((criterion, index) => (
