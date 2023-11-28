@@ -1,10 +1,11 @@
 FROM public.ecr.aws/lambda/python:3.9
 
-COPY requirements.txt ${LAMBDA_TASK_ROOT}
+WORKDIR ${LAMBDA_TASK_ROOT}
 
+COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-COPY handler.py ${LAMBDA_TASK_ROOT}
+COPY *.py .
 
 # actual command will be in serverless.yml
 CMD [ "handler" ]

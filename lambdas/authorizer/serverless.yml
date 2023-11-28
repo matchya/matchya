@@ -23,6 +23,7 @@ provider:
     POSTGRES_DB: ${ssm:/terraform/${self:provider.stage}/rds/db_name}
     POSTGRES_USER: ${ssm:/terraform/${self:provider.stage}/rds/db_username}
     POSTGRES_PASSWORD: ${ssm:/terraform/${self:provider.stage}/rds/db_password}
+    JWT_SECRET_KEY: ${ssm:/secrets/dev/jwt_secret_key}
 
 functions:
   authorizer:
@@ -30,7 +31,7 @@ functions:
     image:
       name: default
       command:
-        - handler.authorize
+        - authorize.handler
 
 plugins:
   - serverless-deployment-bucket
