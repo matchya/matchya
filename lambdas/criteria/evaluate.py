@@ -62,21 +62,21 @@ def save_candidate_info_to_db(body):
     except Exception as e:
         raise RuntimeError(f"Failed to save candidate info: {e}")
 
-def get_criteria_from_dynamodb(position_id):
+def get_criteria_from_dynamodb(checklist_id):
     """
-    Retrieves the full message criteria for a job position.
+    Retrieves the full message criteria for a checklist.
 
-    :param position_id: The ID of the job position.
+    :param checklist_id: The ID of the checklist.
     :return: A list of criteria with keywords and message
     """
     try:
         response = criterion_table.query(
-            IndexName='PositionIdIndex',
-            KeyConditionExpression=boto3.dynamodb.conditions.Key('position_id').eq(position_id),
+            IndexName='ChecklistIdIndex',
+            KeyConditionExpression=boto3.dynamodb.conditions.Key('checklist_id').eq(checklist_id),
             ProjectionExpression='id, message, keywords'
         )
         if not response.get('Items'):
-            raise RuntimeError(f"No criteria found for position_id {position_id}")
+            raise RuntimeError(f"No criteria found for checklist_id {checklist_id}")
         criteria = [{'id': item['id'], 'message': item['message'], 'keywords': item.get('keywords', [])} for item in response.get('Items')]
         return criteria
     except Exception as e:
@@ -155,23 +155,23 @@ def get_candidate_evaluation_from_gpt(criteria, file_content, languages):
         raise RuntimeError(f"Failed to generate criteria from gpt: {e}")
 
 
-def save_candidate_evaluation_to_db(position_id, candidate_id, candidate_result):
+def save_candidate_evaluation_to_db(checklist_id, candidate_id, candidate_result):
     """
     Saves candidate evaluation result to database.
 
-    :param position_id: The ID of the job position.
+    :param checklist_id: The ID of the checklist.
     :param candidate_id: The ID of the candidate.
     :param candidate_result: The candidate's evaluation result.
     """
-    candidate_result_id = save_candidate_result(position_id, candidate_id, candidate_result)
+    candidate_result_id = save_candidate_result(checklist_id, candidate_id, candidate_result)
     save_candidate_assessments(candidate_result_id, candidate_result['assessments'])
     
 
-def save_candidate_result(position_id, candidate_id, candidate_result):
+def save_candidate_result(checklist_id, candidate_id, candidate_result):
     """
     Saves candidate evaluation result to database.
 
-    :param position_id: The ID of the job position.
+    :param checklist_id: The ID of the checklist.
     :param candidate_id: The ID of the candidate.
     :param candidate_result: The candidate's evaluation result.
     """
@@ -179,8 +179,8 @@ def save_candidate_result(position_id, candidate_id, candidate_result):
         id = str(uuid.uuid4())
         total_score = candidate_result['total_score']
         summary = candidate_result['summary'].replace("'", "''")
-        sql = "INSERT INTO candidate_result (id, position_id, candidate_id, total_score, summary) VALUES (%s, %s, %s, %s, %s)"
-        db_cursor.execute(sql, (id, position_id, candidate_id, total_score, summary))
+        sql = "INSERT INTO candidate_result (id, checklist_id, candidate_id, total_score, summary) VALUES (%s, %s, %s, %s, %s)"
+        db_cursor.execute(sql, (id, checklist_id, candidate_id, total_score, summary))
         return id
     except Exception as e:
         raise RuntimeError(f"Failed to save candidate result: {e}")
@@ -220,20 +220,20 @@ def handler(event, context):
         connect_to_db()
 
         body = parse_request_body(event)
-        validate_request_body(body, ['position_id', 'candidate_github_username'])
+        validate_request_body(body, ['checklist_id', 'candidate_email', 'candidate_github_username'])
         candidate_id = save_candidate_info_to_db(body)
         logger.info(f"Saved candidate info to database successfully: {candidate_id}")
 
-        position_id = body.get('position_id')
+        checklist_id = body.get('checklist_id')
         github_username = body.get('candidate_github_username')
         github_client = GithubClient(github_username)
 
-        criteria = get_criteria_from_dynamodb(position_id)
+        criteria = get_criteria_from_dynamodb(checklist_id)
         pinned_repositories = github_client.get_pinned_repositories_name()
         candidate_result = evaluate_candidate(github_client, pinned_repositories, criteria)
         logger.info(f"Generated candidate evaluation successfully: score {candidate_result.get('total_score')}")
 
-        save_candidate_evaluation_to_db(position_id, candidate_id, candidate_result)
+        save_candidate_evaluation_to_db(checklist_id, candidate_id, candidate_result)
         logger.info(f"Saved candidate evaluation to database successfully")
         db_conn.commit()
         return generate_success_response(candidate_result)
@@ -246,4 +246,5 @@ def handler(event, context):
         logger.error(f'Candidate evaluation failed (status {str(status_code)}): {e}')
         return generate_error_response(status_code, str(e))
     finally:
-        db_conn.close()
+        if db_conn:
+            db_conn.close()
