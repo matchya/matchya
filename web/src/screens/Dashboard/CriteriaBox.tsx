@@ -20,7 +20,7 @@ const CriteriaBox = () => {
     const getCriteria = async () => {
         try {
             const response = await axios.get(
-                `${apiEndpoint}/criteria/${positionId}`, 
+                `${apiEndpoint}/checklists/${positionId}`, 
                 {headers: {'Content-Type': 'application/json', 'Authorization': `Bearer validToken`}}
             );
             if (response.data.status == 'success') {

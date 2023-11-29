@@ -41,7 +41,10 @@ functions:
       - http:
           path: /register
           method: POST
-          cors: true
+          cors:
+            origins:
+              - http://127.0.0.1:5173
+            allowCredentials: true
 
   login:
     name: ${self:provider.stage}-authentication-login
@@ -53,7 +56,10 @@ functions:
       - http:
           path: /login
           method: POST
-          cors: true
+          cors:
+            origins:
+              - http://127.0.0.1:5173
+            allowCredentials: true
 
 plugins:
   - serverless-deployment-bucket

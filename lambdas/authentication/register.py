@@ -56,6 +56,26 @@ def parse_request_body(event):
         raise ValueError(f"Invalid JSON in request body: {e}")
 
 
+def parse_header(event):
+    """
+    Parses the request header from an event and extracts the origin and host to resolve cors issue
+
+    :param event: The event object containing the request data.
+    :return: origin and the host
+    """
+    try:
+        headers = event['headers']
+        origin = headers.get('origin')
+        host = headers.get('Host')
+        if not origin:
+            raise ValueError('Origin not included in headers')
+        if not host:
+            raise ValueError('Host not included in headers')
+        return origin, host
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Invalid JSON in request body: {e}")
+
+
 def validate_company_data(body):
     """
     Validates the necessary fields in the company data.
@@ -79,7 +99,7 @@ def create_company_record(company_id: str, body: dict):
         db_cursor.execute(sql, (company_id, body['name'], body['email'], body['github_username'], hash_password(body['password'])))
     except Exception as e:
         raise RuntimeError(f"Error saving to company table: {e}")
-    
+
 
 def save_company_repositories(company_id: str, github_username: str):
     """
@@ -97,7 +117,7 @@ def save_company_repositories(company_id: str, github_username: str):
         db_cursor.execute(sql)
     except Exception as e:
         raise RuntimeError(f"Error saving to repository table: {e}")
-    
+
 
 def get_company_repository_names(github_username: str):
     """
@@ -163,6 +183,7 @@ def handler(event, context):
         logger.info('Received register request')
         connect_to_db()
         body = parse_request_body(event)
+        origin, host = parse_header(event)
         validate_company_data(body)
 
         company_id = str(uuid.uuid4())
@@ -176,14 +197,14 @@ def handler(event, context):
 
         db_conn.commit()
         logger.info('Registration successful: %s', body['email'])
-        return generate_success_response(access_token)
+        return generate_success_response(origin, host, access_token)
     except (ValueError, RuntimeError) as e:
         status_code = 400
         logger.error(f'Registration failed (status {str(status_code)}): {e}')
-        return generate_error_response(status_code, str(e))
+        return generate_error_response(origin, status_code, str(e))
     except Exception as e:
         status_code = 500
         logger.error(f'Registration failed (status {str(status_code)}): {e}')
-        return generate_error_response(status_code, str(e))
+        return generate_error_response(origin, status_code, str(e))
     finally:
         db_conn.close()

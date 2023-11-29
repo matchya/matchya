@@ -1,5 +1,12 @@
 import json
 
+COMMON_HEADERS = {
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
+    'Access-Control-Allow-Credentials': True,
+    "Content-Type": "application/json",
+}
+
 
 def hello(event, context):
     # TODO: remove once cookie is confirmed working
@@ -8,7 +15,10 @@ def hello(event, context):
         "message": "Hello endpoint! Your function executed successfully!",
         "input": event,
     }
+    origin = event['headers'].get('origin')
+    if not origin:
+        return {"statusCode": 400, "body": "Origin doesn't exist", "headers": COMMON_HEADERS}
 
-    response = {"statusCode": 200, "body": json.dumps(body)}
+    COMMON_HEADERS['Access-Control-Allow-Origin'] = origin
 
-    return response
+    return {"statusCode": 200, "body": json.dumps(body), "headers": COMMON_HEADERS}
