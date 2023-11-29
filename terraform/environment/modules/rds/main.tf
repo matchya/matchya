@@ -1,5 +1,6 @@
 resource "aws_db_instance" "this" {
-  db_name = "${terraform.workspace}"
+  db_name = terraform.workspace
+  identifier = terraform.workspace
   allocated_storage    = 20
   storage_type         = "gp2"
   engine               = "postgres"
