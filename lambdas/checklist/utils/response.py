@@ -23,6 +23,7 @@ def generate_response(status_code: int, body: Any) -> Dict[str, Any]:
         "body": body
     }
 
+
 def generate_error_response(status_code: int, message: str):
     """
     Generates an error response object.

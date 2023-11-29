@@ -44,6 +44,7 @@ def connect_to_db():
         db_conn = psycopg2.connect(host=Config.POSTGRES_HOST, database=Config.POSTGRES_DB, user=Config.POSTGRES_USER, password=Config.POSTGRES_PASSWORD)
     db_cursor = db_conn.cursor()
 
+
 def save_candidate_info_to_db(body):
     """
     Saves candidate information to database.
@@ -61,6 +62,7 @@ def save_candidate_info_to_db(body):
         return id
     except Exception as e:
         raise RuntimeError(f"Failed to save candidate info: {e}")
+
 
 def get_criteria_from_dynamodb(checklist_id):
     """
@@ -82,10 +84,11 @@ def get_criteria_from_dynamodb(checklist_id):
     except Exception as e:
         raise RuntimeError(f"Failed to retrieve criteria: {e}")
 
+
 def evaluate_candidate(github_client: GithubClient, repository_names, criteria):
     """
     Generates criteria from GitHub repositories.
-    
+
     :param github_client: A GitHub client object.
     :param repository_names: A list of repository names.
     :param criteria: A list of criteria with id, keywords and message
@@ -112,7 +115,7 @@ def get_candidate_evaluation_from_gpt(criteria, file_content, languages):
 
     for i in range(len(criteria)):
         criterion = criteria[i]
-        system_message += "\n" + "criterion" + str(i+1) + ". id: " + criterion['id'] + criterion["message"] + " (keywords: " + ", ".join(criterion["keywords"]) + ")"
+        system_message += "\n" + "criterion" + str(i + 1) + ". id: " + criterion['id'] + criterion["message"] + " (keywords: " + ", ".join(criterion["keywords"]) + ")"
 
     system_message += """
         You will be given files from the candidate's GitHub repository. Please evaluate the candidate's skillset based on the files.
@@ -165,7 +168,7 @@ def save_candidate_evaluation_to_db(checklist_id, candidate_id, candidate_result
     """
     candidate_result_id = save_candidate_result(checklist_id, candidate_id, candidate_result)
     save_candidate_assessments(candidate_result_id, candidate_result['assessments'])
-    
+
 
 def save_candidate_result(checklist_id, candidate_id, candidate_result):
     """
@@ -184,7 +187,8 @@ def save_candidate_result(checklist_id, candidate_id, candidate_result):
         return id
     except Exception as e:
         raise RuntimeError(f"Failed to save candidate result: {e}")
-    
+
+
 def save_candidate_assessments(candidate_result_id, assessments):
     """
     Saves candidate evaluation result to database.
@@ -205,7 +209,7 @@ def save_candidate_assessments(candidate_result_id, assessments):
         db_cursor.execute(sql)
     except Exception as e:
         raise RuntimeError(f"Failed to save candidate assessments: {e}")
-    
+
 
 def handler(event, context):
     """
@@ -216,7 +220,7 @@ def handler(event, context):
     :return: A dictionary with status code and the candidate's evaluation result in JSON format.
     """
     try:
-        logger.info(f"Received evaluate candidate request")
+        logger.info("Received evaluate candidate request")
         connect_to_db()
 
         body = parse_request_body(event)
@@ -234,7 +238,7 @@ def handler(event, context):
         logger.info(f"Generated candidate evaluation successfully: score {candidate_result.get('total_score')}")
 
         save_candidate_evaluation_to_db(checklist_id, candidate_id, candidate_result)
-        logger.info(f"Saved candidate evaluation to database successfully")
+        logger.info("Saved candidate evaluation to database successfully")
         db_conn.commit()
         return generate_success_response(candidate_result)
     except (ValueError, RuntimeError) as e:

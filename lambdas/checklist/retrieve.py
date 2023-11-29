@@ -30,7 +30,7 @@ def handler(event, context):
         body = {
             "criteria": criteria,
         }
-        logger.info(f"Successfully retrieved criteria")
+        logger.info("Successfully retrieved criteria")
         return generate_success_response(body)
     except (ValueError, RuntimeError) as e:
         logger.error(f"Failed to retrieve criteria: {e}")
@@ -43,7 +43,7 @@ def handler(event, context):
 def get_criteria_by_checklist_id(checklist_id):
     """
     Retrieves the 'message' attribute of criteria for a given checklist_id from the database.
-    
+
     :param checklist_id: The checklist_id to retrieve criteria for.
     :return: List of messages for the given checklist_id.
     """
