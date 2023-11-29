@@ -7,7 +7,8 @@ import psycopg2
 
 from config import Config
 
-from utils.response import generate_success_response, generate_error_response
+from client.github import GithubClient
+from utils.response import generate_error_response, generate_empty_success_response
 from utils.request import parse_request_body, validate_request_body
 
 # Logger
@@ -64,11 +65,11 @@ def send_message_to_sqs(body):
             QueueUrl=queue_url,
             MessageBody=json.dumps(body)
         )
+        if response.get('MessageId') is None:
+            raise RuntimeError("Send message failed")
     except Exception as e:
         logger.exception("Send message failed")
         raise e
-    else:
-        return response
 
 
 def handler(event, context):
@@ -87,9 +88,15 @@ def handler(event, context):
         checklist_id = body.get('checklist_id')
         if not checklist_exists(checklist_id):
             raise RuntimeError(f"Checklist with id {checklist_id} does not exist")
-  
-        res = send_message_to_sqs(body)
-        return generate_success_response(res)
-    except Exception as e:
+
+        if not GithubClient.github_user_exists(body.get('candidate_github_username')):
+            raise RuntimeError(f"Github user {body.get('candidate_github_username')} does not exist")
+
+        send_message_to_sqs(body)
+        return generate_empty_success_response()
+    except RuntimeError as e:
         logger.error(e)
         return generate_error_response(400, str(e))
+    except Exception as e:
+        logger.error(e)
+        return generate_error_response(500, str(e))

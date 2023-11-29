@@ -51,3 +51,16 @@ def generate_success_response(body: Any) -> Dict[str, Any]:
         'payload': body
     }
     return generate_response(status_code=200, body=json.dumps(body))
+
+
+def generate_empty_success_response() -> Dict[str, Any]:
+    """
+    Generates a success response with the access token.
+
+    :param access_token: The generated access token.
+    :return: A success response containing the access token and current timestamp.
+    """
+    body = {
+        'status': 'success',
+    }
+    return generate_response(status_code=200, body=json.dumps(body))

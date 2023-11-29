@@ -41,9 +41,7 @@ functions:
       command:
         - evaluate.handler
     events:
-      - http:
-          path: /checklists/evaluate
-          method: POST
+      - sqs: ${ssm:/terraform/${self:provider.stage}/sqs/criteria_evaluate_queue_arn}
 
   generate:
     name: ${self:provider.stage}-checklist-generate
@@ -80,7 +78,7 @@ functions:
         - publish_evaluation.handler
     events:
       - http:
-          path: /checklists/evaluation
+          path: /checklists/evaluate
           method: POST
 
 plugins:

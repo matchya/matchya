@@ -11,7 +11,6 @@ from config import Config
 from client.github import GithubClient
 
 from utils.response import generate_success_response, generate_error_response
-from utils.request import parse_request_body, validate_request_body
 
 # Logger
 logger = logging.getLogger('evaluate candidate')
@@ -220,11 +219,12 @@ def handler(event, context):
     :return: A dictionary with status code and the candidate's evaluation result in JSON format.
     """
     try:
-        logger.info("Received evaluate candidate request")
+        messages = event['Records']
+        body = json.loads(messages[0]['body'])
+        logger.info(f"Received evaluate candidate request: {body}")
+
         connect_to_db()
 
-        body = parse_request_body(event)
-        validate_request_body(body, ['checklist_id', 'candidate_email', 'candidate_github_username'])
         candidate_id = save_candidate_info_to_db(body)
         logger.info(f"Saved candidate info to database successfully: {candidate_id}")
 
@@ -235,20 +235,17 @@ def handler(event, context):
         criteria = get_criteria_from_dynamodb(checklist_id)
         pinned_repositories = github_client.get_pinned_repositories_name()
         candidate_result = evaluate_candidate(github_client, pinned_repositories, criteria)
-        logger.info(f"Generated candidate evaluation successfully: score {candidate_result.get('total_score')}")
+        logger.info(f"Generated candidate evaluation successfully: {candidate_result}")
 
         save_candidate_evaluation_to_db(checklist_id, candidate_id, candidate_result)
-        logger.info("Saved candidate evaluation to database successfully")
         db_conn.commit()
-        return generate_success_response(candidate_result)
+        logger.info("Saved candidate evaluation to database successfully")
     except (ValueError, RuntimeError) as e:
         status_code = 400
         logger.error(f'Candidate evaluation failed (status {str(status_code)}): {e}')
-        return generate_error_response(status_code, str(e))
     except Exception as e:
-        status_code = 400
+        status_code = 500
         logger.error(f'Candidate evaluation failed (status {str(status_code)}): {e}')
-        return generate_error_response(status_code, str(e))
     finally:
         if db_conn:
             db_conn.close()
