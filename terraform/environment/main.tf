@@ -1,5 +1,7 @@
 module "apigateway" {
   source = "./modules/apigateway"
+
+  client_origin = var.client_origin
 }
 
 module "dynamodb" {

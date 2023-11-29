@@ -31,10 +31,14 @@ functions:
       - http:
           path: /hello
           method: GET
+          cors:
+            origins:
+              - http://127.0.0.1:5173
+            allowCredentials: true
           authorizer:
             type: request
             identitySource: method.request.header.Cookie
-            resultTtlInSeconds: 0
+            resultTtlInSeconds: 300
             name: ${self:provider.stage}-authorizer
             arn: arn:aws:lambda:${aws:region}:${aws:accountId}:function:${self:provider.stage}-authorizer
 

@@ -5,13 +5,14 @@ from typing import Any, Dict
 
 
 COMMON_HEADERS = {
-    'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'OPTIONS,POST',
+    'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
+    'Access-Control-Allow-Credentials': True,
+    'Content-Type': 'application/json'
 }
 
 
-def generate_response(status_code: int, body: Any, cookie=None) -> Dict[str, Any]:
+def generate_response(origin_domain: str, status_code: int, body: Any, cookie=None) -> Dict[str, Any]:
     """
     Generates a HTTP response object.
 
@@ -21,6 +22,8 @@ def generate_response(status_code: int, body: Any, cookie=None) -> Dict[str, Any
     """
     if cookie:
         COMMON_HEADERS['Set-Cookie'] = cookie.output(header='', sep='')
+    if origin_domain:
+        COMMON_HEADERS['Access-Control-Allow-Origin'] = origin_domain
     return {
         "statusCode": status_code,
         "body": body,
@@ -28,7 +31,7 @@ def generate_response(status_code: int, body: Any, cookie=None) -> Dict[str, Any
     }
 
 
-def generate_error_response(status_code: int, message: str):
+def generate_error_response(origin: str, status_code: int, message: str):
     """
     Generates an error response object.
 
@@ -40,10 +43,10 @@ def generate_error_response(status_code: int, message: str):
         'status': 'error',
         'message': message
     }
-    return generate_response(status_code=status_code, body=json.dumps(body))
+    return generate_response(origin_domain=origin, status_code=status_code, body=json.dumps(body))
 
 
-def generate_success_response(access_token):
+def generate_success_response(origin: str, host: str, access_token: str):
     """
     Generates a success response with the access token.
 
@@ -53,7 +56,10 @@ def generate_success_response(access_token):
     cookie = Cookie.SimpleCookie()
     cookie['session'] = access_token
     cookie['session']['httponly'] = True
+    cookie['session']['domain'] = host
     cookie['session']['path'] = '/'
+    cookie['session']['samesite'] = 'None'
+    cookie['session']['secure'] = True
 
     # TODO: change this to 24 hours once it is functioning correctly
     expiration = datetime.datetime.now() + datetime.timedelta(minutes=3)
@@ -62,4 +68,4 @@ def generate_success_response(access_token):
     body = {
         'status': 'success',
     }
-    return generate_response(status_code=200, body=json.dumps(body), cookie=cookie)
+    return generate_response(origin_domain=origin, status_code=200, body=json.dumps(body), cookie=cookie)

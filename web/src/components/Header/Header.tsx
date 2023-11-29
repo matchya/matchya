@@ -29,9 +29,10 @@ const Header = () => {
 
   const handleLogin = async (userData: LoginInput | RegisterInput) => {
     try {
-      const response = await axios.post(`${apiEndpoint}/login`, userData);
+      const response = await axios.post(`${apiEndpoint}/login`, userData, {
+        withCredentials: true,
+      });
       if (response.data.status == 'success') {
-        setAccessToken(response.data.payload.access_token);
         setShowLoginModal(false);
         navigate('/dashboard');
       }
@@ -43,9 +44,10 @@ const Header = () => {
 
   const handleRegister = async (userData: LoginInput | RegisterInput) => {
     try {
-      const response = await axios.post(`${apiEndpoint}/register`, userData);
+      const response = await axios.post(`${apiEndpoint}/register`, userData, {
+        withCredentials: true,
+      });
       if (response.data.status == 'success') {
-        setAccessToken(response.data.payload.access_token);
         setShowLoginModal(false);
         navigate('/dashboard');
       }
