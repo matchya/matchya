@@ -23,8 +23,8 @@ provider:
         buildArgs:
   environment:
     ENVIRONMENT: ${self:provider.stage}
-    OPENAI_API_KEY: ${ssm:/api/openai_api_key}
-    GITHUB_TOKEN: ${ssm:/api/github_token}
+    OPENAI_API_KEY: ${ssm:/secrets/${self:provider.stage}/openai_api_key}
+    GITHUB_TOKEN: ${ssm:/secrets/${self:provider.stage}/github_token}
     POSTGRES_HOST: ${ssm:/terraform/${self:provider.stage}/rds/endpoint}
     POSTGRES_PORT: ${ssm:/terraform/${self:provider.stage}/rds/port}
     POSTGRES_DB: ${ssm:/terraform/${self:provider.stage}/rds/db_name}
