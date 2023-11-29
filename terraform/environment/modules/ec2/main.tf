@@ -1,5 +1,5 @@
 resource "aws_instance" "bastion" {
-  count = 0 # change this 1 when ready
+  count = 0 # change this to 1 when ready
   ami                         = "ami-007855ac798b5175e"
   instance_type               = "t2.micro"
   key_name                    = aws_key_pair.my_keypair.key_name
