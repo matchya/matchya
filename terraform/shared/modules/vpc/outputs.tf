@@ -2,8 +2,8 @@ output "rds_security_group" {
   value = var.create_new ? aws_security_group.rds[0] : data.aws_security_group.rds[0]
 }
 
-output "rds_security_group_id_new" {
-  value = var.create_new ? aws_security_group.rds_postgres[0].id : data.aws_security_group.rds_postgres[0].id
+output "rds_security_group_new" {
+  value = var.create_new ? aws_security_group.rds_postgres[0] : data.aws_security_group.rds_postgres[0]
 }
 
 output "public_ec2_security_group" {
