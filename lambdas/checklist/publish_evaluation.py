@@ -72,6 +72,24 @@ def send_message_to_sqs(body):
         raise e
 
 
+def user_already_evaluated(checklist_id, candidate_email):
+    """
+    Checks if a candidate has already been evaluated for a given checklist.
+
+    :param checklist_id: The id of the checklist to check.
+    :param candidate_email: The email of the candidate to check.
+    :return: True if the candidate has already been evaluated, False otherwise.
+    """
+    sql = """
+        SELECT * FROM candidate c
+        JOIN candidate_result cr
+        ON c.id = cr.candidate_id
+        WHERE cr.checklist_id = %s AND c.email = %s
+    """
+    db_cursor.execute(sql, (checklist_id, candidate_email))
+    return db_cursor.fetchone() is not None
+
+
 def handler(event, context):
     """
     Main entry point for the Lambda function.
@@ -92,7 +110,11 @@ def handler(event, context):
         if not GithubClient.github_user_exists(body.get('candidate_github_username')):
             raise RuntimeError(f"Github user {body.get('candidate_github_username')} does not exist")
 
+        if user_already_evaluated(checklist_id, body.get('candidate_email')):
+            raise RuntimeError(f"Candidate {body.get('candidate_email')} has already been evaluated")
+
         send_message_to_sqs(body)
+        logger.info(f"Successfully sent message to SQS {body}")
         return generate_empty_success_response()
     except RuntimeError as e:
         logger.error(e)

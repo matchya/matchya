@@ -10,8 +10,6 @@ from openai import OpenAI
 from config import Config
 from client.github import GithubClient
 
-from utils.response import generate_success_response, generate_error_response
-
 # Logger
 logger = logging.getLogger('evaluate candidate')
 logger.setLevel(logging.INFO)
