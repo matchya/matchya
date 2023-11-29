@@ -34,6 +34,10 @@ module "rds" {
   private_subnet_2 = module.vpc.private_subnet_2
 }
 
+module "sqs" {
+  source = "./modules/sqs"
+}
+
 module "vpc" {
   source = "../shared/modules/vpc"
 
