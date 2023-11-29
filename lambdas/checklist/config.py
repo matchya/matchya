@@ -11,6 +11,8 @@ class Config:
     POSTGRES_DB = os.environ.get('POSTGRES_DB')
     POSTGRES_USER = os.environ.get('POSTGRES_USER')
     POSTGRES_PASSWORD = os.environ.get('POSTGRES_PASSWORD')
+    
+    EVALUATION_QUEUE_URL = os.environ.get('EVALUATION_QUEUE_URL')
 
     GITHUB_REST_API_HEADERS = {'Authorization-Type': "Bearer " + os.environ['GITHUB_TOKEN']}
     GITHUB_API_REPO_URL = "https://api.github.com/repos/"
