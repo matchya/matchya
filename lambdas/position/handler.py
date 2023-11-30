@@ -25,6 +25,7 @@ criterion_table = dynamodb.Table(f'{Config.ENVIRONMENT}-Criterion')
 db_conn = None
 db_cursor = None
 
+
 def connect_to_db():
     """
     Reconnects to the database.
@@ -98,7 +99,7 @@ def get_position_details_by_id(position_id):
 def process_position_from_sql_results(sql_results):
     """
     Processes sql results from db_cursor.execute(sql) and returns position_data
-    
+
     :param sql_results: sql results from db_cursor.execute(sql)
     :return: position_data
     """
@@ -109,7 +110,7 @@ def process_position_from_sql_results(sql_results):
 
     position_data = {}
     for row in sql_results:
-        (position_id, position_name, checklist_id, repo_name, first_name, last_name, email, 
+        (position_id, position_name, checklist_id, repo_name, first_name, last_name, email,
          github_username, candidate_result_id, total_score, summary, criterion_id, score, reason) = row
 
         if position_id not in position_data:
@@ -118,7 +119,7 @@ def process_position_from_sql_results(sql_results):
         if checklist_id not in position_data[position_id]['checklists']:
             criteria_dict = get_criteria_dict_by_checklist_id(checklist_id)
             position_data[position_id]['checklists'][checklist_id] = {
-                'id': checklist_id, 
+                'id': checklist_id,
                 'repository_names': set(),
                 'candidates': {},
                 'criteria': criteria_dict  # {id: message}

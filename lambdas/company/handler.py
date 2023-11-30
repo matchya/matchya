@@ -20,6 +20,7 @@ logger.addHandler(ch)
 db_conn = None
 db_cursor = None
 
+
 def connect_to_db():
     """
     Reconnects to the database.
@@ -34,7 +35,7 @@ def connect_to_db():
 def get_company_by_id(company_id):
     """
     Retrieves the 'message' attribute of criteria for a given position_id from the database.
-    
+
     :param position_id: Unique identifier for the position.
     :return: List of messages for the given position_id.
     """
@@ -52,12 +53,12 @@ def get_company_by_id(company_id):
         return company
     except Exception as e:
         raise RuntimeError(f"Failed to retrieve company: {e}")
-    
+
 
 def get_repositories_by_company_id(company_id):
     """
     Retrieves the 'message' attribute of criteria for a given position_id from the database.
-    
+
     :param position_id: Unique identifier for the position.
     :return: List of messages for the given position_id.
     """
@@ -70,12 +71,12 @@ def get_repositories_by_company_id(company_id):
         return repositories
     except Exception as e:
         raise RuntimeError(f"Failed to retrieve repositories: {e}")
-    
+
 
 def get_positions_by_company_id(company_id):
     """
     Retrieves the 'message' attribute of criteria for a given position_id from the database.
-    
+
     :param position_id: Unique identifier for the position.
     :return: List of messages for the given position_id.
     """
@@ -88,7 +89,7 @@ def get_positions_by_company_id(company_id):
         return positions
     except Exception as e:
         raise RuntimeError(f"Failed to retrieve positions: {e}")
-    
+
 
 def retrieve(event, context):
     try:
