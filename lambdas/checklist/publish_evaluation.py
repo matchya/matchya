@@ -4,11 +4,10 @@ import logging
 import boto3
 import psycopg2
 
-
 from config import Config
 
 from client.github import GithubClient
-from utils.response import generate_error_response, generate_empty_success_response
+from utils.response import generate_error_response, generate_success_response
 from utils.request import parse_request_body, validate_request_body
 
 # Logger
@@ -26,7 +25,7 @@ db_cursor = None
 
 # SQS
 sqs = boto3.client('sqs')
-queue_url = Config.EVALUATION_QUEUE_URL
+queue_url = Config.EVALUATION_PROCESSOR_QUEUE_URL
 
 
 def connect_to_db():
@@ -115,7 +114,7 @@ def handler(event, context):
 
         send_message_to_sqs(body)
         logger.info(f"Successfully sent message to SQS {body}")
-        return generate_empty_success_response()
+        return generate_success_response()
     except RuntimeError as e:
         logger.error(e)
         return generate_error_response(400, str(e))

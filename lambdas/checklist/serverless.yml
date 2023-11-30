@@ -30,18 +30,18 @@ provider:
     POSTGRES_DB: ${ssm:/terraform/${self:provider.stage}/rds/db_name}
     POSTGRES_USER: ${ssm:/terraform/${self:provider.stage}/rds/db_username}
     POSTGRES_PASSWORD: ${ssm:/terraform/${self:provider.stage}/rds/db_password}
-    EVALUATION_QUEUE_URL: ${ssm:/secrets/${self:provider.stage}/sqs/evaluation_queue_url}
+    EVALUATION_PROCESSOR_QUEUE_URL: ${ssm:/terraform/${self:provider.stage}/sqs/checklist_evaluation_processor_queue_url}
 
 functions:
-  evaluate:
-    name: ${self:provider.stage}-checklist-evaluate
+  evaluation-processor:
+    name: ${self:provider.stage}-checklist-evaluation-processor
     timeout: 30
     image:
       name: default
       command:
         - evaluate.handler
     events:
-      - sqs: ${ssm:/terraform/${self:provider.stage}/sqs/criteria_evaluate_queue_arn}
+      - sqs: ${ssm:/terraform/${self:provider.stage}/sqs/checklist_evaluate_queue_arn}
 
   generate:
     name: ${self:provider.stage}-checklist-generate
@@ -70,8 +70,8 @@ functions:
               paths:
                 id: true
 
-  publish-evaluation:
-    name: ${self:provider.stage}-checklist-publish-evaluation
+  evaluation-publisher:
+    name: ${self:provider.stage}-checklist-evaluation-publisher
     image:
       name: default
       command:
