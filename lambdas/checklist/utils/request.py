@@ -14,7 +14,7 @@ def parse_request_body(event):
         return json.loads(body)
     except json.JSONDecodeError as e:
         raise ValueError(f"Invalid JSON in request body: {e}")
-    
+
 
 def validate_request_body(body, required_fields):
     """
@@ -24,7 +24,8 @@ def validate_request_body(body, required_fields):
     """
     if not all(body.get(field) for field in required_fields):
         raise ValueError('Missing required fields')
-    
+
+
 def parse_request_parameter(event, parameter_name):
     """
     Parses a request parameter from an event and returns it as a string.
@@ -40,4 +41,3 @@ def parse_request_parameter(event, parameter_name):
         return parameter
     except Exception as e:
         raise ValueError(f"Error parsing parameter {parameter_name}: {e}")
-    

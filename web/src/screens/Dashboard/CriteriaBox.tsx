@@ -91,7 +91,7 @@ const CriteriaBox = () => {
         </div>
       );
     }
-  
+
     return (
       <div className="px-6 py-4">
         <h3 className="text-lg font-bold">Generated Criteria</h3>

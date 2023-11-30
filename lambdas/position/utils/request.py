@@ -13,4 +13,3 @@ def parse_request_parameter(event, parameter_name):
         return parameter
     except Exception as e:
         raise ValueError(f"Error parsing parameter {parameter_name}: {e}")
-    
