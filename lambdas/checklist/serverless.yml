@@ -41,7 +41,7 @@ functions:
       command:
         - evaluate.handler
     events:
-      - sqs: ${ssm:/terraform/${self:provider.stage}/sqs/checklist_evaluate_queue_arn}
+      - sqs: ${ssm:/terraform/${self:provider.stage}/sqs/checklist_evaluation_processor_queue_arn}
 
   generate:
     name: ${self:provider.stage}-checklist-generate
