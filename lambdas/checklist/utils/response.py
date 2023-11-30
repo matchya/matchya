@@ -42,7 +42,7 @@ def generate_error_response(origin_domain: str, status_code: int, message: str):
     return generate_response(origin_domain=origin_domain, status_code=status_code, body=json.dumps(body))
 
 
-def generate_success_response(origin_domain: str, body: Any) -> Dict[str, Any]:
+def generate_success_response(origin_domain: str, payload=None) -> Dict[str, Any]:
     """
     Generates a success response with the access token.
 
@@ -50,7 +50,8 @@ def generate_success_response(origin_domain: str, body: Any) -> Dict[str, Any]:
     :return: A success response containing the access token and current timestamp.
     """
     body = {
-        'status': 'success',
-        'payload': body
+        'status': 'success'
     }
+    if payload is not None:
+        body['payload'] = payload
     return generate_response(origin_domain=origin_domain, status_code=200, body=json.dumps(body))

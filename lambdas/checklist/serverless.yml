@@ -30,51 +30,27 @@ provider:
     POSTGRES_DB: ${ssm:/terraform/${self:provider.stage}/rds/db_name}
     POSTGRES_USER: ${ssm:/terraform/${self:provider.stage}/rds/db_username}
     POSTGRES_PASSWORD: ${ssm:/terraform/${self:provider.stage}/rds/db_password}
+    EVALUATION_PROCESSOR_QUEUE_URL: ${ssm:/terraform/${self:provider.stage}/sqs/checklist_evaluation_processor_queue_url}
+    GENERATION_PROCESSOR_QUEUE_URL: ${ssm:/terraform/${self:provider.stage}/sqs/checklist_generation_processor_queue_url}
 
 functions:
-  evaluate:
-    name: ${self:provider.stage}-checklist-evaluate
-    timeout: 30
+  evaluation-processor:
+    name: ${self:provider.stage}-checklist-evaluation-processor
     image:
       name: default
       command:
         - evaluate.handler
     events:
-      - http:
-          path: /checklists/evaluate
-          method: POST
-          cors:
-            origins:
-              - http://127.0.0.1:5173
-            allowCredentials: true
-          authorizer:
-            type: request
-            identitySource: method.request.header.Cookie
-            resultTtlInSeconds: 300
-            name: ${self:provider.stage}-checklist-evaluate-authorizer
-            arn: arn:aws:lambda:${aws:region}:${aws:accountId}:function:${self:provider.stage}-authorizer
+      - sqs: ${ssm:/terraform/${self:provider.stage}/sqs/checklist_evaluation_processor_queue_arn}
 
-  generate:
-    name: ${self:provider.stage}-checklist-generate
-    timeout: 30
+  generation-processor:
+    name: ${self:provider.stage}-checklist-generation-processor
     image:
       name: default
       command:
         - generate.handler
     events:
-      - http:
-          path: /checklists/generate
-          method: POST
-          cors:
-            origins:
-              - http://127.0.0.1:5173
-            allowCredentials: true
-          authorizer:
-            type: request
-            identitySource: method.request.header.Cookie
-            resultTtlInSeconds: 300
-            name: ${self:provider.stage}-checklist-generate-authorizer
-            arn: arn:aws:lambda:${aws:region}:${aws:accountId}:function:${self:provider.stage}-authorizer
+      - sqs: ${ssm:/terraform/${self:provider.stage}/sqs/checklist_generation_processor_queue_arn}
 
   retrieve:
     name: ${self:provider.stage}-checklist-retrieve
@@ -100,6 +76,48 @@ functions:
             parameters:
               paths:
                 id: true
+
+  evaluation-publisher:
+    name: ${self:provider.stage}-checklist-evaluation-publisher
+    image:
+      name: default
+      command:
+        - publish_evaluation.handler
+    events:
+      - http:
+          path: /checklists/evaluate
+          method: POST
+          cors:
+            origins:
+              - http://127.0.0.1:5173
+            allowCredentials: true
+          authorizer:
+            type: request
+            identitySource: method.request.header.Cookie
+            resultTtlInSeconds: 300
+            name: ${self:provider.stage}-checklist-evaluate-authorizer
+            arn: arn:aws:lambda:${aws:region}:${aws:accountId}:function:${self:provider.stage}-authorizer
+
+  generation-publisher:
+    name: ${self:provider.stage}-checklist-generation-publisher
+    image:
+      name: default
+      command:
+        - publish_generation.handler
+    events:
+      - http:
+          path: /checklists/generate
+          method: POST
+          cors:
+            origins:
+              - http://127.0.0.1:5173
+            allowCredentials: true
+          authorizer:
+            type: request
+            identitySource: method.request.header.Cookie
+            resultTtlInSeconds: 300
+            name: ${self:provider.stage}-checklist-evaluate-authorizer
+            arn: arn:aws:lambda:${aws:region}:${aws:accountId}:function:${self:provider.stage}-authorizer
 
 plugins:
   - serverless-deployment-bucket
