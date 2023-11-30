@@ -61,8 +61,7 @@ def generate_success_response(origin: str, host: str, access_token: str):
     cookie['session']['samesite'] = 'None'
     cookie['session']['secure'] = True
 
-    # TODO: change this to 24 hours once it is functioning correctly
-    expiration = datetime.datetime.now() + datetime.timedelta(minutes=3)
+    expiration = datetime.datetime.now() + datetime.timedelta(days=1)
     cookie['session']['expires'] = expiration.strftime("%a, %d-%b-%Y %H:%M:%S GMT")
 
     body = {
