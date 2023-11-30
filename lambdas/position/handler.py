@@ -4,7 +4,7 @@ import psycopg2
 import boto3
 
 from config import Config
-from utils.request import parse_request_parameter
+from utils.request import parse_header, parse_request_parameter
 from utils.response import generate_success_response, generate_error_response
 
 # Logger
@@ -42,18 +42,19 @@ def retrieve(event, context):
         logger.info(f"Received event: {event}")
         connect_to_db()
         position_id = parse_request_parameter(event, 'id')
+        origin = parse_header(event)
         body = get_position_details_by_id(position_id)
         if not body:
             raise ValueError(f"Position not found for id: {position_id}")
-        return generate_success_response(body)
+        return generate_success_response(origin, body)
     except (ValueError, RuntimeError) as e:
         status_code = 400
         logger.error(f"Failed to retrieve position (status {str(status_code)}): {e}")
-        return generate_error_response(status_code, str(e))
+        return generate_error_response(origin, status_code, str(e))
     except Exception as e:
         status_code = 500
         logger.error(f"Failed to retrieve position (status {str(status_code)}): {e}")
-        return generate_error_response(status_code, str(e))
+        return generate_error_response(origin, status_code, str(e))
     finally:
         if db_conn:
             db_conn.close()

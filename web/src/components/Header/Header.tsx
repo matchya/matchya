@@ -1,11 +1,10 @@
-import axios from 'axios';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
 
 import matchyaIcon from '/matchya-icon.png';
 
-import { apiEndpoint } from '../../config';
+import { unprotectedAxios } from '../../helper';
 import { useAuthStore } from '../../store/useAuthStore';
 import AuthModal, { LoginInput, RegisterInput } from '../LoginModal/AuthModal';
 
@@ -29,9 +28,7 @@ const Header = () => {
 
   const handleLogin = async (userData: LoginInput | RegisterInput) => {
     try {
-      const response = await axios.post(`${apiEndpoint}/login`, userData, {
-        withCredentials: true,
-      });
+      const response = await unprotectedAxios.post('/login', userData);
       if (response.data.status == 'success') {
         setShowLoginModal(false);
         navigate('/dashboard');
@@ -44,9 +41,7 @@ const Header = () => {
 
   const handleRegister = async (userData: LoginInput | RegisterInput) => {
     try {
-      const response = await axios.post(`${apiEndpoint}/register`, userData, {
-        withCredentials: true,
-      });
+      const response = await unprotectedAxios.post('/register', userData);
       if (response.data.status == 'success') {
         setShowLoginModal(false);
         navigate('/dashboard');

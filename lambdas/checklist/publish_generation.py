@@ -7,7 +7,7 @@ import psycopg2
 from config import Config
 
 from utils.response import generate_error_response, generate_success_response
-from utils.request import parse_request_body, validate_request_body
+from utils.request import parse_header, parse_request_body, validate_request_body
 
 # Logger
 logger = logging.getLogger('publish generation')
@@ -88,16 +88,17 @@ def handler(event, context):
         logger.info("Received publish criteria generation request")
         connect_to_db()
         body = parse_request_body(event)
+        origin = parse_header(event)
         validate_request_body(body, ['position_id', 'repository_names'])
 
         github_username = get_github_username_from_position_id(body['position_id'])
         body['github_username'] = github_username
         send_message_to_sqs(body)
         logger.info(f"Successfully sent message to SQS {body}")
-        return generate_success_response()
+        return generate_success_response(origin_domain=origin)
     except RuntimeError as e:
         logger.error(e)
-        return generate_error_response(400, str(e))
+        return generate_error_response(origin, 400, str(e))
     except Exception as e:
         logger.error(e)
-        return generate_error_response(500, str(e))
+        return generate_error_response(origin, 500, str(e))

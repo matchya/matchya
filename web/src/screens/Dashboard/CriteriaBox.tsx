@@ -1,9 +1,8 @@
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 
 import Button from '../../components/LoginModal/Button';
 import FormInput from '../../components/LoginModal/FormInput';
-import { apiEndpoint } from '../../config';
+import { protectedAxios } from '../../helper';
 
 const CriteriaBox = () => {
     const [positionId, ] = useState<string>('id');
@@ -19,9 +18,8 @@ const CriteriaBox = () => {
 
     const getCriteria = async () => {
         try {
-            const response = await axios.get(
-                `${apiEndpoint}/checklists/${positionId}`, 
-                {headers: {'Content-Type': 'application/json', 'Authorization': `Bearer validToken`}}
+            const response = await protectedAxios.get(
+                `/checklists/${positionId}`
             );
             if (response.data.status == 'success') {
               setCriteria(response.data.payload.criteria)
@@ -35,10 +33,9 @@ const CriteriaBox = () => {
     const generateCriteria = async () => {
         const userData = {"position_id": positionId, "repo_names": repositoryNames};
         try {
-            const response = await axios.post(
-                `${apiEndpoint}/generate`,
-                userData,
-                {headers: {'Content-Type': 'application/json', 'Authorization': `Bearer validToken`}}
+            const response = await protectedAxios.post(
+                `/generate`,
+                userData
             );
             console.log(response)
             if (response.data.status == 'success') {
@@ -49,7 +46,7 @@ const CriteriaBox = () => {
             // Handle error (e.g., show error message to the user)
         }
     }
-  
+
     if (!criteria.length) {
       return (
         <div className="px-6 py-4 flex flex-col justify-center items-center">

@@ -62,6 +62,16 @@ functions:
       - http:
           path: /checklists/{id}
           method: GET
+          cors:
+            origins:
+              - http://127.0.0.1:5173
+            allowCredentials: true
+          authorizer:
+            type: request
+            identitySource: method.request.header.Cookie
+            resultTtlInSeconds: 300
+            name: ${self:provider.stage}-checklist-retrieve-authorizer
+            arn: arn:aws:lambda:${aws:region}:${aws:accountId}:function:${self:provider.stage}-authorizer
           request:
             parameters:
               paths:
@@ -77,6 +87,16 @@ functions:
       - http:
           path: /checklists/evaluate
           method: POST
+          cors:
+            origins:
+              - http://127.0.0.1:5173
+            allowCredentials: true
+          authorizer:
+            type: request
+            identitySource: method.request.header.Cookie
+            resultTtlInSeconds: 300
+            name: ${self:provider.stage}-checklist-evaluate-authorizer
+            arn: arn:aws:lambda:${aws:region}:${aws:accountId}:function:${self:provider.stage}-authorizer
 
   generation-publisher:
     name: ${self:provider.stage}-checklist-generation-publisher
@@ -88,6 +108,16 @@ functions:
       - http:
           path: /checklists/generate
           method: POST
+          cors:
+            origins:
+              - http://127.0.0.1:5173
+            allowCredentials: true
+          authorizer:
+            type: request
+            identitySource: method.request.header.Cookie
+            resultTtlInSeconds: 300
+            name: ${self:provider.stage}-checklist-evaluate-authorizer
+            arn: arn:aws:lambda:${aws:region}:${aws:accountId}:function:${self:provider.stage}-authorizer
 
 plugins:
   - serverless-deployment-bucket
