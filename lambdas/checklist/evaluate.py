@@ -11,7 +11,7 @@ from config import Config
 from client.github import GithubClient
 
 from utils.response import generate_success_response, generate_error_response
-from utils.request import parse_request_body, validate_request_body
+from utils.request import parse_header, parse_request_body, validate_request_body
 
 # Logger
 logger = logging.getLogger('evaluate candidate')
@@ -224,6 +224,7 @@ def handler(event, context):
         connect_to_db()
 
         body = parse_request_body(event)
+        origin = parse_header(event)
         validate_request_body(body, ['checklist_id', 'candidate_email', 'candidate_github_username'])
         candidate_id = save_candidate_info_to_db(body)
         logger.info(f"Saved candidate info to database successfully: {candidate_id}")
@@ -240,15 +241,15 @@ def handler(event, context):
         save_candidate_evaluation_to_db(checklist_id, candidate_id, candidate_result)
         logger.info("Saved candidate evaluation to database successfully")
         db_conn.commit()
-        return generate_success_response(candidate_result)
+        return generate_success_response(origin, candidate_result)
     except (ValueError, RuntimeError) as e:
         status_code = 400
         logger.error(f'Candidate evaluation failed (status {str(status_code)}): {e}')
-        return generate_error_response(status_code, str(e))
+        return generate_error_response(origin, status_code, str(e))
     except Exception as e:
         status_code = 400
         logger.error(f'Candidate evaluation failed (status {str(status_code)}): {e}')
-        return generate_error_response(status_code, str(e))
+        return generate_error_response(origin, status_code, str(e))
     finally:
         if db_conn:
             db_conn.close()

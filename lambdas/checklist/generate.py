@@ -11,7 +11,7 @@ from config import Config
 from client.github import GithubClient
 
 from utils.response import generate_success_response, generate_error_response
-from utils.request import parse_request_body, validate_request_body
+from utils.request import parse_header, parse_request_body, validate_request_body
 
 # Logger
 logger = logging.getLogger('generate criteria')
@@ -234,6 +234,7 @@ def handler(event, context):
         connect_to_db()
 
         body = parse_request_body(event)
+        origin = parse_header(event)
         validate_request_body(body, ['position_id', 'repository_names'])
         position_id = body.get('position_id')
         repository_names = body.get('repository_names')
@@ -254,14 +255,14 @@ def handler(event, context):
         }
         db_conn.commit()
         logger.info('Criteria saved successfully')
-        return generate_success_response(body)
+        return generate_success_response(origin, body)
     except (ValueError, RuntimeError) as e:
         status_code = 400
         logger.error(f'Criteria generation failed (status {str(status_code)}): {e}')
-        return generate_error_response(status_code, str(e))
+        return generate_error_response(origin, status_code, str(e))
     except Exception as e:
         status_code = 500
         logger.error(f'Criteria generation failed (status {str(status_code)}): {e}')
-        return generate_error_response(status_code, str(e))
+        return generate_error_response(origin, status_code, str(e))
     finally:
         db_conn.close()

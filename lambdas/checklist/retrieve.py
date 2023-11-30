@@ -5,7 +5,7 @@ import boto3
 from config import Config
 
 from utils.response import generate_success_response, generate_error_response
-from utils.request import parse_request_parameter
+from utils.request import parse_header, parse_request_parameter
 
 # Logger
 logger = logging.getLogger('retrieve criteria')
@@ -25,19 +25,20 @@ criterion_table = dynamodb.Table(CRITERION_TABLE_NAME)
 def handler(event, context):
     try:
         logger.info(f"Received event: {event}")
+        origin = parse_header(event)
         checklist_id = parse_request_parameter(event, 'id')
         criteria = get_criteria_by_checklist_id(checklist_id)
         body = {
             "criteria": criteria,
         }
         logger.info("Successfully retrieved criteria")
-        return generate_success_response(body)
+        return generate_success_response(origin, body)
     except (ValueError, RuntimeError) as e:
         logger.error(f"Failed to retrieve criteria: {e}")
-        return generate_error_response(400, f"Failed to retrieve criteria: {e}")
+        return generate_error_response(origin, 400, f"Failed to retrieve criteria: {e}")
     except Exception as e:
         logger.error(f"Failed to retrieve criteria: {e}")
-        return generate_error_response(500, f"Failed to retrieve criteria: {e}")
+        return generate_error_response(origin, 500, f"Failed to retrieve criteria: {e}")
 
 
 def get_criteria_by_checklist_id(checklist_id):
