@@ -31,11 +31,11 @@ provider:
     POSTGRES_USER: ${ssm:/terraform/${self:provider.stage}/rds/db_username}
     POSTGRES_PASSWORD: ${ssm:/terraform/${self:provider.stage}/rds/db_password}
     EVALUATION_PROCESSOR_QUEUE_URL: ${ssm:/terraform/${self:provider.stage}/sqs/checklist_evaluation_processor_queue_url}
+    GENERATION_PROCESSOR_QUEUE_URL: ${ssm:/terraform/${self:provider.stage}/sqs/checklist_generation_processor_queue_url}
 
 functions:
   evaluation-processor:
     name: ${self:provider.stage}-checklist-evaluation-processor
-    timeout: 30
     image:
       name: default
       command:
@@ -43,17 +43,14 @@ functions:
     events:
       - sqs: ${ssm:/terraform/${self:provider.stage}/sqs/checklist_evaluation_processor_queue_arn}
 
-  generate:
-    name: ${self:provider.stage}-checklist-generate
-    timeout: 30
+  generation-processor:
+    name: ${self:provider.stage}-checklist-generation-processor
     image:
       name: default
       command:
         - generate.handler
     events:
-      - http:
-          path: /checklists/generate
-          method: POST
+      - sqs: ${ssm:/terraform/${self:provider.stage}/sqs/checklist_generation_processor_queue_arn}
 
   retrieve:
     name: ${self:provider.stage}-checklist-retrieve
@@ -79,6 +76,17 @@ functions:
     events:
       - http:
           path: /checklists/evaluate
+          method: POST
+
+  generation-publisher:
+    name: ${self:provider.stage}-checklist-generation-publisher
+    image:
+      name: default
+      command:
+        - publish_generation.handler
+    events:
+      - http:
+          path: /checklists/generate
           method: POST
 
 plugins:
