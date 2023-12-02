@@ -11,13 +11,17 @@ from utils.response import generate_error_response, generate_success_response
 from utils.request import parse_header, parse_request_body, validate_request_body
 
 # Logger
-logger = logging.getLogger('publish evaluation')
+logger = logging.getLogger('publish_generation')
 logger.setLevel(logging.INFO)
 
-formatter = logging.Formatter('%(asctime)s:%(name)s:%(levelname)s:%(message)s')
-ch = logging.StreamHandler()
-ch.setFormatter(formatter)
-logger.addHandler(ch)
+formatter = logging.Formatter('[%(levelname)s]:%(funcName)s:%(lineno)d:%(message)s')
+
+if not logger.handlers:
+    ch = logging.StreamHandler()
+    ch.setFormatter(formatter)
+    logger.addHandler(ch)
+
+logger.propagate = False
 
 # Postgres
 db_conn = None
@@ -32,6 +36,7 @@ def connect_to_db():
     """
     Reconnects to the database.
     """
+    logger.info("Connecting to the db...")
     global db_conn
     global db_cursor
     if not db_conn or db_conn.closed:
@@ -46,6 +51,7 @@ def checklist_exists(checklist_id):
     :param checklist_id: The id of the checklist to check.
     :return: True if the checklist exists, False otherwise.
     """
+    logger.info("Checking if checklist exists...")
     global db_cursor
     db_cursor.execute(f"SELECT * FROM checklist WHERE id = '{checklist_id}'")
     return db_cursor.fetchone() is not None
@@ -58,7 +64,7 @@ def send_message_to_sqs(body):
     :param body: The body of the message to send.
     :return: The response from the SQS queue.
     """
-
+    logger.info("Sending message to sqs...")
     try:
         response = sqs.send_message(
             QueueUrl=queue_url,
@@ -79,6 +85,7 @@ def user_already_evaluated(checklist_id, candidate_email):
     :param candidate_email: The email of the candidate to check.
     :return: True if the candidate has already been evaluated, False otherwise.
     """
+    logger.info("Checking if user is already evaluated...")
     sql = """
         SELECT * FROM candidate c
         JOIN candidate_result cr
@@ -97,8 +104,8 @@ def handler(event, context):
     :param context: Lambda runtime information object.
     :return: A dictionary with status code and the candidate's evaluation result in JSON format.
     """
+    logger.info(event)
     try:
-        logger.info("Received evaluate candidate request")
         connect_to_db()
         body = parse_request_body(event)
         origin = parse_header(event)

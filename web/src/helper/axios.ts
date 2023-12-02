@@ -9,11 +9,7 @@ const commonConfig = {
   }
 }
 
-export const protectedAxios = axios.create({
+export const axiosInstance = axios.create({
   ...commonConfig,
   withCredentials: true
-})
-
-export const unprotectedAxios = axios.create({
-  ...commonConfig
 })

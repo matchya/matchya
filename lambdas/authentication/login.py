@@ -14,10 +14,14 @@ from utils.token import generate_access_token
 logger = logging.getLogger('login')
 logger.setLevel(logging.INFO)
 
-formatter = logging.Formatter('%(asctime)s:%(name)s:%(levelname)s:%(message)s')
-ch = logging.StreamHandler()
-ch.setFormatter(formatter)
-logger.addHandler(ch)
+formatter = logging.Formatter('[%(levelname)s]:%(funcName)s:%(lineno)d:%(message)s')
+
+if not logger.handlers:
+    ch = logging.StreamHandler()
+    ch.setFormatter(formatter)
+    logger.addHandler(ch)
+
+logger.propagate = False
 
 # DynamoDB
 dynamodb = boto3.resource('dynamodb')
@@ -46,6 +50,7 @@ def parse_request_body(event):
     :param event: The event object containing the request data.
     :return: Parsed JSON object from the request body.
     """
+    logger.info("Parsing the request body...")
     try:
         body = event.get('body', '')
         if not body:
@@ -62,6 +67,7 @@ def parse_header(event):
     :param event: The event object containing the request data.
     :return: origin and the host
     """
+    logger.info("Parsing the header...")
     try:
         headers = event['headers']
         origin = headers.get('origin')
@@ -82,6 +88,7 @@ def get_company_info(email):
     :param email: The email address used to query the company information.
     :return: The first item from the database query result.
     """
+    logger.info("Getting company info...")
     try:
         db_cursor.execute('SELECT * FROM company WHERE email = %s', (email,))
         result = db_cursor.fetchall()
@@ -108,6 +115,7 @@ def validate_password(password, stored_password):
     :param password: The plaintext password to validate.
     :param stored_password: The stored (hashed) password for comparison.
     """
+    logger.info("Validating the password...")
     if isinstance(stored_password, Binary):
         stored_password = stored_password.value
     if isinstance(stored_password, memoryview):
@@ -127,7 +135,7 @@ def handler(event, context):
              in case of a successful login, or an error message in case of failure.
     """
     try:
-        logger.info('Received login request')
+        logger.info(event)
         connect_to_db()
 
         body = parse_request_body(event)

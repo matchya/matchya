@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 import matchyaIcon from '/matchya-icon.png';
 
-import { unprotectedAxios } from '../../helper';
+import { axiosInstance } from '../../helper';
 import { useAuthStore } from '../../store/useAuthStore';
 import AuthModal, { LoginInput, RegisterInput } from '../LoginModal/AuthModal';
 
@@ -28,7 +28,7 @@ const Header = () => {
 
   const handleLogin = async (userData: LoginInput | RegisterInput) => {
     try {
-      const response = await unprotectedAxios.post('/login', userData);
+      const response = await axiosInstance.post('/login', userData);
       if (response.data.status == 'success') {
         setShowLoginModal(false);
         navigate('/dashboard');
@@ -41,7 +41,7 @@ const Header = () => {
 
   const handleRegister = async (userData: LoginInput | RegisterInput) => {
     try {
-      const response = await unprotectedAxios.post('/register', userData);
+      const response = await axiosInstance.post('/register', userData);
       if (response.data.status == 'success') {
         setShowLoginModal(false);
         navigate('/dashboard');

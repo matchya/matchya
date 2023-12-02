@@ -8,13 +8,17 @@ from utils.request import parse_header, parse_request_parameter
 from utils.response import generate_success_response, generate_error_response
 
 # Logger
-logger = logging.getLogger('position')
+logger = logging.getLogger('publish_generation')
 logger.setLevel(logging.INFO)
 
-formatter = logging.Formatter('%(asctime)s:%(name)s:%(levelname)s:%(message)s')
-ch = logging.StreamHandler()
-ch.setFormatter(formatter)
-logger.addHandler(ch)
+formatter = logging.Formatter('[%(levelname)s]:%(funcName)s:%(lineno)d:%(message)s')
+
+if not logger.handlers:
+    ch = logging.StreamHandler()
+    ch.setFormatter(formatter)
+    logger.addHandler(ch)
+
+logger.propagate = False
 
 # DynamoDB
 dynamodb = boto3.resource('dynamodb')
@@ -30,6 +34,7 @@ def connect_to_db():
     """
     Reconnects to the database.
     """
+    logger.info("Connecting to db...")
     global db_conn
     global db_cursor
     if not db_conn or db_conn.closed:
@@ -38,8 +43,8 @@ def connect_to_db():
 
 
 def retrieve(event, context):
+    logger.info(event)
     try:
-        logger.info(f"Received event: {event}")
         connect_to_db()
         position_id = parse_request_parameter(event, 'id')
         origin = parse_header(event)
@@ -67,6 +72,7 @@ def get_position_details_by_id(position_id):
     :param position_id: The position_id to retrieve details for.
     :return: Dictionary of position details.
     """
+    logger.info("Getting position details by id...")
     sql = """
         SELECT
             p.id AS position_id, p.name AS position_name,
@@ -104,7 +110,7 @@ def process_position_from_sql_results(sql_results):
     :param sql_results: sql results from db_cursor.execute(sql)
     :return: position_data
     """
-
+    logger.info("Processing position from sql results...")
     # if no checklist, return empty checklist
     if sql_results[0][2] is None:
         return {"name": sql_results[0][1], "checklists": []}
@@ -169,6 +175,7 @@ def get_criteria_dict_by_checklist_id(checklist_id):
     :param checklist_id: The checklist_id to retrieve criteria
     :return: Dictionay of criteria
     """
+    logger.info("Getting the criteria dict by checklist id...")
     try:
         response = criterion_table.query(
             IndexName='ChecklistIdIndex',
