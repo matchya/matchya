@@ -10,13 +10,17 @@ from utils.response import generate_error_response, generate_success_response
 from utils.request import parse_header, parse_request_body, validate_request_body
 
 # Logger
-logger = logging.getLogger('publish generation')
+logger = logging.getLogger('publish_generation')
 logger.setLevel(logging.INFO)
 
-formatter = logging.Formatter('%(asctime)s:%(name)s:%(levelname)s:%(message)s')
-ch = logging.StreamHandler()
-ch.setFormatter(formatter)
-logger.addHandler(ch)
+formatter = logging.Formatter('[%(levelname)s]:%(funcName)s:%(lineno)d:%(message)s')
+
+if not logger.handlers:
+    ch = logging.StreamHandler()
+    ch.setFormatter(formatter)
+    logger.addHandler(ch)
+
+logger.propagate = False
 
 # Postgres
 db_conn = None
@@ -31,6 +35,7 @@ def connect_to_db():
     """
     Reconnects to the database.
     """
+    logger.info("Connecting to db...")
     global db_conn
     global db_cursor
     if not db_conn or db_conn.closed:
@@ -45,6 +50,7 @@ def get_github_username_from_position_id(position_id):
     :param position_id: Unique identifier for the position.
     :return: The GitHub username of the company.
     """
+    logger.info("Getting the github username from position id...")
     sql = """
             SELECT Company.github_username FROM Company
             INNER JOIN Position ON Company.id = Position.company_id
@@ -64,6 +70,7 @@ def send_message_to_sqs(body):
     :param body: The body of the message to send.
     :return: The response from the SQS queue.
     """
+    logger.info("Sending the message to sqs...")
     try:
         response = sqs.send_message(
             QueueUrl=queue_url,
@@ -85,7 +92,7 @@ def handler(event, context):
     :return: A dictionary with status code and the candidate's evaluation result in JSON format.
     """
     try:
-        logger.info("Received publish criteria generation request")
+        logger.info(event)
         connect_to_db()
         body = parse_request_body(event)
         origin = parse_header(event)

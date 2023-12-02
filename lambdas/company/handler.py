@@ -8,13 +8,17 @@ from utils.request import parse_header, parse_request_parameter
 from utils.response import generate_success_response, generate_error_response
 
 # Logger
-logger = logging.getLogger('company')
+logger = logging.getLogger('publish_generation')
 logger.setLevel(logging.INFO)
 
-formatter = logging.Formatter('%(asctime)s:%(name)s:%(levelname)s:%(message)s')
-ch = logging.StreamHandler()
-ch.setFormatter(formatter)
-logger.addHandler(ch)
+formatter = logging.Formatter('[%(levelname)s]:%(funcName)s:%(lineno)d:%(message)s')
+
+if not logger.handlers:
+    ch = logging.StreamHandler()
+    ch.setFormatter(formatter)
+    logger.addHandler(ch)
+
+logger.propagate = False
 
 # Postgres
 db_conn = None
@@ -25,6 +29,7 @@ def connect_to_db():
     """
     Reconnects to the database.
     """
+    logger.info("Connecting to the db...")
     global db_conn
     global db_cursor
     if not db_conn or db_conn.closed:
@@ -39,6 +44,7 @@ def get_company_by_id(company_id):
     :param position_id: Unique identifier for the position.
     :return: List of messages for the given position_id.
     """
+    logger.info("Getting the company by id...")
     try:
         db_cursor.execute(f"SELECT id, name, email, github_username FROM company WHERE id = '{company_id}'")
         result = db_cursor.fetchone()
@@ -62,6 +68,7 @@ def get_repositories_by_company_id(company_id):
     :param position_id: Unique identifier for the position.
     :return: List of messages for the given position_id.
     """
+    logger.info("Getting the repositories by company id...")
     try:
         db_cursor.execute(f"SELECT repository_name FROM company_repository WHERE company_id = '{company_id}'")
         result = db_cursor.fetchall()
@@ -80,6 +87,7 @@ def get_positions_by_company_id(company_id):
     :param position_id: Unique identifier for the position.
     :return: List of messages for the given position_id.
     """
+    logger.info("Getting positions by company id...")
     try:
         db_cursor.execute(f"SELECT id, name FROM position WHERE company_id = '{company_id}'")
         result = db_cursor.fetchall()
@@ -92,8 +100,8 @@ def get_positions_by_company_id(company_id):
 
 
 def retrieve(event, context):
+    logger.info(event)
     try:
-        logger.info(f"Received retrive request: {event}")
         connect_to_db()
         company_id = parse_request_parameter(event, 'id')
         origin = parse_header(event)

@@ -12,13 +12,17 @@ from utils.response import generate_error_response, generate_success_response
 from utils.token import generate_access_token
 
 # Logger
-logger = logging.getLogger('register')
+logger = logging.getLogger('publish_generation')
 logger.setLevel(logging.INFO)
 
-formatter = logging.Formatter('%(asctime)s:%(name)s:%(levelname)s:%(message)s')
-ch = logging.StreamHandler()
-ch.setFormatter(formatter)
-logger.addHandler(ch)
+formatter = logging.Formatter('[%(levelname)s]:%(funcName)s:%(lineno)d:%(message)s')
+
+if not logger.handlers:
+    ch = logging.StreamHandler()
+    ch.setFormatter(formatter)
+    logger.addHandler(ch)
+
+logger.propagate = False
 
 # DynamoDB
 dynamodb = boto3.resource('dynamodb')
@@ -33,6 +37,7 @@ def connect_to_db():
     """
     Reconnects to the database.
     """
+    logger.info('Connecting to db...')
     global db_conn
     global db_cursor
     if not db_conn or db_conn.closed:
@@ -47,6 +52,7 @@ def parse_request_body(event):
     :param event: The event object containing the request data.
     :return: Parsed JSON object from the request body.
     """
+    logger.info("Parsing the request body...")
     try:
         body = event.get('body', '')
         if not body:
@@ -63,6 +69,7 @@ def parse_header(event):
     :param event: The event object containing the request data.
     :return: origin and the host
     """
+    logger.info("Parsing the header...")
     try:
         headers = event['headers']
         origin = headers.get('origin')
@@ -82,6 +89,7 @@ def validate_company_data(body):
 
     :param body: The request body containing company data.
     """
+    logger.info("Validating the company data...")
     required_fields = ['email', 'name', 'github_username', 'password']
     if not all(body.get(field) for field in required_fields):
         raise ValueError('Missing required fields')
@@ -94,6 +102,7 @@ def create_company_record(company_id: str, body: dict):
     :param company_id: Unique identifier for the company.
     :param body: The request body containing company data.
     """
+    logger.info("Creating the company record...")
     sql = "INSERT INTO company (id, name, email, github_username, password) VALUES (%s, %s, %s, %s, %s);"
     try:
         db_cursor.execute(sql, (company_id, body['name'], body['email'], body['github_username'], hash_password(body['password'])))
@@ -108,6 +117,7 @@ def save_company_repositories(company_id: str, github_username: str):
     :param company_id: Unique identifier for the company.
     :param github_username: The GitHub username of the company.
     """
+    logger.info("Saving the company repositories...")
     repositories = get_company_repository_names(github_username)
     sql = "INSERT INTO company_repository (id, company_id, repository_name) VALUES"
     for repository in repositories:
@@ -126,6 +136,7 @@ def get_company_repository_names(github_username: str):
     :param company_id: The GitHub username of the company.
     :return: A list of repositories of the company.
     """
+    logger.info("Getting the company repository names...")
     url = f"https://api.github.com/users/{github_username}/repos"
     response = requests.get(url)
     if response.status_code == 404:
@@ -144,6 +155,7 @@ def create_position_record(company_id, position_name='Software Engineer'):
     :param position_id: Unique identifier for the position.
     :param company_id: Unique identifier for the company.
     """
+    logger.info("Creating a position record...")
     sql = "INSERT INTO position (id, company_id, name) VALUES (%s, %s, %s);"
     try:
         position_id = str(uuid.uuid4())
@@ -159,6 +171,7 @@ def create_access_token_record(company_id, access_token):
     :param company_id: Unique identifier for the company associated with the token.
     :param access_token: The access token to be saved.
     """
+    logger.info("Creating an access token record...")
     access_token_info = {
         'token_id': access_token,
         'company_id': company_id
@@ -180,7 +193,7 @@ def handler(event, context):
              in case of success, or an error message in case of failure.
     """
     try:
-        logger.info('Received register request')
+        logger.info(event)
         connect_to_db()
         body = parse_request_body(event)
         origin, host = parse_header(event)

@@ -11,13 +11,17 @@ from config import Config
 from client.github import GithubClient
 
 # Logger
-logger = logging.getLogger('evaluate candidate')
+logger = logging.getLogger('publish_generation')
 logger.setLevel(logging.INFO)
 
-formatter = logging.Formatter('%(asctime)s:%(name)s:%(levelname)s:%(message)s')
-ch = logging.StreamHandler()
-ch.setFormatter(formatter)
-logger.addHandler(ch)
+formatter = logging.Formatter('[%(levelname)s]:%(funcName)s:%(lineno)d:%(message)s')
+
+if not logger.handlers:
+    ch = logging.StreamHandler()
+    ch.setFormatter(formatter)
+    logger.addHandler(ch)
+
+logger.propagate = False
 
 # DynamoDB
 dynamodb = boto3.resource('dynamodb')
@@ -35,6 +39,7 @@ def connect_to_db():
     """
     Reconnects to the database.
     """
+    logger.info("Connecting to db...")
     global db_conn
     global db_cursor
     if not db_conn or db_conn.closed:
@@ -48,6 +53,7 @@ def save_candidate_info_to_db(body):
 
     :param body: The request body containing candidate information.
     """
+    logger.info("Saving candidate info to db...")
     try:
         id = str(uuid.uuid4())
         first_name = body.get('candidate_first_name', '')
@@ -68,6 +74,7 @@ def get_criteria_from_dynamodb(checklist_id):
     :param checklist_id: The ID of the checklist.
     :return: A list of criteria with keywords and message
     """
+    logger.info("Getting the criteria from db...")
     try:
         response = criterion_table.query(
             IndexName='ChecklistIdIndex',
@@ -91,6 +98,7 @@ def evaluate_candidate(github_client: GithubClient, repository_names, criteria):
     :param criteria: A list of criteria with id, keywords and message
     :return: A list of criteria.
     """
+    logger.info("Evaluating the candidate...")
     try:
         contents_and_languages = github_client.get_repos_file_contents_and_languages(repository_names)
     except Exception as e:
@@ -108,6 +116,7 @@ def get_candidate_evaluation_from_gpt(criteria, file_content, languages):
     :param languages: A dictionary of programming languages and their byte sizes.
     :return: A JSON object representing the candidate's evaluation scores and reasons, based on the criteria.
     """
+    logger.info("Getting the candidate evaluation from GPT...")
     system_message = "A company is looking for promising employees as software engineers. Candidates need to have a skillset to work on the company's project in terms of programming languages and other technologies. These are criteria that the company needs candidates to have. You need to assess candidates on each criteria with keywords and a message : "
 
     for i in range(len(criteria)):
@@ -163,6 +172,7 @@ def save_candidate_evaluation_to_db(checklist_id, candidate_id, candidate_result
     :param candidate_id: The ID of the candidate.
     :param candidate_result: The candidate's evaluation result.
     """
+    logger.info("Saving the candidate evaluation to db...")
     candidate_result_id = save_candidate_result(checklist_id, candidate_id, candidate_result)
     save_candidate_assessments(candidate_result_id, candidate_result['assessments'])
 
@@ -175,6 +185,7 @@ def save_candidate_result(checklist_id, candidate_id, candidate_result):
     :param candidate_id: The ID of the candidate.
     :param candidate_result: The candidate's evaluation result.
     """
+    logger.info("Saving the candidate result...")
     try:
         id = str(uuid.uuid4())
         total_score = candidate_result['total_score']
@@ -193,6 +204,7 @@ def save_candidate_assessments(candidate_result_id, assessments):
     :param candidate_result_id: The ID of the candidate result.
     :param assessments: The candidate's assessments.
     """
+    logger.info("Saving the candidate assessments...")
     try:
         sql = "INSERT INTO assessment_criteria (id, candidate_result_id, criterion_id, score, reason) VALUES"
         for assessment in assessments:
@@ -216,6 +228,7 @@ def handler(event, context):
     :param context: Lambda runtime information object.
     :return: A dictionary with status code and the candidate's evaluation result in JSON format.
     """
+    logger.info(event)
     try:
         messages = event['Records']
         body = json.loads(messages[0]['body'])
