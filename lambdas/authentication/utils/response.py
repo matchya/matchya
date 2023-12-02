@@ -54,15 +54,15 @@ def generate_success_response(origin: str, host: str, access_token: str):
     :return: A success response containing the access token and current timestamp.
     """
     cookie = Cookie.SimpleCookie()
-    cookie['session'] = access_token
-    cookie['session']['httponly'] = True
-    cookie['session']['domain'] = host
-    cookie['session']['path'] = '/'
-    cookie['session']['samesite'] = 'None'
-    cookie['session']['secure'] = True
+    cookie['t'] = access_token
+    cookie['t']['httponly'] = True
+    cookie['t']['domain'] = host
+    cookie['t']['path'] = '/'
+    cookie['t']['samesite'] = None
+    cookie['t']['secure'] = True
 
     expiration = datetime.datetime.now() + datetime.timedelta(days=1)
-    cookie['session']['expires'] = expiration.strftime("%a, %d-%b-%Y %H:%M:%S GMT")
+    cookie['t']['expires'] = expiration.strftime("%a, %d-%b-%Y %H:%M:%S GMT")
 
     body = {
         'status': 'success',

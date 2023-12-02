@@ -8,7 +8,7 @@ def handler(event, context):
     headers = event.get('headers', {})
     cookie_header = headers.get('Cookie', '')
     cookie = SimpleCookie(cookie_header)
-    jwt_token = cookie['session'].value if 'session' in cookie else None
+    jwt_token = cookie['t'].value if 't' in cookie else None
 
     # TODO: implement logic to validate if jwt token is still valid
 
