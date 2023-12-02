@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import Button from '../../components/LoginModal/Button';
 import FormInput from '../../components/LoginModal/FormInput';
-import { protectedAxios } from '../../helper';
+import { axiosInstance } from '../../helper';
 
 const CriteriaBox = () => {
     const [positionId, ] = useState<string>('id');
@@ -18,7 +18,7 @@ const CriteriaBox = () => {
 
     const getCriteria = async () => {
         try {
-            const response = await protectedAxios.get(
+            const response = await axiosInstance.get(
                 `/checklists/${positionId}`
             );
             if (response.data.status == 'success') {
@@ -33,7 +33,7 @@ const CriteriaBox = () => {
     const generateCriteria = async () => {
         const userData = {"position_id": positionId, "repo_names": repositoryNames};
         try {
-            const response = await protectedAxios.post(
+            const response = await axiosInstance.post(
                 `/generate`,
                 userData
             );
