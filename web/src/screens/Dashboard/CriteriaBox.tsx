@@ -34,7 +34,7 @@ const CriteriaBox = () => {
         const userData = {"position_id": positionId, "repo_names": repositoryNames};
         try {
             const response = await axiosInstance.post(
-                `/generate`,
+                '/checklists/generate',
                 userData
             );
             console.log(response)
