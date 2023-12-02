@@ -1,4 +1,17 @@
 import json
+import logging
+
+logger = logging.getLogger('publish_generation')
+logger.setLevel(logging.INFO)
+
+formatter = logging.Formatter('[%(levelname)s]:%(funcName)s:%(lineno)d:%(message)s')
+
+if not logger.handlers:
+    ch = logging.StreamHandler()
+    ch.setFormatter(formatter)
+    logger.addHandler(ch)
+
+logger.propagate = False
 
 COMMON_HEADERS = {
     'Access-Control-Allow-Headers': 'Content-Type',
@@ -9,8 +22,7 @@ COMMON_HEADERS = {
 
 
 def hello(event, context):
-    # TODO: remove once cookie is confirmed working
-    print("EVENT: ", event)
+    logger.info(event)
     body = {
         "message": "Hello endpoint! Your function executed successfully!",
         "input": event,
