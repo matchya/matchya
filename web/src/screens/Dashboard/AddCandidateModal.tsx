@@ -3,19 +3,19 @@ import React, { useState } from 'react';
 import Button from '../../components/LoginModal/Button';
 import FormInput from '../../components/LoginModal/FormInput';
 import { axiosInstance } from '../../helper';
-import { Position } from '../../types';
+import { useCompanyStore } from '../../store/useCompanyStore';
 
 interface AddCandidateModalProps {
-    selectedPosition: Position | null;
     close: () => void;
   }
-
   
-  const AddCandidateModal = ({ selectedPosition, close }: AddCandidateModalProps) => {
+const AddCandidateModal = ({ close }: AddCandidateModalProps) => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [githubUsername, setGithubUsername] = useState('');
     const [email, setEmail] = useState('');
+
+    const { selectedPosition } = useCompanyStore()
   
     const handleAddCandidate = async (event?: React.MouseEvent) => {
       event?.preventDefault();

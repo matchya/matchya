@@ -3,15 +3,12 @@ import { useState } from 'react';
 import Button from '../../components/LoginModal/Button';
 import { axiosInstance } from '../../helper';
 import { useCompanyStore } from '../../store/useCompanyStore';
-import { Position, Criterion } from '../../types';
+import { Criterion } from '../../types';
 
-interface CriteriaBoxProps {
-  selectedPosition: Position | null;
-}
 
-const CriteriaBox = ({ selectedPosition }: CriteriaBoxProps) => {
+const CriteriaBox = () => {
     const [selectedRepository, setSelectedRepository] = useState<string>('');
-    const { repository_names } = useCompanyStore()
+    const { repository_names, selectedPosition } = useCompanyStore()
     const [selectedRepositories, setSelectedRepositories ] = useState<string[]>([]);
 
     const handleAddRepository = () => {

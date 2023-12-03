@@ -1,21 +1,19 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import ScoreCard from '../../components/LoginModal/ScoreCard';
 import { axiosInstance } from '../../helper';
 import { useCompanyStore } from '../../store/useCompanyStore';
-import { Position } from '../../types';
 
 import CriteriaBox from './CriteriaBox';
 import DashboardHeader from './DashboardHeader';
+import ScoreCard from './ScoreCard';
 import Sidebar from './Sidebar';
 
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const [selectedPosition, setSelectedPosition] = useState<Position | null>(null)
   const [updatingPosition, setUpdatingPosition] = useState<boolean>(false)
-  const { me, id, positions } = useCompanyStore();
+  const { id, selectedPosition, me } = useCompanyStore();
 
   useEffect(() => {
     if (id) return;
@@ -44,18 +42,15 @@ const Dashboard = () => {
    
   return (
     <div className="pt-16 bg-gray-100 h-screen overflow-hidden">
-      {' '}
-      {/* Padding top for the header */}
-      {/* {showModal && <AddCandidateModal close={() => setShowModal(false)} />} */}
       <div className="w-full h-full mx-auto">
         <div className="w-full h-full flex">
           <div className="w-1/6 pt-0 mt-0 h-full bg-gray-300 border border-3">
-            <Sidebar positions={positions} selectedPosition={selectedPosition} setSelectedPosition={setSelectedPosition} />
+            <Sidebar />
           </div>
             { !updatingPosition && selectedPosition &&
               <div className='w-5/6'>
                 <div className="w-full">
-                  <DashboardHeader selectedPosition={selectedPosition} /> 
+                  <DashboardHeader /> 
                 </div>
                 <div className="justify-between items-center py-6 px-10 mt-4">
                   <div className="flex flex-col lg:flex-row gap-4">
@@ -66,7 +61,7 @@ const Dashboard = () => {
                       ))}
                     </div>
                     <div className="w-1/3 pt-10 bg-white shadow overflow-hidden sm:rounded-md">
-                      <CriteriaBox selectedPosition={selectedPosition} />
+                      <CriteriaBox />
                     </div>
                   </div>
                 </div>
