@@ -5,13 +5,13 @@ import Header from './components/Header/Header';
 import { axiosInstance } from './helper';
 import Dashboard from './screens/Dashboard/Dashboard';
 import Settings from './screens/Settings/Settings';
-import { useAuthStore } from './store/useAuthStore';
+import { useCompanyStore } from './store/useCompanyStore';
 
 function App() {
-  const { initAuth } = useAuthStore();
+  const { me } = useCompanyStore();
 
   useEffect(() => {
-    
+    me();
   }, []);
 
   return (
