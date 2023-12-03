@@ -7,10 +7,10 @@ import { Criterion } from '../../types';
 
 const CriteriaBox = () => {
   const [selectedRepository, setSelectedRepository] = useState<string>('');
-  const { repository_names, selectedPosition } = useCompanyStore();
   const [selectedRepositories, setSelectedRepositories] = useState<string[]>(
     []
   );
+  const { repository_names, selectedPosition } = useCompanyStore();
 
   const handleAddRepository = () => {
     if (
@@ -44,8 +44,9 @@ const CriteriaBox = () => {
     }
   };
 
-  if (
-    !selectedPosition ||
+  if (!selectedPosition) {
+    return <div>loading...</div>;
+  } else if (
     !selectedPosition.checklists ||
     selectedPosition.checklists.length === 0
   ) {
