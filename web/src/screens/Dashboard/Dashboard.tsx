@@ -33,9 +33,10 @@ const Dashboard = () => {
   const getSelectedPosition = async () => {
     if (selectedPosition == null || selectedPosition.checklists) return;
     setUpdatingPosition(true)
-    console.log(selectedPosition.id)
+    console.log("get position")
     const response = await axiosInstance.get(`/positions/${selectedPosition.id}`)
     if (response.data.status === 'success') {
+      console.log(response.data.payload)
       selectedPosition.checklists = response.data.payload.checklists
     }
     setUpdatingPosition(false)
@@ -54,7 +55,7 @@ const Dashboard = () => {
             { !updatingPosition && selectedPosition &&
               <div className='w-5/6'>
                 <div className="w-full">
-                  <DashboardHeader /> 
+                  <DashboardHeader selectedPosition={selectedPosition} /> 
                 </div>
                 <div className="justify-between items-center py-6 px-10 mt-4">
                   <div className="flex flex-col lg:flex-row gap-4">
@@ -65,7 +66,7 @@ const Dashboard = () => {
                       ))}
                     </div>
                     <div className="w-1/3 pt-10 bg-white shadow overflow-hidden sm:rounded-md">
-                      <CriteriaBox checklists={selectedPosition.checklists ? selectedPosition.checklists : []} />
+                      <CriteriaBox selectedPosition={selectedPosition} />
                     </div>
                   </div>
                 </div>
