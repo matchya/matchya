@@ -129,8 +129,10 @@ def process_position_from_sql_results(sql_results):
                 'id': checklist_id,
                 'repository_names': set(),
                 'candidates': {},
-                'criteria': criteria  # {id: message}
+                'criteria': criteria
             }
+            
+        criterion_message = [criterion['message'] for criterion in criteria if criterion['id'] == criterion_id][0]
 
         position_data[position_id]['checklists'][checklist_id]['repository_names'].add(repo_name)
 
@@ -148,7 +150,7 @@ def process_position_from_sql_results(sql_results):
 
         if email:
             candidates[email]['assessments'].append({
-                'criterion_id': criterion_id,
+                'criterion_message': criterion_message,
                 'score': score,
                 'reason': reason
             })

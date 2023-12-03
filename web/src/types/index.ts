@@ -18,7 +18,7 @@ export interface Candidate {
 }
 
 export interface Assessment {
-    criterion_id: string;
+    criterion_message: string;
     score: number;
     reason: string;
 }

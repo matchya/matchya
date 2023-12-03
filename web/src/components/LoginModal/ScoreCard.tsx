@@ -19,7 +19,7 @@ const ScoreCard = ({ candidate }: ScoreCardProps) => {
         {candidate.assessments.map((assessment, index) => (
           <div key={index} className="m-4">
             <p className="text-sm ml-4">
-              - {assessment.criterion_id}: {assessment.score} / 10
+              - {assessment.criterion_message}: {assessment.score} / 10
             </p>
             <p className="text-xs ml-2">{assessment.reason}</p>
           </div>
