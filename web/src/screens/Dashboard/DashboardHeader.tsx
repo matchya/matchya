@@ -1,16 +1,14 @@
 import { useState } from 'react'
 
 import Button from '../../components/LoginModal/Button'
-import { Position } from '../../types';
+import { useCompanyStore } from '../../store/useCompanyStore';
 
 import AddCandidateModal from './AddCandidateModal'
 
-interface DashboardHeaderProps {
-  selectedPosition: Position | null;
-}
 
-const DashboardHeader = ( { selectedPosition }: DashboardHeaderProps) => {
+const DashboardHeader = () => {
     const [showModal, setShowModal] = useState<boolean>(false);
+    const { selectedPosition } = useCompanyStore();
 
     const handleModalDisplay = () => {
         setShowModal(true);
@@ -18,7 +16,7 @@ const DashboardHeader = ( { selectedPosition }: DashboardHeaderProps) => {
 
   return (
     <div className='w-full flex justify-between items-center py-4 bg-gray-500'>
-        {showModal && <AddCandidateModal selectedPosition={selectedPosition} close={() => setShowModal(false)} />}
+        {showModal && <AddCandidateModal close={() => setShowModal(false)} />}
         <h1 className="text-3xl font-bold text-white ml-16">{selectedPosition?.name}</h1>
         <Button
             text="Add candidate"

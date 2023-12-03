@@ -11,6 +11,8 @@ interface CompanyState {
     github_username: string
     repository_names: string[]
     positions: Position[]
+    selectedPosition: Position | null
+    selectPosition: (position: Position) => void
     me: () => void
 }
 
@@ -21,6 +23,8 @@ export const useCompanyStore = create<CompanyState>((set) => ({
     github_username: '',
     repository_names: [],
     positions: [],
+    selectedPosition: null,
+    selectPosition: (position: Position) => set({ selectedPosition: position }),
     me: async () => {
         const res = await axios.get(`${apiEndpoint}/companies/me`, { withCredentials: true })
         if (res.data.status === 'success') {
