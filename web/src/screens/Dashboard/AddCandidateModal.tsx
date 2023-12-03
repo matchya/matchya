@@ -2,20 +2,36 @@ import React, { useState } from 'react';
 
 import Button from '../../components/LoginModal/Button';
 import FormInput from '../../components/LoginModal/FormInput';
+import { axiosInstance } from '../../helper';
+import { Position } from '../../types';
 
 interface AddCandidateModalProps {
+    selectedPosition: Position | null;
     close: () => void;
   }
 
   
-  const AddCandidateModal = ({ close }: AddCandidateModalProps) => {
-    const [name, setName] = useState('');
-    const [githubUrl, setGithubUrl] = useState('');
+  const AddCandidateModal = ({ selectedPosition, close }: AddCandidateModalProps) => {
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [githubUsername, setGithubUsername] = useState('');
+    const [email, setEmail] = useState('');
   
-    const handleAddCandidate = (event?: React.MouseEvent) => {
+    const handleAddCandidate = async (event?: React.MouseEvent) => {
       event?.preventDefault();
-      console.log(name, githubUrl);
-      close();
+      const response = await axiosInstance.post('/checklists/evaluate', {
+        checklist_id: selectedPosition?.checklists[0].id,
+        candidate_first_name: firstName,
+        candidate_last_name: lastName,
+        candidate_github_username: githubUsername,
+        candidate_email: email,
+      });
+      if (response.data.status === 'success') {
+        console.log(response.data.payload);
+        close()
+      } else {
+        console.log(response.data.message);
+      }
     };
   
     const clickOutside = (
@@ -36,20 +52,36 @@ interface AddCandidateModalProps {
           <h1 className="text-3xl font-bold text-center">Add a new candidate</h1>
           <div className="space-y-6">
             <FormInput
-              label="Name"
-              id="name"
+              label="First Name"
+              id="first_name"
               type="text"
               className="my-3"
-              value={name}
-              onChange={e => setName(e.target.value)}
+              value={firstName}
+              onChange={e => setFirstName(e.target.value)}
+            />
+            <FormInput
+              label="Last Name"
+              id="last_name"
+              type="text"
+              className="my-3"
+              value={lastName}
+              onChange={e => setLastName(e.target.value)}
             />
             <FormInput
               label="GitHub Account URL"
               id="github_url"
               type="url"
               className="my-3"
-              value={githubUrl}
-              onChange={e => setGithubUrl(e.target.value)}
+              value={githubUsername}
+              onChange={e => setGithubUsername(e.target.value)}
+            />
+            <FormInput
+              label="Email Address"
+              id="email"
+              type="email"
+              className="my-3"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
             />
             <div className="flex justify-end w-full">
               <Button

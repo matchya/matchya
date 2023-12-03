@@ -55,7 +55,7 @@ const Dashboard = () => {
             { !updatingPosition && selectedPosition &&
               <div className='w-5/6'>
                 <div className="w-full">
-                  <DashboardHeader /> 
+                  <DashboardHeader selectedPosition={selectedPosition} /> 
                 </div>
                 <div className="justify-between items-center py-6 px-10 mt-4">
                   <div className="flex flex-col lg:flex-row gap-4">
