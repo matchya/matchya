@@ -8,8 +8,8 @@ import { Criterion } from '../../types';
 
 const CriteriaBox = () => {
     const [selectedRepository, setSelectedRepository] = useState<string>('');
-    const { repository_names, selectedPosition } = useCompanyStore()
     const [selectedRepositories, setSelectedRepositories ] = useState<string[]>([]);
+    const { repository_names, selectedPosition } = useCompanyStore()
 
     const handleAddRepository = () => {
       if (selectedRepository === '' || selectedRepositories.includes(selectedRepository)) {
@@ -35,7 +35,13 @@ const CriteriaBox = () => {
         }
     }
 
-    if (!selectedPosition || !selectedPosition.checklists || selectedPosition.checklists.length === 0) {
+    if (!selectedPosition) {
+      return (
+        <div>loading...</div>
+      )
+    }
+
+    else if (!selectedPosition.checklists || selectedPosition.checklists.length === 0) {
       return (
         <div className="px-6 py-4 flex flex-col justify-center items-center">
           <h3 className="text-lg font-bold">Generate Criteria</h3>

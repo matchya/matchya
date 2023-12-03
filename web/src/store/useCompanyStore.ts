@@ -36,6 +36,7 @@ export const useCompanyStore = create<CompanyState>((set) => ({
                 github_username: payload.github_username,
                 repository_names: payload.repository_names,
                 positions: payload.positions,
+                selectedPosition: payload.positions[0]
             })
         } else {
             throw new Error(res.data.payload.message)
