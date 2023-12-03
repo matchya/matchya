@@ -5,14 +5,12 @@ import { Link } from 'react-router-dom';
 import matchyaIcon from '/matchya-icon.png';
 
 import { axiosInstance } from '../../helper';
-import { useAuthStore } from '../../store/useAuthStore';
 import AuthModal, { LoginInput, RegisterInput } from '../LoginModal/AuthModal';
 
 const Header = () => {
   const navigate = useNavigate();
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [authenticationType, setAuthenticationType] = useState<'signup' | 'login'>('login');
-  const { accessToken, setAccessToken, removeAccessToken } = useAuthStore();
 
   const handleAuthenticationSwitch = () => {
     if (authenticationType == 'signup') {
@@ -53,7 +51,7 @@ const Header = () => {
   };
 
   const logout = () => {
-    removeAccessToken();
+    document.cookie = 'accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
     navigate('/');
   };
 

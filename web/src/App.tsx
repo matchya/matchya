@@ -8,7 +8,6 @@ import Login from './screens/Login';
 import Settings from './screens/Settings/Settings';
 
 function App() {
-
   return (
     <Router>
       <Header />
