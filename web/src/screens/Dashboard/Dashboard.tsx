@@ -1,19 +1,19 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import ScoreCard from '../../components/LoginModal/ScoreCard';
 import { axiosInstance } from '../../helper';
 import { useCompanyStore } from '../../store/useCompanyStore';
 
 import CriteriaBox from './CriteriaBox';
 import DashboardHeader from './DashboardHeader';
+import ScoreCard from './ScoreCard';
 import Sidebar from './Sidebar';
 
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [updatingPosition, setUpdatingPosition] = useState<boolean>(false)
-  const { me, id, selectedPosition } = useCompanyStore();
+  const { id, selectedPosition, me } = useCompanyStore();
 
   useEffect(() => {
     if (id) return;
@@ -42,9 +42,6 @@ const Dashboard = () => {
    
   return (
     <div className="pt-16 bg-gray-100 h-screen overflow-hidden">
-      {' '}
-      {/* Padding top for the header */}
-      {/* {showModal && <AddCandidateModal close={() => setShowModal(false)} />} */}
       <div className="w-full h-full mx-auto">
         <div className="w-full h-full flex">
           <div className="w-1/6 pt-0 mt-0 h-full bg-gray-300 border border-3">

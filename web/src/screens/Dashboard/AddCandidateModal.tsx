@@ -8,9 +8,8 @@ import { useCompanyStore } from '../../store/useCompanyStore';
 interface AddCandidateModalProps {
     close: () => void;
   }
-
   
-  const AddCandidateModal = ({ close }: AddCandidateModalProps) => {
+const AddCandidateModal = ({ close }: AddCandidateModalProps) => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [githubUsername, setGithubUsername] = useState('');
