@@ -29,7 +29,7 @@ const ScoreCard = ({ candidate }: ScoreCardProps) => {
   };
 
   return (
-    <div className="flex w-full bg-white mb-4">
+    <div className="flex w-full bg-white mb-4 overflow-y-scroll max-h-80">
       <div className="w-5/6">
         <div className="text-2xl font-bold mx-12 my-4">{candidate.first_name + " " + candidate.last_name}</div>
         <p className="text-xs text-gray-600 mx-8 m-2">- {candidate.summary}</p>

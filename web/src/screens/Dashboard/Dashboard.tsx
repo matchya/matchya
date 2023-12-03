@@ -58,7 +58,7 @@ const Dashboard = () => {
                 </div>
                 <div className="justify-between items-center py-6 px-10 mt-4">
                   <div className="flex flex-col lg:flex-row gap-4">
-                    <div className="w-2/3 overflow-hidden sm:rounded-md">
+                    <div className="w-2/3 sm:rounded-md">
                       <h1 className="text-2xl font-bold text-gray-900 my-4 pl-6">Top Candidates</h1>
                       {selectedPosition.checklists?.length && selectedPosition.checklists[0].candidates.map((candidate, index) => (
                         <ScoreCard key={index} candidate={candidate} />
