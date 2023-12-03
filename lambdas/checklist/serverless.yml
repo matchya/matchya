@@ -42,6 +42,7 @@ functions:
         - evaluate.handler
     events:
       - sqs: ${ssm:/terraform/${self:provider.stage}/sqs/checklist_evaluation_processor_queue_arn}
+    timeout: 300
 
   generation-processor:
     name: ${self:provider.stage}-checklist-generation-processor
@@ -51,6 +52,7 @@ functions:
         - generate.handler
     events:
       - sqs: ${ssm:/terraform/${self:provider.stage}/sqs/checklist_generation_processor_queue_arn}
+    timeout: 300
 
   retrieve:
     name: ${self:provider.stage}-checklist-retrieve

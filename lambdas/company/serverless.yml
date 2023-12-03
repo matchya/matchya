@@ -38,7 +38,7 @@ functions:
         - handler.retrieve
     events:
       - http:
-          path: /companies/{id}
+          path: /companies/me
           method: GET
           cors:
             origins:
@@ -50,10 +50,6 @@ functions:
             resultTtlInSeconds: 300
             name: ${self:provider.stage}-company-retrieve-authorizer
             arn: arn:aws:lambda:${aws:region}:${aws:accountId}:function:${self:provider.stage}-authorizer
-          request:
-            parameters:
-              paths:
-                id: true
 
 plugins:
   - serverless-deployment-bucket
