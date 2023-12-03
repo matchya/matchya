@@ -98,6 +98,7 @@ def get_position_details_by_id(position_id):
         results = db_cursor.fetchall()
         if not results or len(results) == 0:
             raise ValueError(f"Position not found for id: {position_id}")
+        logger.info(f"SQL Result: {results}")
         return process_position_from_sql_results(results)
     except Exception as e:
         raise RuntimeError(f"Failed to retrieve position: {e}")
@@ -131,8 +132,6 @@ def process_position_from_sql_results(sql_results):
                 'candidates': {},
                 'criteria': criteria
             }
-            
-        criterion_message = [criterion['message'] for criterion in criteria if criterion['id'] == criterion_id][0]
 
         position_data[position_id]['checklists'][checklist_id]['repository_names'].add(repo_name)
 
@@ -149,6 +148,7 @@ def process_position_from_sql_results(sql_results):
             }
 
         if email:
+            criterion_message = [criterion['message'] for criterion in criteria if criterion['id'] == criterion_id][0]
             candidates[email]['assessments'].append({
                 'criterion_message': criterion_message,
                 'score': score,
@@ -177,7 +177,7 @@ def get_criteria_by_checklist_id(checklist_id):
     :param checklist_id: The checklist_id to retrieve criteria
     :return: Dictionay of criteria
     """
-    logger.info("Getting the criteria dict by checklist id...")
+    logger.info("Getting the criteria by checklist id...")
     try:
         response = criterion_table.query(
             IndexName='ChecklistIdIndex',
