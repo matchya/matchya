@@ -24,7 +24,6 @@ export const useCompanyStore = create<CompanyState>((set) => ({
     me: async () => {
         const res = await axios.get(`${apiEndpoint}/companies/me`, { withCredentials: true })
         if (res.data.status === 'success') {
-            console.log("success!!", res.data.payload)
             const payload = res.data.payload
             set({
                 id: payload.id,
@@ -35,7 +34,7 @@ export const useCompanyStore = create<CompanyState>((set) => ({
                 positions: payload.positions,
             })
         } else {
-            console.log("failure!!", res.data)
+            throw new Error(res.data.payload.message)
         }
     }
 }))
