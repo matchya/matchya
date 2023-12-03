@@ -1,8 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import ScoreCard from '../../components/LoginModal/ScoreCard';
 import { mockCandidates } from '../../data';
+import { axiosInstance } from '../../helper';
 import { useCompanyStore } from '../../store/useCompanyStore';
 
 import CriteriaBox from './CriteriaBox';
@@ -12,7 +13,8 @@ import Sidebar from './Sidebar';
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { me, id } = useCompanyStore();
+  const [selectedPositionId, setSelectedPositionId] = useState<string>('')
+  const { me, id, positions } = useCompanyStore();
 
   useEffect(() => {
     if (id) return;
@@ -22,6 +24,17 @@ const Dashboard = () => {
       navigate('/login');
     }
   }, []);
+
+  useEffect(() => {
+    getSelectedPosition()
+  }, [selectedPositionId])
+
+  const getSelectedPosition = async () => {
+    const response = await axiosInstance.get(`/positions/${selectedPositionId}`)
+    if (response.data.status === 'success') {
+      positions.filter(position => position.id === selectedPositionId)[0].checklists = response.data.payload.checklists
+    }
+  }
    
   return (
     <div className="pt-16 bg-gray-100 h-screen overflow-hidden">
@@ -31,7 +44,7 @@ const Dashboard = () => {
       <div className="w-full h-full mx-auto">
         <div className="w-full h-full flex">
           <div className="w-1/6 pt-0 mt-0 h-full bg-gray-300 border border-3">
-            <Sidebar />
+            <Sidebar positions={positions} selectedPositionId={selectedPositionId} setSelectedPositionId={setSelectedPositionId} />
           </div>
           <div className='w-5/6'>
             <div className="w-full">

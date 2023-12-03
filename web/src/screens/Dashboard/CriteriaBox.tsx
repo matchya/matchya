@@ -1,34 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import Button from '../../components/LoginModal/Button';
 import FormInput from '../../components/LoginModal/FormInput';
 import { axiosInstance } from '../../helper';
 
+
 const CriteriaBox = () => {
     const [positionId, ] = useState<string>('id');
     const [inputRepository, setInputRepository] = useState<string>('');
     const [repositoryNames, setRepositoryNames] = useState<string[]>([]);
-    const [criteria, setCriteria] = useState<string[]>([]);
+    const [criteria, ] = useState<string[]>([]);
 
-    useEffect(() => {
-      if (!criteria.length) {
-        getCriteria();
-      }
-    }, [])
-
-    const getCriteria = async () => {
-        try {
-            const response = await axiosInstance.get(
-                `/checklists/${positionId}`
-            );
-            if (response.data.status == 'success') {
-              setCriteria(response.data.payload.criteria)
-            }
-        } catch (error) {
-            console.error('Retrieving Criteria failed:', error);
-            // Handle error (e.g., show error message to the user)
-        }
-    }
 
     const generateCriteria = async () => {
         const userData = {"position_id": positionId, "repo_names": repositoryNames};
@@ -37,9 +19,8 @@ const CriteriaBox = () => {
                 '/checklists/generate',
                 userData
             );
-            console.log(response)
             if (response.data.status == 'success') {
-                setCriteria(response.data.payload.criteria)
+                console.log("success")
             }
         } catch (error) {
             console.error('Generating Criteria failed:', error);
