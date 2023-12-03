@@ -124,12 +124,12 @@ def process_position_from_sql_results(sql_results):
             position_data[position_id] = {'name': position_name, 'checklists': {}}
 
         if checklist_id not in position_data[position_id]['checklists']:
-            criteria_dict = get_criteria_dict_by_checklist_id(checklist_id)
+            criteria = get_criteria_by_checklist_id(checklist_id)
             position_data[position_id]['checklists'][checklist_id] = {
                 'id': checklist_id,
                 'repository_names': set(),
                 'candidates': {},
-                'criteria': criteria_dict  # {id: message}
+                'criteria': criteria  # {id: message}
             }
 
         position_data[position_id]['checklists'][checklist_id]['repository_names'].add(repo_name)
@@ -168,7 +168,7 @@ def process_position_from_sql_results(sql_results):
     return final_data[0] if final_data else None
 
 
-def get_criteria_dict_by_checklist_id(checklist_id):
+def get_criteria_by_checklist_id(checklist_id):
     """
     Retrieves criteria dictionary {id: message} by checklist_id
 
@@ -182,10 +182,10 @@ def get_criteria_dict_by_checklist_id(checklist_id):
             KeyConditionExpression=boto3.dynamodb.conditions.Key('checklist_id').eq(checklist_id),
             ProjectionExpression='id, message'
         )
-        criteria = {}
+        criteria = []
         for item in response.get('Items', []):
-            criteria[item['id']] = item['message']
-        if criteria == {}:
+            criteria.append(item)
+        if not criteria:
             raise ValueError(f"Criteria not found for checklist_id: {checklist_id}")
         return criteria
     except Exception as e:
