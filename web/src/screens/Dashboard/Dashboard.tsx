@@ -1,12 +1,28 @@
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import ScoreCard from '../../components/LoginModal/ScoreCard';
 import { mockCandidates } from '../../data';
+import { useCompanyStore } from '../../store/useCompanyStore';
 
 import CriteriaBox from './CriteriaBox';
 import DashboardHeader from './DashboardHeader';
 import Sidebar from './Sidebar';
 
-const Dashboard = () => {
 
+const Dashboard = () => {
+  const navigate = useNavigate();
+  const { me, id } = useCompanyStore();
+
+  useEffect(() => {
+    if (id) return;
+    try {
+      me();
+    } catch (error) {
+      navigate('/login');
+    }
+  }, []);
+   
   return (
     <div className="pt-16 bg-gray-100 h-screen overflow-hidden">
       {' '}

@@ -4,15 +4,10 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header/Header';
 import { axiosInstance } from './helper';
 import Dashboard from './screens/Dashboard/Dashboard';
+import Login from './screens/Login';
 import Settings from './screens/Settings/Settings';
-import { useAuthStore } from './store/useAuthStore';
 
 function App() {
-  const { initAuth } = useAuthStore();
-
-  useEffect(() => {
-    initAuth();
-  }, []);
 
   return (
     <Router>
@@ -21,6 +16,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/hello" element={<Hello />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
     </Router>
   );
