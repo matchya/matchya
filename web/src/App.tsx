@@ -11,7 +11,7 @@ function App() {
   const { initAuth } = useAuthStore();
 
   useEffect(() => {
-    initAuth();
+    
   }, []);
 
   return (
