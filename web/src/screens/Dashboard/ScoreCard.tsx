@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Candidate } from '../../types';
 
 interface ScoreCardProps {
-  candidate: Candidate
+  candidate: Candidate;
 }
 
 const ScoreCard = ({ candidate }: ScoreCardProps) => {
@@ -31,7 +31,9 @@ const ScoreCard = ({ candidate }: ScoreCardProps) => {
   return (
     <div className="flex w-full bg-white mb-4 overflow-y-scroll max-h-80">
       <div className="w-5/6">
-        <div className="text-2xl font-bold mx-12 my-4">{candidate.first_name + " " + candidate.last_name}</div>
+        <div className="text-2xl font-bold mx-12 my-4">
+          {candidate.first_name + ' ' + candidate.last_name}
+        </div>
         <p className="text-xs text-gray-600 mx-8 m-2">- {candidate.summary}</p>
         {showDetails && <DetailPart />}
         <button
@@ -42,7 +44,9 @@ const ScoreCard = ({ candidate }: ScoreCardProps) => {
         </button>
       </div>
       <div className="w-1/6">
-        <div className="text-3xl font-bold m-6">{candidate.total_score.toFixed(1)}</div>
+        <div className="text-3xl font-bold m-6">
+          {candidate.total_score.toFixed(1)}
+        </div>
       </div>
     </div>
   );

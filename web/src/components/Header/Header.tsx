@@ -5,14 +5,16 @@ import { Link } from 'react-router-dom';
 import matchyaIcon from '/matchya-icon.png';
 
 import { axiosInstance } from '../../helper';
-import { useAuthStore } from '../../store/useAuthStore';
+import { useCompanyStore } from '../../store/useCompanyStore';
 import AuthModal, { LoginInput, RegisterInput } from '../LoginModal/AuthModal';
 
 const Header = () => {
   const navigate = useNavigate();
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [authenticationType, setAuthenticationType] = useState<'signup' | 'login'>('login');
-  const { accessToken, setAccessToken, removeAccessToken } = useAuthStore();
+  const [authenticationType, setAuthenticationType] = useState<
+    'signup' | 'login'
+  >('login');
+  const { id } = useCompanyStore();
 
   const handleAuthenticationSwitch = () => {
     if (authenticationType == 'signup') {
@@ -53,7 +55,8 @@ const Header = () => {
   };
 
   const logout = () => {
-    removeAccessToken();
+    document.cookie =
+      'accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
     navigate('/');
   };
 
@@ -83,19 +86,19 @@ const Header = () => {
         </Link>
       </div>
       <div className="w-1/4 flex justify-end items-center">
-        {accessToken && (
+        {id ? (
           <button
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full m-6"
             onClick={navigateToSettings}
           >
             Settings
           </button>
-        )}
+        ) : null}
         <button
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full m-6"
-          onClick={accessToken ? logout : showLoginModalHandler}
+          onClick={id ? logout : showLoginModalHandler}
         >
-          {accessToken ? 'Logout' : 'Login'}
+          {id ? 'Logout' : 'Login'}
         </button>
       </div>
     </div>
