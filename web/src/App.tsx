@@ -5,15 +5,8 @@ import Header from './components/Header/Header';
 import { axiosInstance } from './helper';
 import Dashboard from './screens/Dashboard/Dashboard';
 import Settings from './screens/Settings/Settings';
-import { useAuthStore } from './store/useAuthStore';
 
 function App() {
-  const { initAuth } = useAuthStore();
-
-  useEffect(() => {
-    initAuth();
-  }, []);
-
   return (
     <Router>
       <Header />
