@@ -103,8 +103,10 @@ def retrieve(event, context):
     logger.info(event)
     try:
         connect_to_db()
-        company_id = parse_request_parameter(event, 'id')
-        origin = parse_header(event)
+        company_id = "a0368912-287f-4df2-9eb9-c39339569bc7"
+        # company_id = parse_request_parameter(event, 'id')
+        origin = ""
+        # origin = parse_header(event)
         company = get_company_by_id(company_id)
         repositories = get_repositories_by_company_id(company_id)
         positions = get_positions_by_company_id(company_id)
