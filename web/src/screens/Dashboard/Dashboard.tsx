@@ -16,18 +16,21 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (id) return;
-    try {
-      me();
-    } catch (error) {
-      navigate('/login');
-    }
+    getAuthStatus();
   }, []);
 
   useEffect(() => {
-    console.log(selectedPosition);
     if (positions.length === 0 || !selectedPosition) return;
     getSelectedPosition();
   }, [selectedPosition]);
+
+  const getAuthStatus = async () => {
+    try {
+      await me();
+    } catch (error) {
+      navigate('/login');
+    }
+  };
 
   const getSelectedPosition = async () => {
     if (selectedPosition && !selectedPosition.checklists) {
