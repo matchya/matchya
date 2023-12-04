@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import Button from '../../components/LoginModal/Button';
+import Button from '../../components/Button';
 import { useCompanyStore } from '../../store/useCompanyStore';
 
 import AddCandidateModal from './AddCandidateModal';

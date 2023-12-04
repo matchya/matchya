@@ -14,6 +14,7 @@ interface CompanyState {
   selectedPosition: Position | null;
   selectPosition: (position: Position) => void;
   me: () => void;
+  resetAll: () => void;
 }
 
 export const useCompanyStore = create<CompanyState>(set => ({
@@ -26,22 +27,36 @@ export const useCompanyStore = create<CompanyState>(set => ({
   selectedPosition: null,
   selectPosition: (position: Position) => set({ selectedPosition: position }),
   me: async () => {
-    const res = await axios.get(`${apiEndpoint}/companies/me`, {
-      withCredentials: true,
-    });
-    if (res.data.status === 'success') {
-      const payload = res.data.payload;
-      set({
-        id: payload.id,
-        name: payload.name,
-        email: payload.email,
-        github_username: payload.github_username,
-        repository_names: payload.repository_names,
-        positions: payload.positions,
-        selectedPosition: payload.positions[0],
+    try {
+      const res = await axios.get(`${apiEndpoint}/companies/me`, {
+        withCredentials: true,
       });
-    } else {
-      throw new Error(res.data.payload.message);
+      if (res.data.status === 'success') {
+        const payload = res.data.payload;
+        set({
+          id: payload.id,
+          name: payload.name,
+          email: payload.email,
+          github_username: payload.github_username,
+          repository_names: payload.repository_names,
+          positions: payload.positions,
+          selectedPosition: payload.positions[0],
+        });
+      } else {
+        throw new Error(res.data.payload.message);
+      }
+    } catch (err) {
+      throw new Error();
     }
   },
+  resetAll: () =>
+    set({
+      id: '',
+      name: '',
+      email: '',
+      github_username: '',
+      repository_names: [],
+      positions: [],
+      selectedPosition: null,
+    }),
 }));

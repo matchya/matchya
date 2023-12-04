@@ -16,18 +16,21 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (id) return;
-    try {
-      me();
-    } catch (error) {
-      navigate('/login');
-    }
+    getAuthStatus();
   }, []);
 
   useEffect(() => {
-    console.log(selectedPosition);
     if (positions.length === 0 || !selectedPosition) return;
     getSelectedPosition();
   }, [selectedPosition]);
+
+  const getAuthStatus = async () => {
+    try {
+      await me();
+    } catch (error) {
+      navigate('/login');
+    }
+  };
 
   const getSelectedPosition = async () => {
     if (selectedPosition && !selectedPosition.checklists) {
@@ -43,7 +46,7 @@ const Dashboard = () => {
     }
   };
 
-  const dashboardBody = () => {
+  const DashboardBody = () => {
     if (
       positions.length === 0 ||
       !selectedPosition ||
@@ -86,7 +89,7 @@ const Dashboard = () => {
           <div className="w-1/6 pt-0 mt-0 h-full bg-gray-300 border border-3">
             <Sidebar />
           </div>
-          {dashboardBody()}
+          <DashboardBody />
         </div>
       </div>
     </div>

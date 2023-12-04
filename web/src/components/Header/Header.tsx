@@ -1,84 +1,33 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
 
 import matchyaIcon from '/matchya-icon.png';
 
-import { axiosInstance } from '../../helper';
 import { useCompanyStore } from '../../store/useCompanyStore';
-import AuthModal, { LoginInput, RegisterInput } from '../LoginModal/AuthModal';
 
 const Header = () => {
   const navigate = useNavigate();
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [authenticationType, setAuthenticationType] = useState<
-    'signup' | 'login'
-  >('login');
-  const { id } = useCompanyStore();
-
-  const handleAuthenticationSwitch = () => {
-    if (authenticationType == 'signup') {
-      setAuthenticationType('login');
-    } else {
-      setAuthenticationType('signup');
-    }
-  };
-
-  const showLoginModalHandler = () => {
-    setShowLoginModal(true);
-  };
-
-  const handleLogin = async (userData: LoginInput | RegisterInput) => {
-    try {
-      const response = await axiosInstance.post('/login', userData);
-      if (response.data.status == 'success') {
-        setShowLoginModal(false);
-        navigate('/dashboard');
-      }
-    } catch (error) {
-      console.error('Login failed:', error);
-      // Handle error (e.g., show error message to the user)
-    }
-  };
-
-  const handleRegister = async (userData: LoginInput | RegisterInput) => {
-    try {
-      const response = await axiosInstance.post('/register', userData);
-      if (response.data.status == 'success') {
-        setShowLoginModal(false);
-        navigate('/dashboard');
-      }
-    } catch (error) {
-      console.error('Registration failed:', error);
-      // Handle error (e.g., show error message to the user)
-    }
-  };
+  const { id, resetAll } = useCompanyStore();
 
   const logout = () => {
+    // TODO: Updating cokkie is not working
+    // Need to do something on backend!
     document.cookie =
       'accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    resetAll();
     navigate('/');
   };
 
   const navigateToSettings = () => {
-    // Navigate to the settings page
     navigate('/settings');
   };
 
-  const handleCloseModal = () => {
-    setShowLoginModal(false);
+  const navigateToLogin = () => {
+    navigate('/login');
   };
 
   return (
     <div className="w-full h-16 absolute bg-white border-2 flex justify-between">
-      {showLoginModal && (
-        <AuthModal
-          type={authenticationType}
-          action={authenticationType == 'login' ? handleLogin : handleRegister}
-          close={handleCloseModal}
-          switchModal={handleAuthenticationSwitch}
-        />
-      )}
       <div className="w-1/5 flex justify-center items-center">
         <img className="h-3/4 rounded-full m-6" src={matchyaIcon} />
         <Link to="/">
@@ -96,7 +45,7 @@ const Header = () => {
         ) : null}
         <button
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full m-6"
-          onClick={id ? logout : showLoginModalHandler}
+          onClick={id ? logout : navigateToLogin}
         >
           {id ? 'Logout' : 'Login'}
         </button>

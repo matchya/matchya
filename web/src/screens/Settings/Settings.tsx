@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import FormInput from '../../components/LoginModal/FormInput';
+import FormInput from '../../components/FormInput';
 
 const Settings = () => {
   const [companyName, setCompanyName] = useState<string>('');
