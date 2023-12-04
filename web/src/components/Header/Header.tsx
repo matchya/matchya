@@ -7,11 +7,12 @@ import { useCompanyStore } from '../../store/useCompanyStore';
 
 const Header = () => {
   const navigate = useNavigate();
-  const { id } = useCompanyStore();
+  const { id, resetAll } = useCompanyStore();
 
   const logout = () => {
     document.cookie =
       'accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    resetAll();
     navigate('/');
   };
 

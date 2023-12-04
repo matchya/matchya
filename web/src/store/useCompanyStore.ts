@@ -14,6 +14,7 @@ interface CompanyState {
   selectedPosition: Position | null;
   selectPosition: (position: Position) => void;
   me: () => void;
+  resetAll: () => void;
 }
 
 export const useCompanyStore = create<CompanyState>(set => ({
@@ -44,4 +45,14 @@ export const useCompanyStore = create<CompanyState>(set => ({
       throw new Error(res.data.payload.message);
     }
   },
+  resetAll: () =>
+    set({
+      id: '',
+      name: '',
+      email: '',
+      github_username: '',
+      repository_names: [],
+      positions: [],
+      selectedPosition: null,
+    }),
 }));
