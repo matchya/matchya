@@ -68,7 +68,7 @@ const AddCandidateModal = ({ close }: AddCandidateModalProps) => {
             onChange={e => setLastName(e.target.value)}
           />
           <FormInput
-            label="GitHub Account URL"
+            label="GitHub Account Username"
             id="github_url"
             type="url"
             className="my-3"
