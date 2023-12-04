@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import matchyaIcon from '/matchya-icon.png';
 
-import Button from '../components/Button';
+import Button, { Loading } from '../components/Button';
 import FormInput from '../components/FormInput';
 import { axiosInstance } from '../helper';
 
@@ -26,33 +26,38 @@ const Login = () => {
   const [email, setEmail] = useState<string>('');
   const [githubUsername, setGithubUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const login = async (input: LoginInput) => {
     try {
+      setIsLoading(true);
       const response = await axiosInstance.post('/login', input);
       if (response.data.status == 'success') {
         navigate('/dashboard');
       }
     } catch (error) {
-      console.error('Login failed:', error);
-      // Handle error (e.g., show error message to the user)
+      setErrorMessage('Login failed. Please try again.');
     }
+    setIsLoading(false);
   };
 
   const signup = async (input: RegisterInput) => {
     try {
+      setIsLoading(true);
       const response = await axiosInstance.post('/register', input);
       if (response.data.status == 'success') {
         navigate('/dashboard');
       }
     } catch (error) {
-      console.error('Registration failed:', error);
-      // Handle error (e.g., show error message to the user)
+      setErrorMessage('Signup failed. Please try again.');
     }
+    setIsLoading(false);
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setErrorMessage('');
     if (authType === 'login') {
       login({ email, password });
     } else {
@@ -65,59 +70,18 @@ const Login = () => {
     }
   };
 
-  const AuthForm = () => {
+  const ErrorToast = ({ message }: { message: string }) => {
     return (
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {authType === 'signup' && (
-          <FormInput
-            label="Company Name"
-            id="company-name"
-            type="text"
-            className="my-3"
-            value={companyName}
-            onChange={e => setCompanyName(e.target.value)}
-          />
-        )}
-        <FormInput
-          label="Email"
-          id="email"
-          type="email"
-          className="my-3"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-        />
-        {authType === 'signup' && (
-          <FormInput
-            label="GitHub Username"
-            id="github_username"
-            type="text"
-            className="my-3"
-            value={githubUsername}
-            onChange={e => setGithubUsername(e.target.value)}
-          />
-        )}
-        <FormInput
-          label="Password"
-          id="password"
-          type="password"
-          className="mt-3"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-        />
-        <div className="flex justify-center w-full">
-          <Button
-            text={authType === 'login' ? 'Log in' : 'Sign up'}
-            color="green"
-            className="w-2/3"
-          />
-        </div>
-      </form>
+      <div className="bg-red-200 px-6 py-2 mx-2 my-4 rounded-md text-lg flex items-center mx-auto">
+        <span className="text-red-800 text-center">{message}</span>
+      </div>
     );
   };
 
   return (
     <div className="h-screen pt-16 inset-0 bg-gray-200 bg-opacity-75 flex justify-center items-center">
-      <div className="p-8 bg-white shadow-md rounded-lg w-full max-w-md">
+      <div className="p-8 bg-white shadow-md rounded-lg w-1/3">
+        {errorMessage && <ErrorToast message={errorMessage} />}
         <img className="h-16 w-16 rounded-full mx-auto" src={matchyaIcon} />
         <h1 className="text-3xl font-bold text-center">
           {authType === 'login' ? 'Log in' : 'Sign up'}
@@ -136,7 +100,55 @@ const Login = () => {
             {authType === 'login' ? ' Sign up' : ' Log in'}
           </span>
         </p>
-        <AuthForm />
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {authType === 'signup' && (
+            <FormInput
+              label="Company Name"
+              id="company-name"
+              type="text"
+              className="my-3"
+              value={companyName}
+              onChange={e => setCompanyName(e.target.value)}
+            />
+          )}
+          <FormInput
+            label="Email"
+            id="email"
+            type="email"
+            className="my-3"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+          />
+          {authType === 'signup' && (
+            <FormInput
+              label="GitHub Username"
+              id="github_username"
+              type="text"
+              className="my-3"
+              value={githubUsername}
+              onChange={e => setGithubUsername(e.target.value)}
+            />
+          )}
+          <FormInput
+            label="Password"
+            id="password"
+            type="password"
+            className="mt-3"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+          />
+          <div className="flex justify-center w-full">
+            {isLoading ? (
+              <Loading />
+            ) : (
+              <Button
+                text={authType === 'login' ? 'Log in' : 'Sign up'}
+                color="green"
+                className="w-2/3"
+              />
+            )}
+          </div>
+        </form>
       </div>
     </div>
   );
