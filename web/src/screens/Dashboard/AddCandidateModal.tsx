@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
-import Button from '../../components/LoginModal/Button';
-import FormInput from '../../components/LoginModal/FormInput';
+import Button from '../../components/Button';
+import FormInput from '../../components/FormInput';
 import { axiosInstance } from '../../helper';
 import { useCompanyStore } from '../../store/useCompanyStore';
 

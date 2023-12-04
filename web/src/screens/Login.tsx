@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 
 import matchyaIcon from '/matchya-icon.png';
 
-import Button from '../components/LoginModal/Button';
-import FormInput from '../components/LoginModal/FormInput';
+import Button from '../components/Button';
+import FormInput from '../components/FormInput';
 import { axiosInstance } from '../helper';
 
 export interface LoginInput {
@@ -116,9 +116,7 @@ const Login = () => {
   };
 
   return (
-    <div
-      className="h-screen pt-16 inset-0 bg-gray-200 bg-opacity-75 flex justify-center items-center"
-    >
+    <div className="h-screen pt-16 inset-0 bg-gray-200 bg-opacity-75 flex justify-center items-center">
       <div className="p-8 bg-white shadow-md rounded-lg w-full max-w-md">
         <img className="h-16 w-16 rounded-full mx-auto" src={matchyaIcon} />
         <h1 className="text-3xl font-bold text-center">

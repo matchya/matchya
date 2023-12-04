@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import Button from '../../components/LoginModal/Button';
+import Button from '../../components/Button';
 import { axiosInstance } from '../../helper';
 import { useCompanyStore } from '../../store/useCompanyStore';
 import { Criterion } from '../../types';
