@@ -43,7 +43,7 @@ const Dashboard = () => {
     }
   };
 
-  const dashboardBody = () => {
+  const DashboardBody = () => {
     if (
       positions.length === 0 ||
       !selectedPosition ||
@@ -86,7 +86,7 @@ const Dashboard = () => {
           <div className="w-1/6 pt-0 mt-0 h-full bg-gray-300 border border-3">
             <Sidebar />
           </div>
-          {dashboardBody()}
+          <DashboardBody />
         </div>
       </div>
     </div>
