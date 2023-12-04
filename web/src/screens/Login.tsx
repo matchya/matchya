@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import matchyaIcon from '/matchya-icon.png';
 
-import Button from '../components/Button';
+import Button, { Loading } from '../components/Button';
 import FormInput from '../components/FormInput';
 import { axiosInstance } from '../helper';
 
@@ -27,9 +27,11 @@ const Login = () => {
   const [githubUsername, setGithubUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const login = async (input: LoginInput) => {
     try {
+      setIsLoading(true);
       const response = await axiosInstance.post('/login', input);
       if (response.data.status == 'success') {
         navigate('/dashboard');
@@ -37,10 +39,12 @@ const Login = () => {
     } catch (error) {
       setErrorMessage('Login failed. Please try again.');
     }
+    setIsLoading(false);
   };
 
   const signup = async (input: RegisterInput) => {
     try {
+      setIsLoading(true);
       const response = await axiosInstance.post('/register', input);
       if (response.data.status == 'success') {
         navigate('/dashboard');
@@ -48,6 +52,7 @@ const Login = () => {
     } catch (error) {
       setErrorMessage('Signup failed. Please try again.');
     }
+    setIsLoading(false);
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -133,11 +138,15 @@ const Login = () => {
             onChange={e => setPassword(e.target.value)}
           />
           <div className="flex justify-center w-full">
-            <Button
-              text={authType === 'login' ? 'Log in' : 'Sign up'}
-              color="green"
-              className="w-2/3"
-            />
+            {isLoading ? (
+              <Loading />
+            ) : (
+              <Button
+                text={authType === 'login' ? 'Log in' : 'Sign up'}
+                color="green"
+                className="w-2/3"
+              />
+            )}
           </div>
         </form>
       </div>
