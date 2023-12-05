@@ -1,4 +1,5 @@
-import { useNavigate } from 'react-router';
+import { useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
 
 import matchyaIcon from '/matchya-icon.png';
@@ -7,7 +8,22 @@ import { useCompanyStore } from '../../store/useCompanyStore';
 
 const Header = () => {
   const navigate = useNavigate();
-  const { id, resetAll } = useCompanyStore();
+  const location = useLocation();
+  const { id, resetAll, me } = useCompanyStore();
+
+  useEffect(() => {
+    if (id) return;
+    if (location.pathname === '/login' || location.pathname === '/') return;
+    getAuthStatus();
+  }, []);
+
+  const getAuthStatus = async () => {
+    try {
+      await me();
+    } catch (error) {
+      navigate('/login');
+    }
+  };
 
   const logout = () => {
     // TODO: Updating cokkie is not working
@@ -16,10 +32,6 @@ const Header = () => {
       'accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
     resetAll();
     navigate('/');
-  };
-
-  const navigateToSettings = () => {
-    navigate('/settings');
   };
 
   const navigateToLogin = () => {
@@ -36,12 +48,18 @@ const Header = () => {
       </div>
       <div className="w-1/4 flex justify-end items-center">
         {id ? (
-          <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full m-6"
-            onClick={navigateToSettings}
-          >
-            Settings
-          </button>
+          <>
+            <Link to="/settings">
+              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full m-6">
+                Settings
+              </button>
+            </Link>
+            <Link to="/dashboard">
+              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full m-6">
+                Dashboard
+              </button>
+            </Link>
+          </>
         ) : null}
         <button
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full m-6"
