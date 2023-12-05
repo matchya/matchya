@@ -5,6 +5,7 @@ interface FormInputProps {
   type: string;
   className?: string;
   value: string;
+  required?: boolean;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -15,6 +16,7 @@ const FormInput = ({
   type,
   className,
   value,
+  required = false,
   onChange,
 }: FormInputProps) => {
   return (
@@ -28,6 +30,7 @@ const FormInput = ({
         type={type}
         autoFocus
         id={id}
+        required={required}
         placeholder={placeholder}
         className="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-lime-300 focus:border-lime-300"
         value={value}

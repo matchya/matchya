@@ -5,6 +5,7 @@ import matchyaIcon from '/matchya-icon.png';
 
 import Button, { Loading } from '../components/Button';
 import FormInput from '../components/FormInput';
+import ToastMessage from '../components/ToastMessage';
 import { axiosInstance } from '../helper';
 import { CustomError } from '../types';
 
@@ -81,18 +82,10 @@ const Login = () => {
     }
   };
 
-  const ErrorToast = ({ message }: { message: string }) => {
-    return (
-      <div className="bg-red-200 px-6 py-2 mx-2 my-4 rounded-md text-lg flex items-center mx-auto">
-        <span className="text-red-800 text-center">{message}</span>
-      </div>
-    );
-  };
-
   return (
     <div className="h-screen pt-16 inset-0 bg-gray-200 bg-opacity-75 flex justify-center items-center">
       <div className="p-8 bg-white shadow-md rounded-lg w-1/3">
-        {errorMessage && <ErrorToast message={errorMessage} />}
+        {errorMessage && <ToastMessage message={errorMessage} type="error" />}
         <img className="h-16 w-16 rounded-full mx-auto" src={matchyaIcon} />
         <h1 className="text-3xl font-bold text-center">
           {authType === 'login' ? 'Log in' : 'Sign up'}
@@ -119,6 +112,7 @@ const Login = () => {
               type="text"
               className="my-3"
               value={companyName}
+              required={true}
               onChange={e => setCompanyName(e.target.value)}
             />
           )}
@@ -128,6 +122,7 @@ const Login = () => {
             type="email"
             className="my-3"
             value={email}
+            required={true}
             onChange={e => setEmail(e.target.value)}
           />
           {authType === 'signup' && (
@@ -137,6 +132,7 @@ const Login = () => {
               type="text"
               className="my-3"
               value={githubUsername}
+              required={true}
               onChange={e => setGithubUsername(e.target.value)}
             />
           )}
@@ -146,6 +142,7 @@ const Login = () => {
             type="password"
             className="mt-3"
             value={password}
+            required={true}
             onChange={e => setPassword(e.target.value)}
           />
           <div className="flex justify-center w-full">
@@ -156,6 +153,7 @@ const Login = () => {
                 text={authType === 'login' ? 'Log in' : 'Sign up'}
                 color="green"
                 className="w-2/3"
+                type="submit"
               />
             )}
           </div>
