@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import Button from '../../components/Button';
+import Button, { Loading } from '../../components/Button';
 import ToastMessage from '../../components/ToastMessage';
 import { axiosInstance } from '../../helper';
 import { useCompanyStore } from '../../store/useCompanyStore';
@@ -13,6 +13,7 @@ const CriteriaBox = () => {
   );
   const [responseMessage, setResponseMessage] = useState('');
   const [messageType, setMessageType] = useState<'error' | 'success'>('error');
+  const [isLoading, setIsLoading] = useState(false);
   const { repository_names, selectedPosition } = useCompanyStore();
 
   const handleAddRepository = () => {
@@ -29,11 +30,17 @@ const CriteriaBox = () => {
   };
 
   const generateCriteria = async () => {
+    if (selectedRepositories.length === 0) {
+      setMessageType('error');
+      setResponseMessage('Please select at least one repository.');
+      return;
+    }
     const userData = {
       position_id: selectedPosition?.id,
       repository_names: selectedRepositories,
     };
     setResponseMessage('');
+    setIsLoading(true);
     try {
       const response = await axiosInstance.post(
         '/checklists/generate',
@@ -54,6 +61,7 @@ const CriteriaBox = () => {
         setResponseMessage('Something went wrong. Please try again.');
       }
     }
+    setIsLoading(false);
   };
 
   if (!selectedPosition) {
@@ -107,12 +115,17 @@ const CriteriaBox = () => {
             />
           </div>
         ))}
-        <Button
-          text="Generate"
-          color="green"
-          className="mt-4"
-          onClick={generateCriteria}
-        />
+        {isLoading && <Loading />}
+        {/* TODO: If this posiiton already scheduled checklist generation, does not show this button */}
+        {/* If a certain amount of time has elapsed since it scheduled it, change the status of this position and show this button again */}
+        {!isLoading && (
+          <Button
+            text="Generate"
+            color="green"
+            className="mt-4"
+            onClick={generateCriteria}
+          />
+        )}
       </div>
     );
   }
