@@ -50,14 +50,16 @@ const Dashboard = () => {
               <h1 className="text-2xl font-bold text-gray-900 my-4 pl-6">
                 Top Candidates
               </h1>
-              {selectedPosition.checklists?.length > 0 &&
-                selectedPosition.checklists[0].candidates.map(
-                  (candidate, index) => (
-                    <ScoreCard key={index} candidate={candidate} />
-                  )
-                )}
+              <div className="h-[calc(100vh-300px)] overflow-y-scroll">
+                {selectedPosition.checklists?.length > 0 &&
+                  selectedPosition.checklists[0].candidates.map(
+                    (candidate, index) => (
+                      <ScoreCard key={index} candidate={candidate} />
+                    )
+                  )}
+              </div>
             </div>
-            <div className="w-1/3 pt-10 bg-white shadow overflow-hidden sm:rounded-md">
+            <div className="w-1/3 h-full pt-10 bg-white shadow overflow-hidden sm:rounded-md">
               <CriteriaBox />
             </div>
           </div>
