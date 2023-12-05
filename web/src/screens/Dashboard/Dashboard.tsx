@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { axiosInstance } from '../../helper';
 import { useCompanyStore } from '../../store/useCompanyStore';
@@ -10,27 +9,12 @@ import ScoreCard from './ScoreCard';
 import Sidebar from './Sidebar';
 
 const Dashboard = () => {
-  const navigate = useNavigate();
-  const { id, positions, selectedPosition, me, selectPosition } =
-    useCompanyStore();
-
-  useEffect(() => {
-    if (id) return;
-    getAuthStatus();
-  }, []);
+  const { positions, selectedPosition, selectPosition } = useCompanyStore();
 
   useEffect(() => {
     if (positions.length === 0 || !selectedPosition) return;
     getSelectedPosition();
   }, [selectedPosition]);
-
-  const getAuthStatus = async () => {
-    try {
-      await me();
-    } catch (error) {
-      navigate('/login');
-    }
-  };
 
   const getSelectedPosition = async () => {
     if (selectedPosition && !selectedPosition.checklists) {

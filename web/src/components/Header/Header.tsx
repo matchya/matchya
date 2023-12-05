@@ -1,4 +1,5 @@
-import { useNavigate } from 'react-router';
+import { useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
 
 import matchyaIcon from '/matchya-icon.png';
@@ -7,7 +8,22 @@ import { useCompanyStore } from '../../store/useCompanyStore';
 
 const Header = () => {
   const navigate = useNavigate();
-  const { id, resetAll } = useCompanyStore();
+  const location = useLocation();
+  const { id, resetAll, me } = useCompanyStore();
+
+  useEffect(() => {
+    if (id) return;
+    if (location.pathname === '/login' || location.pathname === '/') return;
+    getAuthStatus();
+  }, []);
+
+  const getAuthStatus = async () => {
+    try {
+      await me();
+    } catch (error) {
+      navigate('/login');
+    }
+  };
 
   const logout = () => {
     // TODO: Updating cokkie is not working
