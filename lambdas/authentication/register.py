@@ -92,7 +92,7 @@ def validate_company_data(body):
     logger.info("Validating the company data...")
     required_fields = ['email', 'name', 'github_username', 'password']
     if not all(body.get(field) for field in required_fields):
-        raise ValueError('Missing required fields')
+        raise ValueError('Missing required fields.')
 
 
 def create_company_record(company_id: str, body: dict):
@@ -106,6 +106,8 @@ def create_company_record(company_id: str, body: dict):
     sql = "INSERT INTO company (id, name, email, github_username, password) VALUES (%s, %s, %s, %s, %s);"
     try:
         db_cursor.execute(sql, (company_id, body['name'], body['email'], body['github_username'], hash_password(body['password'])))
+    except psycopg2.IntegrityError:
+        raise RuntimeError(f"Email already exists: {body['email']}")
     except Exception as e:
         raise RuntimeError(f"Error saving to company table: {e}")
 

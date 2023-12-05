@@ -95,7 +95,7 @@ def get_company_info(email):
     except Exception as e:
         raise RuntimeError(f"Error retrieving company info: {e}")
     if not result:
-        raise ValueError('Company not found')
+        raise ValueError('Company not found. Please try again.')
 
     company_res = result[0]
     company_info = {
@@ -121,7 +121,7 @@ def validate_password(password, stored_password):
     if isinstance(stored_password, memoryview):
         stored_password = stored_password.tobytes()
     if not check_password(password, stored_password):
-        raise ValueError('Password is invalid')
+        raise ValueError('Password does not match. Please try again.')
 
 
 def handler(event, context):
