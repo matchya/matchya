@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import matchyaIcon from '/matchya-icon.png';
 
 import Button, { Loading } from '../components/Button';
+import ErrorToast from '../components/ErrorToast';
 import FormInput from '../components/FormInput';
 import { axiosInstance } from '../helper';
 import { CustomError } from '../types';
@@ -79,14 +80,6 @@ const Login = () => {
         github_username: githubUsername,
       });
     }
-  };
-
-  const ErrorToast = ({ message }: { message: string }) => {
-    return (
-      <div className="bg-red-200 px-6 py-2 mx-2 my-4 rounded-md text-lg flex items-center mx-auto">
-        <span className="text-red-800 text-center">{message}</span>
-      </div>
-    );
   };
 
   return (

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import Button from '../../components/Button';
+import ErrorToast from '../../components/ErrorToast';
 import FormInput from '../../components/FormInput';
 import { axiosInstance } from '../../helper';
 import { useCompanyStore } from '../../store/useCompanyStore';
@@ -15,6 +16,7 @@ const AddCandidateModal = ({ close }: AddCandidateModalProps) => {
   const [lastName, setLastName] = useState('');
   const [githubUsername, setGithubUsername] = useState('');
   const [email, setEmail] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const { selectedPosition } = useCompanyStore();
 
@@ -33,11 +35,11 @@ const AddCandidateModal = ({ close }: AddCandidateModalProps) => {
         close();
       }
     } catch (error) {
-      const err = error as CustomError
+      const err = error as CustomError;
       if (err.response.status === 400) {
-        console.log(err.response.data.message);
+        setErrorMessage(err.response.data.message);
       } else {
-        console.log('Something went wrong. Please try again.');
+        setErrorMessage('Something went wrong. Please try again.');
       }
     }
   };
@@ -57,6 +59,7 @@ const AddCandidateModal = ({ close }: AddCandidateModalProps) => {
       onClick={clickOutside}
     >
       <div className="p-8 bg-white shadow-md rounded-lg w-full max-w-md">
+        {errorMessage && <ErrorToast message={errorMessage} />}
         <h1 className="text-3xl font-bold text-center">Add a new candidate</h1>
         <div className="space-y-6">
           <form className="space-y-6" onSubmit={handleAddCandidate}>
