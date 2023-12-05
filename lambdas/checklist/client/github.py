@@ -73,7 +73,7 @@ class GithubClient:
 
         data = json.loads(res.content)
         if data is None or data.get('content') is None:
-            raise RuntimeError("Error getting file contents. No content found.")
+            return "(No content found)"
         
         content_encoded = data['content']
         content = str(base64.b64decode(content_encoded))
