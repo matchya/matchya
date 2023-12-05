@@ -6,6 +6,7 @@ import matchyaIcon from '/matchya-icon.png';
 import Button, { Loading } from '../components/Button';
 import FormInput from '../components/FormInput';
 import { axiosInstance } from '../helper';
+import { CustomError } from '../types';
 
 export interface LoginInput {
   email: string;
@@ -37,7 +38,12 @@ const Login = () => {
         navigate('/dashboard');
       }
     } catch (error) {
-      setErrorMessage('Login failed. Please try again.');
+      const err = error as CustomError;
+      if (err.response.status === 400) {
+        setErrorMessage(err.response.data.message);
+      } else {
+        setErrorMessage('Login failed. Please try again.');
+      }
     }
     setIsLoading(false);
   };
@@ -50,7 +56,12 @@ const Login = () => {
         navigate('/dashboard');
       }
     } catch (error) {
-      setErrorMessage('Signup failed. Please try again.');
+      const err = error as CustomError;
+      if (err.response.status === 400) {
+        setErrorMessage(err.response.data.message);
+      } else {
+        setErrorMessage('Signup failed. Please try again.');
+      }
     }
     setIsLoading(false);
   };
