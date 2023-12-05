@@ -5,6 +5,7 @@ interface ButtonProps {
   hover?: boolean;
   outline?: boolean;
   className?: string;
+  type?: 'button' | 'submit' | 'reset';
   onClick?: (e?: React.MouseEvent) => void;
 }
 
@@ -15,6 +16,7 @@ const Button = ({
   hover = true,
   outline = true,
   className = '',
+  type = 'button',
   onClick = () => {},
 }: ButtonProps) => {
   if (!outline) {
@@ -30,6 +32,7 @@ const Button = ({
 
   return (
     <button
+      type={type}
       className={`text-${color}-700
                 ${
                   border

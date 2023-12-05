@@ -119,6 +119,7 @@ const Login = () => {
               type="text"
               className="my-3"
               value={companyName}
+              required={true}
               onChange={e => setCompanyName(e.target.value)}
             />
           )}
@@ -128,6 +129,7 @@ const Login = () => {
             type="email"
             className="my-3"
             value={email}
+            required={true}
             onChange={e => setEmail(e.target.value)}
           />
           {authType === 'signup' && (
@@ -137,6 +139,7 @@ const Login = () => {
               type="text"
               className="my-3"
               value={githubUsername}
+              required={true}
               onChange={e => setGithubUsername(e.target.value)}
             />
           )}
@@ -146,6 +149,7 @@ const Login = () => {
             type="password"
             className="mt-3"
             value={password}
+            required={true}
             onChange={e => setPassword(e.target.value)}
           />
           <div className="flex justify-center w-full">
@@ -156,6 +160,7 @@ const Login = () => {
                 text={authType === 'login' ? 'Log in' : 'Sign up'}
                 color="green"
                 className="w-2/3"
+                type="submit"
               />
             )}
           </div>
