@@ -59,7 +59,7 @@ const Dashboard = () => {
                   )}
               </div>
             </div>
-            <div className="w-1/3 h-full pt-10 bg-white shadow overflow-hidden sm:rounded-md">
+            <div className="w-1/3 h-full pt-2 bg-white shadow overflow-hidden sm:rounded-md">
               <CriteriaBox />
             </div>
           </div>

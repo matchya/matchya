@@ -1,15 +1,18 @@
 import { useState } from 'react';
 
 import Button from '../../components/Button';
+import ToastMessage from '../../components/ToastMessage';
 import { axiosInstance } from '../../helper';
 import { useCompanyStore } from '../../store/useCompanyStore';
-import { Criterion } from '../../types';
+import { Criterion, CustomError } from '../../types';
 
 const CriteriaBox = () => {
   const [selectedRepository, setSelectedRepository] = useState<string>('');
   const [selectedRepositories, setSelectedRepositories] = useState<string[]>(
     []
   );
+  const [responseMessage, setResponseMessage] = useState('');
+  const [messageType, setMessageType] = useState<'error' | 'success'>('error');
   const { repository_names, selectedPosition } = useCompanyStore();
 
   const handleAddRepository = () => {
@@ -30,17 +33,26 @@ const CriteriaBox = () => {
       position_id: selectedPosition?.id,
       repository_names: selectedRepositories,
     };
+    setResponseMessage('');
     try {
       const response = await axiosInstance.post(
         '/checklists/generate',
         userData
       );
       if (response.data.status == 'success') {
-        console.log('success');
+        setMessageType('success');
+        setResponseMessage(
+          'Criteria generation is scheduled successfully. It may take a few minutes to generate.'
+        );
       }
     } catch (error) {
-      console.error('Generating Criteria failed:');
-      // Handle error (e.g., show error message to the user)
+      const err = error as CustomError;
+      setMessageType('error');
+      if (err.response.status === 400) {
+        setResponseMessage(err.response.data.message);
+      } else {
+        setResponseMessage('Something went wrong. Please try again.');
+      }
     }
   };
 
@@ -51,7 +63,10 @@ const CriteriaBox = () => {
     selectedPosition.checklists.length === 0
   ) {
     return (
-      <div className="px-6 py-4 flex flex-col justify-center items-center">
+      <div className="px-6 py-4 flex flex-col items-center">
+        {responseMessage && (
+          <ToastMessage message={responseMessage} type={messageType} />
+        )}
         <h3 className="text-lg font-bold">Generate Criteria</h3>
         <p className="text-sm text-gray-600 mt-4">
           Generate criteria to get started

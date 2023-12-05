@@ -40,7 +40,6 @@ const AddCandidateModal = ({ close }: AddCandidateModalProps) => {
           'Candidate added successfully. It may take a few minutes to evaluate the candidate.'
         );
         setTimeout(() => {
-          close();
           resetInputValues();
         }, 1000);
       }
