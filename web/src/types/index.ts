@@ -56,6 +56,7 @@ export interface Evaluation {
 
 export interface CustomError {
   response: {
+    status: number;
     data: {
       status: string
       message: string;

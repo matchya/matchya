@@ -107,7 +107,7 @@ def create_company_record(company_id: str, body: dict):
     try:
         db_cursor.execute(sql, (company_id, body['name'], body['email'], body['github_username'], hash_password(body['password'])))
     except psycopg2.IntegrityError:
-        raise RuntimeError(f"Email already exists: {body['email']}")
+        raise RuntimeError(f"Email address is already used: {body['email']}")
     except Exception as e:
         raise RuntimeError(f"Error saving to company table: {e}")
 
