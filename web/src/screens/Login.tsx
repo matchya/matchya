@@ -85,7 +85,7 @@ const Login = () => {
   return (
     <div className="h-screen pt-16 inset-0 bg-gray-200 bg-opacity-75 flex justify-center items-center">
       <div className="p-8 bg-white shadow-md rounded-lg w-1/3">
-        {errorMessage && <ErrorToast message={errorMessage} />}
+        {errorMessage && <ErrorToast message={errorMessage} type="error" />}
         <img className="h-16 w-16 rounded-full mx-auto" src={matchyaIcon} />
         <h1 className="text-3xl font-bold text-center">
           {authType === 'login' ? 'Log in' : 'Sign up'}

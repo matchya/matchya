@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import Button from '../../components/Button';
+import Button, { Loading } from '../../components/Button';
 import ErrorToast from '../../components/ErrorToast';
 import FormInput from '../../components/FormInput';
 import { axiosInstance } from '../../helper';
@@ -16,12 +16,16 @@ const AddCandidateModal = ({ close }: AddCandidateModalProps) => {
   const [lastName, setLastName] = useState('');
   const [githubUsername, setGithubUsername] = useState('');
   const [email, setEmail] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [responseMessage, setResponseMessage] = useState('');
+  const [messageType, setMessageType] = useState<'error' | 'success'>('error');
+  const [isLoading, setIsLoading] = useState(false);
 
   const { selectedPosition } = useCompanyStore();
 
   const handleAddCandidate = async (event?: React.FormEvent) => {
     event?.preventDefault();
+    setResponseMessage('');
+    setIsLoading(true);
     try {
       const response = await axiosInstance.post('/checklists/evaluate', {
         checklist_id: selectedPosition?.checklists[0].id,
@@ -31,23 +35,39 @@ const AddCandidateModal = ({ close }: AddCandidateModalProps) => {
         candidate_email: email,
       });
       if (response.data.status === 'success') {
-        console.log(response.data.payload);
-        close();
+        setMessageType('success');
+        setResponseMessage(
+          'Candidate added successfully. It may take a few minutes to evaluate the candidate.'
+        );
+        setTimeout(() => {
+          close();
+          resetInputValues();
+        }, 1000);
       }
     } catch (error) {
       const err = error as CustomError;
+      setMessageType('error');
       if (err.response.status === 400) {
-        setErrorMessage(err.response.data.message);
+        setResponseMessage(err.response.data.message);
       } else {
-        setErrorMessage('Something went wrong. Please try again.');
+        setResponseMessage('Something went wrong. Please try again.');
       }
     }
+    setIsLoading(false);
+  };
+
+  const resetInputValues = () => {
+    setFirstName('');
+    setLastName('');
+    setGithubUsername('');
+    setEmail('');
   };
 
   const clickOutside = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
     if ((event.target as HTMLDivElement).id === 'outside') {
+      setResponseMessage('');
       close();
     }
   };
@@ -59,7 +79,9 @@ const AddCandidateModal = ({ close }: AddCandidateModalProps) => {
       onClick={clickOutside}
     >
       <div className="p-8 bg-white shadow-md rounded-lg w-full max-w-md">
-        {errorMessage && <ErrorToast message={errorMessage} />}
+        {responseMessage && (
+          <ErrorToast message={responseMessage} type={messageType} />
+        )}
         <h1 className="text-3xl font-bold text-center">Add a new candidate</h1>
         <div className="space-y-6">
           <form className="space-y-6" onSubmit={handleAddCandidate}>
@@ -97,19 +119,25 @@ const AddCandidateModal = ({ close }: AddCandidateModalProps) => {
               required={true}
               onChange={e => setEmail(e.target.value)}
             />
-            <div className="flex justify-end w-full">
-              <Button
-                text="Add"
-                color="green"
-                className="w-1/3"
-                type="submit"
-              />
-              <Button
-                text="Cancel"
-                color="red"
-                className="w-1/3"
-                onClick={close}
-              />
+            <div className="w-full flex justify-center">
+              {isLoading ? (
+                <Loading />
+              ) : (
+                <div className="flex justify-end w-full">
+                  <Button
+                    text="Add"
+                    color="green"
+                    className="w-1/3"
+                    type="submit"
+                  />
+                  <Button
+                    text="Cancel"
+                    color="red"
+                    className="w-1/3"
+                    onClick={close}
+                  />
+                </div>
+              )}
             </div>
           </form>
         </div>
