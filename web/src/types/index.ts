@@ -53,3 +53,12 @@ export interface Evaluation {
   score: number;
   reason: string;
 }
+
+export interface CustomError {
+  response: {
+    data: {
+      status: string
+      message: string;
+    };
+  };
+}
