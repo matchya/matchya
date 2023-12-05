@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 
 import Button, { Loading } from '../../components/Button';
-import ErrorToast from '../../components/ErrorToast';
 import FormInput from '../../components/FormInput';
+import ToastMessage from '../../components/ToastMessage';
 import { axiosInstance } from '../../helper';
 import { useCompanyStore } from '../../store/useCompanyStore';
 import { CustomError } from '../../types';
@@ -80,7 +80,7 @@ const AddCandidateModal = ({ close }: AddCandidateModalProps) => {
     >
       <div className="p-8 bg-white shadow-md rounded-lg w-full max-w-md">
         {responseMessage && (
-          <ErrorToast message={responseMessage} type={messageType} />
+          <ToastMessage message={responseMessage} type={messageType} />
         )}
         <h1 className="text-3xl font-bold text-center">Add a new candidate</h1>
         <div className="space-y-6">
