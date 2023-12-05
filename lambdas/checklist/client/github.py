@@ -39,7 +39,7 @@ class GithubClient:
         branch = self._get_default_branch(repo_name)
 
         url = Config.GITHUB_API_REPO_URL + self.github_username + "/" + repo_name + "/git/trees/" + branch + "?recursive=1"
-        try :
+        try:
             res = requests.get(url, headers=Config.GITHUB_REST_API_HEADERS)
         except Exception:
             raise RuntimeError("Error getting file tree. Request to GitHub API failed.")
@@ -47,13 +47,13 @@ class GithubClient:
         data = json.loads(res.content)
         if data is None or data.get('tree') is None:
             raise RuntimeError("Error getting file tree. No tree found.")
-        
+
         tree = data['tree']
         file_paths = []
         for branch in tree:
             if branch['type'] == 'blob' and self._is_important_file(branch['path'], important_file_names):
                 file_paths.append(branch['path'])
-        
+
         # TODO: If the list is too big, we need to filter out the files that are not important (depth > 2)
         return file_paths
 
@@ -74,11 +74,11 @@ class GithubClient:
         data = json.loads(res.content)
         if data is None or data.get('content') is None:
             return "(No content found)"
-        
+
         content_encoded = data['content']
         content = str(base64.b64decode(content_encoded))
         return content
-    
+
     def get_repo_file_content(self, repo_name, languages):
         """
         Retrieves the content of important files from a specified repository.
@@ -95,7 +95,7 @@ class GithubClient:
             content += "path: " + file_path + "\n" + self.get_file_contents(repo_name, file_path) + "\n"
 
         return content
-    
+
     def get_pinned_repositories_name(self):
         """
         Fetches names of pinned repositories for a given GitHub username.
@@ -126,7 +126,7 @@ class GithubClient:
         data = self._run_github_query(query)
         if data is None or data.get("repositoryOwner") is None or data.get("repositoryOwner").get("pinnableItems") is None:
             raise Exception("Getting pinned repositories failed. No data found.")
-        
+
         repo_names = []
         edges = data.get("repositoryOwner").get("pinnableItems").get("edges")
         for edge in edges:
@@ -135,7 +135,7 @@ class GithubClient:
                 repo_names.append(node.get("name"))
 
         return repo_names
-    
+
     def get_repos_file_contents_and_languages(self, repository_names):
         """
         Retrieves the content of important files from multiple repositories. and programming languages used in the repositories with bytes.
@@ -154,12 +154,12 @@ class GithubClient:
             raise RuntimeError(f"Error Reading files: {e}")
 
         return {"file_content": file_content, "languages": all_languages_in_repos}
-    
+
     @staticmethod
     def accumulate_language_data(all_languages_in_repos, repo_languages):
         """
         Accumulates the programming language data from multiple repositories.
-        
+
         :param all_languages_in_repos: A dictionary containing the programming languages used in the repositories and their bytes.
         :param repo_languages: A dictionary containing the programming languages used in a repository and their bytes.
         """
@@ -206,7 +206,7 @@ class GithubClient:
     def github_user_exists(username):
         """
         Checks if a GitHub user exists.
-        
+
         :param username: The GitHub username.
         :return: True if the user exists, False otherwise.
         """
