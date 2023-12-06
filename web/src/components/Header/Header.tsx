@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 
 import matchyaIcon from '/matchya-icon.png';
 
+import { axiosInstance } from '../../helper';
 import { useCompanyStore } from '../../store/useCompanyStore';
 
 const Header = () => {
@@ -25,13 +26,14 @@ const Header = () => {
     }
   };
 
-  const logout = () => {
-    // TODO: Updating cokkie is not working
-    // Need to do something on backend!
-    document.cookie =
-      'accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-    resetAll();
-    navigate('/');
+  const logout = async () => {
+    try {
+      await axiosInstance.post('/logout')
+      resetAll();
+      navigate('/');
+    } catch (err) {
+      console.error(err)
+    }
   };
 
   const navigateToLogin = () => {
