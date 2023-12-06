@@ -61,5 +61,20 @@ functions:
               - http://127.0.0.1:5173
             allowCredentials: true
 
+  logout:
+    name: ${self:provider.stage}-authentication-logout
+    image:
+      name: default
+      command:
+        - logout.handler
+    events:
+      - http:
+          path: /logout
+          method: POST
+          cors:
+            origins:
+              - http://127.0.0.1:5173
+            allowCredentials: true
+
 plugins:
   - serverless-deployment-bucket
