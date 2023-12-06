@@ -1,4 +1,3 @@
-import json
 import logging
 
 import psycopg2
@@ -6,6 +5,7 @@ import boto3
 from boto3.dynamodb.types import Binary
 
 from config import Config
+from utils.request import parse_header, parse_request_body
 from utils.response import generate_success_response, generate_error_response
 from utils.password import check_password
 from utils.token import generate_access_token
@@ -41,44 +41,6 @@ def connect_to_db():
     if not db_conn or db_conn.closed:
         db_conn = psycopg2.connect(host=Config.POSTGRES_HOST, database=Config.POSTGRES_DB, user=Config.POSTGRES_USER, password=Config.POSTGRES_PASSWORD)
     db_cursor = db_conn.cursor()
-
-
-def parse_request_body(event):
-    """
-    Parses the request body from an event and returns it as a JSON object.
-
-    :param event: The event object containing the request data.
-    :return: Parsed JSON object from the request body.
-    """
-    logger.info("Parsing the request body...")
-    try:
-        body = event.get('body', '')
-        if not body:
-            raise ValueError("Empty body")
-        return json.loads(body)
-    except json.JSONDecodeError as e:
-        raise ValueError(f"Invalid JSON in request body: {e}")
-
-
-def parse_header(event):
-    """
-    Parses the request header from an event and extracts the origin and host to resolve cors issue
-
-    :param event: The event object containing the request data.
-    :return: origin and the host
-    """
-    logger.info("Parsing the header...")
-    try:
-        headers = event['headers']
-        origin = headers.get('origin')
-        host = headers.get('Host')
-        if not origin:
-            raise ValueError('Origin not included in headers')
-        if not host:
-            raise ValueError('Host not included in headers')
-        return origin, host
-    except json.JSONDecodeError as e:
-        raise ValueError(f"Invalid JSON in request body: {e}")
 
 
 def get_company_info(email):
