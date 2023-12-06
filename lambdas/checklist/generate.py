@@ -211,6 +211,22 @@ def save_repository_names_to_db(checklist_id, repository_names):
         raise RuntimeError(f"Error saving repository names to postgres: {e}")
 
 
+def update_generation_status(position_id, checklist_status):
+    """
+    Updates the generation status of the position.
+
+    :param position_id: Unique identifier for the position.
+    :param checklist_status: The status of the checklist.
+    """
+    logger.info("Updating the generation status...")
+    sql = f"UPDATE position SET checklist_generation_status = '{checklist_status}' WHERE id = '{position_id}';"
+    try:
+        db_cursor.execute(sql)
+        db_conn.commit()
+    except Exception as e:
+        raise RuntimeError(f"Error updating generation status in postgres: {e}")
+
+
 def handler(event, context):
     """
     Lambda function entry point to generate criteria from GitHub repositories.
@@ -223,6 +239,7 @@ def handler(event, context):
     try:
         logger.info('Received generate criteria request')
         connect_to_db()
+        checklist_status = 'failed'
 
         messages = event['Records']
         body = json.loads(messages[0]['body'])
@@ -243,7 +260,7 @@ def handler(event, context):
             "checklist_id": checklist_id,
             "criteria": criteria_messages
         }
-        db_conn.commit()
+        checklist_status = 'succeeded'
         logger.info('Criteria saved successfully')
     except (ValueError, RuntimeError) as e:
         status_code = 400
@@ -252,5 +269,8 @@ def handler(event, context):
         status_code = 500
         logger.error(f'Criteria generation failed (status {str(status_code)}): {e}')
     finally:
+        update_generation_status(position_id, checklist_status)
+        if db_cursor:
+            db_cursor.close()
         if db_conn:
             db_conn.close()
