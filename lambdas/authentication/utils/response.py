@@ -20,14 +20,15 @@ def generate_response(origin_domain: str, status_code: int, body: Any, cookie=No
     :param body: The body of the response, can be any type that is convertible to a string.
     :return: A dictionary representing the HTTP response.
     """
+    headers = COMMON_HEADERS.copy()
     if cookie:
-        COMMON_HEADERS['Set-Cookie'] = cookie.output(header='', sep='')
+        headers['Set-Cookie'] = cookie.output(header='', sep='')
     if origin_domain:
-        COMMON_HEADERS['Access-Control-Allow-Origin'] = origin_domain
+        headers['Access-Control-Allow-Origin'] = origin_domain
     return {
         "statusCode": status_code,
         "body": body,
-        "headers": COMMON_HEADERS
+        "headers": headers
     }
 
 
