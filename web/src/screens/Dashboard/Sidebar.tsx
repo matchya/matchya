@@ -3,6 +3,10 @@ import { useCompanyStore } from '../../store/useCompanyStore';
 const Sidebar = () => {
   const { positions, selectedPosition, selectPosition } = useCompanyStore();
 
+  if (positions.length === 0) {
+    return <div>loading...</div>;
+  }
+
   return (
     <div className="w-full">
       <div className="mt-10 mx-auto">

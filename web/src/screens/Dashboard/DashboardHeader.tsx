@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import Button from '../../components/LoginModal/Button';
+import Button from '../../components/Button';
 import { useCompanyStore } from '../../store/useCompanyStore';
 
 import AddCandidateModal from './AddCandidateModal';
@@ -19,13 +19,16 @@ const DashboardHeader = () => {
       <h1 className="text-3xl font-bold text-white ml-16">
         {selectedPosition?.name}
       </h1>
-      <Button
-        text="Add candidate"
-        color="green"
-        outline={false}
-        className="mr-24 px-6 py-4 text-xl mb-0 mt-0"
-        onClick={handleModalDisplay}
-      />
+      {selectedPosition?.checklists &&
+        selectedPosition?.checklists.length > 0 && (
+          <Button
+            text="Add candidate"
+            color="green"
+            outline={false}
+            className="mr-24 px-6 py-4 text-xl mb-0 mt-0"
+            onClick={handleModalDisplay}
+          />
+        )}
     </div>
   );
 };
