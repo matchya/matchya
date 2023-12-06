@@ -54,7 +54,8 @@ functions:
             parameters:
               paths:
                 id: true
-  retrieve:
+
+  checklist-status:
     name: ${self:provider.stage}-position-checklist-status
     image:
       name: default
