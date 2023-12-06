@@ -38,10 +38,6 @@ module "sqs" {
   source = "./modules/sqs"
 }
 
-module "s3" {
-  source = "./modules/s3"
-}
-
 module "vpc" {
   source = "../shared/modules/vpc"
 

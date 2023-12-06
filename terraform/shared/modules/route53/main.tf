@@ -21,7 +21,7 @@ resource "aws_route53_record" "www" {
   name    = "www.${var.domain_name}"
   type    = "A"
   alias {
-    name                   = var.www_root.regional_domain_name
+    name                   = var.www_root.website_domain
     zone_id                = var.www_root.hosted_zone_id
     evaluate_target_health = false
   }
@@ -33,10 +33,9 @@ resource "aws_route53_record" "root" {
   name    = "${var.domain_name}"
   type    = "A"
   alias {
-    name                   = var.root.regional_domain_name
+    name                   = var.root.website_domain
     zone_id                = var.root.hosted_zone_id
     evaluate_target_health = false
   }
   allow_overwrite = true
 }
-
