@@ -60,9 +60,17 @@ def save_candidate_info_to_db(body):
         last_name = body.get('candidate_last_name', '')
         github_username = body.get('candidate_github_username', '')
         email = body.get('candidate_email', '')
-        sql = "INSERT INTO candidate (id, first_name, last_name, github_username, email) VALUES (%s, %s, %s, %s, %s)"
-        db_cursor.execute(sql, (id, first_name, last_name, github_username, email))
-        return id
+        sql = """
+            INSERT INTO candidate (id, first_name, last_name, github_username, email) VALUES (%s, %s, %s, %s, %s)
+            ON CONFLICT (email) DO UPDATE SET (first_name, last_name, github_username) = (%s, %s, %s) RETURNING id;
+        """
+        db_cursor.execute(sql, (id, first_name, last_name, github_username, email, first_name, last_name, github_username))
+        result = db_cursor.fetchone()
+        if not result:
+            logger.info(f"New candidate is saved to db successfully id: {id}")
+            return id
+        logger.info(f"Candidate already exists in db, updated the information. candidate id is still: {result[0]}")
+        return result[0]
     except Exception as e:
         raise RuntimeError(f"Failed to save candidate info: {e}")
 
