@@ -109,3 +109,7 @@ CREATE TABLE IF NOT EXISTS checklist_repository (
 	foreign key (checklist_id) references checklist(id)
 );
 --rollback DROP TABLE IF EXISTS checklist_repository;
+
+--changeset author:13
+ALTER TABLE position ADD COLUMN checklist_generation_status varchar(30) DEFAULT 'unscheduled';
+--rollback ALTER TABLE position DROP COLUMN checklist_generation_status;
