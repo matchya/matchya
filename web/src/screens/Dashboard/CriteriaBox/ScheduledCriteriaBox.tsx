@@ -7,7 +7,7 @@ import { useCompanyStore } from '../../../store/useCompanyStore';
 
 const ScheduledCriteriaBox = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { selectedPosition } = useCompanyStore();
+  const { selectedPosition, setSelectedPositionDetail } = useCompanyStore();
 
   const handleRefresh = async () => {
     if (!selectedPosition) return;
@@ -19,7 +19,12 @@ const ScheduledCriteriaBox = () => {
         `/positions/status/${selectedPosition?.id}`
       );
       if (response.data.status == 'success') {
-        console.log(response.data.payload.checklist_status);
+        const status: string = response.data.payload.checklist_status;
+        if (status === 'succeeded') {
+          await setSelectedPositionDetail();
+        } else if (status === 'failed') {
+          alert('failed');
+        }
       }
     } catch (error) {
       console.log(error);
@@ -43,7 +48,7 @@ const ScheduledCriteriaBox = () => {
           <Loading />
         </div>
       ) : (
-        <div className=''>
+        <div className="">
           <p className="text-sm text-gray-600 mt-4">
             Criteria generation is scheduled. It may take a few minutes to
             generate.

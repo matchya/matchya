@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 
-import { axiosInstance } from '../../helper';
 import { useCompanyStore } from '../../store/useCompanyStore';
 
 import CriteriaBox from './CriteriaBox';
@@ -9,27 +8,19 @@ import ScoreCard from './ScoreCard';
 import Sidebar from './Sidebar';
 
 const Dashboard = () => {
-  const { positions, selectedPosition, selectPosition } = useCompanyStore();
+  const { positions, selectedPosition, setSelectedPositionDetail } =
+    useCompanyStore();
 
   useEffect(() => {
     if (positions.length === 0 || !selectedPosition) return;
-    getSelectedPosition();
+    handleSetPositionDetail();
   }, [selectedPosition]);
 
-  const getSelectedPosition = async () => {
-    if (selectedPosition && !selectedPosition.checklists) {
-      const response = await axiosInstance.get(
-        `/positions/${selectedPosition.id}`
-      );
-      if (response.data.status === 'success') {
-        selectPosition({
-          ...selectedPosition,
-          // checklist_status: response.data.payload.checklist_status,
-          // checklists: response.data.payload.checklists,
-          checklists: [],
-          checklist_status: 'scheduled',
-        });
-      }
+  const handleSetPositionDetail = async () => {
+    try {
+      await setSelectedPositionDetail();
+    } catch (error) {
+      console.log(error);
     }
   };
 
