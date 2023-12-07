@@ -56,7 +56,7 @@ def handler(event, context):
         origin = parse_header(event)
         status = get_checklist_status(position_id)
         body = {
-            'status': status
+            'checklist_status': status
         }
         return generate_success_response(origin, body)
     except (ValueError, RuntimeError) as e:
