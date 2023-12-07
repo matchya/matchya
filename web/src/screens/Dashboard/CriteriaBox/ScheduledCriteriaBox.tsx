@@ -5,7 +5,6 @@ import { Loading } from '../../../components/Button';
 import ToastMessage from '../../../components/ToastMessage';
 import { axiosInstance } from '../../../helper';
 import { useCompanyStore } from '../../../store/useCompanyStore';
-import { Position } from '../../../types';
 
 interface ScheduledCriteriaBoxProps {
   message: string;
@@ -21,8 +20,7 @@ const ScheduledCriteriaBox = ({
   setMessageType,
 }: ScheduledCriteriaBoxProps) => {
   const [isLoading, setIsLoading] = useState(false);
-  const { selectedPosition } =
-    useCompanyStore();
+  const { selectedPosition, selectPosition } = useCompanyStore();
 
   const handleRefresh = async () => {
     if (!selectedPosition) return;
@@ -40,6 +38,10 @@ const ScheduledCriteriaBox = ({
         } else if (status === 'failed') {
           setMessageType('error');
           setMessage('Criteria generation failed. Please try again.');
+          selectPosition({
+            ...selectedPosition,
+            checklist_status: 'failed',
+          });
         }
       }
     } catch (error) {
@@ -50,8 +52,8 @@ const ScheduledCriteriaBox = ({
 
   return (
     <div className="px-6 py-4">
+      {message && <ToastMessage message={message} type={messageType} />}
       <div className="flex items-center">
-        {message && <ToastMessage message={message} type={messageType} />}
         <h3 className="text-2xl font-bold mx-10">Generated Criteria</h3>
         <button
           className="border border-2 border-black rounded py-1 px-3 hover:bg-gray-200 active:bg-gray-300"

@@ -24,7 +24,7 @@ const GenerateCriteraBox = ({
     []
   );
   const [isLoading, setIsLoading] = useState(false);
-  const { repository_names, selectedPosition, selectPosition } =
+  const { repository_names, selectedPosition } =
     useCompanyStore();
 
   const handleAddRepository = () => {
@@ -64,10 +64,6 @@ const GenerateCriteraBox = ({
         setMessage(
           'Criteria generation is scheduled successfully. It may take a few minutes to finish.'
         );
-        selectPosition({
-          ...selectedPosition,
-          checklist_status: 'scheduled',
-        });
       }
     } catch (error) {
       const err = error as CustomError;
@@ -125,7 +121,7 @@ const GenerateCriteraBox = ({
         </div>
       ))}
       {isLoading && <Loading />}
-      {!isLoading && (
+      {!isLoading && messageType !== 'success' && (
         <Button
           text="Generate"
           color="green"
