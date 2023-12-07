@@ -13,7 +13,7 @@ interface CompanyState {
   positions: Position[];
   selectedPosition: Position | null;
   selectPosition: (position: Position) => void;
-  setSelectedPositionDetail: () => void;
+  setSelectedPositionDetail: () => Promise<void>;
   me: () => void;
   resetAll: () => void;
 }
