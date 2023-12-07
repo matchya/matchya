@@ -6,7 +6,7 @@ import { axiosInstance } from '../../../helper';
 import { useCompanyStore } from '../../../store/useCompanyStore';
 import { CustomError } from '../../../types';
 
-const UnscheduledCriteriaBox = () => {
+const GenerateCriteraBox = () => {
   const [selectedRepository, setSelectedRepository] = useState<string>('');
   const [selectedRepositories, setSelectedRepositories] = useState<string[]>(
     []
@@ -124,4 +124,4 @@ const UnscheduledCriteriaBox = () => {
   );
 };
 
-export default UnscheduledCriteriaBox;
+export default GenerateCriteraBox;

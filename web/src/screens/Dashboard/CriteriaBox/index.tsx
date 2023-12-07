@@ -1,8 +1,8 @@
 import { useCompanyStore } from '../../../store/useCompanyStore';
 import { Criterion } from '../../../types';
 
+import GenerateCriteriaBox from './GenerateCriteraBox';
 import ScheduledCriteriaBox from './ScheduledCriteriaBox';
-import UnscheduledCriteriaBox from './UnscheduledCriteriaBox';
 
 const CriteriaBox = () => {
   const { selectedPosition } = useCompanyStore();
@@ -19,7 +19,7 @@ const CriteriaBox = () => {
     !selectedPosition.checklists ||
     selectedPosition.checklists.length === 0
   ) {
-    return <UnscheduledCriteriaBox />;
+    return <GenerateCriteriaBox />;
   }
 
   return (
