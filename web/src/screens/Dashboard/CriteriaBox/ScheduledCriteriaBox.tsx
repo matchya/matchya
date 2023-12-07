@@ -5,7 +5,11 @@ import { Loading } from '../../../components/Button';
 import { axiosInstance } from '../../../helper';
 import { useCompanyStore } from '../../../store/useCompanyStore';
 
-const ScheduledCriteriaBox = () => {
+interface ScheduledCriteriaProps {
+  setGenerationDone: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const ScheduledCriteriaBox = ({ setGenerationDone }: ScheduledCriteriaProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const { selectedPosition, setSelectedPositionDetail } = useCompanyStore();
 
@@ -22,6 +26,7 @@ const ScheduledCriteriaBox = () => {
         const status: string = response.data.payload.checklist_status;
         if (status === 'succeeded') {
           await setSelectedPositionDetail();
+          setGenerationDone(true)
         } else if (status === 'failed') {
           alert('failed');
         }

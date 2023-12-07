@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { useCompanyStore } from '../../../store/useCompanyStore';
 import { Criterion } from '../../../types';
 
@@ -6,6 +8,7 @@ import ScheduledCriteriaBox from './ScheduledCriteriaBox';
 
 const CriteriaBox = () => {
   const { selectedPosition } = useCompanyStore();
+  const [generationDone, setGenerationDone] = useState(false);
 
   const LoadingCriteriaBox = () => {
     return <div>loading...</div>;
@@ -28,10 +31,14 @@ const CriteriaBox = () => {
     );
   };
 
+  if (generationDone) {
+    return <GeneratedCriteriaBox />;
+  }
+
   if (!selectedPosition) {
     return <LoadingCriteriaBox />;
   } else if (selectedPosition.checklist_status === 'scheduled') {
-    return <ScheduledCriteriaBox />;
+    return <ScheduledCriteriaBox setGenerationDone={setGenerationDone} />;
   } else if (selectedPosition.checklist_status === 'succeeded') {
     return <GeneratedCriteriaBox />;
   } else {
