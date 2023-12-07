@@ -8,7 +8,8 @@ import ScheduledCriteriaBox from './ScheduledCriteriaBox';
 
 const CriteriaBox = () => {
   const { selectedPosition } = useCompanyStore();
-  const [generationDone, setGenerationDone] = useState(false);
+  const [message, setMessage] = useState<string>('');
+  const [messageType, setMessageType] = useState<'error' | 'success'>('error');
 
   const LoadingCriteriaBox = () => {
     return <div>loading...</div>;
@@ -31,18 +32,28 @@ const CriteriaBox = () => {
     );
   };
 
-  if (generationDone) {
-    return <GeneratedCriteriaBox />;
-  }
-
   if (!selectedPosition) {
     return <LoadingCriteriaBox />;
   } else if (selectedPosition.checklist_status === 'scheduled') {
-    return <ScheduledCriteriaBox setGenerationDone={setGenerationDone} />;
+    return (
+      <ScheduledCriteriaBox
+        message={message}
+        messageType={messageType}
+        setMessage={setMessage}
+        setMessageType={setMessageType}
+      />
+    );
   } else if (selectedPosition.checklist_status === 'succeeded') {
     return <GeneratedCriteriaBox />;
   } else {
-    return <GenerateCriteriaBox />;
+    return (
+      <GenerateCriteriaBox
+        message={message}
+        messageType={messageType}
+        setMessage={setMessage}
+        setMessageType={setMessageType}
+      />
+    );
   }
 };
 

@@ -6,15 +6,26 @@ import { axiosInstance } from '../../../helper';
 import { useCompanyStore } from '../../../store/useCompanyStore';
 import { CustomError } from '../../../types';
 
-const GenerateCriteraBox = () => {
+interface GenerateCriteraBoxProps {
+  message: string;
+  messageType: 'error' | 'success';
+  setMessage: (message: string) => void;
+  setMessageType: (messageType: 'error' | 'success') => void;
+}
+
+const GenerateCriteraBox = ({
+  message,
+  messageType,
+  setMessage,
+  setMessageType,
+}: GenerateCriteraBoxProps) => {
   const [selectedRepository, setSelectedRepository] = useState<string>('');
   const [selectedRepositories, setSelectedRepositories] = useState<string[]>(
     []
   );
-  const [responseMessage, setResponseMessage] = useState('');
-  const [messageType, setMessageType] = useState<'error' | 'success'>('error');
   const [isLoading, setIsLoading] = useState(false);
-  const { repository_names, selectedPosition } = useCompanyStore();
+  const { repository_names, selectedPosition, selectPosition } =
+    useCompanyStore();
 
   const handleAddRepository = () => {
     if (
@@ -32,16 +43,16 @@ const GenerateCriteraBox = () => {
   };
 
   const generateCriteria = async () => {
-    if (selectedRepositories.length === 0) {
+    if (!selectedPosition || selectedRepositories.length === 0) {
       setMessageType('error');
-      setResponseMessage('Please select at least one repository.');
+      setMessage('Please select at least one repository.');
       return;
     }
     const userData = {
-      position_id: selectedPosition?.id,
+      position_id: selectedPosition.id,
       repository_names: selectedRepositories,
     };
-    setResponseMessage('');
+    setMessage('');
     setIsLoading(true);
     try {
       const response = await axiosInstance.post(
@@ -50,17 +61,21 @@ const GenerateCriteraBox = () => {
       );
       if (response.data.status == 'success') {
         setMessageType('success');
-        setResponseMessage(
+        setMessage(
           'Criteria generation is scheduled successfully. It may take a few minutes to generate.'
         );
+        selectPosition({
+          ...selectedPosition,
+          checklist_status: 'scheduled',
+        });
       }
     } catch (error) {
       const err = error as CustomError;
       setMessageType('error');
       if (err.response.status === 400) {
-        setResponseMessage(err.response.data.message);
+        setMessage(err.response.data.message);
       } else {
-        setResponseMessage('Something went wrong. Please try again.');
+        setMessage('Something went wrong. Please try again.');
       }
     }
     setIsLoading(false);
@@ -68,9 +83,7 @@ const GenerateCriteraBox = () => {
 
   return (
     <div className="px-6 py-4 flex flex-col items-center">
-      {responseMessage && (
-        <ToastMessage message={responseMessage} type={messageType} />
-      )}
+      {message && <ToastMessage message={message} type={messageType} />}
       <h3 className="text-lg font-bold">Generate Criteria</h3>
       <p className="text-sm text-gray-600 mt-4">
         Generate criteria to get started
