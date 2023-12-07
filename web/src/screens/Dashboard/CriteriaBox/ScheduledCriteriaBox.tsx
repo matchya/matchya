@@ -1,8 +1,30 @@
+import { useState } from 'react';
 import { IoMdRefresh } from 'react-icons/io';
 
+import { Loading } from '../../../components/Button';
+import { axiosInstance } from '../../../helper';
+import { useCompanyStore } from '../../../store/useCompanyStore';
+
 const ScheduledCriteriaBox = () => {
-  const handleRefresh = () => {
-    console.log('refreshing...');
+  const [isLoading, setIsLoading] = useState(false);
+  const { selectedPosition } = useCompanyStore();
+
+  const handleRefresh = async () => {
+    if (!selectedPosition) return;
+    if (isLoading) return;
+
+    setIsLoading(true);
+    try {
+      const response = await axiosInstance.get(
+        `/positions/status/${selectedPosition?.id}`
+      );
+      if (response.data.status == 'success') {
+        console.log(response.data.payload.checklist_status);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    setIsLoading(false);
   };
 
   return (
@@ -16,9 +38,18 @@ const ScheduledCriteriaBox = () => {
           <IoMdRefresh size={30} />
         </button>
       </div>
-      <p className="text-sm text-gray-600 mt-4">
-        Criteria generation is scheduled. It may take a few minutes to generate.
-      </p>
+      {isLoading ? (
+        <div className="my-5 flex justify-center items-center">
+          <Loading />
+        </div>
+      ) : (
+        <div className=''>
+          <p className="text-sm text-gray-600 mt-4">
+            Criteria generation is scheduled. It may take a few minutes to
+            generate.
+          </p>
+        </div>
+      )}
     </div>
   );
 };
