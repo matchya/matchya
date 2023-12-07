@@ -12,8 +12,8 @@ interface CompanyState {
   repository_names: string[];
   positions: Position[];
   selectedPosition: Position | null;
-  selectPosition: (position: Position | null) => void;
-  setSelectedPositionDetail: () => Promise<Position | null>;
+  selectPosition: (position: Position) => void;
+  setSelectedPositionDetail: () => Promise<void>;
   me: () => void;
   resetAll: () => void;
 }
@@ -26,9 +26,8 @@ export const useCompanyStore = create<CompanyState>((set, get) => ({
   repository_names: [],
   positions: [],
   selectedPosition: null,
-  selectPosition: (position: Position | null) => set({ selectedPosition: position }),
+  selectPosition: (position: Position) => set({ selectedPosition: position }),
   setSelectedPositionDetail: async () => {
-    let newSelectedPosition = null;
     try {
       const selectedPosition = get().selectedPosition;
       if (selectedPosition && !selectedPosition.checklists) {
@@ -39,12 +38,13 @@ export const useCompanyStore = create<CompanyState>((set, get) => ({
           }
         );
         if (res.data.status === 'success') {
-          newSelectedPosition = {
-            ...selectedPosition,
-            checklist_status: res.data.payload.checklist_status,
-            checklists: res.data.payload.checklists,
-          };
-          set({ selectedPosition: newSelectedPosition });
+          set({
+            selectedPosition: {
+              ...selectedPosition,
+              checklist_status: res.data.payload.checklist_status,
+              checklists: res.data.payload.checklists,
+            },
+          });
         } else {
           throw new Error(res.data.payload.message);
         }
@@ -52,7 +52,7 @@ export const useCompanyStore = create<CompanyState>((set, get) => ({
     } catch (err) {
       throw new Error();
     }
-    return newSelectedPosition;
+    return;
   },
   me: async () => {
     try {

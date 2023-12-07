@@ -62,7 +62,7 @@ const GenerateCriteraBox = ({
       if (response.data.status == 'success') {
         setMessageType('success');
         setMessage(
-          'Criteria generation is scheduled successfully. It may take a few minutes to generate.'
+          'Criteria generation is scheduled successfully. It may take a few minutes to finish.'
         );
         selectPosition({
           ...selectedPosition,

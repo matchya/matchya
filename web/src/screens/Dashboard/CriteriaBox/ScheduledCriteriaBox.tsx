@@ -21,7 +21,7 @@ const ScheduledCriteriaBox = ({
   setMessageType,
 }: ScheduledCriteriaBoxProps) => {
   const [isLoading, setIsLoading] = useState(false);
-  const { selectedPosition, selectPosition, setSelectedPositionDetail } =
+  const { selectedPosition } =
     useCompanyStore();
 
   const handleRefresh = async () => {
@@ -36,9 +36,7 @@ const ScheduledCriteriaBox = ({
       if (response.data.status == 'success') {
         const status: string = response.data.payload.checklist_status;
         if (status === 'succeeded') {
-          const pos: Position | null = await setSelectedPositionDetail();
-          if (pos) selectPosition(pos);
-          // window.location.reload();
+          window.location.reload();
         } else if (status === 'failed') {
           setMessageType('error');
           setMessage('Criteria generation failed. Please try again.');
