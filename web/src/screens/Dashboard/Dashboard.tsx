@@ -27,7 +27,7 @@ const Dashboard = () => {
           // checklist_status: response.data.payload.checklist_status,
           // checklists: response.data.payload.checklists,
           checklists: [],
-          checklist_status: 'scheduled'
+          checklist_status: 'scheduled',
         });
       }
     }
