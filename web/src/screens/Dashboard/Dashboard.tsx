@@ -24,7 +24,10 @@ const Dashboard = () => {
       if (response.data.status === 'success') {
         selectPosition({
           ...selectedPosition,
-          checklists: response.data.payload.checklists,
+          // checklist_status: response.data.payload.checklist_status,
+          // checklists: response.data.payload.checklists,
+          checklists: [],
+          checklist_status: 'scheduled'
         });
       }
     }

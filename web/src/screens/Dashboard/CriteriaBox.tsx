@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { IoMdRefresh } from 'react-icons/io';
 
 import Button, { Loading } from '../../components/Button';
 import ToastMessage from '../../components/ToastMessage';
@@ -27,6 +28,10 @@ const CriteriaBox = () => {
     setSelectedRepository(
       repository_names.filter(name => !selectedRepositories.includes(name))[0]
     );
+  };
+
+  const handleRefresh = () => {
+    console.log('refreshing...');
   };
 
   const generateCriteria = async () => {
@@ -66,6 +71,24 @@ const CriteriaBox = () => {
 
   if (!selectedPosition) {
     return <div>loading...</div>;
+  } else if (selectedPosition.checklist_status === 'scheduled') {
+    return (
+      <div className="px-6 py-4">
+        <div className="flex items-center">
+          <h3 className="text-2xl font-bold mx-10">Generated Criteria</h3>
+          <button
+            className="border border-2 border-black rounded py-1 px-3 hover:bg-gray-200 active:bg-gray-300"
+            onClick={handleRefresh}
+          >
+            <IoMdRefresh size={30} />
+          </button>
+        </div>
+        <p className="text-sm text-gray-600 mt-4">
+          Criteria generation is scheduled. It may take a few minutes to
+          generate.
+        </p>
+      </div>
+    );
   } else if (
     !selectedPosition.checklists ||
     selectedPosition.checklists.length === 0
