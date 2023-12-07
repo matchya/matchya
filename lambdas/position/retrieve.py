@@ -75,7 +75,7 @@ def get_position_details_by_id(position_id):
     logger.info("Getting position details by id...")
     sql = """
         SELECT
-            p.id AS position_id, p.name AS position_name,
+            p.id AS position_id, p.name AS position_name, p.checklist_generation_status AS checklist_status,
             c.id AS checklist_id,
             cr.repository_name,
             can.first_name, can.last_name, can.email, can.github_username, 
@@ -118,11 +118,11 @@ def process_position_from_sql_results(sql_results):
 
     position_data = {}
     for row in sql_results:
-        (position_id, position_name, checklist_id, repo_name, first_name, last_name, email,
+        (position_id, position_name, checklist_status, checklist_id, repo_name, first_name, last_name, email,
          github_username, candidate_result_id, total_score, summary, criterion_id, score, reason) = row
 
         if position_id not in position_data:
-            position_data[position_id] = {'name': position_name, 'checklists': {}}
+            position_data[position_id] = {'name': position_name, 'checklist_status': checklist_status, 'checklists': {}}
 
         if checklist_id not in position_data[position_id]['checklists']:
             criteria = get_criteria_by_checklist_id(checklist_id)
@@ -164,6 +164,7 @@ def process_position_from_sql_results(sql_results):
             checklists.append(chk_info)
         final_data.append({
             'name': pos_info['name'],
+            'checklist_status': pos_info['checklist_status'],
             'checklists': checklists
         })
 
