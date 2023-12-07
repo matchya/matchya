@@ -113,8 +113,8 @@ def process_position_from_sql_results(sql_results):
     """
     logger.info("Processing position from sql results...")
     # if no checklist, return empty checklist
-    if sql_results[0][2] is None:
-        return {"name": sql_results[0][1], "checklists": []}
+    if sql_results[0][3] is None:
+        return {"name": sql_results[0][1], "checklist_status": sql_results[0][2], "checklists": []}
 
     position_data = {}
     for row in sql_results:

@@ -31,6 +31,7 @@ export interface Criterion {
 export interface Position {
   id: string;
   name: string;
+  checklist_status: string;
   checklists: Checklist[];
 }
 
