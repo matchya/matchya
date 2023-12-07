@@ -6,26 +6,17 @@ import { axiosInstance } from '../../../helper';
 import { useCompanyStore } from '../../../store/useCompanyStore';
 import { CustomError } from '../../../types';
 
-interface GenerateCriteraBoxProps {
-  message: string;
-  messageType: 'error' | 'success';
-  setMessage: (message: string) => void;
-  setMessageType: (messageType: 'error' | 'success') => void;
-}
-
-const GenerateCriteraBox = ({
-  message,
-  messageType,
-  setMessage,
-  setMessageType,
-}: GenerateCriteraBoxProps) => {
+const GenerateCriteraBox = () => {
   const [selectedRepository, setSelectedRepository] = useState<string>('');
   const [selectedRepositories, setSelectedRepositories] = useState<string[]>(
     []
   );
+  const [message, setMessage] = useState<string>('');
+  const [messageType, setMessageType] = useState<'error' | 'success'>(
+    'error'
+  );
   const [isLoading, setIsLoading] = useState(false);
-  const { repository_names, selectedPosition } =
-    useCompanyStore();
+  const { repository_names, selectedPosition } = useCompanyStore();
 
   const handleAddRepository = () => {
     if (

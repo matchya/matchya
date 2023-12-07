@@ -6,25 +6,21 @@ import ToastMessage from '../../../components/ToastMessage';
 import { axiosInstance } from '../../../helper';
 import { useCompanyStore } from '../../../store/useCompanyStore';
 
-interface ScheduledCriteriaBoxProps {
-  message: string;
-  messageType: 'error' | 'success';
-  setMessage: (message: string) => void;
-  setMessageType: (messageType: 'error' | 'success') => void;
-}
-
-const ScheduledCriteriaBox = ({
-  message,
-  messageType,
-  setMessage,
-  setMessageType,
-}: ScheduledCriteriaBoxProps) => {
+const ScheduledCriteriaBox = () => {
+  const [message, setMessage] = useState<string>('');
+  const [messageType, setMessageType] = useState<'error' | 'success'>('success');
   const [isLoading, setIsLoading] = useState(false);
   const { selectedPosition, selectPosition } = useCompanyStore();
 
   const handleRefresh = async () => {
     if (!selectedPosition) return;
     if (isLoading) return;
+    if (messageType === 'error') {
+      selectPosition({
+        ...selectedPosition,
+        checklist_status: 'failed',
+      });
+    }
 
     setIsLoading(true);
     try {
@@ -38,10 +34,6 @@ const ScheduledCriteriaBox = ({
         } else if (status === 'failed') {
           setMessageType('error');
           setMessage('Criteria generation failed. Please try again.');
-          selectPosition({
-            ...selectedPosition,
-            checklist_status: 'failed',
-          });
         }
       }
     } catch (error) {

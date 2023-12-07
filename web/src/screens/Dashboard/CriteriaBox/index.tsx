@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 import { useCompanyStore } from '../../../store/useCompanyStore';
 import { Criterion } from '../../../types';
 
@@ -8,8 +6,6 @@ import ScheduledCriteriaBox from './ScheduledCriteriaBox';
 
 const CriteriaBox = () => {
   const { selectedPosition } = useCompanyStore();
-  const [message, setMessage] = useState<string>('');
-  const [messageType, setMessageType] = useState<'error' | 'success'>('error');
 
   const LoadingCriteriaBox = () => {
     return <div>loading...</div>;
@@ -35,25 +31,11 @@ const CriteriaBox = () => {
   if (!selectedPosition) {
     return <LoadingCriteriaBox />;
   } else if (selectedPosition.checklist_status === 'scheduled') {
-    return (
-      <ScheduledCriteriaBox
-        message={message}
-        messageType={messageType}
-        setMessage={setMessage}
-        setMessageType={setMessageType}
-      />
-    );
+    return <ScheduledCriteriaBox />;
   } else if (selectedPosition.checklist_status === 'succeeded') {
     return <GeneratedCriteriaBox />;
   } else {
-    return (
-      <GenerateCriteriaBox
-        message={message}
-        messageType={messageType}
-        setMessage={setMessage}
-        setMessageType={setMessageType}
-      />
-    );
+    return <GenerateCriteriaBox />;
   }
 };
 
