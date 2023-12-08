@@ -16,7 +16,7 @@ const Header = () => {
     if (id) return;
     if (location.pathname === '/login' || location.pathname === '/') return;
     getAuthStatus();
-  }, []);
+  }, [location.pathname]);
 
   const getAuthStatus = async () => {
     try {
