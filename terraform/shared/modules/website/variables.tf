@@ -5,3 +5,7 @@ variable "domain_name" {
 variable "region" {
   type = string
 }
+
+variable "ns_records" {
+  type = list(string)
+}

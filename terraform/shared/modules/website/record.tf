@@ -3,12 +3,7 @@ resource "aws_route53_record" "ns" {
   name    = "${var.domain_name}"
   type    = "NS"
   ttl     = "3600"
-  records = [
-    "ns-1351.awsdns-40.org",
-    "ns-356.awsdns-44.com",
-    "ns-856.awsdns-43.net",
-    "ns-2010.awsdns-59.co.uk"
-  ]
+  records = var.ns_records
   allow_overwrite = true
 }
 
