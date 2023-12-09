@@ -4,18 +4,12 @@ module "iam" {
   create_new = true
 }
 
-module "route53" {
-  source = "./modules/route53"
+module "website" {
+  source = "./modules/website"
 
   domain_name = var.domain_name
-  www_root = module.s3.www_root
-  root = module.s3.root
-}
-
-module "s3" {
-  source = "./modules/s3"
-
-  domain_name = var.domain_name
+  ns_records = var.ns_records
+  region = data.aws_region.current.name
 }
 
 module "vpc" {
