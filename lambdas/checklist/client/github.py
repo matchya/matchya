@@ -228,7 +228,6 @@ class GithubClient:
         :param repo_name: Name of the repository.
         :return: The name of the default branch for the repository.
         """
-        print(f"getting default branch {repo_name}")
         url = Config.GITHUB_API_REPO_URL + self.github_username + "/" + repo_name
         try:
             res = requests.get(url, headers=Config.GITHUB_REST_API_HEADERS)
@@ -237,7 +236,6 @@ class GithubClient:
 
         data = json.loads(res.content)
         if data is None or data.get('default_branch') is None:
-            print(f"Error getting default branch name. No data found. {data}")
             raise RuntimeError("Error getting default branch name.")
         return data.get('default_branch')
 
