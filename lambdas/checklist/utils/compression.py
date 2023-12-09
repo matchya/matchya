@@ -1,7 +1,6 @@
 import re
 
 
-# Remove one line comments from file content
 def remove_oneline_comments(extension, file_content):
     comment_symbols = {
         "py": "#",
@@ -44,22 +43,22 @@ def remove_oneline_comments(extension, file_content):
         "django": "#",
         "Makefile": "#",
         "webpack.config.js": "//",
-        "eslintrc": "//"
+        "eslintrc": "//",
+        "txt": "#",
     }
 
-    lines = file_content.split("\n")
     if extension in comment_symbols:
-        lines = [line for line in file_content if not line.lstrip().startswith(comment_symbols[extension])]
-    file_content = "\n".join(lines)
+        lines = file_content.split("\n")
+        compressed_lines = [line for line in lines if not line.lstrip().startswith(comment_symbols[extension])]
+        file_content = "\n".join(compressed_lines)
     return file_content
 
 
 def compress_default(file_content):
-    file_content = re.sub('\W+', '', file_content)
+    file_content = re.sub('\d+', '', file_content).replace(" ", "").replace("\"", "").replace("\'", "").replace(":", " ")
     return file_content
 
 
-# Compress file content based on file extension
 def compress_python_file(file_content):
     lines = file_content.split("\n")
     compressed_lines = [line for line in lines
@@ -171,15 +170,13 @@ def compress_rust_file(file_content):
     return file_content
 
 
-# Compress file content based on file name
 def compress_read_me(file_content):
     lines = file_content.split("\n")
     compressed_lines = [line for line in lines
-                        if not line.contains("![") and not line.contains("<img")
-                        and not line.contains("<video") and not line.contains("<audio")
-                        and not line.contains("<iframe") and not line.contains("<object")
-                        and not line.contains("<embed") and not line.contains("<svg")
-                        and not line.contains("http://") and not line.contains("https://")]
+                        if "![" not in line and "<img" not in line and "<video" not in line
+                        and "<audio" not in line and "<iframe" not in line and "<object" not in line
+                        and "<embed" not in line and "<svg" not in line 
+                        and "http://" not in line and "https://" not in line]
     file_content = "\n".join(compressed_lines)
     return file_content
 
@@ -193,9 +190,9 @@ def compress_requirements_txt(file_content):
 
 def compress_package_json(file_content):
     lines = file_content.split("\n")
-    compressed_lines = [line.split(":")[0] for line in lines]
+    compressed_lines = [line.split(":")[0] for line in lines if (":" in line)]
     file_content = "\n".join(compressed_lines)
-    file_content = file_content.replace("{", "").replace("}", "").replace(",", "").repalce("\"", "").replace("\'", "")
+    file_content = file_content.replace("{", "").replace("}", "").replace(",", "").replace("\"", "").replace("\'", "")
     return file_content
 
 
@@ -257,7 +254,6 @@ common_extensions_compression_func_map = {
 }
 
 
-# Compress file content
 def compress_file_content(file_name: str, file_content: str):
     """Compress file content using gzip.
 
@@ -275,12 +271,12 @@ def compress_file_content(file_name: str, file_content: str):
             file_content = common_extensions_compression_func_map[extension](file_content)
 
         else:
-            print(f"Using default compression {file_content}")
             file_content = compress_default(file_content)
             
         # Limit file content to 4000 characters (~1000 tokens)
         if len(file_content) > 4000:
             file_content = file_content[:4000]
         return file_content
-    except Exception:
+    except Exception as e:
+        print(f"Error in compressing file content: {e}")
         return file_content
