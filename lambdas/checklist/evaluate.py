@@ -194,13 +194,20 @@ def get_candidate_evaluation_from_gpt(criteria, file_content, languages):
     for name, bytes in languages.items():
         languages_info += name + "(" + str(bytes) + " bytes), "
 
+    user_message = """
+        Here are the files from the candidate's GitHub Account. 
+        Note: The contents of the file have been modified to reduce the number of TOKEN and may not be written in correct syntax. 
+        In that case, you must guess the contents of the original file yourself and do the evaluation accordingly. 
+        The fact that the content is syntactically incorrect has no effect on the evaluation at all:\n"""
+    user_message += file_content + languages_info
+
     try:
         completion = chat_client.chat.completions.create(
             model="gpt-3.5-turbo-1106",
             response_format={"type": "json_object"},
             messages=[
                 {"role": "system", "content": system_message},
-                {"role": "user", "content": "Follow system message instruction. Here are the files from the candidate's GitHub Account: " + file_content + languages_info}
+                {"role": "user", "content": user_message}
             ],
             temperature=0.01,
             seed=42,
