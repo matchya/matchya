@@ -3,6 +3,7 @@ import json
 import requests
 
 from config import Config
+from utils.compression import compress_file_content
 
 
 class GithubClient:
@@ -36,7 +37,10 @@ class GithubClient:
         :param important_file_names: A list of important file names to look for.
         :return: A list of file paths for important files in the repository.
         """
-        branch = self._get_default_branch(repo_name)
+        try:
+            branch = self._get_default_branch(repo_name)
+        except Exception:
+            return []
 
         url = Config.GITHUB_API_REPO_URL + self.github_username + "/" + repo_name + "/git/trees/" + branch + "?recursive=1"
         try:
@@ -92,7 +96,9 @@ class GithubClient:
 
         content = "repository: " + repo_name + "\n"
         for file_path in file_paths:
-            content += "path: " + file_path + "\n" + self.get_file_contents(repo_name, file_path) + "\n"
+            file_name = file_path.split("/")[-1]
+            compressed_content = compress_file_content(file_name, self.get_file_contents(repo_name, file_path))
+            content += "path: " + file_path + "\n" + compressed_content + "\n"
 
         return content
 

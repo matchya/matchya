@@ -132,24 +132,61 @@ def get_candidate_evaluation_from_gpt(criteria, file_content, languages):
         system_message += "\n" + "criterion" + str(i + 1) + ". id: " + criterion['id'] + criterion["message"] + " (keywords: " + ", ".join(criterion["keywords"]) + ")"
 
     system_message += """
-        You will be given files from the candidate's GitHub repository. Please evaluate the candidate's skillset based on the files.
-        Score each criteria from 0 to 10. 0 means the candidate does not have the skillset at all, and 10 means the candidate has the skillset perfectly.
-        The total score is the average of all criteria scores. Please also provide a reason for each score as well.
-        When you give a reason, mention the repository name, but never mention the file name.
+        A company is seeking skilled software engineers for its projects. The assessment will be based on the candidate's GitHub repositories contents. 
+        The criteria include specific skills and technologies relevant to the company's needs. 
+        The evaluation will be on a scale of 0 to 10, with 0 indicating a lack of skill and 10 representing perfect proficiency.
+
+        Consider the following factors:
+        1. **Accuracy and Consistency:**
+        - Assess the candidate's skillset based on files like "README.md," "package.json," and "requirements.txt."
+        - Larger repositories may indicate experience with larger projects, making certain technologies more significant.
+        - Repeated use of a technology across repositories suggests familiarity and expertise.
+        - Always evaluate all criteria, even if the candidate has no repositories that demonstrate a skill.
+        - To evaluate a candidate accurately and consistently, follow the guildelines below.
+        score_guidelines = {
+            0: "Candidate lacks essential skills outlined in the criteria. For example, if Frontend development requires TypeScript and React, a score of 0 implies a complete absence of these skills.",
+            1: "Candidate exhibits minimal skills related to the specified message and keywords, or shows basic skills in similar areas. If the criterion is proficiency in Python for backend development, a score of 1 might be assigned if the candidate demonstrates basic experience with similar backend technologies.",
+            2: "Candidate displays limited proficiency related to the specified message and keywords or exhibits minimal skills in similar areas. A score of 2 suggests a partial alignment with the criterion, but the essential skill is not fully present.",
+            3: "Candidate demonstrates below-average proficiency in the specified skillset. There is limited evidence of relevant experience in the repositories, indicating a basic understanding but falling short of moderate proficiency.",
+            4: "Candidate shows moderate proficiency. Evidence in repositories indicates a clear understanding and application of the specified skillset.",
+            5: "Candidate demonstrates moderate proficiency. Evidence in repositories indicates a clear understanding and application of the specified skillset.",
+            6: "Candidate exhibits above-average proficiency in the specified skillset. There is clear evidence of relevant experience in the repositories, demonstrating a stronger understanding and application of the specified skillset but falling short of significant proficiency.",
+            7: "Candidate demonstrates significant proficiency in the specified skillset. There is clear evidence of relevant experience in the repositories, demonstrating a strong understanding and application of the specified skillset.",
+            8: "Candidate shows significant proficiency. Clear evidence in repositories, for instance in Frontend development with React, multiple repositories showcase well-implemented React components.",
+            9: "Candidate exhibits exceptional proficiency. Evidence in repositories indicates advanced skills and significant experience, such as proficiency in multiple programming languages and frameworks.",
+            10: "Candidate possesses extensive experience using the specified skillset, likely in large or multiple projects. Proficiency is evident, and the candidate is highly skilled and knowledgeable in the relevant technologies. If the criterion involves expertise in a specific framework like Django for backend development, a score of 10 may be given if the candidate has successfully implemented and maintained complex Django projects at scale."
+        }
+        - Note: The value of the score is absolute and does not change depending on the score of other criteria. Score each criterion as a separate one with an absolute rating.
+
+        2. **Message Importance:**
+        - Emphasize that the evaluation is primarily based on the message, not just keywords.
+        - A candidate doesn't need every keyword; proficiency in the mentioned technology is crucial.
+        - Provide scores and reasoning that align clearly with the message content.
+
+        3. **Detailed Reasoning:**
+        - Precision and detail in reasoning are vital.
+        - For lower scores, explain why, highlighting factors like project size or similar skills.
+        - Higher scores (7, 8, or above) require clear identification of repositories showcasing skills and their quality.
+        - Always explain which repositories demonstrate the candidate's skillset and why they are significant if the candidate has the skill. However, NEVER EVER mention the name files because we want to hide what file you read.
+
+        4. **Total Score Calculation:**
+        - THIS IS VERY IMPORTANT!!!: The total score MUST be the AVERAGE VALUE of scores for each criterion.
+        - YOU MUST CALCULATE the AVERAGE VALUE after scoring all criteria. Add each score and divide by the number of criteria. The avarage score can contain one decimal point.
+        - For example, if there are 3 criteria and the scores are 5, 8, and 9, the total score will be (5 + 8 + 9) / 3 = 7.3
         Your response will look like this in JSON format:
         {
-            "total_score": number, // average score from 0 to 10
-            "summary": string, // general comment about the candidate's skillset
             "assessments": [
                 {
                     "criterion_id": string, // criterion's id
                     "criterion_message": string, // criterion's message
-                    "score": number, // score from 0 to 10
-                    "reason": string // reason for the score
+                    "score": number, // score from 0 to 10 (int)
+                    "reason": string // reason for the score (2-3 sentences)
                 },
                 {
                 }, ... // other criteria
-            ]
+            ],
+            "total_score": number, // avarage value of scores for each criterion (one decimal point). you are not allowed to give a value other than the average, always calculate this value after all the scoring is done.
+            "summary": string // general comment about the candidate's skillset (3-4 sentences, highlight strengths and weaknesses. use the information from the criteria and the total score.)
         }
     """
 
@@ -157,16 +194,26 @@ def get_candidate_evaluation_from_gpt(criteria, file_content, languages):
     for name, bytes in languages.items():
         languages_info += name + "(" + str(bytes) + " bytes), "
 
+    user_message = """
+        Here are the files from the candidate's GitHub Account. 
+        Note: The contents of the file have been modified to reduce the number of TOKEN and may not be written in correct syntax. 
+        In that case, you must guess the contents of the original file yourself and do the evaluation accordingly. 
+        The fact that the content is syntactically incorrect has no effect on the evaluation at all:\n"""
+    user_message += file_content + languages_info
+
     try:
         completion = chat_client.chat.completions.create(
             model="gpt-3.5-turbo-1106",
             response_format={"type": "json_object"},
             messages=[
                 {"role": "system", "content": system_message},
-                {"role": "user", "content": "Follow system message instruction. Here are the files from the candidate's GitHub Account: " + file_content + languages_info}
-            ]
+                {"role": "user", "content": user_message}
+            ],
+            temperature=0.01,
+            seed=42,
         )
-
+        token_estimation = (len(system_message) + len(file_content)) / 5
+        logger.info(f"Input token estimation: {token_estimation}")
         return json.loads(completion.choices[0].message.content)
     except Exception as e:
         raise RuntimeError(f"Failed to generate criteria from gpt: {e}")
