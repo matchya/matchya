@@ -36,7 +36,10 @@ class GithubClient:
         :param important_file_names: A list of important file names to look for.
         :return: A list of file paths for important files in the repository.
         """
-        branch = self._get_default_branch(repo_name)
+        try:
+            branch = self._get_default_branch(repo_name)
+        except Exception:
+            return []
 
         url = Config.GITHUB_API_REPO_URL + self.github_username + "/" + repo_name + "/git/trees/" + branch + "?recursive=1"
         try:
@@ -225,6 +228,7 @@ class GithubClient:
         :param repo_name: Name of the repository.
         :return: The name of the default branch for the repository.
         """
+        print(f"getting default branch {repo_name}")
         url = Config.GITHUB_API_REPO_URL + self.github_username + "/" + repo_name
         try:
             res = requests.get(url, headers=Config.GITHUB_REST_API_HEADERS)
@@ -233,6 +237,7 @@ class GithubClient:
 
         data = json.loads(res.content)
         if data is None or data.get('default_branch') is None:
+            print(f"Error getting default branch name. No data found. {data}")
             raise RuntimeError("Error getting default branch name.")
         return data.get('default_branch')
 
