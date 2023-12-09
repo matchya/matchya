@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-import Header from './components/Header/Header';
+import { Header } from './components/ui/Header/Header';
 
 import Dashboard from '@/screens/Dashboard/Dashboard';
 import Login from '@/screens/Login';
