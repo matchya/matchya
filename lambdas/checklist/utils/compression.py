@@ -316,3 +316,7 @@ def print_if_low_compression_ratio(file_path, file_content, original_size):
     if compression_ratio < 0.2 and original_size > 2000:
         print(f"Could not compress file content much. \
               Compressed file {file_path} from {original_size} to {compressed_size} ({compression_ratio * 100}%)")
+        
+    elif compression_ratio == 0:
+        print(f"Could not compress file content at all. \
+              Compressed file {file_path} from {original_size} to {compressed_size} ({compression_ratio * 100}%)")
