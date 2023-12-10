@@ -270,12 +270,14 @@ common_extensions_compression_func_map = {
 def compress_file_content(file_path: str, original: str):
     """
     Compress file content to a smaller string
-    
+
     :param file_path: file path
     :param original: original file content
     :return: compressed file content
     """
     try:
+        if not original or len(original) == 0:
+            return original
         compressed = original
         file_name = file_path.split("/")[-1]
         extension = file_name.split(".")[-1]

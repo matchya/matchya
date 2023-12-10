@@ -80,7 +80,8 @@ class GithubClient:
             return "(No content found)"
 
         content_encoded = data['content']
-        content = str(base64.b64decode(content_encoded))
+        decoded = base64.b64decode(content_encoded)
+        content = decoded.decode("utf-8")
         return content
 
     def get_repo_file_content(self, repo_name, languages):
