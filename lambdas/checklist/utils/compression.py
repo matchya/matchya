@@ -267,29 +267,32 @@ common_extensions_compression_func_map = {
 }
 
 
-def compress_file_content(file_name: str, file_content: str):
+def compress_file_content(file_name: str, original: str):
     """Compress file content using gzip.
 
     param: file_content (str): File content to compress.
     return:str: Compressed file content.
     """
     try:
+        compressed = original
         extension = file_name.split(".")[-1]
-        file_content = remove_oneline_comments(extension, file_content)
+        compressed = remove_oneline_comments(extension, compressed)
 
         if file_name in common_files_compression_func_map:
-            file_content = common_files_compression_func_map[file_name](file_content)
+            compressed = common_files_compression_func_map[file_name](compressed)
 
         elif extension in common_extensions_compression_func_map:
-            file_content = common_extensions_compression_func_map[extension](file_content)
+            compressed = common_extensions_compression_func_map[extension](compressed)
 
         else:
-            file_content = compress_default(file_content)
-
-        # Limit file content to 4000 characters (~1000 tokens)
-        if len(file_content) > 4000:
-            file_content = file_content[:4000]
-        return file_content
+            compressed = compress_default(compressed)
+        
+        print(f"Compressed ratio: {len(compressed) / len(original)} for file: {file_name}, compressed file size #char: {len(compressed)}")
     except Exception as e:
         print(f"Error in compressing file content: {e}")
-        return file_content
+    
+    finally:
+        # Limit file content to 4000 characters (~1000 tokens)
+        if len(compressed) > 4000:
+            compressed = compressed[:4000] + "..."
+        return compressed
