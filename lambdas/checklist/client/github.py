@@ -96,8 +96,7 @@ class GithubClient:
 
         content = "repository: " + repo_name + "\n"
         for file_path in file_paths:
-            file_name = file_path.split("/")[-1]
-            compressed_content = compress_file_content(file_name, self.get_file_contents(repo_name, file_path))
+            compressed_content = compress_file_content(file_path, self.get_file_contents(repo_name, file_path))
             content += "path: " + file_path + "\n" + compressed_content + "\n"
 
         return content

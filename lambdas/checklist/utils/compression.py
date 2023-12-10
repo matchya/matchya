@@ -267,14 +267,17 @@ common_extensions_compression_func_map = {
 }
 
 
-def compress_file_content(file_name: str, original: str):
-    """Compress file content using gzip.
-
-    param: file_content (str): File content to compress.
-    return:str: Compressed file content.
+def compress_file_content(file_path: str, original: str):
+    """
+    Compress file content to a smaller string
+    
+    :param file_path: file path
+    :param original: original file content
+    :return: compressed file content
     """
     try:
         compressed = original
+        file_name = file_path.split("/")[-1]
         extension = file_name.split(".")[-1]
         compressed = remove_oneline_comments(extension, compressed)
 
@@ -287,7 +290,7 @@ def compress_file_content(file_name: str, original: str):
         else:
             compressed = compress_default(compressed)
         
-        print(f"Compressed ratio: {len(compressed) / len(original)} for file: {file_name}, compressed file size #char: {len(compressed)}")
+        print(f"Compressed ratio: {len(compressed) / len(original)} for file: {file_path}, compressed file size #char: {len(compressed)}")
     except Exception as e:
         print(f"Error in compressing file content: {e}")
     
