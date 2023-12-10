@@ -292,7 +292,7 @@ def compress_file_content(file_path: str, file_content: str):
         else:
             file_content = compress_default(file_content)
 
-        print(f"Compressed ratio: {len(file_content) / original_size} for file: {file_path}, compressed file size #char: {len(file_content)}")
+        print_if_low_compression_ratio(file_path, file_content, original_size)
     except Exception as e:
         print(f"Error in compressing file content: {e}")
 
@@ -301,3 +301,18 @@ def compress_file_content(file_path: str, file_content: str):
         if len(file_content) > 4000:
             file_content = file_content[:4000] + "..."
         return file_content
+
+
+def print_if_low_compression_ratio(file_path, file_content, original_size):
+    """
+    Print compression ratio if the file compression ratio is less than 20% and the file size is greater than 2000 characters
+
+    :param file_path: file path
+    :param file_content: compressed file content
+    :param original_size: original file size
+    """
+    compressed_size = len(file_content)
+    compression_ratio = round((original_size - compressed_size) / original_size, 2)
+    if compression_ratio < 0.2 and original_size > 2000:
+        print(f"Could not compress file content much. \
+              Compressed file {file_path} from {original_size} to {compressed_size} ({compression_ratio * 100}%)")

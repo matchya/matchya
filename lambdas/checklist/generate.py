@@ -129,7 +129,11 @@ def get_criteria_from_gpt(file_content, languages):
         system_message += name + "(" + str(bytes) + " bytes), "
 
     try:
-        user_message = "Perform your task according to the system message. These are the company's repositories and the file contents." + file_content
+        user_message = """
+            Perform your task according to the system message. Note that README.md is not as important as other files.
+            Use README.me as a reference to understand the repository, but do not use it directly to generate criteria.
+            These are the company's repositories and the file contents: %s
+        """ % file_content
         token_estimation = (len(system_message) + len(user_message)) / 4
         logger.info(f"Estimated prompt token: {token_estimation}")
         completion = chat_client.chat.completions.create(
