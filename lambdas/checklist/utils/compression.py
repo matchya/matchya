@@ -267,7 +267,7 @@ common_extensions_compression_func_map = {
 }
 
 
-def compress_file_content(file_path: str, original: str):
+def compress_file_content(file_path: str, file_content: str):
     """
     Compress file content to a smaller string
 
@@ -276,28 +276,28 @@ def compress_file_content(file_path: str, original: str):
     :return: compressed file content
     """
     try:
-        if not original or len(original) == 0:
-            return original
-        compressed = original
+        original_size = len(file_content)
+        if not file_content or original_size < 100:
+            return file_content
         file_name = file_path.split("/")[-1]
         extension = file_name.split(".")[-1]
-        compressed = remove_oneline_comments(extension, compressed)
+        file_content = remove_oneline_comments(extension, file_content)
 
         if file_name in common_files_compression_func_map:
-            compressed = common_files_compression_func_map[file_name](compressed)
+            file_content = common_files_compression_func_map[file_name](file_content)
 
         elif extension in common_extensions_compression_func_map:
-            compressed = common_extensions_compression_func_map[extension](compressed)
+            file_content = common_extensions_compression_func_map[extension](file_content)
 
         else:
-            compressed = compress_default(compressed)
-        
-        print(f"Compressed ratio: {len(compressed) / len(original)} for file: {file_path}, compressed file size #char: {len(compressed)}")
+            file_content = compress_default(file_content)
+
+        print(f"Compressed ratio: {len(file_content) / original_size} for file: {file_path}, compressed file size #char: {len(file_content)}")
     except Exception as e:
         print(f"Error in compressing file content: {e}")
-    
+
     finally:
         # Limit file content to 4000 characters (~1000 tokens)
-        if len(compressed) > 4000:
-            compressed = compressed[:4000] + "..."
-        return compressed
+        if len(file_content) > 4000:
+            file_content = file_content[:4000] + "..."
+        return file_content
