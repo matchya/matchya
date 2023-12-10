@@ -170,12 +170,24 @@ def compress_rust_file(file_content):
     return file_content
 
 
+def compress_terraform_file(file_content):
+    lines = file_content.split("\n")
+    compressed_lines = [line for line in lines
+                        if line.lstrip().startswith("resource") or line.lstrip().startswith("module")
+                        or line.lstrip().startswith("provider") or line.lstrip().startswith("data")
+                        or line.lstrip().startswith("variable") or line.lstrip().startswith("output")
+                        or line.lstrip().startswith("locals") or line.lstrip().startswith("terraform")
+                        or line.lstrip().startswith("terraform") or line.lstrip().startswith("return")]
+    file_content = "\n".join(compressed_lines)
+    return file_content
+
+
 def compress_read_me(file_content):
     lines = file_content.split("\n")
     compressed_lines = [line for line in lines
                         if "![" not in line and "<img" not in line and "<video" not in line
                         and "<audio" not in line and "<iframe" not in line and "<object" not in line
-                        and "<embed" not in line and "<svg" not in line 
+                        and "<embed" not in line and "<svg" not in line
                         and "http://" not in line and "https://" not in line]
     file_content = "\n".join(compressed_lines)
     return file_content
@@ -250,7 +262,8 @@ common_extensions_compression_func_map = {
     "swift": compress_swift_file,
     "kt": compress_kotlin_file,
     "php": compress_php_file,
-    "rs": compress_rust_file
+    "rs": compress_rust_file,
+    "tf": compress_terraform_file,
 }
 
 
@@ -272,7 +285,7 @@ def compress_file_content(file_name: str, file_content: str):
 
         else:
             file_content = compress_default(file_content)
-            
+
         # Limit file content to 4000 characters (~1000 tokens)
         if len(file_content) > 4000:
             file_content = file_content[:4000]
