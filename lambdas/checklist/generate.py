@@ -129,15 +129,23 @@ def get_criteria_from_gpt(file_content, languages):
         system_message += name + "(" + str(bytes) + " bytes), "
 
     try:
+        user_message = """
+            Perform your task according to the system message. Note that README.md is not as important as other files.
+            Use README.me as a reference to understand the repository, but do not use it directly to generate criteria.
+            These are the company's repositories and the file contents: %s
+        """ % file_content
+        token_estimation = (len(system_message) + len(user_message)) / 4
+        logger.info(f"Estimated prompt token: {token_estimation}")
         completion = chat_client.chat.completions.create(
             model="gpt-3.5-turbo-1106",
             response_format={"type": "json_object"},
             messages=[
                 {"role": "system", "content": system_message},
-                {"role": "user", "content": "Perform your task according to the system message. These are the company's repositories and the file contents." + file_content}
+                {"role": "user", "content": user_message}
             ]
         )
         content = json.loads(completion.choices[0].message.content)
+        logger.info(f"Criteria generated: {content['criteria']}")
         return content['criteria']
     except Exception as e:
         raise RuntimeError(f"Error generating criteria with OpenAI API: {e}")

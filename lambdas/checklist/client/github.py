@@ -80,7 +80,8 @@ class GithubClient:
             return "(No content found)"
 
         content_encoded = data['content']
-        content = str(base64.b64decode(content_encoded))
+        decoded = base64.b64decode(content_encoded)
+        content = decoded.decode("utf-8")
         return content
 
     def get_repo_file_content(self, repo_name, languages):
@@ -96,8 +97,7 @@ class GithubClient:
 
         content = "repository: " + repo_name + "\n"
         for file_path in file_paths:
-            file_name = file_path.split("/")[-1]
-            compressed_content = compress_file_content(file_name, self.get_file_contents(repo_name, file_path))
+            compressed_content = compress_file_content(file_path, self.get_file_contents(repo_name, file_path))
             content += "path: " + file_path + "\n" + compressed_content + "\n"
 
         return content
