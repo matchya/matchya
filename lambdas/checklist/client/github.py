@@ -79,7 +79,7 @@ class GithubClient:
     def get_pinned_repositories_name(self):
         """
         Retrieves the names of the pinned repositories of a GitHub user.
-        
+
         :return: A list of the names of the pinned repositories.
         """
         query = """
@@ -149,7 +149,7 @@ class GithubClient:
     def get_important_file_names_by_languages(languages):
         """
         Returns a list of file names that are important for the given programming languages.
-        
+
         :param languages: A list of programming languages (and their usage details) used in the repository.
         :return: A list of file names that are important for the given programming languages.
         """
@@ -212,7 +212,7 @@ class GithubClient:
     def get_organized_folder_structure(paths):
         """
         Organizes a list of file paths into a tree structure.
-        
+
         :param paths: A list of file paths.
         :return: A string representation of the tree structure.
         """
