@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import Settings from './Settings';
 
 export default {
-  title: 'Components/Settings',
+  title: 'Screens/Settings',
   component: Settings,
 } as Meta;
 

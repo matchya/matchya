@@ -22,22 +22,18 @@ const Header = () => {
     try {
       await me();
     } catch (error) {
-      navigate('/login');
+      navigate('/auth');
     }
   };
 
-  const logout = async () => {
+  const handleLogout = async () => {
     try {
-      await axiosInstance.post('/logout')
+      await axiosInstance.post('/logout');
       resetAll();
       navigate('/');
     } catch (err) {
-      console.error(err)
+      console.error(err);
     }
-  };
-
-  const navigateToLogin = () => {
-    navigate('/login');
   };
 
   return (
@@ -65,9 +61,9 @@ const Header = () => {
         ) : null}
         <button
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full m-6"
-          onClick={id ? logout : navigateToLogin}
+          onClick={handleLogout}
         >
-          {id ? 'Logout' : 'Login'}
+          Logout
         </button>
       </div>
     </div>
