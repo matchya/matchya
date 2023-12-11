@@ -73,7 +73,8 @@ def save_candidate_info_to_db(body):
         logger.info(f"Candidate already exists in db, updated the information. candidate id is still: {result[0]}")
         return result[0]
     except Exception as e:
-        raise RuntimeError(f"Failed to save candidate info: {e}")
+        logger.error(f"Failed to save candidate info: {e}")
+        raise RuntimeError("Failed to save candidate info")
 
 
 def get_criteria_from_dynamodb(checklist_id):
@@ -95,7 +96,8 @@ def get_criteria_from_dynamodb(checklist_id):
         criteria = [{'id': item['id'], 'message': item['message'], 'keywords': item.get('keywords', [])} for item in response.get('Items')]
         return criteria
     except Exception as e:
-        raise RuntimeError(f"Failed to retrieve criteria: {e}")
+        logger.error(f"Failed to retrieve criteria: {e}")
+        raise RuntimeError("Failed to retrieve criteria")
 
 
 def retrieve_candidate_github_data(github_client: GithubClient):
@@ -130,7 +132,7 @@ def retrieve_candidate_github_data(github_client: GithubClient):
         return repositories_data
     except Exception as e:
         logger.error(f"Error retrieving repositories data: {e}")
-        raise RuntimeError(f"Error retrieving repositories data: {e}")
+        raise RuntimeError("Error retrieving repositories data")
 
 
 def get_system_and_user_message(repositories_data, criteria):
@@ -257,7 +259,8 @@ def evaluate_candidate_with_gpt(system_message, user_message):
         logger.info(f"Input token estimation: {token_estimation}")
         return json.loads(completion.choices[0].message.content)
     except Exception as e:
-        raise RuntimeError(f"Failed to generate criteria from gpt: {e}")
+        logger.error(f"Failed to generate criteria from gpt: {e}")
+        raise RuntimeError("Failed to generate criteria from gpt")
 
 
 def save_candidate_evaluation_to_db(checklist_id, candidate_id, candidate_result):
@@ -290,7 +293,8 @@ def save_candidate_result(checklist_id, candidate_id, candidate_result):
         db_cursor.execute(sql, (id, checklist_id, candidate_id, total_score, summary))
         return id
     except Exception as e:
-        raise RuntimeError(f"Failed to save candidate result: {e}")
+        logger.error(f"Failed to save candidate result: {e}")
+        raise RuntimeError("Failed to save candidate result")
 
 
 def save_candidate_assessments(candidate_result_id, assessments):
@@ -313,7 +317,8 @@ def save_candidate_assessments(candidate_result_id, assessments):
         sql = sql[:-1] + ";"
         db_cursor.execute(sql)
     except Exception as e:
-        raise RuntimeError(f"Failed to save candidate assessments: {e}")
+        logger.error(f"Failed to save candidate assessments: {e}")
+        raise RuntimeError("Failed to save candidate assessments")
 
 
 def handler(event, context):
