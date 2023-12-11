@@ -13,7 +13,7 @@ export const Header = () => {
   const { id, resetAll, me } = useCompanyStore();
 
   useEffect(() => {
-    if (!id) navigate('/login');
+    if (id) return;
     getAuthStatus();
   }, [location.pathname]);
 
@@ -21,7 +21,7 @@ export const Header = () => {
     try {
       await me();
     } catch (error) {
-      navigateToLogin();
+      navigateToAuth();
     }
   };
 
@@ -35,8 +35,8 @@ export const Header = () => {
     }
   };
 
-  const navigateToLogin = () => {
-    navigate('/login');
+  const navigateToAuth = () => {
+    navigate('/auth');
   };
 
   return (
@@ -49,7 +49,7 @@ export const Header = () => {
           {id ? (
             <UserNav onLogout={handleLogout} />
           ) : (
-            <Button onClick={navigateToLogin}>Log in</Button>
+            <Button onClick={navigateToAuth}>Log in</Button>
           )}
         </div>
       </div>

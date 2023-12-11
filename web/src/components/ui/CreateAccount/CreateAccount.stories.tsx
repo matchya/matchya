@@ -19,5 +19,13 @@ export default meta;
 type Story = StoryObj<typeof CreateAccount>;
 
 export const Default: Story = {
-  render: () => <CreateAccount />,
+  render: () => (
+    <CreateAccount
+      handleInputChange={() => {}}
+      handleGithubAuthentication={() => {}}
+      handleCreateAccount={() => {}}
+      password=""
+      email=""
+    />
+  ),
 };

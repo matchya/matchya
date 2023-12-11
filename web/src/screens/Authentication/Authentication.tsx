@@ -20,7 +20,7 @@ export interface RegisterInput {
   github_username: string;
 }
 
-const Login = () => {
+const Authentication = () => {
   const navigate = useNavigate();
   const [authType, setAuthType] = useState<'login' | 'signup'>('login');
   const [userInput, setUserInput] = useState({
@@ -182,4 +182,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Authentication;

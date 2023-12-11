@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
   authType: 'login' | 'signup';
-  onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+  onSubmit: (event: any) => void;
   isLoading: boolean;
   userInput: {
     companyName: string;
