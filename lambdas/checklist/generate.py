@@ -105,28 +105,26 @@ def get_system_and_user_message(repositories_data):
         1. **Format Specification**: Structure the response in JSON format. Each entry should consist of a 'keywords' array and a 'message' string within a criterion object.
 
         2. **Individual Major Technologies**: Each major technology must be treated as a distinct and separate criterion.
-            This is imperative for technologies like Docker, AWS, Terraform, Kubernetes, Python, and JavaScript, among others.
-            It is essential to understand that each of these technologies is a critical and standalone skill.
-            For example, 'Docker' should form its own criterion focusing exclusively on containerization skills, 'AWS' on cloud services and infrastructure, and 'Terraform' on infrastructure as code.
-            This approach is necessary because a candidate might have deep expertise in one of these areas (like Docker) but limited knowledge in another (like Terraform).
-            Thus, creating separate criteria for each ensures a clear and accurate assessment of a candidate's specific skills in each of these significant technologies.
+            Type of major technologies include programming languages, frameworks, and infrastructure elements.
+            Type of minor technologies include libraries, tools, and packages.
             Avoid grouping these major technologies under any circumstance to ensure precise evaluation of candidate abilities in each distinct area.
+            You can group major technologies with minor technologies, but not with other major technologies.
+            You cannot create a criteria with only minor technologies.
 
         3. **Grouping of Related Tools**: Combine technologies or tools that are closely related and often used together into a single criterion.
             For example, 'Git' and 'GitHub' can be grouped together for version control, and 'React' with 'Next.js' for front-end development.
-            This grouping should be judicious, maintaining relevance and coherence.
+            This grouping should be judicious, maintaining relevance and coherence. For example, 'Git' and 'React' should not be grouped together.
+            You can also include a technology that is not found in our repositories but is relevant to the criterion. However, in that case, you cannot add that keyword in the message.
 
-        4. **Descriptive Messages**: Each criterion should include a brief message, preferably within 5-6 words, describing the role and importance of the technology or skill in our projects.
-            Never use too long message like 10 words, it's too long. For example, 'JavaScript for client-side scripting' or 'AWS for cloud services'.
+        4. **Descriptive Messages**: Each criterion should include a brief message, preferably within 6-8 words, describing the role and importance of the technology or skill in our projects.
+            Never use too long message like 15 words, it's too long. For example, 'JavaScript and React for client-side development' or 'AWS services including EC2, ECS, and RDS for cloud services'.
+            Users cannot see keywords, so the message must be descriptive enough to convey the criterion's purpose and relevance. Include major technologies in the keywords in the message.
+            If the message needs to be long to convey the criterion's purpose, then it is likely that the criterion is too broad and should be split into multiple criteria.
 
-        5. **Focus on Relevance**: Prioritize technologies that are central to our projects, including key programming languages, frameworks, and infrastructure elements.
-            Exclude minor tools or libraries unless they hold particular relevance.
+        5. **Number of Criteria**: Target around 8-10 criteria, but this can vary (6 to 12) depending on the repository's contents, ensuring comprehensive coverage without overcomplication.
+            It's much better to have more criteria than making them too broad and general using too many keywords in a single criterion.
 
-        6. **Clear Criteria for Each Technology**: Ensure each criterion is focused and revolves around a single, coherent concept, aiding in accurate candidate assessment.
-
-        7. **Number of Criteria**: Target around 8-10 criteria, but this can vary (6 to 12) depending on the repository's contents, ensuring comprehensive coverage without overcomplication.
-
-        8. **Guidance from Repository Data**: Utilize the provided details on programming languages and technologies in our repositories to guide the inclusion and emphasis of relevant languages and technologies in your criteria.
+        6. **Guidance from Repository Data**: Utilize the provided details on programming languages and technologies in our repositories to guide the inclusion and emphasis of relevant languages and technologies in your criteria.
 
         Your response must be in the following JSON format like this (example):
         {
@@ -318,6 +316,8 @@ def handler(event, context):
 
         github_client = GithubClient(github_username)
         repositories_data = retrieve_repositories_data(github_client, repository_names)
+        logger.info(f'Repositories data retrieved successfully for position: {repositories_data}')
+        
         system_message, user_message = get_system_and_user_message(repositories_data)
         criteria = get_criteria_from_gpt(system_message, user_message,)
         logger.info(f'Checklist and Criteria generated successfully for position: {position_id}')

@@ -39,7 +39,7 @@ class GithubClient:
         try:
             branch = self._get_default_branch(repository_name)
         except Exception:
-            return []
+            raise RuntimeError("Error getting file tree. Unable to get default branch name.")
 
         url = Config.GITHUB_API_REPO_URL + self.github_username + "/" + repository_name + "/git/trees/" + branch + "?recursive=1"
         try:
@@ -57,7 +57,7 @@ class GithubClient:
     def read_file(self, repository_name, file_path):
         """
         Retrieves the contents of a file from a GitHub repository.
-        
+
         :param repository_name: Repository name.
         :param file_path: Path of the file in the repository.
         :return: The content of the file as a string.
@@ -95,9 +95,15 @@ class GithubClient:
             if paths.count("/") > max_depth:
                 max_depth = paths.count("/")
 
-        while len(package_file_paths) > 10:
+        num_paths = len(package_file_paths)
+        while num_paths > 10:
             max_depth -= 1
-            package_file_paths = [path for path in package_file_paths if path.count("/") == max_depth]
+            for path in package_file_paths:
+                if num_paths <= 10:
+                    break
+                if path.count("/") > max_depth:
+                    package_file_paths.remove(path)
+                    num_paths -= 1
 
         return package_file_paths
 
@@ -159,7 +165,7 @@ class GithubClient:
 
         data = json.loads(res.content)
         if data is None or data.get('default_branch') is None:
-            raise RuntimeError("Error getting default branch name.")
+            raise RuntimeError("Unable to get default branch name. No data found.")
         return data.get('default_branch')
 
     ##############################################################
