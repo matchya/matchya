@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import Dashboard from './Dashboard';
 
 export default {
-  title: 'Components/Home',
+  title: 'Screens/Dashboard',
   component: Dashboard,
 } as Meta;
 
