@@ -5,7 +5,6 @@ import { useCompanyStore } from '../../store/useCompanyStore';
 import CriteriaBox from './CriteriaBox';
 import DashboardHeader from './DashboardHeader';
 import ScoreCard from './ScoreCard';
-import Sidebar from './Sidebar';
 
 const Dashboard = () => {
   const { positions, selectedPosition, setSelectedPositionDetail } =
@@ -34,7 +33,7 @@ const Dashboard = () => {
     }
 
     return (
-      <div className="w-5/6">
+      <div>
         <div className="w-full">
           <DashboardHeader />
         </div>
@@ -63,14 +62,9 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="pt-16 bg-gray-100 h-screen overflow-hidden">
+    <div className="bg-gray-100 h-screen overflow-hidden">
       <div className="w-full h-full mx-auto">
-        <div className="w-full h-full flex">
-          <div className="w-1/6 pt-0 mt-0 h-full bg-gray-300 border border-3">
-            <Sidebar />
-          </div>
-          <DashboardBody />
-        </div>
+        <DashboardBody />
       </div>
     </div>
   );

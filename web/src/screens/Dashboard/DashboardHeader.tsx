@@ -16,9 +16,6 @@ const DashboardHeader = () => {
   return (
     <div className="w-full flex justify-between items-center py-4 bg-gray-500">
       {showModal && <AddCandidateModal close={() => setShowModal(false)} />}
-      <h1 className="text-3xl font-bold text-white ml-16">
-        {selectedPosition?.name}
-      </h1>
       {selectedPosition?.checklists &&
         selectedPosition?.checklists.length > 0 && (
           <Button
