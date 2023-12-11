@@ -9,6 +9,7 @@ from openai import OpenAI
 
 from config import Config
 from client.github import GithubClient
+from utils.compression import compress_file_content
 
 # Logger
 logger = logging.getLogger('publish_generation')
@@ -97,41 +98,43 @@ def get_criteria_from_dynamodb(checklist_id):
         raise RuntimeError(f"Failed to retrieve criteria: {e}")
 
 
-def evaluate_candidate(github_client: GithubClient, repository_names, criteria):
-    """
-    Generates criteria from GitHub repositories.
-
-    :param github_client: A GitHub client object.
-    :param repository_names: A list of repository names.
-    :param criteria: A list of criteria with id, keywords and message
-    :return: A list of criteria.
-    """
-    logger.info("Evaluating the candidate...")
+def retrieve_candidate_github_data(github_client: GithubClient):
+    pinned_repositories = github_client.get_pinned_repositories_name()
+    logger.info("Retrieving repositories data...")
     try:
-        contents_and_languages = github_client.get_repos_file_contents_and_languages(repository_names)
+        repositories_data = []
+        for repository_name in pinned_repositories:
+
+            programming_languages = github_client.get_programming_languages_used(repository_name)
+            repo_tree = github_client.get_repository_tree(repository_name)
+
+            n = 5
+            depth_n_files = [branch['path'] for branch in repo_tree if branch["path"].count("/") < n and branch["type"] == "blob"]
+            while len(depth_n_files) > 400:
+                n -= 1
+                depth_n_files = [file for file in depth_n_files if file.count("/") < n]
+
+            repo_structure = GithubClient.get_organized_folder_structure(depth_n_files)
+            package_files = GithubClient.get_package_file_paths_to_read(depth_n_files, programming_languages)
+
+            repo_data = {'name': repository_name, 'languages': programming_languages, 'structure': repo_structure, 'files': []}
+            for file_path in package_files:
+                file_content = github_client.read_file(repository_name, file_path)
+                compressed_content = compress_file_content(file_path, file_content)
+                repo_data['files'].append({
+                    'path': file_path,
+                    'content': compressed_content
+                })
+            repositories_data.append(repo_data)
+
+        return repositories_data
     except Exception as e:
-        raise RuntimeError(f"Error Reading files: {e}")
+        logger.error(f"Error retrieving repositories data: {e}")
+        raise RuntimeError(f"Error retrieving repositories data: {e}")
 
-    return get_candidate_evaluation_from_gpt(criteria, contents_and_languages['file_content'], contents_and_languages['languages'])
 
-
-def get_candidate_evaluation_from_gpt(criteria, file_content, languages):
-    """
-    Evaluates a candidate's GitHub repository contents against specified criteria using ChatGPT.
-
-    :param criteria_full_messages: A list of criteria id, keywords, and messages.
-    :param repos_content: Content from the candidate's GitHub repositories.
-    :param languages: A dictionary of programming languages and their byte sizes.
-    :return: A JSON object representing the candidate's evaluation scores and reasons, based on the criteria.
-    """
-    logger.info("Getting the candidate evaluation from GPT...")
-    system_message = "A company is looking for promising employees as software engineers. Candidates need to have a skillset to work on the company's project in terms of programming languages and other technologies. These are criteria that the company needs candidates to have. You need to assess candidates on each criteria with keywords and a message : "
-
-    for i in range(len(criteria)):
-        criterion = criteria[i]
-        system_message += "\n" + "criterion" + str(i + 1) + ". id: " + criterion['id'] + criterion["message"] + " (keywords: " + ", ".join(criterion["keywords"]) + ")"
-
-    system_message += """
+def get_system_and_user_message(repositories_data, criteria):
+    system_message = """
         A company is seeking skilled software engineers for its projects. The assessment will be based on the candidate's GitHub repositories contents. 
         The criteria include specific skills and technologies relevant to the company's needs. 
         The evaluation will be on a scale of 0 to 10, with 0 indicating a lack of skill and 10 representing perfect proficiency.
@@ -160,8 +163,9 @@ def get_candidate_evaluation_from_gpt(criteria, file_content, languages):
 
         2. **Message Importance:**
         - Emphasize that the evaluation is primarily based on the message, not just keywords.
-        - A candidate doesn't need every keyword; proficiency in the mentioned technology is crucial.
+        - A candidate doesn't need to have skills in all of the keywords; proficiency in the mentioned technology is crucial.
         - Provide scores and reasoning that align clearly with the message content.
+        - Even if the candidate does not have the exactly same skills in the keywords, if the candidate has similar skills according to the message, you can give some points.
 
         3. **Detailed Reasoning:**
         - Precision and detail in reasoning are vital.
@@ -190,17 +194,54 @@ def get_candidate_evaluation_from_gpt(criteria, file_content, languages):
         }
     """
 
-    languages_info = "\nHere is the list of programming languages this candidate used. If you can use this as helpful information, use it:"
-    for name, bytes in languages.items():
-        languages_info += name + "(" + str(bytes) + " bytes), "
+    user_message = "First of all, here are criteria that the company needs candidates to have. You need to assess candidates on each criteria with keywords and a message : "
+    for i in range(len(criteria)):
+        criterion = criteria[i]
+        user_message += "\n" + "criterion" + str(i + 1) + ". id: " + criterion['id'] + criterion["message"] + " (keywords: " + ", ".join(criterion["keywords"]) + ")"
+    user_message += "\n\n"
 
-    user_message = """
-        Here are the files from the candidate's GitHub Account. 
+    user_message += """
+        Next, here are the data from the candidate's GitHub Account. 
         Note: The contents of the file have been modified to reduce the number of TOKEN and may not be written in correct syntax. 
         In that case, you must guess the contents of the original file yourself and do the evaluation accordingly. 
-        The fact that the content is syntactically incorrect has no effect on the evaluation at all:\n"""
-    user_message += file_content + languages_info
+        The fact that the content is syntactically incorrect has no effect on the evaluation at all:\n
+    """
+    for repository_data in repositories_data:
+        user_message += "Repository: " + repository_data['name'] + "\n"
 
+        user_message += "This repository uses the following programming languages: "
+        for name, bytes in repository_data['languages'].items():
+            user_message += name + "(" + str(bytes) + " bytes), "
+        user_message += "\n"
+
+        user_message += "This repository has the following file structure: \n"
+        user_message += repository_data['structure'] + "\n"
+
+        if len(user_message) > 50000:
+            break
+
+        for file_data in repository_data['files']:
+            user_message += "file paths: " + file_data['path'] + "\n"
+            user_message += file_data['content'] + "\n\n"
+
+        user_message += "Repository " + repository_data['name'] + " ends here.\n\n"
+
+        if len(user_message) > 50000:
+            user_message = user_message[:50000] + "...\n Repository " + repository_data['name'] + " ends here.\n\n"
+            break
+
+    return system_message, user_message
+
+
+def evaluate_candidate_with_gpt(system_message, user_message):
+    """
+    Evaluates a candidate's GitHub repository contents against specified criteria using ChatGPT.
+
+    :param system_message: The system message to be sent to ChatGPT.
+    :param user_message: The user message to be sent to ChatGPT.
+    :return: A dictionary with the candidate's evaluation result in JSON format.
+    """
+    logger.info("Getting the candidate evaluation from GPT...")
     try:
         completion = chat_client.chat.completions.create(
             model="gpt-3.5-turbo-1106",
@@ -212,7 +253,7 @@ def get_candidate_evaluation_from_gpt(criteria, file_content, languages):
             temperature=0.01,
             seed=42,
         )
-        token_estimation = (len(system_message) + len(file_content)) / 5
+        token_estimation = (len(system_message) + len(user_message)) / 4
         logger.info(f"Input token estimation: {token_estimation}")
         return json.loads(completion.choices[0].message.content)
     except Exception as e:
@@ -299,8 +340,11 @@ def handler(event, context):
         github_client = GithubClient(github_username)
 
         criteria = get_criteria_from_dynamodb(checklist_id)
-        pinned_repositories = github_client.get_pinned_repositories_name()
-        candidate_result = evaluate_candidate(github_client, pinned_repositories, criteria)
+        repositories_data = retrieve_candidate_github_data(github_client)
+        logger.info(f'Repositories data retrieved successfully for position: {repositories_data}')
+
+        system_message, user_message = get_system_and_user_message(repositories_data, criteria)
+        candidate_result = evaluate_candidate_with_gpt(system_message, user_message,)
         logger.info(f"Generated candidate evaluation successfully: {candidate_result}")
 
         save_candidate_evaluation_to_db(checklist_id, candidate_id, candidate_result)
