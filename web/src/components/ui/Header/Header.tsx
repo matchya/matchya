@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router';
 
-import { Button } from '@/components/ui/Button/Button';
+import { PositionSwitcher } from '../PositionSwitcher/PositionSwitcher';
+
 import { MainNav } from '@/components/ui/MainNav/MainNav';
 import { UserNav } from '@/components/ui/UserNav/UserNav';
 import { axiosInstance } from '@/helper';
@@ -42,7 +43,7 @@ export const Header = () => {
   return (
     <div className="border-b">
       <div className="flex h-16 items-center px-4">
-        {/* <TeamSwitcher /> */}
+        <PositionSwitcher />
         <MainNav className="mx-6" />
         <div className="ml-auto flex items-center space-x-4">
           {/* <Search /> */}
