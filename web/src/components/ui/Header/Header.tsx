@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router';
 
-import { Button } from '@/components/ui/Button/Button';
 import { MainNav } from '@/components/ui/MainNav/MainNav';
 import { UserNav } from '@/components/ui/UserNav/UserNav';
 import { axiosInstance } from '@/helper';
@@ -46,11 +45,7 @@ export const Header = () => {
         <MainNav className="mx-6" />
         <div className="ml-auto flex items-center space-x-4">
           {/* <Search /> */}
-          {id ? (
-            <UserNav onLogout={handleLogout} />
-          ) : (
-            <Button onClick={navigateToAuth}>Log in</Button>
-          )}
+          <UserNav onLogout={handleLogout} />
         </div>
       </div>
     </div>
