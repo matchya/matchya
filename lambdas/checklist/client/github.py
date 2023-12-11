@@ -203,6 +203,38 @@ class GithubClient:
             raise RuntimeError("Error getting GitHub user. Request to GitHub API failed.")
         return res.status_code == 200
 
+    @staticmethod
+    def get_organized_folder_structure(paths):
+        """
+        Organizes a list of file paths into a tree structure.
+        
+        :param paths: A list of file paths.
+        :return: A string representation of the tree structure.
+        """
+        tree = {}
+
+        def add_to_tree(base, chain):
+            if len(chain) == 1:
+                base[chain[0]] = base.get(chain[0], {})
+            else:
+                node = base.get(chain[0], {})
+                base[chain[0]] = node
+                add_to_tree(node, chain[1:])
+
+        for path in paths:
+            parts = path.split('/')
+            add_to_tree(tree, parts)
+
+        def tree_to_string(base, level=0):
+            result = ""
+            for k, v in sorted(base.items()):
+                result += "   " * level + k + "\n"
+                if isinstance(v, dict):
+                    result += tree_to_string(v, level + 1)
+            return result
+
+        return tree_to_string(tree).rstrip()
+
     def _get_default_branch(self, repo_name):
         """
         Fetches the default branch name of a given GitHub repository.
