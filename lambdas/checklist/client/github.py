@@ -188,6 +188,21 @@ class GithubClient:
 
         return important_file_names
 
+    @staticmethod
+    def github_user_exists(username):
+        """
+        Checks if a GitHub user exists.
+
+        :param username: The GitHub username.
+        :return: True if the user exists, False otherwise.
+        """
+        url = "https://api.github.com/users/" + username
+        try:
+            res = requests.get(url, headers=Config.GITHUB_REST_API_HEADERS)
+        except Exception:
+            raise RuntimeError("Error getting GitHub user. Request to GitHub API failed.")
+        return res.status_code == 200
+
     def _get_default_branch(self, repo_name):
         """
         Fetches the default branch name of a given GitHub repository.
