@@ -181,9 +181,9 @@ def get_criteria_from_gpt(system_message, user_message):
     """
     Generates a list of criteria keywords using OpenAI's ChatGPT based on given prompt and programming languages.
 
-    :param file_content: A string containing the contents of all files in the repositories.
-    :param languages: A dictionary containing the programming languages and their byte size.
-    :return: A list of criteria with keywords and message.
+    :param system_message: A system message to be used as prompt for OpenAI's ChatGPT.
+    :param user_message: A user message to be used as prompt for OpenAI's ChatGPT.
+    :return: A list of criteria keywords.
     """
     logger.info("Getting the criteria from GPT...")
     try:
@@ -317,7 +317,7 @@ def handler(event, context):
         github_client = GithubClient(github_username)
         repositories_data = retrieve_repositories_data(github_client, repository_names)
         logger.info(f'Repositories data retrieved successfully for position: {repositories_data}')
-        
+
         system_message, user_message = get_system_and_user_message(repositories_data)
         criteria = get_criteria_from_gpt(system_message, user_message,)
         logger.info(f'Checklist and Criteria generated successfully for position: {position_id}')
