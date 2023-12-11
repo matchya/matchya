@@ -13,8 +13,7 @@ export const Header = () => {
   const { id, resetAll, me } = useCompanyStore();
 
   useEffect(() => {
-    if (id) return;
-    if (location.pathname === '/login' || location.pathname === '/') return;
+    if (!id) navigate('/login');
     getAuthStatus();
   }, [location.pathname]);
 
@@ -22,7 +21,7 @@ export const Header = () => {
     try {
       await me();
     } catch (error) {
-      navigate('/login');
+      navigateToLogin();
     }
   };
 
