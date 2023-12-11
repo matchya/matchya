@@ -16,7 +16,7 @@ interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
     githubUsername: string;
     password: string;
   };
-  onUserInputChange: (fieldName: string, value: string) => void;
+  onUserInputChange: any;
 }
 
 export function UserAuthForm({
