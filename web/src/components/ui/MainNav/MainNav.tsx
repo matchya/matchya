@@ -1,5 +1,3 @@
-import { Link } from 'react-router-dom';
-
 import { cn } from '@/lib/utils';
 
 export function MainNav({
@@ -11,18 +9,14 @@ export function MainNav({
       className={cn('flex items-center space-x-4 lg:space-x-6', className)}
       {...props}
     >
-      <Link
+      {/* This is an example if we happen to need links... */}
+      {/* <Link
         to="/"
         className="text-sm font-medium transition-colors hover:text-primary"
       >
         Home
       </Link>
-      <Link
-        to="/examples/dashboard"
-        className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-      >
-        Settings
-      </Link>
+     */}
     </nav>
   );
 }
