@@ -101,6 +101,12 @@ def get_criteria_from_dynamodb(checklist_id):
 
 
 def retrieve_candidate_github_data(github_client: GithubClient):
+    """
+    Retrieves the candidate's GitHub repository data.
+    
+    :param github_client: The GitHub client.
+    :return: The candidate's GitHub repository data.
+    """
     pinned_repositories = github_client.get_pinned_repositories_name()
     logger.info("Retrieving repositories data...")
     try:
@@ -136,6 +142,13 @@ def retrieve_candidate_github_data(github_client: GithubClient):
 
 
 def get_system_and_user_message(repositories_data, criteria):
+    """
+    Generates the system and user messages for the candidate evaluation.
+    
+    :param repositories_data: The candidate's GitHub repository data.
+    :param criteria: The criteria for the candidate evaluation.
+    :return: The system and user messages for the candidate evaluation.
+    """
     system_message = """
         A company is seeking skilled software engineers for its projects. The assessment will be based on the candidate's GitHub repositories contents. 
         The criteria include specific skills and technologies relevant to the company's needs. 

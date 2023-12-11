@@ -14,7 +14,7 @@ class GithubClient:
         Retrieves programming languages used in a specified GitHub repository.
 
         :param repository_name: Name of the GitHub repository.
-        :return: A list of programming languages used in the repository.
+        :return: A map of programming languages containing the bytes of code written in each language and its name.
         """
         url = Config.GITHUB_API_REPO_URL + self.github_username + "/" + repository_name + "/languages"
         try:
@@ -78,10 +78,9 @@ class GithubClient:
 
     def get_pinned_repositories_name(self):
         """
-        Fetches names of pinned repositories for a given GitHub username.
-
-        :param github_username: The GitHub username.
-        :return: A list of names of pinned repositories.
+        Retrieves the names of the pinned repositories of a GitHub user.
+        
+        :return: A list of the names of the pinned repositories.
         """
         query = """
         {
@@ -148,6 +147,12 @@ class GithubClient:
 
     @staticmethod
     def get_important_file_names_by_languages(languages):
+        """
+        Returns a list of file names that are important for the given programming languages.
+        
+        :param languages: A list of programming languages (and their usage details) used in the repository.
+        :return: A list of file names that are important for the given programming languages.
+        """
         important_file_names = ["README.md"]
 
         package_file_names = {
@@ -239,9 +244,7 @@ class GithubClient:
         """
         Fetches the default branch name of a given GitHub repository.
 
-        :param github_username: GitHub username.
-        :param repo_name: Name of the repository.
-        :return: The name of the default branch for the repository.
+        :param repo_name: The name of the GitHub repository.
         """
         url = Config.GITHUB_API_REPO_URL + self.github_username + "/" + repo_name
         try:
