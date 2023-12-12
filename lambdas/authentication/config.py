@@ -14,6 +14,9 @@ class Config:
 
     JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
 
+    GITHUB_CLIENT_ID = os.getenv('GITHUB_CLIENT_ID')
+    GITHUB_CLIENT_SECRET = os.getenv('GITHUB_CLIENT_SECRET')
+
     @classmethod
     def validate(cls):
         """
