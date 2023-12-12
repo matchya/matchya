@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/Button/Button';
 import { Icons } from '@/components/ui/Icons/Icons';
 import { Input } from '@/components/ui/Input/Input';
 import { Label } from '@/components/ui/Label/Label';
+import { githubClientId } from '@/config';
 import { cn } from '@/lib/utils';
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -28,6 +29,13 @@ export function UserAuthForm({
   onUserInputChange,
   ...props
 }: UserAuthFormProps) {
+  const handleGithubLogin = () => {
+    const redirectUri = 'http://127.0.0.1:5173/auth/github/callback';
+    const loginUrl = `https://github.com/login/oauth/authorize?client_id=${githubClientId}&redirect_uri=${redirectUri}&scope=user`;
+
+    window.location.href = loginUrl;
+  };
+
   const renderInputs = () => {
     const commonInputs = (
       <>
@@ -112,7 +120,7 @@ export function UserAuthForm({
         </div>
       </form>
       {/* To be implemented soon */}
-      {/* <div className="relative">
+      <div className="relative">
         <div className="absolute inset-0 flex items-center">
           <span className="w-full border-t" />
         </div>
@@ -122,14 +130,20 @@ export function UserAuthForm({
           </span>
         </div>
       </div>
-      <Button variant="outline" type="button" disabled={isLoading}>
+
+      <Button
+        variant="outline"
+        type="button"
+        disabled={isLoading}
+        onClick={handleGithubLogin}
+      >
         {isLoading ? (
           <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
         ) : (
           <Icons.gitHub className="mr-2 h-4 w-4" />
         )}{' '}
-        Github
-      </Button> */}
+        GitHub
+      </Button>
     </div>
   );
 }
