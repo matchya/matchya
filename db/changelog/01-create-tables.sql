@@ -118,3 +118,7 @@ ALTER TABLE position ADD COLUMN checklist_generation_status varchar(30) DEFAULT 
 -- change the type of total_score from int to float
 ALTER TABLE candidate_result ALTER COLUMN total_score TYPE float;
 --rollback ALTER TABLE candidate_result ALTER COLUMN total_score TYPE int;
+
+--changeset author:15
+ALTER TABLE company ADD COLUMN github_access_token bytea;
+--rollback ALTER TABLE company DROP COLUMN github_access_token;
