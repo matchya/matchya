@@ -8,6 +8,7 @@ import {
   HomePage,
   SettingsPage,
 } from '@/screens';
+import GithubAuthCallback from '@/screens/Authentication/GithubAuthCallback';
 
 function App() {
   return (
@@ -20,6 +21,10 @@ function App() {
         </Route>
         <Route element={<UnAuthenticatedLayout />}>
           <Route path="/auth" element={<AuthenticationPage />} />
+          <Route
+            path="/auth/github/callback"
+            element={<GithubAuthCallback />}
+          />
         </Route>
       </Routes>
     </Router>
