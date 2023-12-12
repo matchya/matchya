@@ -106,7 +106,7 @@ def create_company_record(company_id: str, body: dict):
         raise RuntimeError(f"Error saving to company table: {e}")
 
 
-def save_company_repositories(company_id: str, github_username: str):
+def save_company_repositories(company_id: str, github_username: str, github_access_token: str):
     """
     Saves the repositories of the company to the database.
 
@@ -114,7 +114,7 @@ def save_company_repositories(company_id: str, github_username: str):
     :param github_username: The GitHub username of the company.
     """
     logger.info("Saving the company repositories...")
-    repositories = get_company_repository_names(github_username)
+    repositories = get_company_repository_names(github_username, github_access_token)
     sql = "INSERT INTO company_repository (id, company_id, repository_name) VALUES"
     for repository in repositories:
         sql += f" ('{str(uuid.uuid4())}', '{company_id}', '{repository}'),"
@@ -125,20 +125,21 @@ def save_company_repositories(company_id: str, github_username: str):
         raise RuntimeError(f"Error saving to repository table: {e}")
 
 
-def get_company_repository_names(github_username: str):
+def get_company_repository_names(github_username: str, github_access_token: str):
     """
     Gets the repositories of a company from GitHub.
 
-    :param company_id: The GitHub username of the company.
+    :param github_username: The GitHub username of the company.
+    :param github_access_token: The GitHub access token of the company.
     :return: A list of repositories of the company.
     """
     logger.info("Getting the company repository names...")
-    url = f"https://api.github.com/users/{github_username}/repos"
-    response = requests.get(url)
+    url = "https://api.github.com/user/repos"
+    response = requests.get(url, headers={'Authorization': f'Bearer {github_access_token}'})
     if response.status_code == 404:
-        raise RuntimeError(f"GitHub account not found: {github_username}")
+        raise RuntimeError(f"Repository not found for the User: {github_username}")
     if response.status_code != 200:
-        raise RuntimeError(f"Error getting repositories from GitHub account: {github_username}")
+        raise RuntimeError(f"Error getting repositories from GitHub: {response.content}")
     repositories = response.json()
     repo_names = [repository['name'] for repository in repositories]
     return repo_names
@@ -286,7 +287,7 @@ def handler(event, context):
         create_company_record(company_id, data)
 
         create_position_record(company_id)
-        save_company_repositories(company_id, username)
+        save_company_repositories(company_id, username, github_access_token)
 
         access_token = generate_access_token(company_id)
         create_access_token_record(company_id, access_token)
