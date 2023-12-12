@@ -18,7 +18,7 @@ export interface Candidate {
 }
 
 export interface Assessment {
-  criterion_message: string;
+  criterion: Criterion;
   score: number;
   reason: string;
 }
@@ -26,6 +26,7 @@ export interface Assessment {
 export interface Criterion {
   id: string;
   message: string;
+  created_at: string;
 }
 
 export interface Position {

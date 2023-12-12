@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { Candidate } from '../../types';
+import { Assessment, Candidate } from '../../types';
 
 interface ScoreCardProps {
   candidate: Candidate;
@@ -8,6 +8,15 @@ interface ScoreCardProps {
 
 const ScoreCard = ({ candidate }: ScoreCardProps) => {
   const [showDetails, setShowDetails] = useState<boolean>(false);
+  const [sortedAssessments, setSortedAssessments] = useState<Assessment[]>([]);
+
+  useEffect(() => {
+    const assessments = candidate.assessments;
+    assessments.sort((a, b) =>
+      a.criterion.created_at.localeCompare(b.criterion.created_at)
+    );
+    setSortedAssessments(assessments);
+  }, [candidate]);
 
   const toggleDetail = () => {
     setShowDetails(!showDetails);
@@ -16,10 +25,10 @@ const ScoreCard = ({ candidate }: ScoreCardProps) => {
   const DetailPart = () => {
     return (
       <div className="text-xs text-gray-600 m-2">
-        {candidate.assessments.map((assessment, index) => (
-          <div key={index} className="m-4">
+        {sortedAssessments.map(assessment => (
+          <div key={assessment.criterion.id} className="m-4">
             <p className="text-sm ml-4">
-              - {assessment.criterion_message}: {assessment.score} / 10
+              - {assessment.criterion.message}: {assessment.score} / 10
             </p>
             <p className="text-xs ml-2">{assessment.reason}</p>
           </div>
