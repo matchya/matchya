@@ -148,9 +148,9 @@ def process_position_from_sql_results(sql_results):
             }
 
         if email:
-            criterion_message = [criterion['message'] for criterion in criteria if criterion['id'] == criterion_id][0]
+            criterion = [criterion for criterion in criteria if criterion['id'] == criterion_id][0]
             candidates[email]['assessments'].append({
-                'criterion_message': criterion_message,
+                'criterion': criterion,
                 'score': score,
                 'reason': reason
             })
@@ -183,7 +183,7 @@ def get_criteria_by_checklist_id(checklist_id):
         response = criterion_table.query(
             IndexName='ChecklistIdIndex',
             KeyConditionExpression=boto3.dynamodb.conditions.Key('checklist_id').eq(checklist_id),
-            ProjectionExpression='id, message'
+            ProjectionExpression='id, message, created_at'
         )
         criteria = []
         for item in response.get('Items', []):
