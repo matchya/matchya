@@ -122,7 +122,3 @@ ALTER TABLE candidate_result ALTER COLUMN total_score TYPE float;
 --changeset author:15
 ALTER TABLE company ADD COLUMN github_access_token bytea;
 --rollback ALTER TABLE company DROP COLUMN github_access_token;
-
---changeset author:16
-ALTER TABLE company ALTER COLUMN github_access_token TYPE varchar(255);
---rollback ALTER TABLE company ALTER COLUMN github_access_token TYPE bytea;
