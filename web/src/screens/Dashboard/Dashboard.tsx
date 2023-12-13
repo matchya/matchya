@@ -1,27 +1,10 @@
-import { useEffect } from 'react';
-
 import { useCompanyStore } from '../../store/useCompanyStore';
 
-import CriteriaBox from './CriteriaBox';
 import DashboardHeader from './DashboardHeader';
 import ScoreCard from './ScoreCard';
 
 const Dashboard = () => {
-  const { positions, selectedPosition, setSelectedPositionDetail } =
-    useCompanyStore();
-
-  useEffect(() => {
-    if (positions.length === 0 || !selectedPosition) return;
-    handleSetPositionDetail();
-  }, [selectedPosition]);
-
-  const handleSetPositionDetail = async () => {
-    try {
-      await setSelectedPositionDetail();
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const { positions, selectedPosition } = useCompanyStore();
 
   const DashboardBody = () => {
     if (
@@ -51,9 +34,6 @@ const Dashboard = () => {
                     )
                   )}
               </div>
-            </div>
-            <div className="w-1/3 h-full pt-2 bg-white shadow overflow-hidden sm:rounded-md">
-              <CriteriaBox />
             </div>
           </div>
         </div>
