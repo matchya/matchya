@@ -1,5 +1,5 @@
 import jwt
-import bcrypt
+from cryptography.fernet import Fernet
 
 from config import Config
 
@@ -11,13 +11,28 @@ def generate_access_token(company_id):
     return jwt.encode(payload, Config.JWT_SECRET_KEY, algorithm="HS256")
 
 
-def hash_github_access_token(access_token: str) -> bytes:
+def encrypt_github_access_token(access_token: str) -> bytes:
     """
-    Hashes a password using bcrypt.
+    Hashes a GitHub access token.
 
-    :param password: The plaintext password to be hashed.
-    :return: The hashed password as a byte string.
+    :param access_token: The access token to be hashed.
+    :return: The hashed access token as a byte string.
     """
-    token_bytes = access_token.encode('utf-8')
-    salt = bcrypt.gensalt()
-    return bcrypt.hashpw(token_bytes, salt)
+
+    key = Config.GITHUB_FERNET_KEY
+    cipher_suite = Fernet(key.encode())
+    return cipher_suite.encrypt(access_token.encode('utf-8'))
+
+
+def decrypt_github_access_token(encrypted_token: bytes) -> str:
+    """
+    Decrypts a GitHub access token.
+
+    :param encrypted_token: The encrypted access token to be decrypted.
+    :return: The decrypted access token as a string.
+    """
+    if isinstance(encrypted_token, memoryview):
+        encrypted_token = encrypted_token.tobytes()
+    key = Config.GITHUB_FERNET_KEY
+    cipher_suite = Fernet(key.encode())
+    return cipher_suite.decrypt(encrypted_token).decode()
