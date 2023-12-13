@@ -10,6 +10,7 @@ from openai import OpenAI
 from config import Config
 from client.github import GithubClient
 from utils.compression import compress_file_content
+from utils.token import decrypt_github_access_token
 
 # Logger
 logger = logging.getLogger('publish_generation')
@@ -46,6 +47,33 @@ def connect_to_db():
     if not db_conn or db_conn.closed:
         db_conn = psycopg2.connect(host=Config.POSTGRES_HOST, database=Config.POSTGRES_DB, user=Config.POSTGRES_USER, password=Config.POSTGRES_PASSWORD)
     db_cursor = db_conn.cursor()
+
+
+def get_github_access_token_from_checklist_id(checklist_id):
+    """
+    Gets the github access token from the checklist id.
+
+    :param checklist_: Unique identifier for the checklist.
+    :return: The github access token.
+    """
+    logger.info("Getting the github access token from checklist id...")
+    sql = """
+        SELECT company.github_access_token
+        FROM company
+        JOIN position ON company.id = position.company_id
+        JOIN checklist ON position.id = checklist.position_id
+        WHERE checklist.id = '%s';
+        """
+    try:
+        db_cursor.execute(sql % (checklist_id))
+        result = db_cursor.fetchone()
+        if result and result[0]:
+            return decrypt_github_access_token(result[0])
+        else:
+            return None
+    except Exception as e:
+        logger.error(f"Error getting github access token from postgres: {e}")
+        raise RuntimeError(f"Error getting github access token from postgres: {e}")
 
 
 def save_candidate_info_to_db(body):
@@ -355,7 +383,8 @@ def handler(event, context):
 
         checklist_id = body.get('checklist_id')
         github_username = body.get('candidate_github_username')
-        github_client = GithubClient(github_username)
+        github_access_token = get_github_access_token_from_checklist_id(checklist_id)
+        github_client = GithubClient(github_username, github_access_token)
 
         criteria = get_criteria_from_dynamodb(checklist_id)
         repositories_data = retrieve_candidate_github_data(github_client)

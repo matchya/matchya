@@ -49,6 +49,12 @@ def connect_to_db():
 
 
 def get_github_access_token_from_position_id(position_id):
+    """
+    Gets the github access token from the position id.
+
+    :param position_id: Unique identifier for the position.
+    :return: The github access token.
+    """
     logger.info("Getting the github access token from position id...")
     sql = """
             SELECT Company.github_access_token FROM Company
