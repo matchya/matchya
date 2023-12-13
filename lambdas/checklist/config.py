@@ -18,11 +18,10 @@ class Config:
     EVALUATION_PROCESSOR_QUEUE_URL = os.getenv('EVALUATION_PROCESSOR_QUEUE_URL')
     GENERATION_PROCESSOR_QUEUE_URL = os.getenv('GENERATION_PROCESSOR_QUEUE_URL')
 
-    GITHUB_REST_API_HEADERS = {'Authorization-Type': "Bearer " + os.environ['GITHUB_TOKEN']}
+    GITHUB_API_HEADERS = {'Authorization': "Bearer " + os.environ['GITHUB_TOKEN']}
     GITHUB_API_REPO_URL = "https://api.github.com/repos/"
-
     GITHUB_GRAPHQL_API_URL = "https://api.github.com/graphql"
-    GITHUB_GRAPHQL_API_HEADERS = {"Authorization": "Bearer " + os.environ['GITHUB_TOKEN']}
+    GITHUB_FERNET_KEY = os.getenv('GITHUB_FERNET_KEY')
 
     @classmethod
     def validate(cls):
@@ -33,7 +32,7 @@ class Config:
         required_variables = [
             'POSTGRES_HOST', 'POSTGRES_PORT', 'POSTGRES_DB', 'POSTGRES_USER',
             'POSTGRES_PASSWORD', 'EVALUATION_PROCESSOR_QUEUE_URL', 'GENERATION_PROCESSOR_QUEUE_URL',
-            'GITHUB_REST_API_HEADERS', 'GITHUB_GRAPHQL_API_HEADERS'
+            'GITHUB_API_HEADERS', 'GITHUB_API_REPO_URL', 'GITHUB_GRAPHQL_API_URL', 'GITHUB_FERNET_KEY'
         ]
         missing_variables = [variable for variable in required_variables if not getattr(cls, variable)]
 
