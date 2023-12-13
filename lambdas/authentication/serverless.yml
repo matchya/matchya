@@ -31,6 +31,7 @@ provider:
     POSTGRES_PASSWORD: ${ssm:/terraform/${self:provider.stage}/rds/db_password}
     GITHUB_CLIENT_ID: ${ssm:/secrets/${self:provider.stage}/github_client_id}
     GITHUB_CLIENT_SECRET: ${ssm:/secrets/${self:provider.stage}/github_client_secret}
+    GITHUB_FERNET_KEY: ${ssm:/secrets/${self:provider.stage}/github_fernet_key}
 
 functions:
   register:

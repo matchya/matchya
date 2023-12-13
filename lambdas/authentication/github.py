@@ -9,7 +9,7 @@ import psycopg2
 from config import Config
 from utils.response import generate_success_response, generate_error_response
 from utils.request import parse_header, parse_request_body
-from utils.token import generate_access_token
+from utils.token import generate_access_token, encrypt_github_access_token
 
 # Logger
 logger = logging.getLogger('github authentication')
@@ -50,31 +50,23 @@ def connect_to_db():
     db_cursor = db_conn.cursor()
 
 
-def get_company_info(email):
+def get_company_id(email):
     """
-    Retrieves company information from the database based on the provided email.
+    Retrieves the company id from the database based on the provided email.
 
-    :param email: The email address used to query the company information.
+    :param email: The email address used to query the company id.
     :return: The first item from the database query result.
     """
-    logger.info("Getting company info...")
+    logger.info("Getting company id...")
     try:
-        db_cursor.execute('SELECT * FROM company WHERE email = %s', (email,))
+        db_cursor.execute('SELECT id FROM company WHERE email = %s', (email,))
         result = db_cursor.fetchall()
     except Exception as e:
-        raise RuntimeError(f"Error retrieving company info: {e}")
+        raise RuntimeError(f"Error retrieving company id: {e}")
     if not result:
         raise ValueError('Company not found. Please try again.')
 
-    company_res = result[0]
-    company_info = {
-        'id': company_res[0],
-        'name': company_res[1],
-        'email': company_res[2],
-        'github_username': company_res[3],
-        'password': company_res[4]
-    }
-    return company_info
+    return result[0][0]
 
 
 def validate_company_data(body):
@@ -97,9 +89,9 @@ def create_company_record(company_id: str, body: dict):
     :param body: The request body containing company data.
     """
     logger.info("Creating the company record...")
-    sql = "INSERT INTO company (id, name, email, github_username) VALUES (%s, %s, %s, %s);"
+    sql = "INSERT INTO company (id, name, email, github_username, github_access_token) VALUES (%s, %s, %s, %s, %s);"
     try:
-        db_cursor.execute(sql, (company_id, body['name'], body['email'], body['github_username']))
+        db_cursor.execute(sql, (company_id, body['name'], body['email'], body['github_username'], encrypt_github_access_token(body['github_access_token'])))
     except psycopg2.IntegrityError:
         raise RuntimeError(f"Email address is already used: {body['email']}")
     except Exception as e:
@@ -278,8 +270,8 @@ def handler(event, context):
         }
 
         if company_already_exists(email):
-            company = get_company_info(email)
-            access_token = generate_access_token(company['id'])
+            company_id = get_company_id(email)
+            access_token = generate_access_token(company_id)
             logger.info('Github Login successful: %s', email)
             return generate_success_response(origin, host, access_token)
 
