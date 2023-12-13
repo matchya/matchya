@@ -8,11 +8,10 @@ import { axiosInstance } from '@/helper';
 import { cn } from '@/lib/utils';
 import { useCompanyStore } from '@/store/useCompanyStore';
 
-interface MainNavProps extends React.HTMLAttributes<HTMLElement> {
-  onGenerateCriteriaClick: () => void;
-}
-
-export function MainNav({ className, ...props }: MainNavProps) {
+export function MainNav({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLElement>) {
   const [shouldOpen, setShouldOpen] = useState(false);
   const { selectedPosition, setSelectedPositionDetail } = useCompanyStore();
   const [status, setStatus] = useState<'generate' | 'scheduled' | 'done'>(
@@ -65,14 +64,6 @@ export function MainNav({ className, ...props }: MainNavProps) {
       className={cn('flex items-center space-x-4 lg:space-x-6', className)}
       {...props}
     >
-      {/* This is an example if we happen to need links... */}
-      {/* <Link
-        to="/"
-        className="text-sm font-medium transition-colors hover:text-primary"
-      >
-        Home
-      </Link>
-     */}
       <Button onClick={() => setShouldOpen(!shouldOpen)}>
         {status === 'scheduled' && (
           <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
