@@ -19,5 +19,5 @@ export default meta;
 type Story = StoryObj<typeof MainNav>;
 
 export const Default: Story = {
-  render: () => <MainNav onGenerateCriteriaClick={() => {}} className="mx-6" />,
+  render: () => <MainNav className="mx-6" />,
 };

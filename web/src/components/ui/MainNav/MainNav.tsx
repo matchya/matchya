@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
+import { ChecklistSheet } from '../ChecklistSheet/ChecklistSheet';
 import { GenerateCriteriaDialog } from '../GenerateCriteriaDialog/GenerateCriteriaDialog';
 import { Icons } from '../Icons/Icons';
+import { Sheet, SheetTrigger } from '../Sheet/Sheet';
 
 import { Button } from '@/components/ui/Button/Button';
 import { axiosInstance } from '@/helper';
@@ -14,40 +16,50 @@ export function MainNav({
 }: React.HTMLAttributes<HTMLElement>) {
   const [shouldOpen, setShouldOpen] = useState(false);
   const { selectedPosition, setSelectedPositionDetail } = useCompanyStore();
-  const [status, setStatus] = useState<'generate' | 'scheduled' | 'done'>(
-    'generate'
-  );
+  const [status, setStatus] = useState<
+    'generate' | 'scheduled' | 'failed' | 'done'
+  >('generate');
   const handleClose = () => setShouldOpen(false);
 
   const handleStatusUpdate = status => setStatus(status);
 
+  const isMounted = useRef(true);
+
   useEffect(() => {
-    if (status === 'scheduled') {
-      const interval = setInterval(async () => {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let interval;
+
+    const fetchStatus = async () => {
+      try {
         const response = await axiosInstance.get(
           `/positions/status/${selectedPosition?.id}`
         );
         if (response.data.payload.checklist_status === 'succeeded') {
+          setSelectedPositionDetail();
           setStatus('done');
-          console.log('ENTERED1');
           clearInterval(interval);
         }
-      }, 5000);
-      return () => clearInterval(interval);
-    } else if (status === 'done') {
-      const done = async () => {
-        await setSelectedPositionDetail();
-      };
-      done();
-    }
-  }, [status]);
+        if (response.data.payload.checklist_status === 'failed') {
+          setStatus('failed');
+          clearInterval(interval);
+        }
+      } catch (error) {
+        console.error(error);
+        // handle error appropriately
+      }
+    };
 
-  useEffect(() => {
-    console.log('ENTERED4', selectedPosition);
-    if (selectedPosition?.checklists) {
-      alert(JSON.stringify(selectedPosition.checklists));
+    if (status === 'scheduled') {
+      interval = setInterval(fetchStatus, 10000);
     }
-  }, [selectedPosition]);
+
+    return () => clearInterval(interval);
+  }, [status]);
 
   const getMessage = () => {
     if (status === 'scheduled') {
@@ -55,27 +67,39 @@ export function MainNav({
     } else if (status === 'generate') {
       return 'Generate Criteria';
     } else {
-      return 'Generated Criteria';
+      return 'Refresh the page!';
     }
   };
 
   return (
-    <nav
-      className={cn('flex items-center space-x-4 lg:space-x-6', className)}
-      {...props}
-    >
-      <Button onClick={() => setShouldOpen(!shouldOpen)}>
-        {status === 'scheduled' && (
-          <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-        )}
-        {status === 'done' && <Icons.react className="mr-2 h-4 w-4" />}
-        {getMessage()}
-      </Button>
-      <GenerateCriteriaDialog
-        shouldOpen={shouldOpen}
-        onClose={handleClose}
-        onUpdateStatus={handleStatusUpdate}
-      />
-    </nav>
+    <Sheet>
+      <nav
+        className={cn('flex items-center space-x-4 lg:space-x-6', className)}
+        {...props}
+      >
+        {['generate', 'scheduled'].includes(status) ? (
+          <Button
+            disabled={status !== 'generate'}
+            onClick={() => setShouldOpen(!shouldOpen)}
+          >
+            {status === 'scheduled' && (
+              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+            )}
+            {getMessage()}
+          </Button>
+        ) : null}
+        {status === 'done' ? (
+          <SheetTrigger asChild>
+            <Button variant="outline">See Checklist</Button>
+          </SheetTrigger>
+        ) : null}
+        <ChecklistSheet />
+        <GenerateCriteriaDialog
+          shouldOpen={shouldOpen}
+          onClose={handleClose}
+          onUpdateStatus={handleStatusUpdate}
+        />
+      </nav>
+    </Sheet>
   );
 }
