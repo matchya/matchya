@@ -10,6 +10,7 @@ from openai import OpenAI
 from config import Config
 from client.github import GithubClient
 from utils.compression import compress_file_content
+from utils.token import decrypt_github_access_token
 
 # Logger
 logger = logging.getLogger('publish_generation')
@@ -45,6 +46,31 @@ def connect_to_db():
     if not db_conn or db_conn.closed:
         db_conn = psycopg2.connect(host=Config.POSTGRES_HOST, database=Config.POSTGRES_DB, user=Config.POSTGRES_USER, password=Config.POSTGRES_PASSWORD)
     db_cursor = db_conn.cursor()
+
+
+def get_github_access_token_from_position_id(position_id):
+    """
+    Gets the github access token from the position id.
+
+    :param position_id: Unique identifier for the position.
+    :return: The github access token.
+    """
+    logger.info("Getting the github access token from position id...")
+    sql = """
+            SELECT Company.github_access_token FROM Company
+            INNER JOIN Position ON Company.id = Position.company_id
+            WHERE Position.id = '%s';
+        """
+    try:
+        db_cursor.execute(sql % (position_id))
+        result = db_cursor.fetchone()
+        if result and result[0]:
+            return decrypt_github_access_token(result[0])
+        else:
+            return None
+    except Exception as e:
+        logger.error(f"Error getting github access token from postgres: {e}")
+        raise RuntimeError(f"Error getting github access token from postgres: {e}")
 
 
 def retrieve_repositories_data(github_client: GithubClient, repository_names):
@@ -313,8 +339,9 @@ def handler(event, context):
         position_id = body.get('position_id')
         repository_names = body.get('repository_names')
         github_username = body.get('github_username')
+        github_access_token = get_github_access_token_from_position_id(position_id)
 
-        github_client = GithubClient(github_username)
+        github_client = GithubClient(github_username, github_access_token)
         repositories_data = retrieve_repositories_data(github_client, repository_names)
         logger.info(f'Repositories data retrieved successfully for position: {repositories_data}')
 
