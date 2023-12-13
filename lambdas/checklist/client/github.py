@@ -9,8 +9,12 @@ from config import Config
 class GithubClient:
     logger = logging.getLogger('github_client')
 
-    def __init__(self, github_username):
+    def __init__(self, github_username, github_access_token=None):
         self.github_username = github_username
+        if github_access_token is not None:
+            self.github_header = {'Authorization': "Bearer " + github_access_token}
+        else:
+            self.github_header = Config.GITHUB_API_HEADERS
         self.logger.setLevel(logging.INFO)
 
         formatter = logging.Formatter('[%(levelname)s]:%(funcName)s:%(lineno)d:%(message)s')
@@ -31,7 +35,7 @@ class GithubClient:
         """
         url = Config.GITHUB_API_REPO_URL + self.github_username + "/" + repository_name + "/languages"
         try:
-            res = requests.get(url, headers=Config.GITHUB_REST_API_HEADERS)
+            res = requests.get(url, headers=self.github_header)
         except Exception:
             raise RuntimeError("Error getting programming languages used in repository. Request to GitHub API failed.")
         if res.status_code == 404:
@@ -56,7 +60,7 @@ class GithubClient:
 
         url = Config.GITHUB_API_REPO_URL + self.github_username + "/" + repository_name + "/git/trees/" + branch + "?recursive=1"
         try:
-            res = requests.get(url, headers=Config.GITHUB_REST_API_HEADERS)
+            res = requests.get(url, headers=self.github_header)
         except Exception as e:
             self.logger.error(f"Error getting file tree. Request to GitHub API failed. {e}")
             raise RuntimeError("Error getting file tree. Request to GitHub API failed.")
@@ -79,7 +83,7 @@ class GithubClient:
         """
         url = Config.GITHUB_API_REPO_URL + self.github_username + "/" + repository_name + "/contents/" + file_path
         try:
-            res = requests.get(url, headers=Config.GITHUB_REST_API_HEADERS)
+            res = requests.get(url, headers=self.github_header)
         except Exception as e:
             self.logger.error(f"Error getting file contents. Request to GitHub API failed. {e}")
             raise RuntimeError("Error getting file contents. Request to GitHub API failed.")
@@ -221,7 +225,7 @@ class GithubClient:
         """
         url = "https://api.github.com/users/" + username
         try:
-            res = requests.get(url, headers=Config.GITHUB_REST_API_HEADERS)
+            res = requests.get(url, headers=Config.GITHUB_API_HEADERS)
         except Exception as e:
             GithubClient.logger.error(f"Error getting GitHub user. Request to GitHub API failed. {e}")
             raise RuntimeError("Error getting GitHub user. Request to GitHub API failed.")
@@ -267,7 +271,7 @@ class GithubClient:
         """
         url = Config.GITHUB_API_REPO_URL + self.github_username + "/" + repo_name
         try:
-            res = requests.get(url, headers=Config.GITHUB_REST_API_HEADERS)
+            res = requests.get(url, headers=self.github_header)
         except Exception as e:
             GithubClient.logger.error(f"Error getting default branch name. Request to GitHub API failed. {e}")
             raise RuntimeError("Error getting default branch name. Request to GitHub API failed.")
@@ -286,7 +290,7 @@ class GithubClient:
         :return: The data returned from the GitHub API.
         """
         try:
-            res = requests.post(url=Config.GITHUB_GRAPHQL_API_URL, json={'query': query}, headers=Config.GITHUB_GRAPHQL_API_HEADERS)
+            res = requests.post(url=Config.GITHUB_GRAPHQL_API_URL, json={'query': query}, headers=self.github_header)
             content = json.loads(res.content)
             return content.get("data")
         except Exception as e:
