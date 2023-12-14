@@ -49,7 +49,7 @@ def connect_to_db():
     db_cursor = db_conn.cursor()
 
 
-def get_github_access_token_from_checklist_id(checklist_id):
+def get_github_access_token_from_checklist_id(checklist_id: str) -> str:
     """
     Gets the github access token from the checklist id.
 
@@ -76,11 +76,12 @@ def get_github_access_token_from_checklist_id(checklist_id):
         raise RuntimeError(f"Error getting github access token from postgres: {e}")
 
 
-def save_candidate_info_to_db(body):
+def save_candidate_info_to_db(body: dict) -> str:
     """
     Saves candidate information to database.
 
     :param body: The request body containing candidate information.
+    :return: The ID of the candidate.
     """
     logger.info("Saving candidate info to db...")
     try:
@@ -105,7 +106,7 @@ def save_candidate_info_to_db(body):
         raise RuntimeError("Failed to save candidate info")
 
 
-def get_criteria_from_dynamodb(checklist_id):
+def get_criteria_from_dynamodb(checklist_id: str) -> list:
     """
     Retrieves the full message criteria for a checklist.
 
@@ -128,7 +129,7 @@ def get_criteria_from_dynamodb(checklist_id):
         raise RuntimeError("Failed to retrieve criteria")
 
 
-def retrieve_candidate_github_data(github_client: GithubClient):
+def retrieve_candidate_github_data(github_client: GithubClient) -> dict:
     """
     Retrieves the candidate's GitHub repository data.
 
@@ -141,8 +142,8 @@ def retrieve_candidate_github_data(github_client: GithubClient):
         repositories_data = []
         for repository_name in pinned_repositories:
 
-            programming_languages = github_client.get_programming_languages_used(repository_name)
-            repo_tree = github_client.get_repository_tree(repository_name)
+            programming_languages: dict = github_client.get_programming_languages_used(repository_name)
+            repo_tree: list = github_client.get_repository_tree(repository_name)
 
             n = 5
             depth_n_files = [branch['path'] for branch in repo_tree if branch["path"].count("/") < n and branch["type"] == "blob"]
@@ -150,8 +151,8 @@ def retrieve_candidate_github_data(github_client: GithubClient):
                 n -= 1
                 depth_n_files = [file for file in depth_n_files if file.count("/") < n]
 
-            repo_structure = GithubClient.get_organized_folder_structure(depth_n_files)
-            package_files = GithubClient.get_package_file_paths_to_read(depth_n_files, programming_languages)
+            repo_structure: str = GithubClient.get_organized_folder_structure(depth_n_files)
+            package_files: list = GithubClient.get_package_file_paths_to_read(depth_n_files, programming_languages)
 
             repo_data = {'name': repository_name, 'languages': programming_languages, 'structure': repo_structure, 'files': []}
             for file_path in package_files:
@@ -169,7 +170,7 @@ def retrieve_candidate_github_data(github_client: GithubClient):
         raise RuntimeError("Error retrieving repositories data")
 
 
-def get_system_and_user_message(repositories_data, criteria):
+def get_system_and_user_message(repositories_data: dict, criteria: dict) -> tuple:
     """
     Generates the system and user messages for the candidate evaluation.
 
@@ -276,7 +277,7 @@ def get_system_and_user_message(repositories_data, criteria):
     return system_message, user_message
 
 
-def evaluate_candidate_with_gpt(system_message, user_message):
+def evaluate_candidate_with_gpt(system_message: str, user_message: str) -> dict:
     """
     Evaluates a candidate's GitHub repository contents against specified criteria using ChatGPT.
 
@@ -304,7 +305,7 @@ def evaluate_candidate_with_gpt(system_message, user_message):
         raise RuntimeError("Failed to generate criteria from gpt")
 
 
-def save_candidate_evaluation_to_db(checklist_id, candidate_id, candidate_result):
+def save_candidate_evaluation_to_db(checklist_id: str, candidate_id: str, candidate_result: dict):
     """
     Saves candidate evaluation result to database.
 
@@ -317,13 +318,14 @@ def save_candidate_evaluation_to_db(checklist_id, candidate_id, candidate_result
     save_candidate_assessments(candidate_result_id, candidate_result['assessments'])
 
 
-def save_candidate_result(checklist_id, candidate_id, candidate_result):
+def save_candidate_result(checklist_id: str, candidate_id: str, candidate_result: dict) -> str:
     """
     Saves candidate evaluation result to database.
 
     :param checklist_id: The ID of the checklist.
     :param candidate_id: The ID of the candidate.
     :param candidate_result: The candidate's evaluation result.
+    :return: The ID of the candidate result.
     """
     logger.info("Saving the candidate result...")
     try:
@@ -338,7 +340,7 @@ def save_candidate_result(checklist_id, candidate_id, candidate_result):
         raise RuntimeError("Failed to save candidate result")
 
 
-def save_candidate_assessments(candidate_result_id, assessments):
+def save_candidate_assessments(candidate_result_id: str, assessments: dict):
     """
     Saves candidate evaluation result to database.
 
