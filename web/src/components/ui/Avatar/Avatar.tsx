@@ -45,8 +45,12 @@ const AvatarFallback = React.forwardRef<
 ));
 AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName;
 
-export const Avatar = ({ altName = 'KO', imageUrl = '/avatars/01.png' }) => (
-  <AvatarWrapper className="h-8 w-8">
+export const Avatar = ({
+  altName = 'KO',
+  imageUrl = '/avatars/01.png',
+  size = 8,
+}) => (
+  <AvatarWrapper className={`h-${size} w-${size}`}>
     <AvatarImage src={imageUrl} alt="@shadcn" />
     <AvatarFallback>{altName}</AvatarFallback>
   </AvatarWrapper>
