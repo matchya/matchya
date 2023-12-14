@@ -21,7 +21,7 @@ export default meta;
 
 type Story = StoryObj<typeof Component>;
 
-export const Default: Story = {
+export const CreatePosition: Story = {
   render: () => (
     <Dialog open={true} onOpenChange={() => {}}>
       <Component />

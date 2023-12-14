@@ -1,10 +1,11 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { BrowserRouter as Router } from 'react-router-dom';
 
-import { MainNav } from './MainNav';
+import { MainNav as Component } from './MainNav';
 
-const meta: Meta<typeof MainNav> = {
-  component: MainNav,
+const meta: Meta<typeof Component> = {
+  title: 'Component',
+  component: Component,
   decorators: [
     Story => (
       <Router>
@@ -16,8 +17,8 @@ const meta: Meta<typeof MainNav> = {
 
 export default meta;
 
-type Story = StoryObj<typeof MainNav>;
+type Story = StoryObj<typeof Component>;
 
-export const Default: Story = {
-  render: () => <MainNav className="mx-6" />,
+export const MainNav: Story = {
+  render: () => <Component className="mx-6" />,
 };

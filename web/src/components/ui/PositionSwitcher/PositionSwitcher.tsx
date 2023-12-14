@@ -68,7 +68,11 @@ export function PositionSwitcher({ className }: PositionSwitcherProps) {
             aria-label="Select a Position"
             className={cn('w-[200px] justify-between', className)}
           >
-            <Avatar altName="SC" imageUrl={`https://avatar.vercel.sh/1.png`} />
+            <Avatar
+              size={6}
+              altName="SC"
+              imageUrl={`https://avatar.vercel.sh/1.png`}
+            />
             {selectedPosition?.name}
             <CaretSortIcon className="ml-auto h-4 w-4 shrink-0 opacity-50" />
           </Button>

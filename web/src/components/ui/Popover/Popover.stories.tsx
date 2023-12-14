@@ -6,14 +6,15 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import { Avatar } from '@/components/ui/Avatar/Avatar';
 import { Button } from '@/components/ui/Button/Button';
 import {
-  Popover,
+  Popover as Component,
   PopoverTrigger,
   PopoverContent,
 } from '@/components/ui/Popover/Popover';
 import { cn } from '@/lib/utils';
 
-const meta: Meta<typeof Popover> = {
-  component: Popover,
+const meta: Meta<typeof Component> = {
+  title: 'Component',
+  component: Component,
   decorators: [
     Story => (
       <Router>
@@ -25,18 +26,18 @@ const meta: Meta<typeof Popover> = {
 
 export default meta;
 
-type Story = StoryObj<typeof Popover>;
+type Story = StoryObj<typeof Component>;
 
-export const Default: Story = {
+export const Popover: Story = {
   render: () => {
     const [open, setOpen] = useState(false);
     const [selectedPosition] = useState({
-      label: '',
+      label: 'Software Engineer',
       value: '',
     });
 
     return (
-      <Popover open={open} onOpenChange={setOpen}>
+      <Component open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
             variant="outline"
@@ -45,13 +46,15 @@ export const Default: Story = {
             aria-label="Select a Position"
             className={cn('w-[200px] justify-between')}
           >
-            <Avatar />
+            <div className="mr-1">
+              <Avatar />
+            </div>
             {selectedPosition.label}
             <CaretSortIcon className="ml-auto h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[200px] p-0">Content here</PopoverContent>
-      </Popover>
+      </Component>
     );
   },
 };

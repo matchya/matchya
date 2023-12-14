@@ -1,6 +1,8 @@
 import { useCallback, useRef, useState } from 'react';
 
 import { Button } from '../../Button/Button';
+import { Icons } from '../../Icons/Icons';
+import { MultiSelect } from '../../MultiSelect/MultiSelect';
 import {
   Dialog,
   DialogContent,
@@ -9,8 +11,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '../Dialog';
-import { Icons } from '../../Icons/Icons';
-import { MultiSelect } from '../../MultiSelect/MultiSelect';
 
 import { axiosInstance } from '@/helper';
 import { useCompanyStore } from '@/store/useCompanyStore';
@@ -30,10 +30,10 @@ export const GenerateCriteriaDialog = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const { selectedPosition, repository_names } = useCompanyStore();
   const [isLoading, setIsLoading] = useState(false);
-  const [selected, setSelected] = useState<any>([]);
+  const [selected, setSelected] = useState<string[]>([]);
 
-  const handleUnselect = useCallback((framework: any) => {
-    setSelected(prev => prev.filter(s => s.value !== framework.value));
+  const handleUnselect = useCallback((framework: string) => {
+    setSelected(prev => prev.filter(s => s !== framework));
   }, []);
 
   const handleGenerateCriteria = async () => {
@@ -93,8 +93,8 @@ export const GenerateCriteriaDialog = ({
     []
   );
 
-  const handleAddItem = item => {
-    setSelected(prev => [...prev, item]);
+  const handleAddItem = (item: string) => {
+    setSelected((prev: string[]) => [...prev, item]);
   };
 
   return (
