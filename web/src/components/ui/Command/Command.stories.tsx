@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 
-import { Avatar, AvatarFallback, AvatarImage } from '../Avatar/Avatar';
+import { Avatar } from '../Avatar/Avatar';
 
 import {
   Command,
@@ -67,14 +67,10 @@ export const Default: Story = {
                   }}
                   className="text-sm"
                 >
-                  <Avatar className="mr-2 h-5 w-5">
-                    <AvatarImage
-                      src={`https://avatar.vercel.sh/${Position.value}.png`}
-                      alt={Position.label}
-                      className="grayscale"
-                    />
-                    <AvatarFallback>SC</AvatarFallback>
-                  </Avatar>
+                  <Avatar
+                    imageUrl={`https://avatar.vercel.sh/${Position.value}.png`}
+                    altName="SC"
+                  />
                   {Position.label}
                   <CheckIcon
                     className={cn(

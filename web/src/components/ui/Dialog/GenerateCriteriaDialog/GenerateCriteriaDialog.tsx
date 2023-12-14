@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 
-import { Button } from '../Button/Button';
+import { Button } from '../../Button/Button';
 import {
   Dialog,
   DialogContent,
@@ -8,9 +8,9 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '../Dialog/Dialog';
-import { Icons } from '../Icons/Icons';
-import { MultiSelect } from '../MultiSelect/MultiSelect';
+} from '../Dialog';
+import { Icons } from '../../Icons/Icons';
+import { MultiSelect } from '../../MultiSelect/MultiSelect';
 
 import { axiosInstance } from '@/helper';
 import { useCompanyStore } from '@/store/useCompanyStore';

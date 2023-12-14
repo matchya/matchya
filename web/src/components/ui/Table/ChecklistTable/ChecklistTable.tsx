@@ -1,4 +1,4 @@
-import { Badge } from '../Badge/Badge';
+import { Badge } from '../../Badge/Badge';
 import {
   TableHeader,
   TableRow,
@@ -6,12 +6,12 @@ import {
   TableBody,
   TableCell,
   Table,
-} from '../Table/Table';
+} from '../Table';
+
+import { Criterion } from '@/types';
 
 interface ChecklistTableProps {
-  checklist: {
-    message: string;
-  }[];
+  checklist: Criterion[];
 }
 
 export const ChecklistTable = ({ checklist }: ChecklistTableProps) => {

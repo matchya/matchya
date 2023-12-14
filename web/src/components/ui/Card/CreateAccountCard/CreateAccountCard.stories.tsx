@@ -1,10 +1,11 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { BrowserRouter as Router } from 'react-router-dom';
 
-import { CreateAccount } from './CreateAccount';
+import { CreateAccountCard as Component } from './CreateAccountCard';
 
-const meta: Meta<typeof CreateAccount> = {
-  component: CreateAccount,
+const meta: Meta<typeof Component> = {
+  title: 'Component/Card',
+  component: Component,
   decorators: [
     Story => (
       <Router>
@@ -16,11 +17,11 @@ const meta: Meta<typeof CreateAccount> = {
 
 export default meta;
 
-type Story = StoryObj<typeof CreateAccount>;
+type Story = StoryObj<typeof Component>;
 
 export const Default: Story = {
   render: () => (
-    <CreateAccount
+    <Component
       handleInputChange={() => {}}
       handleGithubAuthentication={() => {}}
       handleCreateAccount={() => {}}

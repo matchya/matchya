@@ -1,10 +1,11 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { BrowserRouter as Router } from 'react-router-dom';
 
-import { Select } from './Select';
+import { Select as Component } from './Select';
 
-const meta: Meta<typeof Select> = {
-  component: Select,
+const meta: Meta<typeof Component> = {
+  title: 'Component',
+  component: Component,
   decorators: [
     Story => (
       <Router>
@@ -16,8 +17,8 @@ const meta: Meta<typeof Select> = {
 
 export default meta;
 
-type Story = StoryObj<typeof Select>;
+type Story = StoryObj<typeof Component>;
 
-export const Default: Story = {
-  render: () => <Select />,
+export const Select: Story = {
+  render: () => <Component />,
 };

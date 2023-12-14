@@ -1,36 +1,35 @@
-import { Meta, StoryObj } from '@storybook/react';
-import { BrowserRouter as Router } from 'react-router-dom';
-
-import { Button } from '../Button/Button';
-import { Icons } from '../Icons/Icons';
-import { Input } from '../Input/Input';
-import { Label } from '../Label/Label';
-
+import { Button } from '@/components/ui/Button/Button';
 import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
-} from './Card';
+} from '@/components/ui/Card/Card';
+import { Icons } from '@/components/ui/Icons/Icons';
+import { Input } from '@/components/ui/Input/Input';
+import { Label } from '@/components/ui/Label/Label';
 
-const meta: Meta<typeof Card> = {
-  component: Card,
-  decorators: [
-    Story => (
-      <Router>
-        <Story />
-      </Router>
-    ),
-  ],
-};
+export interface CreateAccountProps {
+  handleInputChange: (
+    field: string,
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => void;
+  handleGithubAuthentication: () => void;
+  handleCreateAccount: () => void;
+  password: string;
+  email: string;
+}
 
-export default meta;
-
-type Story = StoryObj<typeof Card>;
-
-export const Default: Story = {
-  render: () => (
+export function CreateAccountCard({
+  handleInputChange,
+  handleGithubAuthentication,
+  handleCreateAccount,
+  password,
+  email,
+}: CreateAccountProps) {
+  return (
     <Card>
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl">Create an account</CardTitle>
@@ -40,10 +39,14 @@ export const Default: Story = {
       </CardHeader>
       <CardContent className="grid gap-4">
         <div className="grid grid-cols-1 gap-6">
-          <Button onClick={() => {}} variant="outline">
+          <Button onClick={handleGithubAuthentication} variant="outline">
             <Icons.gitHub className="mr-2 h-4 w-4" />
             Github
           </Button>
+          {/* <Button variant="outline">
+            <Icons.google className="mr-2 h-4 w-4" />
+            Google
+          </Button> */}
         </div>
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
@@ -58,8 +61,8 @@ export const Default: Story = {
         <div className="grid gap-2">
           <Label htmlFor="email">Email</Label>
           <Input
-            value=""
-            onChange={() => {}}
+            value={email}
+            onChange={e => handleInputChange('email', e)}
             id="email"
             type="email"
             placeholder="m@example.com"
@@ -67,14 +70,19 @@ export const Default: Story = {
         </div>
         <div className="grid gap-2">
           <Label htmlFor="password">Password</Label>
-          <Input value="" onChange={() => {}} id="password" type="password" />
+          <Input
+            value={password}
+            onChange={e => handleInputChange('password', e)}
+            id="password"
+            type="password"
+          />
         </div>
       </CardContent>
-      <div>
-        <Button onClick={() => {}} className="w-full">
+      <CardFooter>
+        <Button onClick={handleCreateAccount} className="w-full">
           Create account
         </Button>
-      </div>
+      </CardFooter>
     </Card>
-  ),
-};
+  );
+}

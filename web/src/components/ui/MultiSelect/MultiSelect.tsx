@@ -15,7 +15,7 @@ interface MultiSelectProps {
   placeholder?: string;
   onUnselect: (item: string) => void;
   onKeyDown: (event: React.KeyboardEvent) => void;
-  onAddItem?: (item: string) => void;
+  onAddItem: (item: string) => void;
   inputRef: React.RefObject<HTMLInputElement>;
 }
 

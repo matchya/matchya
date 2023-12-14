@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 
-import { ChecklistSheet } from '../ChecklistSheet/ChecklistSheet';
-import { GenerateCriteriaDialog } from '../GenerateCriteriaDialog/GenerateCriteriaDialog';
+import { GenerateCriteriaDialog } from '../Dialog/GenerateCriteriaDialog/GenerateCriteriaDialog';
 import { Icons } from '../Icons/Icons';
+import { ChecklistSheet } from '../Sheet/ChecklistSheet/ChecklistSheet';
 import { Sheet, SheetTrigger } from '../Sheet/Sheet';
 
 import { Button } from '@/components/ui/Button/Button';

@@ -1,10 +1,10 @@
-import { ChecklistTable } from '../ChecklistTable/ChecklistTable';
+import { ChecklistTable } from '../../Table/ChecklistTable/ChecklistTable';
 import {
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from '../Sheet/Sheet';
+} from '../Sheet';
 
 import { useCompanyStore } from '@/store/useCompanyStore';
 

@@ -1,10 +1,11 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { BrowserRouter as Router } from 'react-router-dom';
 
-import { Input } from './Input';
+import { Input as Component } from './Input';
 
-const meta: Meta<typeof Input> = {
-  component: Input,
+const meta: Meta<typeof Component> = {
+  title: 'Component',
+  component: Component,
   decorators: [
     Story => (
       <Router>
@@ -16,8 +17,8 @@ const meta: Meta<typeof Input> = {
 
 export default meta;
 
-type Story = StoryObj<typeof Input>;
+type Story = StoryObj<typeof Component>;
 
-export const Default: Story = {
-  render: () => <Input />,
+export const Input: Story = {
+  render: () => <Component />,
 };
