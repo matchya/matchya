@@ -129,7 +129,7 @@ def get_criteria_from_dynamodb(checklist_id: str) -> list:
         raise RuntimeError("Failed to retrieve criteria")
 
 
-def retrieve_candidate_github_data(github_client: GithubClient) -> dict:
+def retrieve_candidate_github_data(github_client: GithubClient) -> list:
     """
     Retrieves the candidate's GitHub repository data.
 
@@ -170,7 +170,7 @@ def retrieve_candidate_github_data(github_client: GithubClient) -> dict:
         raise RuntimeError("Error retrieving repositories data")
 
 
-def get_system_and_user_message(repositories_data: dict, criteria: dict) -> tuple:
+def get_system_and_user_message(repositories_data: list, criteria: dict) -> tuple:
     """
     Generates the system and user messages for the candidate evaluation.
 
