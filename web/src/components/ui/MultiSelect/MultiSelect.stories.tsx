@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { BrowserRouter as Router } from 'react-router-dom';
 
-import { Header as Component } from './Header';
+import { MultiSelect as Component } from './MultiSelect';
 
 const meta: Meta<typeof Component> = {
   title: 'Component',
@@ -19,6 +19,16 @@ export default meta;
 
 type Story = StoryObj<typeof Component>;
 
-export const Header: Story = {
-  render: () => <Component />,
+export const MultiSelect: Story = {
+  render: () => (
+    <Component
+      options={[]}
+      placeholder="Repositories"
+      selected={[]}
+      onUnselect={() => {}}
+      onKeyDown={() => {}}
+      onAddItem={() => {}}
+      inputRef={() => {}}
+    />
+  ),
 };
