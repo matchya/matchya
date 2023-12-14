@@ -3,7 +3,7 @@ import * as React from 'react';
 
 import { cn } from '@/lib/utils';
 
-const Avatar = React.forwardRef<
+const AvatarWrapper = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root>
 >(({ className, ...props }, ref) => (
@@ -16,7 +16,7 @@ const Avatar = React.forwardRef<
     {...props}
   />
 ));
-Avatar.displayName = AvatarPrimitive.Root.displayName;
+AvatarWrapper.displayName = AvatarPrimitive.Root.displayName;
 
 const AvatarImage = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Image>,
@@ -45,4 +45,13 @@ const AvatarFallback = React.forwardRef<
 ));
 AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName;
 
-export { Avatar, AvatarImage, AvatarFallback };
+export const Avatar = ({
+  altName = 'KO',
+  imageUrl = '/avatars/01.png',
+  size = 8,
+}) => (
+  <AvatarWrapper className={`h-${size} w-${size}`}>
+    <AvatarImage src={imageUrl} alt="@shadcn" />
+    <AvatarFallback>{altName}</AvatarFallback>
+  </AvatarWrapper>
+);

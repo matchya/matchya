@@ -1,4 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
+import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 
 import { MultiSelect as Component } from './MultiSelect';
@@ -28,7 +29,7 @@ export const MultiSelect: Story = {
       onUnselect={() => {}}
       onKeyDown={() => {}}
       onAddItem={() => {}}
-      inputRef={() => {}}
+      inputRef={React.createRef<HTMLInputElement>()}
     />
   ),
 };

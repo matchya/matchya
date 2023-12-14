@@ -3,10 +3,10 @@ import { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 
-import { Avatar, AvatarFallback, AvatarImage } from '../Avatar/Avatar';
+import { Avatar } from '../Avatar/Avatar';
 
 import {
-  Command,
+  Command as Component,
   CommandEmpty,
   CommandGroup,
   CommandInput,
@@ -16,8 +16,9 @@ import {
 } from '@/components/ui/Command/Command';
 import { cn } from '@/lib/utils';
 
-const meta: Meta<typeof Command> = {
-  component: Command,
+const meta: Meta<typeof Component> = {
+  title: 'Component',
+  component: Component,
   decorators: [
     Story => (
       <Router>
@@ -29,9 +30,9 @@ const meta: Meta<typeof Command> = {
 
 export default meta;
 
-type Story = StoryObj<typeof Command>;
+type Story = StoryObj<typeof Component>;
 
-export const Default: Story = {
+export const Command: Story = {
   render: () => {
     const [selectedPosition, setSelectedPosition] = useState({
       label: '',
@@ -53,7 +54,7 @@ export const Default: Story = {
       },
     ];
     return (
-      <Command>
+      <Component>
         <CommandList>
           <CommandInput placeholder="Search Position..." />
           <CommandEmpty>No Position found.</CommandEmpty>
@@ -67,14 +68,13 @@ export const Default: Story = {
                   }}
                   className="text-sm"
                 >
-                  <Avatar className="mr-2 h-5 w-5">
-                    <AvatarImage
-                      src={`https://avatar.vercel.sh/${Position.value}.png`}
-                      alt={Position.label}
-                      className="grayscale"
+                  <div className="mr-2">
+                    <Avatar
+                      size={6}
+                      imageUrl={`https://avatar.vercel.sh/${Position.value}.png`}
+                      altName="SC"
                     />
-                    <AvatarFallback>SC</AvatarFallback>
-                  </Avatar>
+                  </div>
                   {Position.label}
                   <CheckIcon
                     className={cn(
@@ -90,7 +90,7 @@ export const Default: Story = {
           ))}
         </CommandList>
         <CommandSeparator />
-      </Command>
+      </Component>
     );
   },
 };

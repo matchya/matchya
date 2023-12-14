@@ -1,10 +1,11 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { BrowserRouter as Router } from 'react-router-dom';
 
-import { UserAuthForm } from './UserAuthForm';
+import { UserAuthForm as Component } from './UserAuthForm';
 
-const meta: Meta<typeof UserAuthForm> = {
-  component: UserAuthForm,
+const meta: Meta<typeof Component> = {
+  title: 'Component/Form',
+  component: Component,
   decorators: [
     Story => (
       <Router>
@@ -16,11 +17,11 @@ const meta: Meta<typeof UserAuthForm> = {
 
 export default meta;
 
-type Story = StoryObj<typeof UserAuthForm>;
+type Story = StoryObj<typeof Component>;
 
 export const Register: Story = {
   render: () => (
-    <UserAuthForm
+    <Component
       authType="signup"
       className="mx-6"
       onSubmit={() => {}}
@@ -38,7 +39,7 @@ export const Register: Story = {
 
 export const Login: Story = {
   render: () => (
-    <UserAuthForm
+    <Component
       authType="login"
       className="mx-6"
       onSubmit={() => {}}

@@ -1,10 +1,12 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { BrowserRouter as Router } from 'react-router-dom';
 
-import { Label as Component } from './Label';
+import { Dialog } from '../Dialog';
+
+import { CreatePositionDialog as Component } from './CreatePositionDialog';
 
 const meta: Meta<typeof Component> = {
-  title: 'Component',
+  title: 'Component/Dialog',
   component: Component,
   decorators: [
     Story => (
@@ -19,6 +21,10 @@ export default meta;
 
 type Story = StoryObj<typeof Component>;
 
-export const Default: Story = {
-  render: () => <Component>Label Text</Component>,
+export const CreatePosition: Story = {
+  render: () => (
+    <Dialog open={true} onOpenChange={() => {}}>
+      <Component />
+    </Dialog>
+  ),
 };

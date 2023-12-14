@@ -1,10 +1,11 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { BrowserRouter as Router } from 'react-router-dom';
 
-import { PositionSwitcher } from './PositionSwitcher';
+import { PositionSwitcher as Component } from './PositionSwitcher';
 
-const meta: Meta<typeof PositionSwitcher> = {
-  component: PositionSwitcher,
+const meta: Meta<typeof Component> = {
+  title: 'Component',
+  component: Component,
   decorators: [
     Story => (
       <Router>
@@ -16,8 +17,8 @@ const meta: Meta<typeof PositionSwitcher> = {
 
 export default meta;
 
-type Story = StoryObj<typeof PositionSwitcher>;
+type Story = StoryObj<typeof Component>;
 
-export const Default: Story = {
-  render: () => <PositionSwitcher className="mx-6" />,
+export const PositionSwitcher: Story = {
+  render: () => <Component className="mx-6" />,
 };

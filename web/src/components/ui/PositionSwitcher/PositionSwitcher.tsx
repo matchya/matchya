@@ -5,11 +5,7 @@ import {
 } from '@radix-ui/react-icons';
 import * as React from 'react';
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from '@/components/ui/Avatar/Avatar';
+import { Avatar } from '@/components/ui/Avatar/Avatar';
 import { Button } from '@/components/ui/Button/Button';
 import {
   Command,
@@ -72,13 +68,11 @@ export function PositionSwitcher({ className }: PositionSwitcherProps) {
             aria-label="Select a Position"
             className={cn('w-[200px] justify-between', className)}
           >
-            <Avatar className="mr-2 h-5 w-5">
-              <AvatarImage
-                src={`https://avatar.vercel.sh/1.png`}
-                alt={`avatar-image-${selectedPosition?.id}`}
-              />
-              <AvatarFallback>SC</AvatarFallback>
-            </Avatar>
+            <Avatar
+              size={6}
+              altName="SC"
+              imageUrl={`https://avatar.vercel.sh/1.png`}
+            />
             {selectedPosition?.name}
             <CaretSortIcon className="ml-auto h-4 w-4 shrink-0 opacity-50" />
           </Button>
@@ -98,14 +92,10 @@ export function PositionSwitcher({ className }: PositionSwitcherProps) {
                     }}
                     className="text-sm"
                   >
-                    <Avatar className="mr-2 h-5 w-5">
-                      <AvatarImage
-                        src={`https://avatar.vercel.sh/1.png`}
-                        alt={`avatar-image-${selectedPosition?.id}`}
-                        className="grayscale"
-                      />
-                      <AvatarFallback>SC</AvatarFallback>
-                    </Avatar>
+                    <Avatar
+                      altName="SC"
+                      imageUrl={`https://avatar.vercel.sh/1.png`}
+                    />
                     {position.name}
                     <CheckIcon
                       className={cn(
