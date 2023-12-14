@@ -1,14 +1,15 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { ChecklistTable } from '@/components/ui/ChecklistTable/ChecklistTable';
+import { ChecklistTable as Component } from '@/components/ui/ChecklistTable/ChecklistTable';
 
-const meta: Meta<typeof ChecklistTable> = {
-  component: ChecklistTable,
+const meta: Meta<typeof Component> = {
+  title: 'Component',
+  component: Component,
 };
 
 export default meta;
 
-type Story = StoryObj<typeof ChecklistTable>;
+type Story = StoryObj<typeof Component>;
 
 const checklist = [
   {
@@ -34,5 +35,5 @@ const checklist = [
 ];
 
 export const Checklist: Story = {
-  render: () => <ChecklistTable checklist={checklist} />,
+  render: () => <Component checklist={checklist} />,
 };

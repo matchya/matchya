@@ -16,11 +16,17 @@ import { axiosInstance } from '@/helper';
 import { useCompanyStore } from '@/store/useCompanyStore';
 import { CustomError } from '@/types';
 
+interface GenerateCriteriaDialogProps {
+  shouldOpen: boolean;
+  onClose: () => void;
+  onUpdateStatus: (status: 'done' | 'scheduled' | 'done') => void;
+}
+
 export const GenerateCriteriaDialog = ({
   shouldOpen,
   onClose,
   onUpdateStatus,
-}) => {
+}: GenerateCriteriaDialogProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const { selectedPosition, repository_names } = useCompanyStore();
   const [isLoading, setIsLoading] = useState(false);

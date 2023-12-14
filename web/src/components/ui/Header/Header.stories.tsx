@@ -1,10 +1,11 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { BrowserRouter as Router } from 'react-router-dom';
 
-import { Header } from './Header';
+import { Header as Component } from './Header';
 
-const meta: Meta<typeof Header> = {
-  component: Header,
+const meta: Meta<typeof Component> = {
+  title: 'Component',
+  component: Component,
   decorators: [
     Story => (
       <Router>
@@ -16,8 +17,8 @@ const meta: Meta<typeof Header> = {
 
 export default meta;
 
-type Story = StoryObj<typeof Header>;
+type Story = StoryObj<typeof Component>;
 
-export const Default: Story = {
-  render: () => <Header />,
+export const Header: Story = {
+  render: () => <Component />,
 };

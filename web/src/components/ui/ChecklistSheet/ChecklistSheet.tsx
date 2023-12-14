@@ -1,4 +1,3 @@
-import { useCompanyStore } from '@/store/useCompanyStore';
 import { ChecklistTable } from '../ChecklistTable/ChecklistTable';
 import {
   SheetContent,
@@ -7,42 +6,21 @@ import {
   SheetTitle,
 } from '../Sheet/Sheet';
 
+import { useCompanyStore } from '@/store/useCompanyStore';
+
 export const ChecklistSheet = () => {
   const { selectedPosition } = useCompanyStore();
-  const checklist = [
-    {
-      keywords: ['react', 'typescript', 'firebase', 'yo'],
-      description: 'This is a description for the first item in the checklist',
-    },
-    {
-      keywords: ['react', 'typescript'],
-      description: 'This is a description for the second item in the checklist',
-    },
-    {
-      keywords: ['react', 'typescript'],
-      description: 'This is a description for the third item in the checklist',
-    },
-    {
-      keywords: ['react', 'typescript'],
-      description: 'This is a description for the fourth item in the checklist',
-    },
-    {
-      keywords: ['react', 'typescript'],
-      description: 'This is a description for the fifth item in the checklist',
-    },
-  ];
 
   if (selectedPosition?.checklist_status !== 'succeeded') {
     return null;
   }
 
-  console.log('YOOO: ');
   return (
     <SheetContent>
       <SheetHeader>
         <SheetTitle>Checklist</SheetTitle>
         <SheetDescription>
-          Make changes to your profile here. Click save when you're done.
+          See below for the generated checklist
         </SheetDescription>
       </SheetHeader>
       <div className="grid gap-4 py-4">

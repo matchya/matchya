@@ -21,7 +21,9 @@ export function MainNav({
   >('generate');
   const handleClose = () => setShouldOpen(false);
 
-  const handleStatusUpdate = status => setStatus(status);
+  const handleStatusUpdate = (
+    status: 'generate' | 'scheduled' | 'failed' | 'done'
+  ) => setStatus(status);
 
   const isMounted = useRef(true);
 
@@ -32,7 +34,7 @@ export function MainNav({
   }, []);
 
   useEffect(() => {
-    let interval;
+    let interval: NodeJS.Timeout;
 
     const fetchStatus = async () => {
       try {

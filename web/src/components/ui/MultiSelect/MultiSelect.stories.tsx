@@ -1,10 +1,11 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { BrowserRouter as Router } from 'react-router-dom';
 
-import { MultiSelect } from './MultiSelect';
+import { MultiSelect as Component } from './MultiSelect';
 
-const meta: Meta<typeof MultiSelect> = {
-  component: MultiSelect,
+const meta: Meta<typeof Component> = {
+  title: 'Component',
+  component: Component,
   decorators: [
     Story => (
       <Router>
@@ -16,8 +17,18 @@ const meta: Meta<typeof MultiSelect> = {
 
 export default meta;
 
-type Story = StoryObj<typeof MultiSelect>;
+type Story = StoryObj<typeof Component>;
 
-export const Default: Story = {
-  render: () => <MultiSelect options={[]} placeholder="Repositories" />,
+export const MultiSelect: Story = {
+  render: () => (
+    <Component
+      options={[]}
+      placeholder="Repositories"
+      selected={[]}
+      onUnselect={() => {}}
+      onKeyDown={() => {}}
+      onAddItem={() => {}}
+      inputRef={() => {}}
+    />
+  ),
 };

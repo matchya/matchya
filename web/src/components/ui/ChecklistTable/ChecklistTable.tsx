@@ -8,7 +8,13 @@ import {
   Table,
 } from '../Table/Table';
 
-export const ChecklistTable = ({ checklist }) => {
+interface ChecklistTableProps {
+  checklist: {
+    message: string;
+  }[];
+}
+
+export const ChecklistTable = ({ checklist }: ChecklistTableProps) => {
   return (
     <Table>
       <TableHeader>

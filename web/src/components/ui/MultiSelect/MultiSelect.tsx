@@ -9,6 +9,16 @@ import {
   CommandItem,
 } from '@/components/ui/Command/Command';
 
+interface MultiSelectProps {
+  options?: string[];
+  selected: string[];
+  placeholder?: string;
+  onUnselect: (item: string) => void;
+  onKeyDown: (event: React.KeyboardEvent) => void;
+  onAddItem?: (item: string) => void;
+  inputRef: React.RefObject<HTMLInputElement>;
+}
+
 export function MultiSelect({
   options = [],
   selected,
@@ -17,7 +27,7 @@ export function MultiSelect({
   onKeyDown,
   onAddItem,
   inputRef,
-}) {
+}: MultiSelectProps) {
   const [open, setOpen] = React.useState(false);
 
   const [inputValue, setInputValue] = React.useState('');
