@@ -1,6 +1,12 @@
 import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router';
 
+import { Avatar } from '../Avatar/Avatar';
+import { Button } from '../Button/Button';
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+} from '../DropdownMenu/DropdownMenu';
 import { UserNavDropdownMenu } from '../DropdownMenu/UserNavDropdownMenu/UserNavDropdownMenu';
 import { PositionSwitcher } from '../PositionSwitcher/PositionSwitcher';
 
@@ -11,7 +17,7 @@ import { useCompanyStore } from '@/store/useCompanyStore';
 export const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { id, resetAll, me } = useCompanyStore();
+  const { id, resetAll, name, email } = useCompanyStore();
 
   useEffect(() => {
     if (id) return;
@@ -40,6 +46,15 @@ export const Header = () => {
     navigate('/auth');
   };
 
+  const abbreviateName = () => {
+    const nameParts = name.split(' ');
+    if (nameParts.length === 1) {
+      return nameParts[0].charAt(0);
+    } else {
+      return nameParts[0].charAt(0) + nameParts[1].charAt(0);
+    }
+  };
+
   return (
     <div className="border-b">
       <div className="flex h-16 items-center px-4">
@@ -47,7 +62,18 @@ export const Header = () => {
         <MainNav className="mx-6" />
         <div className="ml-auto flex items-center space-x-4">
           {/* <Search /> */}
-          <UserNavDropdownMenu onLogout={handleLogout} />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                <Avatar altName={abbreviateName()} />
+              </Button>
+            </DropdownMenuTrigger>
+            <UserNavDropdownMenu
+              companyName={name}
+              companyEmail={email}
+              onLogout={handleLogout}
+            />
+          </DropdownMenu>
         </div>
       </div>
     </div>
