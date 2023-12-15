@@ -76,36 +76,6 @@ def get_github_access_token_from_checklist_id(checklist_id: str) -> str:
         raise RuntimeError(f"Error getting github access token from postgres: {e}")
 
 
-def save_candidate_info_to_db(body: dict) -> str:
-    """
-    Saves candidate information to database.
-
-    :param body: The request body containing candidate information.
-    :return: The ID of the candidate.
-    """
-    logger.info("Saving candidate info to db...")
-    try:
-        id = str(uuid.uuid4())
-        first_name = body.get('candidate_first_name', '')
-        last_name = body.get('candidate_last_name', '')
-        github_username = body.get('candidate_github_username', '')
-        email = body.get('candidate_email', '')
-        sql = """
-            INSERT INTO candidate (id, first_name, last_name, github_username, email) VALUES (%s, %s, %s, %s, %s)
-            ON CONFLICT (email) DO UPDATE SET (first_name, last_name, github_username) = (%s, %s, %s) RETURNING id;
-        """
-        db_cursor.execute(sql, (id, first_name, last_name, github_username, email, first_name, last_name, github_username))
-        result = db_cursor.fetchone()
-        if not result:
-            logger.info(f"New candidate is saved to db successfully id: {id}")
-            return id
-        logger.info(f"Candidate already exists in db, updated the information. candidate id is still: {result[0]}")
-        return result[0]
-    except Exception as e:
-        logger.error(f"Failed to save candidate info: {e}")
-        raise RuntimeError("Failed to save candidate info")
-
-
 def get_criteria_from_dynamodb(checklist_id: str) -> list:
     """
     Retrieves the full message criteria for a checklist.
@@ -305,20 +275,7 @@ def evaluate_candidate_with_gpt(system_message: str, user_message: str) -> dict:
         raise RuntimeError("Failed to generate criteria from gpt")
 
 
-def save_candidate_evaluation_to_db(checklist_id: str, candidate_id: str, candidate_result: dict):
-    """
-    Saves candidate evaluation result to database.
-
-    :param checklist_id: The ID of the checklist.
-    :param candidate_id: The ID of the candidate.
-    :param candidate_result: The candidate's evaluation result.
-    """
-    logger.info("Saving the candidate evaluation to db...")
-    candidate_result_id = save_candidate_result(checklist_id, candidate_id, candidate_result)
-    save_candidate_assessments(candidate_result_id, candidate_result['assessments'])
-
-
-def save_candidate_result(checklist_id: str, candidate_id: str, candidate_result: dict) -> str:
+def save_candidate_result(candidate_result_id: str, candidate_result: dict):
     """
     Saves candidate evaluation result to database.
 
@@ -329,12 +286,12 @@ def save_candidate_result(checklist_id: str, candidate_id: str, candidate_result
     """
     logger.info("Saving the candidate result...")
     try:
-        id = str(uuid.uuid4())
         total_score = candidate_result['total_score']
         summary = candidate_result['summary'].replace("'", "''")
-        sql = "INSERT INTO candidate_result (id, checklist_id, candidate_id, total_score, summary) VALUES (%s, %s, %s, %s, %s)"
-        db_cursor.execute(sql, (id, checklist_id, candidate_id, total_score, summary))
-        return id
+        sql = """
+            UPDATE candidate_result SET total_score = %s, summary = %s WHERE id = %s;
+        """
+        db_cursor.execute(sql, (total_score, summary, candidate_result_id))
     except Exception as e:
         logger.error(f"Failed to save candidate result: {e}")
         raise RuntimeError("Failed to save candidate result")
@@ -364,6 +321,23 @@ def save_candidate_assessments(candidate_result_id: str, assessments: dict):
         raise RuntimeError("Failed to save candidate assessments")
 
 
+def update_candidate_result_status(candidate_result_id: str, status: str):
+    """
+    Updates the status of the candidate result.
+
+    :param candidate_result_id: The ID of the candidate result.
+    :param status: The status of the candidate result.
+    """
+    logger.info("Updating the candidate result status...")
+    try:
+        sql = f"UPDATE candidate_result SET status = '{status}' WHERE id = '{candidate_result_id}';"
+        db_cursor.execute(sql)
+        db_conn.commit()
+    except Exception as e:
+        logger.error(f"Failed to update candidate result status: {e}")
+        raise RuntimeError("Failed to update candidate result status")
+
+
 def handler(event, context):
     """
     Main entry point for the Lambda function.
@@ -378,10 +352,10 @@ def handler(event, context):
         body = json.loads(messages[0]['body'])
         logger.info(f"Received evaluate candidate request: {body}")
 
-        connect_to_db()
+        evaluation_status = 'failed'
+        candidate_result_id = body['candidate_result_id']
 
-        candidate_id = save_candidate_info_to_db(body)
-        logger.info(f"Saved candidate info to database successfully: {candidate_id}")
+        connect_to_db()
 
         checklist_id = body.get('checklist_id')
         github_username = body.get('candidate_github_username')
@@ -396,8 +370,11 @@ def handler(event, context):
         candidate_result = evaluate_candidate_with_gpt(system_message, user_message,)
         logger.info(f"Generated candidate evaluation successfully: {candidate_result}")
 
-        save_candidate_evaluation_to_db(checklist_id, candidate_id, candidate_result)
-        db_conn.commit()
+        logger.info("Saving the candidate evaluation to db...")
+        save_candidate_result(candidate_result_id, candidate_result)
+        save_candidate_assessments(candidate_result_id, candidate_result['assessments'])
+
+        evaluation_status = 'succeeded'
         logger.info("Saved candidate evaluation to database successfully")
     except (ValueError, RuntimeError) as e:
         status_code = 400
@@ -406,5 +383,9 @@ def handler(event, context):
         status_code = 500
         logger.error(f'Candidate evaluation failed (status {str(status_code)}): {e}')
     finally:
-        if db_conn:
-            db_conn.close()
+        try:
+            update_candidate_result_status(candidate_result_id, evaluation_status)
+            if db_conn:
+                db_conn.close()
+        except Exception as e:
+            logger.error(f'Failed to update candidate result status: {e}')
