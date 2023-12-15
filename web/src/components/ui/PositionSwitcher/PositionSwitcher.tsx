@@ -66,18 +66,20 @@ export function PositionSwitcher({ className }: PositionSwitcherProps) {
             role="combobox"
             aria-expanded={open}
             aria-label="Select a Position"
-            className={cn('w-[200px] justify-between', className)}
+            className={cn('w-[225px] justify-between', className)}
           >
-            <Avatar
-              size={6}
-              altName="SC"
-              imageUrl={`https://avatar.vercel.sh/1.png`}
-            />
+            <div className="mr-2">
+              <Avatar
+                size={6}
+                altName="SC"
+                imageUrl={`https://avatar.vercel.sh/1.png`}
+              />
+            </div>
             {selectedPosition?.name}
             <CaretSortIcon className="ml-auto h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[200px] p-0">
+        <PopoverContent className="w-[225px] p-0">
           <Command>
             <CommandList>
               <CommandInput placeholder="Search Position..." />
@@ -92,10 +94,13 @@ export function PositionSwitcher({ className }: PositionSwitcherProps) {
                     }}
                     className="text-sm"
                   >
-                    <Avatar
-                      altName="SC"
-                      imageUrl={`https://avatar.vercel.sh/1.png`}
-                    />
+                    <div className="mr-2">
+                      <Avatar
+                        size={6}
+                        altName="SC"
+                        imageUrl={`https://avatar.vercel.sh/1.png`}
+                      />
+                    </div>
                     {position.name}
                     <CheckIcon
                       className={cn(
