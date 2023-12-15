@@ -17,7 +17,10 @@ export const usePositionStore = create<PositionState>((set, get) => ({
     positions: [],
     setPositions: (positions: Position[]) => set({ positions }),
     selectedPosition: null,
-    selectPosition: (position: Position) => set({ selectedPosition: position }),
+    selectPosition: (position: Position) => {
+        set({ selectedPosition: position }),
+        get().setPositionDetail(position.id);
+    },
     setPositionDetail: async (positionId: string) => {
         try {
             const selectedPosition = get().selectedPosition;

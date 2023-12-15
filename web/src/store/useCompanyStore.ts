@@ -36,7 +36,6 @@ export const useCompanyStore = create<CompanyState>(set => ({
         });
         await usePositionStore.getState().setPositions(payload.positions);
         await usePositionStore.getState().selectPosition(payload.positions[0]);
-        await usePositionStore.getState().setPositionDetail(payload.positions[0].id);
       } else {
         throw new Error(res.data.payload.message);
       }
