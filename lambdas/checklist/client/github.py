@@ -26,7 +26,7 @@ class GithubClient:
 
         self.logger.propagate = False
 
-    def get_programming_languages_used(self, repository_name):
+    def get_programming_languages_used(self, repository_name: list) -> dict:
         """
         Retrieves programming languages used in a specified GitHub repository.
 
@@ -45,7 +45,7 @@ class GithubClient:
             raise RuntimeError("Error getting programming languages used in repository. No languages found.")
         return data
 
-    def get_repository_tree(self, repository_name):
+    def get_repository_tree(self, repository_name: str) -> list:
         """
         Retrieves the file tree of a GitHub repository.
 
@@ -73,7 +73,7 @@ class GithubClient:
         tree = data['tree']
         return tree
 
-    def read_file(self, repository_name, file_path):
+    def read_file(self, repository_name: str, file_path: str) -> str:
         """
         Retrieves the contents of a file from a GitHub repository.
 
@@ -97,7 +97,7 @@ class GithubClient:
         content = decoded.decode("utf-8")
         return content
 
-    def get_pinned_repositories_name(self):
+    def get_pinned_repositories_name(self) -> list:
         """
         Retrieves the names of the pinned repositories of a GitHub user.
 
@@ -138,7 +138,7 @@ class GithubClient:
         return repo_names
 
     @staticmethod
-    def get_package_file_paths_to_read(file_paths, languages):
+    def get_package_file_paths_to_read(file_paths: list, languages: dict) -> list:
         """
         Filters out the file paths that are not important for the given programming languages.
         Return up to 10 file paths.
@@ -168,7 +168,7 @@ class GithubClient:
         return package_file_paths
 
     @staticmethod
-    def get_important_file_names_by_languages(languages):
+    def get_important_file_names_by_languages(languages: dict) -> list:
         """
         Returns a list of file names that are important for the given programming languages.
 
@@ -216,7 +216,7 @@ class GithubClient:
         return important_file_names
 
     @staticmethod
-    def github_user_exists(username):
+    def github_user_exists(username: str) -> bool:
         """
         Checks if a GitHub user exists.
 
@@ -232,7 +232,7 @@ class GithubClient:
         return res.status_code == 200
 
     @staticmethod
-    def get_organized_folder_structure(paths):
+    def get_organized_folder_structure(paths: list) -> str:
         """
         Organizes a list of file paths into a tree structure.
 
@@ -263,7 +263,7 @@ class GithubClient:
 
         return tree_to_string(tree).rstrip()
 
-    def _get_default_branch(self, repo_name):
+    def _get_default_branch(self, repo_name: str) -> str:
         """
         Fetches the default branch name of a given GitHub repository.
 
@@ -282,7 +282,7 @@ class GithubClient:
             raise RuntimeError("Unable to get default branch name. No data found.")
         return data.get('default_branch')
 
-    def _run_github_query(self, query):
+    def _run_github_query(self, query: str):
         """
         Executes a GraphQL query on GitHub's API.
 

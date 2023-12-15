@@ -48,7 +48,7 @@ def connect_to_db():
     db_cursor = db_conn.cursor()
 
 
-def get_github_access_token_from_position_id(position_id):
+def get_github_access_token_from_position_id(position_id: str):
     """
     Gets the github access token from the position id.
 
@@ -73,7 +73,7 @@ def get_github_access_token_from_position_id(position_id):
         raise RuntimeError(f"Error getting github access token from postgres: {e}")
 
 
-def retrieve_repositories_data(github_client: GithubClient, repository_names):
+def retrieve_repositories_data(github_client: GithubClient, repository_names: list) -> list:
     """
     Retrieves the repositories' data from GitHub.
 
@@ -87,8 +87,8 @@ def retrieve_repositories_data(github_client: GithubClient, repository_names):
         repositories_data = []
         for repository_name in repository_names:
 
-            programming_languages = github_client.get_programming_languages_used(repository_name)
-            repo_tree = github_client.get_repository_tree(repository_name)
+            programming_languages: dict = github_client.get_programming_languages_used(repository_name)
+            repo_tree: list = github_client.get_repository_tree(repository_name)
 
             n = 5
             depth_n_files = [branch['path'] for branch in repo_tree if branch["path"].count("/") < n and branch["type"] == "blob"]
@@ -96,8 +96,8 @@ def retrieve_repositories_data(github_client: GithubClient, repository_names):
                 n -= 1
                 depth_n_files = [file for file in depth_n_files if file.count("/") < n]
 
-            repo_structure = GithubClient.get_organized_folder_structure(depth_n_files)
-            package_files = GithubClient.get_package_file_paths_to_read(depth_n_files, programming_languages)
+            repo_structure: str = GithubClient.get_organized_folder_structure(depth_n_files)
+            package_files: list = GithubClient.get_package_file_paths_to_read(depth_n_files, programming_languages)
 
             repo_data = {'name': repository_name, 'languages': programming_languages, 'structure': repo_structure, 'files': []}
             for file_path in package_files:
@@ -115,7 +115,7 @@ def retrieve_repositories_data(github_client: GithubClient, repository_names):
         raise RuntimeError(f"Error retrieving repositories data: {e}")
 
 
-def get_system_and_user_message(repositories_data):
+def get_system_and_user_message(repositories_data: list):
     """
     Generates a system message and a user message to be used as prompt for OpenAI's ChatGPT.
 
@@ -203,7 +203,7 @@ def get_system_and_user_message(repositories_data):
     return system_message, user_message
 
 
-def get_criteria_from_gpt(system_message, user_message):
+def get_criteria_from_gpt(system_message: str, user_message: str) -> list:
     """
     Generates a list of criteria keywords using OpenAI's ChatGPT based on given prompt and programming languages.
 
@@ -232,11 +232,12 @@ def get_criteria_from_gpt(system_message, user_message):
         raise RuntimeError("Error generating criteria with OpenAI API")
 
 
-def save_checklist_to_db(position_id):
+def save_checklist_to_db(position_id: str) -> str:
     """
     Saves the generated checklist to the database.
 
     :param position_id: Unique identifier for the position.
+    :return: Unique identifier for the checklist.
     """
     logger.info("Saving the checklist to db...")
     checklist_id = str(uuid.uuid4())
@@ -249,7 +250,7 @@ def save_checklist_to_db(position_id):
         raise RuntimeError("Error saving checklist to postgres")
 
 
-def save_criteria_to_dynamodb(criteria, checklist_id):
+def save_criteria_to_dynamodb(criteria: list, checklist_id: str):
     """
     Saves the generated criteria to the database.
 
@@ -285,7 +286,7 @@ def save_criteria_to_dynamodb(criteria, checklist_id):
         raise RuntimeError("Error saving criteria to DynamoDB")
 
 
-def save_repository_names_to_db(checklist_id, repository_names):
+def save_repository_names_to_db(checklist_id: str, repository_names: list):
     """
     Saves the repository names to the database.
 
@@ -304,7 +305,7 @@ def save_repository_names_to_db(checklist_id, repository_names):
         raise RuntimeError("Error saving repository names to postgres")
 
 
-def update_generation_status(position_id, checklist_status):
+def update_generation_status(position_id: str, checklist_status: str):
     """
     Updates the generation status of the position.
 
