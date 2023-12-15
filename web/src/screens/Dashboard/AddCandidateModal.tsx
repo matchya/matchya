@@ -4,8 +4,9 @@ import Button, { Loading } from '../../components/Button';
 import FormInput from '../../components/FormInput';
 import ToastMessage from '../../components/ToastMessage';
 import { axiosInstance } from '../../helper';
-import { useCompanyStore } from '../../store/useCompanyStore';
 import { CustomError } from '../../types';
+
+import { usePositionStore } from '@/store/usePositionStore';
 
 interface AddCandidateModalProps {
   close: () => void;
@@ -20,7 +21,7 @@ const AddCandidateModal = ({ close }: AddCandidateModalProps) => {
   const [messageType, setMessageType] = useState<'error' | 'success'>('error');
   const [isLoading, setIsLoading] = useState(false);
 
-  const { selectedPosition } = useCompanyStore();
+  const { selectedPosition } = usePositionStore();
 
   const handleAddCandidate = async (event?: React.FormEvent) => {
     event?.preventDefault();
@@ -28,7 +29,7 @@ const AddCandidateModal = ({ close }: AddCandidateModalProps) => {
     setIsLoading(true);
     try {
       const response = await axiosInstance.post('/checklists/evaluate', {
-        checklist_id: selectedPosition?.checklists[0].id,
+        checklist_id: selectedPosition?.checklist.id,
         candidate_first_name: firstName,
         candidate_last_name: lastName,
         candidate_github_username: githubUsername,

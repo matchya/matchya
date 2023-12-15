@@ -6,10 +6,10 @@ import {
   SheetTitle,
 } from '../Sheet';
 
-import { useCompanyStore } from '@/store/useCompanyStore';
+import { usePositionStore } from '@/store/usePositionStore';
 
 export const ChecklistSheet = () => {
-  const { selectedPosition } = useCompanyStore();
+  const { selectedPosition } = usePositionStore();
 
   if (selectedPosition?.checklist_status !== 'succeeded') {
     return null;
@@ -24,7 +24,7 @@ export const ChecklistSheet = () => {
         </SheetDescription>
       </SheetHeader>
       <div className="grid gap-4 py-4">
-        <ChecklistTable checklist={selectedPosition?.checklists[0].criteria} />
+        <ChecklistTable checklist={selectedPosition?.checklist.criteria} />
       </div>
       {/* <SheetFooter>
         <SheetClose asChild>

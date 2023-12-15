@@ -8,22 +8,15 @@ import { Sheet, SheetTrigger } from '../Sheet/Sheet';
 import { Button } from '@/components/ui/Button/Button';
 import { axiosInstance } from '@/helper';
 import { cn } from '@/lib/utils';
-import { useCompanyStore } from '@/store/useCompanyStore';
+import { usePositionStore } from '@/store/usePositionStore';
 
 export function MainNav({
   className,
   ...props
 }: React.HTMLAttributes<HTMLElement>) {
   const [shouldOpen, setShouldOpen] = useState(false);
-  const { selectedPosition, setSelectedPositionDetail } = useCompanyStore();
-  const [status, setStatus] = useState<
-    'generate' | 'scheduled' | 'failed' | 'done'
-  >('generate');
+  const { selectedPosition, setPositionDetail } = usePositionStore();
   const handleClose = () => setShouldOpen(false);
-
-  const handleStatusUpdate = (
-    status: 'generate' | 'scheduled' | 'failed' | 'done'
-  ) => setStatus(status);
 
   const isMounted = useRef(true);
 
@@ -38,16 +31,19 @@ export function MainNav({
 
     const fetchStatus = async () => {
       try {
+        if (!selectedPosition) {
+          return;
+        }
         const response = await axiosInstance.get(
           `/positions/status/${selectedPosition?.id}`
         );
         if (response.data.payload.checklist_status === 'succeeded') {
-          setSelectedPositionDetail();
-          setStatus('done');
+          setPositionDetail(selectedPosition.id);
+          selectedPosition.checklist_status = 'succeeded';
           clearInterval(interval);
         }
         if (response.data.payload.checklist_status === 'failed') {
-          setStatus('failed');
+          selectedPosition.checklist_status = 'failed';
           clearInterval(interval);
         }
       } catch (error) {
@@ -56,17 +52,17 @@ export function MainNav({
       }
     };
 
-    if (status === 'scheduled') {
+    if (selectedPosition?.checklist_status === 'scheduled') {
       interval = setInterval(fetchStatus, 10000);
     }
 
     return () => clearInterval(interval);
-  }, [status]);
+  }, [selectedPosition?.checklist_status]);
 
   const getMessage = () => {
-    if (status === 'scheduled') {
+    if (selectedPosition?.checklist_status === 'scheduled') {
       return 'Generating Criteria...';
-    } else if (status === 'generate') {
+    } else if (selectedPosition?.checklist_status === 'unscheduled') {
       return 'Generate Criteria';
     } else {
       return 'Refresh the page!';
@@ -79,18 +75,18 @@ export function MainNav({
         className={cn('flex items-center space-x-4 lg:space-x-6', className)}
         {...props}
       >
-        {['generate', 'scheduled'].includes(status) ? (
+        {['unscheduled', 'scheduled'].includes(selectedPosition ? selectedPosition.checklist_status : '') ? (
           <Button
-            disabled={status !== 'generate'}
+            disabled={selectedPosition?.checklist_status !== 'unscheduled'}
             onClick={() => setShouldOpen(!shouldOpen)}
           >
-            {status === 'scheduled' && (
+            {selectedPosition?.checklist_status === 'scheduled' && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
             {getMessage()}
           </Button>
         ) : null}
-        {status === 'done' ? (
+        {selectedPosition?.checklist_status === 'succeeded' ? (
           <SheetTrigger asChild>
             <Button variant="outline">See Checklist</Button>
           </SheetTrigger>
@@ -99,7 +95,6 @@ export function MainNav({
         <GenerateCriteriaDialog
           shouldOpen={shouldOpen}
           onClose={handleClose}
-          onUpdateStatus={handleStatusUpdate}
         />
       </nav>
     </Sheet>
