@@ -79,7 +79,7 @@ def get_position_details_by_id(position_id):
             c.id AS checklist_id,
             cr.repository_name,
             can.first_name, can.last_name, can.email, can.github_username, 
-            can_res.id AS candidate_result_id, can_res.total_score, can_res.summary,
+            can_res.total_score, can_res.summary, can_res.status AS candidate_result_status,
             ass_crit.criterion_id, ass_crit.score, ass_crit.reason
         FROM
             position p
@@ -119,7 +119,7 @@ def process_position_from_sql_results(sql_results):
     position_data = {}
     for row in sql_results:
         (position_id, position_name, checklist_status, checklist_id, repo_name, first_name, last_name, email,
-         github_username, candidate_result_id, total_score, summary, criterion_id, score, reason) = row
+         github_username, total_score, summary, candidate_result_status, criterion_id, score, reason) = row
 
         if position_id not in position_data:
             position_data[position_id] = {'name': position_name, 'checklist_status': checklist_status, 'checklists': {}}
@@ -144,10 +144,11 @@ def process_position_from_sql_results(sql_results):
                 'github_username': github_username,
                 'total_score': total_score,
                 'summary': summary,
+                'status': candidate_result_status,
                 'assessments': []
             }
 
-        if email:
+        if email and candidate_result_status == 'succeeded':
             criterion = [criterion for criterion in criteria if criterion['id'] == criterion_id][0]
             candidates[email]['assessments'].append({
                 'criterion': criterion,
@@ -190,6 +191,8 @@ def get_criteria_by_checklist_id(checklist_id):
             criteria.append(item)
         if not criteria:
             raise ValueError(f"Criteria not found for checklist_id: {checklist_id}")
+        logger.info("Successfully retrieved criteria")
         return criteria
     except Exception as e:
+        logger.error(f"Failed to retrieve criteria: {e}")
         raise RuntimeError(f"Failed to retrieve criteria messages: {e}")

@@ -1,5 +1,6 @@
 import json
 import logging
+import uuid
 
 import boto3
 import psycopg2
@@ -77,23 +78,81 @@ def send_message_to_sqs(body):
         raise e
 
 
-def user_already_evaluated(checklist_id, candidate_email):
+def user_already_evaluated(checklist_id, candidate_id):
     """
-    Checks if a candidate has already been evaluated for a given checklist.
+    Checks if the user has already been evaluated.
 
     :param checklist_id: The id of the checklist to check.
-    :param candidate_email: The email of the candidate to check.
-    :return: True if the candidate has already been evaluated, False otherwise.
+    :param candidate_id: The id of the candidate to check.
+    :return: True if the user has already been evaluated, False otherwise.
     """
     logger.info("Checking if user is already evaluated...")
-    sql = """
-        SELECT * FROM candidate c
-        JOIN candidate_result cr
-        ON c.id = cr.candidate_id
-        WHERE cr.checklist_id = %s AND c.email = %s
-    """
-    db_cursor.execute(sql, (checklist_id, candidate_email))
+    failed_status = 'failed'
+    sql = f"SELECT * FROM candidate_result WHERE checklist_id = '{checklist_id}' AND candidate_id = '{candidate_id}' AND status != '{failed_status}'"
+    db_cursor.execute(sql)
     return db_cursor.fetchone() is not None
+
+
+def save_candidate_info_to_db(body: dict) -> str:
+    """
+    Saves the candidate's information to the database.
+
+    :param body: The body of the request.
+    :return: The id of the candidate.
+    """
+    logger.info("Saving candidate info to db...")
+    try:
+        id = str(uuid.uuid4())
+        first_name = body.get('candidate_first_name', '')
+        last_name = body.get('candidate_last_name', '')
+        github_username = body.get('candidate_github_username', '')
+        email = body.get('candidate_email', '')
+        sql = """
+            INSERT INTO candidate (id, first_name, last_name, github_username, email) VALUES (%s, %s, %s, %s, %s)
+            ON CONFLICT (email) DO UPDATE SET (first_name, last_name, github_username) = (%s, %s, %s) RETURNING id;
+        """
+        db_cursor.execute(sql, (id, first_name, last_name, github_username, email, first_name, last_name, github_username))
+        result = db_cursor.fetchone()
+        if not result:
+            logger.info(f"New candidate is saved to db successfully id: {id}")
+            return id
+        logger.info(f"Candidate already exists in db, updated the information. candidate id is still: {result[0]}")
+        return result[0]
+    except Exception as e:
+        logger.error(f"Failed to save candidate info: {e}")
+        raise RuntimeError("Failed to save candidate info")
+
+
+def create_candidate_result_to_db(checklist_id, candidate_id):
+    """
+    If there is failed candidate result, update the status to scheduled.
+    If not, create a new candidate result with status scheduled.
+
+    :param checklist_id: The id of the checklist to save.
+    :param candidate_id: The id of the candidate to save.
+    :return: The id of the candidate result.
+    """
+    logger.info("Saving the candidate result...")
+    try:
+        new_status = 'scheduled'
+        sql = f"SELECT * FROM candidate_result WHERE checklist_id = '{checklist_id}' AND candidate_id = '{candidate_id}' AND status = 'failed'"
+        db_cursor.execute(sql)
+        result = db_cursor.fetchone()
+
+        if result:
+            logger.info(f"Updating the candidate result status to scheduled, id: {result[0]}")
+            sql = f"UPDATE candidate_result SET status = '{new_status}' WHERE id = '{result[0]}'"
+            db_cursor.execute(sql)
+            return result[0]
+
+        id = str(uuid.uuid4())
+        sql = "INSERT INTO candidate_result (id, checklist_id, candidate_id, status) VALUES (%s, %s, %s, %s)"
+        db_cursor.execute(sql, (id, checklist_id, candidate_id, new_status))
+        logger.info(f"New candidate result is saved to db successfully id: {id}")
+        return id
+    except Exception as e:
+        logger.error(f"Failed to save candidate result: {e}")
+        raise RuntimeError("Failed to save candidate result")
 
 
 def handler(event, context):
@@ -117,9 +176,16 @@ def handler(event, context):
         if not GithubClient.github_user_exists(body.get('candidate_github_username')):
             raise RuntimeError(f"Github user {body.get('candidate_github_username')} does not exist")
 
-        if user_already_evaluated(checklist_id, body.get('candidate_email')):
+        candidate_id = save_candidate_info_to_db(body)
+        logger.info(f"Saved candidate info to database successfully: {candidate_id}")
+
+        if user_already_evaluated(checklist_id, candidate_id):
             raise RuntimeError(f"Candidate {body.get('candidate_email')} has already been evaluated")
 
+        candidate_result_id = create_candidate_result_to_db(checklist_id, candidate_id)
+        logger.info(f"Saved candidate result to database successfully with status 'scheduled': {candidate_result_id}")
+
+        body['candidate_result_id'] = candidate_result_id
         send_message_to_sqs(body)
         logger.info(f"Successfully sent message to SQS {body}")
         return generate_success_response(origin_domain=origin)
@@ -129,3 +195,7 @@ def handler(event, context):
     except Exception as e:
         logger.error(e)
         return generate_error_response(origin, 500, str(e))
+    finally:
+        db_conn.commit()
+        if db_conn:
+            db_conn.close()
