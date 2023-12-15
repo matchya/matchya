@@ -3,7 +3,7 @@ resource "aws_route53_record" "ns" {
   name    = "${var.domain_name}"
   type    = "NS"
   ttl     = "3600"
-  records = var.ns_records
+  records = aws_route53_zone.main.name_servers
   allow_overwrite = true
 }
 
