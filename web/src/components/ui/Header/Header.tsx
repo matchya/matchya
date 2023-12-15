@@ -17,7 +17,7 @@ import { useCompanyStore } from '@/store/useCompanyStore';
 export const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { id, resetAll, name, email } = useCompanyStore();
+  const { id, resetAll, me, name, email } = useCompanyStore();
 
   useEffect(() => {
     if (id) return;
