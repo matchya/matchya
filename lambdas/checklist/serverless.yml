@@ -100,6 +100,7 @@ functions:
             resultTtlInSeconds: 300
             name: ${self:provider.stage}-checklist-evaluation-publisher-authorizer
             arn: arn:aws:lambda:${aws:region}:${aws:accountId}:function:${self:provider.stage}-authorizer
+    timeout: 30
 
   generation-publisher:
     name: ${self:provider.stage}-checklist-generation-publisher
@@ -121,6 +122,7 @@ functions:
             resultTtlInSeconds: 300
             name: ${self:provider.stage}-checklist-generation-publisher-authorizer
             arn: arn:aws:lambda:${aws:region}:${aws:accountId}:function:${self:provider.stage}-authorizer
+    timeout: 30
 
 plugins:
   - serverless-deployment-bucket
