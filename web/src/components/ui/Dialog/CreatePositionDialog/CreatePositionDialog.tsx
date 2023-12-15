@@ -8,6 +8,7 @@ import {
 } from '@radix-ui/react-select';
 
 import { Button } from '../../Button/Button';
+import { Input } from '../../Input/Input';
 import {
   DialogContent,
   DialogDescription,
@@ -15,7 +16,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '../Dialog';
-import { Input } from '../../Input/Input';
 
 export const CreatePositionDialog = () => {
   return (

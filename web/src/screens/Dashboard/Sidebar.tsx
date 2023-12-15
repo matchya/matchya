@@ -1,7 +1,7 @@
-import { useCompanyStore } from '../../store/useCompanyStore';
+import { usePositionStore } from '@/store/usePositionStore';
 
 const Sidebar = () => {
-  const { positions, selectedPosition, selectPosition } = useCompanyStore();
+  const { positions, selectedPosition, selectPosition } = usePositionStore();
 
   if (positions.length === 0) {
     return <div>loading...</div>;

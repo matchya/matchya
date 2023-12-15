@@ -40,7 +40,7 @@ import {
   SelectValue,
 } from '@/components/ui/Select/Select';
 import { cn } from '@/lib/utils';
-import { useCompanyStore } from '@/store/useCompanyStore';
+import { usePositionStore } from '@/store/usePositionStore';
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<
   typeof PopoverTrigger
@@ -49,7 +49,7 @@ type PopoverTriggerProps = React.ComponentPropsWithoutRef<
 interface PositionSwitcherProps extends PopoverTriggerProps {}
 
 export function PositionSwitcher({ className }: PositionSwitcherProps) {
-  const { positions, selectedPosition, selectPosition } = useCompanyStore();
+  const { positions, selectedPosition, selectPosition } = usePositionStore();
   const [open, setOpen] = React.useState(false);
   const [showNewPositionDialog, setShowNewPositionDialog] =
     React.useState(false);

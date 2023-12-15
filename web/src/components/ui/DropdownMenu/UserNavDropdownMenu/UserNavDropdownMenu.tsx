@@ -1,15 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 
-import { Avatar } from '../../Avatar/Avatar';
-import { Button } from '../../Button/Button';
 import {
-  DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
 } from '../DropdownMenu';
 
 export interface UserNavProps {

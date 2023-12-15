@@ -14,21 +14,18 @@ import {
 
 import { axiosInstance } from '@/helper';
 import { useCompanyStore } from '@/store/useCompanyStore';
+import { usePositionStore } from '@/store/usePositionStore';
 import { CustomError } from '@/types';
 
 interface GenerateCriteriaDialogProps {
   shouldOpen: boolean;
   onClose: () => void;
-  onUpdateStatus: (status: 'done' | 'scheduled' | 'done') => void;
 }
 
-export const GenerateCriteriaDialog = ({
-  shouldOpen,
-  onClose,
-  onUpdateStatus,
-}: GenerateCriteriaDialogProps) => {
+export const GenerateCriteriaDialog = ({ shouldOpen, onClose }: GenerateCriteriaDialogProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const { selectedPosition, repository_names } = useCompanyStore();
+  const { repository_names } = useCompanyStore();
+  const { selectedPosition } = usePositionStore();
   const [isLoading, setIsLoading] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
 
@@ -53,7 +50,7 @@ export const GenerateCriteriaDialog = ({
       );
       if (response.data.status == 'success') {
         console.log('success');
-        onUpdateStatus('scheduled');
+        selectedPosition.checklist_status = 'scheduled';
         onClose();
         // setMessage(
         //   'Criteria generation is scheduled successfully. It may take a few minutes to finish.'

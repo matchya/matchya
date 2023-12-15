@@ -1,16 +1,24 @@
-import { useCompanyStore } from '../../store/useCompanyStore';
+import { useEffect } from 'react';
 
 import DashboardHeader from './DashboardHeader';
 import ScoreCard from './ScoreCard';
 
+import { usePositionStore } from '@/store/usePositionStore';
+
 const Dashboard = () => {
-  const { positions, selectedPosition } = useCompanyStore();
+  const { positions, selectedPosition } = usePositionStore();
+
+  useEffect(() => {
+    if (positions.length === 0) {
+      return;
+    }
+  }, [positions, selectedPosition]);
 
   const DashboardBody = () => {
     if (
       positions.length === 0 ||
       !selectedPosition ||
-      !selectedPosition.checklists
+      !selectedPosition.checklist
     ) {
       return <div>loading...</div>;
     }
@@ -27,8 +35,8 @@ const Dashboard = () => {
                 Top Candidates
               </h1>
               <div className="h-[calc(100vh-300px)] overflow-y-scroll">
-                {selectedPosition.checklists?.length > 0 &&
-                  selectedPosition.checklists[0].candidates.map(
+                {selectedPosition.checklist &&
+                  selectedPosition.checklist.candidates.map(
                     (candidate, index) => (
                       <ScoreCard key={index} candidate={candidate} />
                     )
