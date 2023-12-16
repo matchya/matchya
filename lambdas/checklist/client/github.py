@@ -41,8 +41,6 @@ class GithubClient:
         if res.status_code == 404:
             raise RuntimeError("Error getting programming languages used in repository. Repository not found.")
         data = json.loads(res.content)
-        if data == {}:
-            raise RuntimeError("Error getting programming languages used in repository. No languages found.")
         return data
 
     def get_repository_tree(self, repository_name: str) -> list:
@@ -61,6 +59,9 @@ class GithubClient:
         url = Config.GITHUB_API_REPO_URL + self.github_username + "/" + repository_name + "/git/trees/" + branch + "?recursive=1"
         try:
             res = requests.get(url, headers=self.github_header)
+            if res.status_code == 409:
+                self.logger.info("Repository is empty.")
+                return []
         except Exception as e:
             self.logger.error(f"Error getting file tree. Request to GitHub API failed. {e}")
             raise RuntimeError("Error getting file tree. Request to GitHub API failed.")
