@@ -179,7 +179,7 @@ def company_already_exists(email):
     :return: True if the user already exists, False otherwise.
     """
     logger.info(f"Checking if the user already exists... {email}")
-    sql = "SELECT * FROM company WHERE email = %s;"
+    sql = "SELECT id FROM company WHERE email = %s;"
     try:
         db_cursor.execute(sql, (email,))
         return db_cursor.fetchone() is not None

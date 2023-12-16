@@ -63,6 +63,22 @@ def get_github_username_from_position_id(position_id):
         raise RuntimeError(f"Error getting github_username from postgres: {e}")
 
 
+def checklist_already_exist(position_id):
+    """
+    Checks if a checklist already exists for the position.
+
+    :param position_id: Unique identifier for the position.
+    :return: True if a checklist already exists, False otherwise.
+    """
+    logger.info("Checking if checklist already exists...")
+    sql = f"SELECT id FROM checklist WHERE position_id = '{position_id}';"
+    try:
+        db_cursor.execute(sql)
+        return db_cursor.fetchone() is not None
+    except Exception as e:
+        raise RuntimeError(f"Error checking if checklist already exists in postgres: {e}")
+
+
 def send_message_to_sqs(body):
     """
     Sends a message to the SQS queue.
@@ -117,10 +133,16 @@ def handler(event, context):
         origin = parse_header(event)
         validate_request_body(body, ['position_id', 'repository_names'])
 
+        if checklist_already_exist(body['position_id']):
+            logger.error(f"Checklist for position {body['position_id']} already exists")
+            raise RuntimeError(f"Checklist for position {body['position_id']} already exists")
+
         github_username = get_github_username_from_position_id(body['position_id'])
         body['github_username'] = github_username
+
         send_message_to_sqs(body)
         logger.info(f"Successfully sent message to SQS {body}")
+
         update_generation_status(body['position_id'])
         return generate_success_response(origin_domain=origin)
     except RuntimeError as e:

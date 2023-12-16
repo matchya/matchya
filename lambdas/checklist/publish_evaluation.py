@@ -54,7 +54,7 @@ def checklist_exists(checklist_id):
     """
     logger.info("Checking if checklist exists...")
     global db_cursor
-    db_cursor.execute(f"SELECT * FROM checklist WHERE id = '{checklist_id}'")
+    db_cursor.execute(f"SELECT id FROM checklist WHERE id = '{checklist_id}'")
     return db_cursor.fetchone() is not None
 
 
@@ -88,7 +88,7 @@ def user_already_evaluated(checklist_id, candidate_id):
     """
     logger.info("Checking if user is already evaluated...")
     failed_status = 'failed'
-    sql = f"SELECT * FROM candidate_result WHERE checklist_id = '{checklist_id}' AND candidate_id = '{candidate_id}' AND status != '{failed_status}'"
+    sql = f"SELECT id FROM candidate_result WHERE checklist_id = '{checklist_id}' AND candidate_id = '{candidate_id}' AND status != '{failed_status}'"
     db_cursor.execute(sql)
     return db_cursor.fetchone() is not None
 
@@ -135,7 +135,7 @@ def create_candidate_result_to_db(checklist_id, candidate_id):
     logger.info("Saving the candidate result...")
     try:
         new_status = 'scheduled'
-        sql = f"SELECT * FROM candidate_result WHERE checklist_id = '{checklist_id}' AND candidate_id = '{candidate_id}' AND status = 'failed'"
+        sql = f"SELECT id FROM candidate_result WHERE checklist_id = '{checklist_id}' AND candidate_id = '{candidate_id}' AND status = 'failed'"
         db_cursor.execute(sql)
         result = db_cursor.fetchone()
 
