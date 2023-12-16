@@ -15,7 +15,8 @@ export function MainNav({
   ...props
 }: React.HTMLAttributes<HTMLElement>) {
   const [shouldOpen, setShouldOpen] = useState(false);
-  const { selectedPosition, setPositionDetail } = usePositionStore();
+  const { selectedPosition, selectPosition, setPositionDetail } =
+    usePositionStore();
   const handleClose = () => setShouldOpen(false);
 
   const isMounted = useRef(true);
@@ -43,7 +44,7 @@ export function MainNav({
           clearInterval(interval);
         }
         if (response.data.payload.checklist_status === 'failed') {
-          selectedPosition.checklist_status = 'failed';
+          selectPosition({ ...selectedPosition, checklist_status: 'failed' });
           clearInterval(interval);
         }
       } catch (error) {
@@ -65,7 +66,7 @@ export function MainNav({
     } else if (selectedPosition?.checklist_status === 'unscheduled') {
       return 'Generate Criteria';
     } else {
-      return 'Refresh the page!';
+      return 'Generation Failed';
     }
   };
 
@@ -75,9 +76,11 @@ export function MainNav({
         className={cn('flex items-center space-x-4 lg:space-x-6', className)}
         {...props}
       >
-        {['unscheduled', 'scheduled'].includes(selectedPosition ? selectedPosition.checklist_status : '') ? (
+        {['unscheduled', 'scheduled', 'failed'].includes(
+          selectedPosition ? selectedPosition.checklist_status : ''
+        ) ? (
           <Button
-            disabled={selectedPosition?.checklist_status !== 'unscheduled'}
+            disabled={selectedPosition?.checklist_status !== 'unscheduled' && selectedPosition?.checklist_status !== 'failed'}
             onClick={() => setShouldOpen(!shouldOpen)}
           >
             {selectedPosition?.checklist_status === 'scheduled' && (
@@ -92,10 +95,7 @@ export function MainNav({
           </SheetTrigger>
         ) : null}
         <ChecklistSheet />
-        <GenerateCriteriaDialog
-          shouldOpen={shouldOpen}
-          onClose={handleClose}
-        />
+        <GenerateCriteriaDialog shouldOpen={shouldOpen} onClose={handleClose} />
       </nav>
     </Sheet>
   );
