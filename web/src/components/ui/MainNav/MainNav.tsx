@@ -36,7 +36,7 @@ export function MainNav({
           return;
         }
         const response = await axiosInstance.get(
-          `/positions/status/${selectedPosition?.id}`
+          `/positions/status/checklist/${selectedPosition?.id}`
         );
         if (response.data.payload.checklist_status === 'succeeded') {
           setPositionDetail(selectedPosition.id);

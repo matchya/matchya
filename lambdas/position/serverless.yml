@@ -63,7 +63,7 @@ functions:
         - checklist_status.handler
     events:
       - http:
-          path: /positions/status/{id}
+          path: /positions/status/checklist/{id}
           method: GET
           cors:
             origins:
@@ -74,6 +74,31 @@ functions:
             identitySource: method.request.header.Cookie
             resultTtlInSeconds: 300
             name: ${self:provider.stage}-position-checklist-status-authorizer
+            arn: arn:aws:lambda:${aws:region}:${aws:accountId}:function:${self:provider.stage}-authorizer
+          request:
+            parameters:
+              paths:
+                id: true
+
+  candidates-status:
+    name: ${self:provider.stage}-position-candidates-status
+    image:
+      name: default
+      command:
+        - candidates_status.handler
+    events:
+      - http:
+          path: /positions/status/candidates/{id}
+          method: GET
+          cors:
+            origins:
+              - http://127.0.0.1:5173
+            allowCredentials: true
+          authorizer:
+            type: request
+            identitySource: method.request.header.Cookie
+            resultTtlInSeconds: 300
+            name: ${self:provider.stage}-position-candidates-status-authorizer
             arn: arn:aws:lambda:${aws:region}:${aws:accountId}:function:${self:provider.stage}-authorizer
           request:
             parameters:

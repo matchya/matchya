@@ -25,7 +25,7 @@ const ScheduledCriteriaBox = () => {
     setIsLoading(true);
     try {
       const response = await axiosInstance.get(
-        `/positions/status/${selectedPosition?.id}`
+        `/positions/status/checklist/${selectedPosition?.id}`
       );
       if (response.data.status == 'success') {
         const status: string = response.data.payload.checklist_status;
