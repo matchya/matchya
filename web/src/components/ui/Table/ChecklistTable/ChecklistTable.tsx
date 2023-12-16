@@ -27,7 +27,7 @@ export const ChecklistTable = ({ checklist }: ChecklistTableProps) => {
         {checklist.map(item => (
           <TableRow key={item.message}>
             <TableCell className="w-[250px] font-medium flex flex-wrap gap-2">
-              {['react', 'typescript'].map(keyword => (
+              {item.keywords.map(keyword => (
                 <Badge>{keyword}</Badge>
               ))}
             </TableCell>
