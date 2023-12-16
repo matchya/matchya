@@ -14,6 +14,7 @@ export function MainNav({
   className,
   ...props
 }: React.HTMLAttributes<HTMLElement>) {
+  const POLLING_INTERVAL = 20000;
   const [shouldOpen, setShouldOpen] = useState(false);
   const { selectedPosition, selectPosition, setPositionDetail } =
     usePositionStore();
@@ -54,7 +55,7 @@ export function MainNav({
     };
 
     if (selectedPosition?.checklist_status === 'scheduled') {
-      interval = setInterval(fetchStatus, 10000);
+      interval = setInterval(fetchStatus, POLLING_INTERVAL);
     }
 
     return () => clearInterval(interval);
