@@ -184,7 +184,7 @@ def get_criteria_by_checklist_id(checklist_id):
         response = criterion_table.query(
             IndexName='ChecklistIdIndex',
             KeyConditionExpression=boto3.dynamodb.conditions.Key('checklist_id').eq(checklist_id),
-            ProjectionExpression='id, message, created_at'
+            ProjectionExpression='id, message, keywords, created_at'
         )
         criteria = []
         for item in response.get('Items', []):
