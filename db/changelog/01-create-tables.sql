@@ -125,3 +125,8 @@ ALTER TABLE company ADD COLUMN github_access_token bytea;
 
 --changeset author:16
 ALTER TABLE candidate_result ADD COLUMN status varchar(30) DEFAULT 'scheduled';
+--rollback ALTER TABLE candidate_result DROP COLUMN status;
+
+--changeset author:17
+ALTER TABLE checklist ADD COLUMN status varchar(30) DEFAULT 'scheduled';
+--rollback ALTER TABLE checklist DROP COLUMN status;
