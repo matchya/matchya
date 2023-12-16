@@ -26,6 +26,7 @@ export interface Assessment {
 export interface Criterion {
   id: string;
   message: string;
+  keywords: string[];
   created_at: string;
 }
 
