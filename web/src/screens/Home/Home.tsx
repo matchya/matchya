@@ -9,7 +9,6 @@ function Home() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log('ID: ', id);
     if (id) return;
     if (location.pathname === '/auth' || location.pathname === '/') return;
     getAuthStatus();
