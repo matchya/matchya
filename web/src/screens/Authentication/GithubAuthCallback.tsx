@@ -49,7 +49,7 @@ const GithubAuthCallback = () => {
             className="mt-5 h-12 text-xl bg-black text-white"
             onClick={() => navigate('/auth')}
           >
-            Retry Login
+            Retry Log In
           </Button>
         )}
       </div>
