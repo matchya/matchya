@@ -1,91 +1,19 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
-import { axiosInstance } from '../../helper';
-import { CustomError } from '../../types';
-
-import { Button, buttonVariants } from '@/components/ui/Button/Button';
-import { UserAuthForm } from '@/components/ui/UserAuthForm/UserAuthForm';
+import { Button } from '@/components/ui/Button/Button';
+import { Icons } from '@/components/ui/Icons/Icons';
+import { githubClientId } from '@/config';
 import { cn } from '@/lib/utils';
 
-export interface LoginInput {
-  email: string;
-  password: string;
-}
-
-export interface RegisterInput {
-  name: string;
-  email: string;
-  password: string;
-  github_username: string;
-}
-
 const Authentication = () => {
-  const navigate = useNavigate();
-  const [authType, setAuthType] = useState<'login' | 'signup'>('login');
-  const [userInput, setUserInput] = useState({
-    companyName: '',
-    email: '',
-    githubUsername: '',
-    password: '',
-  });
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const login = async (input: LoginInput) => {
-    try {
-      setIsLoading(true);
-      const response = await axiosInstance.post('/login', input);
-      if (response.data.status === 'success') {
-        navigate('/dashboard');
-      }
-    } catch (error) {
-      const err = error as CustomError;
-      if (err.response.status === 400) {
-        console.error(err.response.data.message);
-      } else {
-        console.error('Login failed. Please try again.');
-      }
-    }
-    setIsLoading(false);
-  };
+  const handleGithubLogin = () => {
+    setIsLoading(true);
+    const redirectUri = 'http://127.0.0.1:5173/auth/github/callback';
+    const loginUrl = `https://github.com/login/oauth/authorize?client_id=${githubClientId}&redirect_uri=${redirectUri}&scope=repo,user`;
 
-  const signup = async (input: RegisterInput) => {
-    try {
-      setIsLoading(true);
-      const response = await axiosInstance.post('/register', input);
-      if (response.data.status === 'success') {
-        navigate('/dashboard');
-      }
-    } catch (error) {
-      const err = error as CustomError;
-      if (err.response.status === 400) {
-        console.error(err.response.data.message);
-      } else {
-        console.error('Signup failed. Please try again.');
-      }
-    }
-    setIsLoading(false);
-  };
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (authType === 'login') {
-      login({ email: userInput.email, password: userInput.password });
-    } else {
-      signup({
-        name: userInput.companyName,
-        email: userInput.email,
-        password: userInput.password,
-        github_username: userInput.githubUsername,
-      });
-    }
-  };
-
-  const handleUserInputChange = (field: string, value: string) => {
-    setUserInput({
-      ...userInput,
-      [field]: value,
-    });
+    window.location.href = loginUrl;
   };
 
   return (
@@ -107,15 +35,6 @@ const Authentication = () => {
         />
       </div>
       <div className="min-h-screen container relative hidden flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
-        <Button
-          className={cn(
-            buttonVariants({ variant: 'ghost' }),
-            'absolute right-4 top-4 md:right-8 md:top-8'
-          )}
-          onClick={() => setAuthType(authType === 'login' ? 'signup' : 'login')}
-        >
-          {authType === 'login' ? 'Sign Up' : 'Login'}
-        </Button>
         <div className="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
           <div className="absolute inset-0 bg-zinc-900" />
           <div className="relative z-20 flex items-center text-lg font-medium">
@@ -147,16 +66,25 @@ const Authentication = () => {
           <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
             <div className="flex flex-col space-y-2 text-center">
               <h1 className="text-2xl font-semibold tracking-tight">
-                {authType === 'login' ? 'Login' : 'Sign Up'}
+                Log in to Matchya
               </h1>
             </div>
-            <UserAuthForm
-              authType={authType}
-              onSubmit={handleSubmit}
-              isLoading={isLoading}
-              userInput={userInput}
-              onUserInputChange={handleUserInputChange}
-            />
+            <div className={cn('grid gap-6')}>
+              <Button
+                variant="outline"
+                type="button"
+                disabled={isLoading}
+                onClick={handleGithubLogin}
+                className='w-3/4 h-12 mx-auto text-white bg-black text-xl hover:bg-gray-600 hover:text-white dark:bg-white dark:text-black dark:border-black dark:hover:bg-gray-100 dark:hover:text-black dark:hover:border-black'
+              >
+                {isLoading ? (
+                  <Icons.spinner className="mr-2 h-6 w-6 animate-spin" />
+                ) : (
+                  <Icons.gitHub className="mr-2 h-6 w-6" />
+                )}{' '}
+                GitHub
+              </Button>
+            </div>
             {/* To be implemented... */}
             {/* <p className="px-8 text-center text-sm text-muted-foreground">
               By clicking continue, you agree to our{' '}
