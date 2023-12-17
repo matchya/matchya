@@ -34,36 +34,6 @@ provider:
     GITHUB_FERNET_KEY: ${ssm:/secrets/${self:provider.stage}/github_fernet_key}
 
 functions:
-  register:
-    name: ${self:provider.stage}-authentication-register
-    image:
-      name: default
-      command:
-        - register.handler
-    events:
-      - http:
-          path: /register
-          method: POST
-          cors:
-            origins:
-              - http://127.0.0.1:5173
-            allowCredentials: true
-
-  login:
-    name: ${self:provider.stage}-authentication-login
-    image:
-      name: default
-      command:
-        - login.handler
-    events:
-      - http:
-          path: /login
-          method: POST
-          cors:
-            origins:
-              - http://127.0.0.1:5173
-            allowCredentials: true
-
   logout:
     name: ${self:provider.stage}-authentication-logout
     image:
