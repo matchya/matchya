@@ -93,16 +93,16 @@ def process_position_from_sql_results(sql_results):
     candidate_data = {}
     criteria = None
     for row in sql_results:
-        (checklist_id, candidate_id, first_name, last_name, email, github_username, 
+        (checklist_id, candidate_id, first_name, last_name, email, github_username,
          total_score, summary, candidate_result_status, criterion_id, score, reason) = row
 
         if candidate_id not in candidate_data:
             candidate_data[candidate_id] = {
-                'id': candidate_id, 
-                'first_name': first_name, 
-                'last_name': last_name, 
-                'email': email, 
-                'github_username': github_username, 
+                'id': candidate_id,
+                'first_name': first_name,
+                'last_name': last_name,
+                'email': email,
+                'github_username': github_username,
                 'total_score': total_score,
                 'summary': summary,
                 'status': candidate_result_status,
