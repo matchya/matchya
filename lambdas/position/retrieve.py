@@ -146,22 +146,24 @@ def process_position_from_sql_results(sql_results):
                 'total_score': total_score,
                 'summary': summary,
                 'status': candidate_result_status,
-                'assessments': []
+                'assessments': {}
             }
 
         if email and candidate_result_status == 'succeeded':
             criterion = [criterion for criterion in criteria if criterion['id'] == criterion_id][0]
-            candidates[email]['assessments'].append({
+            candidates[email]['assessments'][criterion['id']] = {
                 'criterion': criterion,
                 'score': score,
                 'reason': reason
-            })
+            }
 
     final_data = []
     for pos_id, pos_info in position_data.items():
         checklists = []
         for chk_id, chk_info in pos_info['checklists'].items():
             chk_info['repository_names'] = list(chk_info['repository_names'])
+            for can_email, can_info in chk_info['candidates'].items():
+                can_info['assessments'] = list(can_info['assessments'].values())
             chk_info['candidates'] = list(chk_info['candidates'].values())
             checklists.append(chk_info)
         final_data.append({

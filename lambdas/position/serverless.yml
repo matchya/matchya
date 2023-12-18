@@ -54,6 +54,7 @@ functions:
             parameters:
               paths:
                 id: true
+    timeout: 30
 
   checklist-status:
     name: ${self:provider.stage}-position-checklist-status
