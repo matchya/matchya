@@ -143,6 +143,10 @@ def process_position_from_sql_results(sql_results):
                 'last_name': last_name,
                 'email': email,
                 'github_username': github_username,
+                'total_score': total_score,
+                'summary': summary,
+                'status': candidate_result_status,
+                'assessments': []
             }
 
         if email and candidate_result_status == 'succeeded':

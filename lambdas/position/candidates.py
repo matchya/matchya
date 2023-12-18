@@ -52,7 +52,6 @@ def get_candidates_by_position_id(position_id):
     logger.info(f"Retrieving checklist status for position: {position_id}")
     sql = """
         SELECT
-            c.id AS checklist_id,
             can.id AS candidate_id, can.first_name, can.last_name, can.email, can.github_username, 
             can_res.total_score, can_res.summary, can_res.status AS candidate_result_status,
             ass_crit.criterion_id, ass_crit.score, ass_crit.reason
@@ -86,14 +85,13 @@ def process_position_from_sql_results(sql_results):
     :return: candidates
     """
     logger.info("Processing position from sql results...")
-    # if no checklist or no candidates, return empty list
-    if sql_results[0][0] is None or sql_results[0][1] is None:
+    # if no candidates, return empty list
+    if sql_results[0][0] is None:
         return []
 
     candidate_data = {}
-    criteria = None
     for row in sql_results:
-        (checklist_id, candidate_id, first_name, last_name, email, github_username,
+        (candidate_id, first_name, last_name, email, github_username,
          total_score, summary, candidate_result_status, criterion_id, score, reason) = row
 
         if candidate_id not in candidate_data:
@@ -110,11 +108,10 @@ def process_position_from_sql_results(sql_results):
             }
 
         if email and candidate_result_status == 'succeeded':
-            if criteria is None:
-                criteria = get_criteria_by_checklist_id(checklist_id)
-            criterion = [criterion for criterion in criteria if criterion['id'] == criterion_id][0]
             candidate_data[candidate_id]['assessments'].append({
-                'criterion_id': criterion['id'],
+                'criterion': {
+                    'id': criterion_id,
+                },
                 'score': score,
                 'reason': reason
             })
@@ -124,32 +121,6 @@ def process_position_from_sql_results(sql_results):
         final_data.append(can_info)
 
     return final_data
-
-
-def get_criteria_by_checklist_id(checklist_id):
-    """
-    Retrieves criteria dictionary {id: message} by checklist_id
-
-    :param checklist_id: The checklist_id to retrieve criteria
-    :return: Dictionay of criteria
-    """
-    logger.info("Getting the criteria by checklist id...")
-    try:
-        response = criterion_table.query(
-            IndexName='ChecklistIdIndex',
-            KeyConditionExpression=boto3.dynamodb.conditions.Key('checklist_id').eq(checklist_id),
-            ProjectionExpression='id, message, keywords, created_at'
-        )
-        criteria = []
-        for item in response.get('Items', []):
-            criteria.append(item)
-        if not criteria:
-            raise ValueError(f"Criteria not found for checklist_id: {checklist_id}")
-        logger.info("Successfully retrieved criteria")
-        return criteria
-    except Exception as e:
-        logger.error(f"Failed to retrieve criteria: {e}")
-        raise RuntimeError(f"Failed to retrieve criteria messages: {e}")
 
 
 def handler(event, context):
