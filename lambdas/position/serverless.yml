@@ -80,15 +80,15 @@ functions:
               paths:
                 id: true
 
-  candidates-status:
-    name: ${self:provider.stage}-position-candidates-status
+  retrieve-candidates:
+    name: ${self:provider.stage}-position-retreive-candidates
     image:
       name: default
       command:
-        - candidates_status.handler
+        - candidates.handler
     events:
       - http:
-          path: /positions/status/candidates/{id}
+          path: /positions/candidates/{id}
           method: GET
           cors:
             origins:

@@ -8,7 +8,7 @@ from utils.request import parse_header, parse_request_parameter
 from utils.response import generate_success_response, generate_error_response
 
 # Logger
-logger = logging.getLogger('position retrieve')
+logger = logging.getLogger('retrieve_candidates')
 logger.setLevel(logging.INFO)
 
 formatter = logging.Formatter('[%(levelname)s]:%(funcName)s:%(lineno)d:%(message)s')
@@ -42,49 +42,23 @@ def connect_to_db():
     db_cursor = db_conn.cursor()
 
 
-def handler(event, context):
-    logger.info(event)
-    try:
-        connect_to_db()
-        position_id = parse_request_parameter(event, 'id')
-        origin = parse_header(event)
-        body = get_position_details_by_id(position_id)
-        if not body:
-            raise ValueError(f"Position not found for id: {position_id}")
-        return generate_success_response(origin, body)
-    except (ValueError, RuntimeError) as e:
-        status_code = 400
-        logger.error(f"Failed to retrieve position (status {str(status_code)}): {e}")
-        return generate_error_response(origin, status_code, str(e))
-    except Exception as e:
-        status_code = 500
-        logger.error(f"Failed to retrieve position (status {str(status_code)}): {e}")
-        return generate_error_response(origin, status_code, str(e))
-    finally:
-        if db_conn:
-            db_conn.close()
-
-
-def get_position_details_by_id(position_id):
+def get_candidates_by_position_id(position_id):
     """
-    Retrieves the position details for a given position_id from the database.
+    Retrieves candidates for a given position.
 
-    :param position_id: The position_id to retrieve details for.
-    :return: Dictionary of position details.
+    :param position_id: The position id.
+    :return A list of candidates
     """
-    logger.info("Getting position details by id...")
+    logger.info(f"Retrieving checklist status for position: {position_id}")
     sql = """
         SELECT
-            p.id AS position_id, p.name AS position_name, p.checklist_generation_status AS checklist_status,
             c.id AS checklist_id,
-            cr.repository_name,
             can.id AS candidate_id, can.first_name, can.last_name, can.email, can.github_username, 
             can_res.total_score, can_res.summary, can_res.status AS candidate_result_status,
             ass_crit.criterion_id, ass_crit.score, ass_crit.reason
         FROM
             position p
         LEFT JOIN checklist c ON p.id = c.position_id
-        LEFT JOIN checklist_repository cr ON c.id = cr.checklist_id
         LEFT JOIN candidate_result can_res ON c.id = can_res.checklist_id
         LEFT JOIN candidate can ON can_res.candidate_id = can.id
         LEFT JOIN assessment_criteria ass_crit ON can_res.id = ass_crit.candidate_result_id
@@ -106,67 +80,50 @@ def get_position_details_by_id(position_id):
 
 def process_position_from_sql_results(sql_results):
     """
-    Processes sql results from db_cursor.execute(sql) and returns position_data
+    Processes sql results from db_cursor.execute(sql) and returns candidates
 
     :param sql_results: sql results from db_cursor.execute(sql)
-    :return: position_data
+    :return: candidates
     """
     logger.info("Processing position from sql results...")
-    # if no checklist, return empty checklist
-    if sql_results[0][3] is None:
-        return {"name": sql_results[0][1], "checklist_status": sql_results[0][2], "checklists": []}
+    # if no checklist or no candidates, return empty list
+    if sql_results[0][0] is None or sql_results[0][1] is None:
+        return []
 
-    position_data = {}
+    candidate_data = {}
+    criteria = None
     for row in sql_results:
-        (position_id, position_name, checklist_status, checklist_id, repo_name, candidate_id, first_name, last_name, email,
-         github_username, total_score, summary, candidate_result_status, criterion_id, score, reason) = row
+        (checklist_id, candidate_id, first_name, last_name, email, github_username, 
+         total_score, summary, candidate_result_status, criterion_id, score, reason) = row
 
-        if position_id not in position_data:
-            position_data[position_id] = {'name': position_name, 'checklist_status': checklist_status, 'checklists': {}}
-
-        if checklist_id not in position_data[position_id]['checklists']:
-            criteria = get_criteria_by_checklist_id(checklist_id)
-            position_data[position_id]['checklists'][checklist_id] = {
-                'id': checklist_id,
-                'repository_names': set(),
-                'candidates': {},
-                'criteria': criteria
-            }
-
-        position_data[position_id]['checklists'][checklist_id]['repository_names'].add(repo_name)
-
-        candidates = position_data[position_id]['checklists'][checklist_id]['candidates']
-        if email and email not in candidates:
-            candidates[email] = {
-                'id': candidate_id,
-                'first_name': first_name,
-                'last_name': last_name,
-                'email': email,
-                'github_username': github_username,
+        if candidate_id not in candidate_data:
+            candidate_data[candidate_id] = {
+                'id': candidate_id, 
+                'first_name': first_name, 
+                'last_name': last_name, 
+                'email': email, 
+                'github_username': github_username, 
+                'total_score': total_score,
+                'summary': summary,
+                'status': candidate_result_status,
+                'assessments': []
             }
 
         if email and candidate_result_status == 'succeeded':
+            if criteria is None:
+                criteria = get_criteria_by_checklist_id(checklist_id)
             criterion = [criterion for criterion in criteria if criterion['id'] == criterion_id][0]
-            candidates[email]['assessments'].append({
-                'criterion': criterion,
+            candidate_data[candidate_id]['assessments'].append({
+                'criterion_id': criterion['id'],
                 'score': score,
                 'reason': reason
             })
 
     final_data = []
-    for pos_id, pos_info in position_data.items():
-        checklists = []
-        for chk_id, chk_info in pos_info['checklists'].items():
-            chk_info['repository_names'] = list(chk_info['repository_names'])
-            chk_info['candidates'] = list(chk_info['candidates'].values())
-            checklists.append(chk_info)
-        final_data.append({
-            'name': pos_info['name'],
-            'checklist_status': pos_info['checklist_status'],
-            'checklists': checklists
-        })
+    for can_id, can_info in candidate_data.items():
+        final_data.append(can_info)
 
-    return final_data[0] if final_data else None
+    return final_data
 
 
 def get_criteria_by_checklist_id(checklist_id):
@@ -193,3 +150,27 @@ def get_criteria_by_checklist_id(checklist_id):
     except Exception as e:
         logger.error(f"Failed to retrieve criteria: {e}")
         raise RuntimeError(f"Failed to retrieve criteria messages: {e}")
+
+
+def handler(event, context):
+    logger.info(event)
+    try:
+        connect_to_db()
+        position_id = parse_request_parameter(event, 'id')
+        origin = parse_header(event)
+        candidates = get_candidates_by_position_id(position_id)
+        body = {
+            'candidates': candidates
+        }
+        return generate_success_response(origin, body)
+    except (ValueError, RuntimeError) as e:
+        status_code = 400
+        logger.error(f"Failed to retrieve position (status {str(status_code)}): {e}")
+        return generate_error_response(origin, status_code, str(e))
+    except Exception as e:
+        status_code = 500
+        logger.error(f"Failed to retrieve position (status {str(status_code)}): {e}")
+        return generate_error_response(origin, status_code, str(e))
+    finally:
+        if db_conn:
+            db_conn.close()
