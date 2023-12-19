@@ -43,10 +43,6 @@ export function CreateAccountCard({
             <Icons.gitHub className="mr-2 h-4 w-4" />
             Github
           </Button>
-          {/* <Button variant="outline">
-            <Icons.google className="mr-2 h-4 w-4" />
-            Google
-          </Button> */}
         </div>
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
