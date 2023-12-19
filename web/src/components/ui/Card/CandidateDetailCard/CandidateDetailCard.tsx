@@ -1,20 +1,11 @@
-import { z } from 'zod';
-
+import { assessments } from '../../Table/EvaluationTable/columns';
 import { EvaluationTable } from '../../Table/EvaluationTable/EvaluationTable';
-import { mockedAssessments } from '../../Table/EvaluationTable/mock';
-import { assessmentSchema } from '../../Table/EvaluationTable/schema';
 
 import { Candidate } from '@/types';
 
 interface CandidateDetailCardProps {
   candidate: Candidate;
 }
-
-async function getAssessments() {
-  const assessments = mockedAssessments;
-  return z.array(assessmentSchema).parse(assessments);
-}
-const assessments = await getAssessments();
 
 export const CandidateDetailCard = ({
   candidate,
