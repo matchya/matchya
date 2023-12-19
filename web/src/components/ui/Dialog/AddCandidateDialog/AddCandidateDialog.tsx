@@ -1,8 +1,9 @@
-import { Label } from '@radix-ui/react-label';
 import { useState } from 'react';
 
 import { Button } from '../../Button/Button';
+import { Icons } from '../../Icons/Icons';
 import { Input } from '../../Input/Input';
+import { Label } from '../../Label/Label';
 import {
   Dialog,
   DialogContent,
@@ -136,10 +137,10 @@ export const AddCandidateDialog = ({
           <Button variant="outline" onClick={() => {}}>
             Cancel
           </Button>
-          <Button
-            onClick={() => onSubmit(candidateInput)}
-            isLoading={isLoading}
-          >
+          <Button onClick={() => onSubmit(candidateInput)}>
+            {isLoading && (
+              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+            )}
             Continue
           </Button>
         </DialogFooter>
