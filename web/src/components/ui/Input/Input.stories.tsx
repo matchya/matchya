@@ -6,7 +6,7 @@ import { Label } from '../Label/Label';
 import { Input as Component, Input } from './Input';
 
 const meta: Meta<typeof Component> = {
-  title: 'Component',
+  title: 'Component/Input',
   component: Component,
   decorators: [
     Story => (
