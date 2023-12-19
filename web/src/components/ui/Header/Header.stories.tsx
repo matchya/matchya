@@ -20,5 +20,18 @@ export default meta;
 type Story = StoryObj<typeof Component>;
 
 export const Header: Story = {
-  render: () => <Component />,
+  render: () => (
+    <Component
+      abbreviatedName="JD"
+      companyName="Acme Corp"
+      email="johndoe@acme.com"
+      handleLogout={() => console.log('Logout')}
+      positions={[
+        { id: '1', name: 'Position 1' },
+        { id: '2', name: 'Position 2' },
+      ]}
+      selectPosition={position => console.log(position)}
+      selectedPosition={{ id: '1', name: 'Position 1' }}
+    />
+  ),
 };

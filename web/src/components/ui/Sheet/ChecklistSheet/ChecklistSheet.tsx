@@ -6,31 +6,26 @@ import {
   SheetTitle,
 } from '../Sheet';
 
-import { usePositionStore } from '@/store/usePositionStore';
+import { Position } from '@/types';
 
-export const ChecklistSheet = () => {
-  const { selectedPosition } = usePositionStore();
+interface ChecklistSheetProps {
+  selectedPosition: Position;
+}
 
-  if (selectedPosition?.checklist_status !== 'succeeded') {
-    return null;
-  }
-
-  return (
-    <SheetContent>
-      <SheetHeader>
-        <SheetTitle>Checklist</SheetTitle>
-        <SheetDescription>
-          See below for the generated checklist
-        </SheetDescription>
-      </SheetHeader>
-      <div className="grid gap-4 py-4">
-        <ChecklistTable checklist={selectedPosition?.checklist.criteria} />
-      </div>
-      {/* <SheetFooter>
-        <SheetClose asChild>
-          <Button type="submit">Regenerate</Button>
-        </SheetClose>
-      </SheetFooter> */}
-    </SheetContent>
-  );
-};
+export const ChecklistSheet = ({ selectedPosition }: ChecklistSheetProps) => (
+  <SheetContent>
+    <SheetHeader>
+      <SheetTitle>Checklist</SheetTitle>
+      <SheetDescription>See below for the generated checklist</SheetDescription>
+    </SheetHeader>
+    <div className="grid gap-4 py-4">
+      <ChecklistTable checklist={selectedPosition?.checklist.criteria} />
+    </div>
+    {/* not needed at this point in time */}
+    {/* <SheetFooter>
+  <SheetClose asChild>
+    <Button type="submit">Regenerate</Button>
+  </SheetClose>
+</SheetFooter> */}
+  </SheetContent>
+);
