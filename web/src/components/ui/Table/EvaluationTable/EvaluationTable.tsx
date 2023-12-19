@@ -38,7 +38,7 @@ export function EvaluationTable({ assessments }: EvaluationTableProps) {
   );
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
-  const table = useReactTable<Assessment>({
+  const table = useReactTable({
     data: assessments,
     columns,
     state: {
