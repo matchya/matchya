@@ -76,8 +76,6 @@ export function MainNav({
     }
   };
 
-  console.log('CHECKLIST: ', selectedPosition?.checklist_status);
-
   const handleAddCandidate = async (candidateInput: {
     firstName: string;
     lastName: string;
