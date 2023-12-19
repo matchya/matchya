@@ -1,23 +1,11 @@
-import { z } from 'zod';
-
-import { Avatar } from '../../Avatar/Avatar';
-
-import { columns } from './columns';
-import { DataTable } from './DataTable';
-import { taskSchema } from './schema';
-import { mockedTasks } from './tasks';
+import { assessments } from '../../Table/EvaluationTable/columns';
+import { EvaluationTable } from '../../Table/EvaluationTable/EvaluationTable';
 
 import { Candidate } from '@/types';
 
 interface CandidateDetailCardProps {
   candidate: Candidate;
 }
-
-async function getTasks() {
-  const tasks = mockedTasks;
-  return z.array(taskSchema).parse(tasks);
-}
-const tasks = await getTasks();
 
 export const CandidateDetailCard = ({
   candidate,
@@ -35,7 +23,7 @@ export const CandidateDetailCard = ({
           {candidate.total_score}
         </div>
       </div>
-      <DataTable data={tasks} columns={columns} />
+      <EvaluationTable assessments={assessments} />
     </div>
   );
 };

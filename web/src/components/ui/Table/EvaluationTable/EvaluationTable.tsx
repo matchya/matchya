@@ -1,5 +1,4 @@
 import {
-  ColumnDef,
   ColumnFiltersState,
   SortingState,
   VisibilityState,
@@ -21,17 +20,16 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '../../Table/Table';
+} from '../Table';
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+import { columns } from './columns';
+import { Assessment } from './schema';
+
+interface EvaluationTableProps {
+  assessments: Assessment[];
 }
 
-export function DataTable<TData, TValue>({
-  columns,
-  data,
-}: DataTableProps<TData, TValue>) {
+export function EvaluationTable({ assessments }: EvaluationTableProps) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -41,7 +39,7 @@ export function DataTable<TData, TValue>({
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
   const table = useReactTable({
-    data,
+    data: assessments,
     columns,
     state: {
       sorting,
@@ -63,7 +61,7 @@ export function DataTable<TData, TValue>({
   });
   return (
     <div className="space-y-4">
-      {/* <DataTableToolbar table={table} /> */}
+      {/* <EvaluationTableToolbar table={table} /> */}
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -114,7 +112,7 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      {/* <DataTablePagination table={table} /> */}
+      {/* <EvaluationTablePagination table={table} /> */}
     </div>
   );
 }

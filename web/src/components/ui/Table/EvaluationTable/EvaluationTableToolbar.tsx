@@ -5,16 +5,16 @@ import { Button } from '../../Button/Button';
 import { Input } from '../../Input/Input';
 
 import { priorities, statuses } from './data';
-import { DataTableFacetedFilter } from './DataTableFacetedFilter';
-import { DataTableViewOptions } from './DataTableViewOptions';
+import { EvaluationTableFacetedFilter } from './EvaluationTableFacetedFilter';
+import { EvaluationTableViewOptions } from './EvaluationTableViewOptions';
 
-interface DataTableToolbarProps<TData> {
+interface EvaluationTableToolbarProps<TData> {
   table: Table<TData>;
 }
 
-export function DataTableToolbar<TData>({
+export function EvaluationTableToolbar<TData>({
   table,
-}: DataTableToolbarProps<TData>) {
+}: EvaluationTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
 
   return (
@@ -29,14 +29,14 @@ export function DataTableToolbar<TData>({
           className="h-8 w-[150px] lg:w-[250px]"
         />
         {table.getColumn('status') && (
-          <DataTableFacetedFilter
+          <EvaluationTableFacetedFilter
             column={table.getColumn('status')}
             title="Status"
             options={statuses}
           />
         )}
         {table.getColumn('priority') && (
-          <DataTableFacetedFilter
+          <EvaluationTableFacetedFilter
             column={table.getColumn('priority')}
             title="Priority"
             options={priorities}
@@ -53,7 +53,7 @@ export function DataTableToolbar<TData>({
           </Button>
         )}
       </div>
-      <DataTableViewOptions table={table} />
+      <EvaluationTableViewOptions table={table} />
     </div>
   );
 }

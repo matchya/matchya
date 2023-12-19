@@ -6,8 +6,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuSub,
@@ -16,17 +14,16 @@ import {
   DropdownMenuTrigger,
 } from '../../DropdownMenu/DropdownMenu';
 
-import { labels } from './data';
-import { taskSchema } from './schema';
+import { assessmentSchema } from './schema';
 
-interface DataTableRowActionsProps<TData> {
+interface EvaluationTableRowActionsProps<TData> {
   row: Row<TData>;
 }
 
-export function DataTableRowActions<TData>({
+export function EvaluationTableRowActions<TData>({
   row,
-}: DataTableRowActionsProps<TData>) {
-  const task = taskSchema.parse(row.original);
+}: EvaluationTableRowActionsProps<TData>) {
+  const assessments = assessmentSchema.parse(row.original);
 
   return (
     <DropdownMenu>
