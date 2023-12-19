@@ -19,7 +19,7 @@ export default meta;
 
 type Story = StoryObj<typeof Component>;
 
-export const Default: Story = {
+export const CreateAccount: Story = {
   render: () => (
     <Component
       handleInputChange={() => {}}
