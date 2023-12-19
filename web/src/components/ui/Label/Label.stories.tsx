@@ -19,6 +19,6 @@ export default meta;
 
 type Story = StoryObj<typeof Component>;
 
-export const Default: Story = {
+export const Label: Story = {
   render: () => <Component>Label Text</Component>,
 };

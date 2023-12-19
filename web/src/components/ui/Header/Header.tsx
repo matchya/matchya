@@ -15,9 +15,9 @@ interface HeaderProps {
   companyName: string;
   email: string;
   handleLogout: () => void;
-  positions: Array<{ id: string; name: string }>;
+  positions: Position[];
   selectPosition: (position: Position) => void;
-  selectedPosition: { id: string; name: string } | null;
+  selectedPosition: Position;
 }
 
 export const Header = ({
@@ -39,7 +39,6 @@ export const Header = ({
         />
         <MainNav className="mx-6" />
         <div className="ml-auto flex items-center space-x-4">
-          {/* <Search /> */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-8 w-8 rounded-full">

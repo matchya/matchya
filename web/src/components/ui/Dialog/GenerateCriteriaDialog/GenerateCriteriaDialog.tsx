@@ -22,7 +22,10 @@ interface GenerateCriteriaDialogProps {
   onClose: () => void;
 }
 
-export const GenerateCriteriaDialog = ({ shouldOpen, onClose }: GenerateCriteriaDialogProps) => {
+export const GenerateCriteriaDialog = ({
+  shouldOpen,
+  onClose,
+}: GenerateCriteriaDialogProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const { repository_names } = useCompanyStore();
   const { selectedPosition } = usePositionStore();
@@ -113,7 +116,7 @@ export const GenerateCriteriaDialog = ({ shouldOpen, onClose }: GenerateCriteria
           />
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => {}}>
+          <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
           <Button onClick={handleGenerateCriteria}>
