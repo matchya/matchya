@@ -1,7 +1,11 @@
 import { ColumnDef } from '@tanstack/react-table';
+import { z } from 'zod';
 
 import { EvaluationTableColumnHeader } from './EvaluationTableColumnHeader';
-import { Assessment } from './schema';
+import { mockedAssessments } from './mock';
+import { Assessment, assessmentSchema } from './schema';
+
+import { Criterion } from '@/types';
 
 export const columns: ColumnDef<Assessment>[] = [
   {
@@ -10,18 +14,20 @@ export const columns: ColumnDef<Assessment>[] = [
       <EvaluationTableColumnHeader column={column} title="Criterion" />
     ),
     cell: ({ row }) => (
-      <div className="max-w-[500px]">{row.getValue('criterion')}</div>
+      <div className="max-w-[500px]">
+        {(row.getValue('criterion') as Criterion).message}
+      </div>
     ),
     enableSorting: false,
     enableHiding: false,
   },
   {
-    accessorKey: 'message',
+    accessorKey: 'reason',
     header: ({ column }) => (
-      <EvaluationTableColumnHeader column={column} title="Message" />
+      <EvaluationTableColumnHeader column={column} title="Reason" />
     ),
     cell: ({ row }) => (
-      <div className="max-w-[500px]">{row.getValue('message')}</div>
+      <div className="max-w-[500px]">{row.getValue('reason')}</div>
     ),
     enableSorting: false,
     enableHiding: false,
@@ -37,3 +43,10 @@ export const columns: ColumnDef<Assessment>[] = [
     },
   },
 ];
+
+async function getAssessments() {
+  const assessments = mockedAssessments;
+  return z.array(assessmentSchema).parse(assessments);
+}
+
+export const assessments = await getAssessments();
