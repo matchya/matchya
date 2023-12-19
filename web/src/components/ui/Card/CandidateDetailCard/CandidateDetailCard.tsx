@@ -1,11 +1,8 @@
 import { z } from 'zod';
 
-import { Avatar } from '../../Avatar/Avatar';
-
-import { columns } from './columns';
-import { DataTable } from './DataTable';
-import { taskSchema } from './schema';
-import { mockedTasks } from './tasks';
+import { EvaluationTable } from '../../Table/EvaluationTable/EvaluationTable';
+import { mockedAssessments } from '../../Table/EvaluationTable/mock';
+import { assessmentSchema } from '../../Table/EvaluationTable/schema';
 
 import { Candidate } from '@/types';
 
@@ -13,11 +10,11 @@ interface CandidateDetailCardProps {
   candidate: Candidate;
 }
 
-async function getTasks() {
-  const tasks = mockedTasks;
-  return z.array(taskSchema).parse(tasks);
+async function getAssessments() {
+  const assessments = mockedAssessments;
+  return z.array(assessmentSchema).parse(assessments);
 }
-const tasks = await getTasks();
+const assessments = await getAssessments();
 
 export const CandidateDetailCard = ({
   candidate,
@@ -35,7 +32,7 @@ export const CandidateDetailCard = ({
           {candidate.total_score}
         </div>
       </div>
-      <DataTable data={tasks} columns={columns} />
+      <EvaluationTable assessments={assessments} />
     </div>
   );
 };
