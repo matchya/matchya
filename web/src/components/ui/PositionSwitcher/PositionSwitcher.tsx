@@ -40,16 +40,24 @@ import {
   SelectValue,
 } from '@/components/ui/Select/Select';
 import { cn } from '@/lib/utils';
-import { usePositionStore } from '@/store/usePositionStore';
+import { Position } from '@/types';
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<
   typeof PopoverTrigger
 >;
 
-interface PositionSwitcherProps extends PopoverTriggerProps {}
+interface PositionSwitcherProps extends PopoverTriggerProps {
+  positions: Position[];
+  selectedPosition: Position;
+  selectPosition: (position: Position) => void;
+}
 
-export function PositionSwitcher({ className }: PositionSwitcherProps) {
-  const { positions, selectedPosition, selectPosition } = usePositionStore();
+export function PositionSwitcher({
+  className,
+  positions,
+  selectedPosition,
+  selectPosition,
+}: PositionSwitcherProps) {
   const [open, setOpen] = React.useState(false);
   const [showNewPositionDialog, setShowNewPositionDialog] =
     React.useState(false);
