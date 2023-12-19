@@ -1,6 +1,3 @@
-import { useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router';
-
 import { Avatar } from '../Avatar/Avatar';
 import { Button } from '../Button/Button';
 import {
@@ -11,65 +8,46 @@ import { UserNavDropdownMenu } from '../DropdownMenu/UserNavDropdownMenu/UserNav
 import { PositionSwitcher } from '../PositionSwitcher/PositionSwitcher';
 
 import { MainNav } from '@/components/ui/MainNav/MainNav';
-import { axiosInstance } from '@/helper';
-import { useCompanyStore } from '@/store/useCompanyStore';
+import { Position } from '@/types';
 
-export const Header = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { id, resetAll, me, name, email } = useCompanyStore();
+interface HeaderProps {
+  abbreviatedName: string;
+  companyName: string;
+  email: string;
+  handleLogout: () => void;
+  positions: Array<{ id: string; name: string }>;
+  selectPosition: (position: Position) => void;
+  selectedPosition: { id: string; name: string } | null;
+}
 
-  useEffect(() => {
-    if (id) return;
-    getAuthStatus();
-  }, [location.pathname]);
-
-  const getAuthStatus = async () => {
-    try {
-      await me();
-    } catch (error) {
-      navigateToAuth();
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      await axiosInstance.post('/logout');
-      resetAll();
-      navigate('/');
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const navigateToAuth = () => {
-    navigate('/auth');
-  };
-
-  const abbreviateName = () => {
-    const nameParts = name.split(' ');
-    if (nameParts.length === 1) {
-      return nameParts[0].charAt(0);
-    } else {
-      return nameParts[0].charAt(0) + nameParts[1].charAt(0);
-    }
-  };
-
+export const Header = ({
+  abbreviatedName,
+  companyName,
+  email,
+  handleLogout,
+  positions,
+  selectPosition,
+  selectedPosition,
+}: HeaderProps) => {
   return (
     <div className="border-b">
       <div className="flex h-16 items-center px-4">
-        <PositionSwitcher />
+        <PositionSwitcher
+          positions={positions}
+          selectedPosition={selectedPosition}
+          selectPosition={selectPosition}
+        />
         <MainNav className="mx-6" />
         <div className="ml-auto flex items-center space-x-4">
           {/* <Search /> */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                <Avatar altName={abbreviateName()} />
+                <Avatar altName={abbreviatedName} />
               </Button>
             </DropdownMenuTrigger>
             <UserNavDropdownMenu
-              companyName={name}
+              companyName={companyName}
               companyEmail={email}
               onLogout={handleLogout}
             />
