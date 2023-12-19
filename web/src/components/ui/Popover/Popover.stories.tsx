@@ -47,7 +47,7 @@ export const Popover: Story = {
             className={cn('w-[200px] justify-between')}
           >
             <div className="mr-1">
-              <Avatar />
+              <Avatar size={6} altName="SC" />
             </div>
             {selectedPosition.label}
             <CaretSortIcon className="ml-auto h-4 w-4 shrink-0 opacity-50" />
