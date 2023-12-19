@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { ChecklistTable as Component } from '@/components/ui/Table/ChecklistTable/ChecklistTable';
 
 const meta: Meta<typeof Component> = {
-  title: 'Component',
+  title: 'Component/Table',
   component: Component,
 };
 
