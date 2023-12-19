@@ -14,6 +14,7 @@ import {
   CommandSeparator,
 } from '../../Command/Command';
 import { Popover, PopoverContent, PopoverTrigger } from '../../Popover/Popover';
+import { Separator } from '../../Seperator/Seperator';
 
 import { cn } from '@/lib/utils';
 
