@@ -81,7 +81,10 @@ export function MainNav({
           selectedPosition ? selectedPosition.checklist_status : ''
         ) ? (
           <Button
-            disabled={selectedPosition?.checklist_status !== 'unscheduled' && selectedPosition?.checklist_status !== 'failed'}
+            disabled={
+              selectedPosition?.checklist_status !== 'unscheduled' &&
+              selectedPosition?.checklist_status !== 'failed'
+            }
             onClick={() => setShouldOpen(!shouldOpen)}
           >
             {selectedPosition?.checklist_status === 'scheduled' && (
@@ -91,11 +94,13 @@ export function MainNav({
           </Button>
         ) : null}
         {selectedPosition?.checklist_status === 'succeeded' ? (
-          <SheetTrigger asChild>
-            <Button variant="outline">See Checklist</Button>
-          </SheetTrigger>
+          <>
+            <SheetTrigger asChild>
+              <Button variant="outline">See Checklist</Button>
+            </SheetTrigger>
+            <ChecklistSheet selectedPosition={selectedPosition} />
+          </>
         ) : null}
-        <ChecklistSheet />
         <GenerateCriteriaDialog shouldOpen={shouldOpen} onClose={handleClose} />
       </nav>
     </Sheet>
