@@ -95,7 +95,6 @@ export const Dashboard: Story = {
       checklist_status: 'active',
     };
     const selectedCandidateId = '1';
-    const onCandidateSelect = (candidateId: string) => console.log(candidateId);
 
     return (
       <>
@@ -111,7 +110,7 @@ export const Dashboard: Story = {
         <Component
           selectedPosition={selectedPosition}
           selectedCandidateId={selectedCandidateId}
-          onCandidateSelect={onCandidateSelect}
+          onCandidateSelect={() => {}}
         />
       </>
     );

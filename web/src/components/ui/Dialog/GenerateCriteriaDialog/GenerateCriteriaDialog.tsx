@@ -52,20 +52,16 @@ export const GenerateCriteriaDialog = ({
         userData
       );
       if (response.data.status == 'success') {
-        console.log('success');
         selectedPosition.checklist_status = 'scheduled';
         onClose();
-        // setMessage(
-        //   'Criteria generation is scheduled successfully. It may take a few minutes to finish.'
-        // );
       }
     } catch (error) {
       const err = error as CustomError;
       // setMessageType('error');
       if (err.response.status === 400) {
-        console.log(err.response.data.message);
+        console.error(err.response.data.message);
       } else {
-        console.log('Something went wrong. Please try again.');
+        console.error('Something went wrong. Please try again.');
       }
     }
     setIsLoading(false);
