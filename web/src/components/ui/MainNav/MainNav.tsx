@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 
+import { AddCandidateDialog } from '../Dialog/AddCandidateDialog/AddCandidateDialog';
 import { GenerateCriteriaDialog } from '../Dialog/GenerateCriteriaDialog/GenerateCriteriaDialog';
 import { Icons } from '../Icons/Icons';
 import { ChecklistSheet } from '../Sheet/ChecklistSheet/ChecklistSheet';
@@ -9,16 +10,20 @@ import { Button } from '@/components/ui/Button/Button';
 import { axiosInstance } from '@/helper';
 import { cn } from '@/lib/utils';
 import { usePositionStore } from '@/store/usePositionStore';
+import { CustomError } from '@/types';
 
 export function MainNav({
   className,
   ...props
 }: React.HTMLAttributes<HTMLElement>) {
   const POLLING_INTERVAL = 20000;
-  const [shouldOpen, setShouldOpen] = useState(false);
+  const [shouldOpen, setShouldOpen] = useState({
+    generateCriteria: false,
+    addCandidate: false,
+  });
   const { selectedPosition, selectPosition, setPositionDetail } =
     usePositionStore();
-  const handleClose = () => setShouldOpen(false);
+  const [isAddCandidateLoading, setIsAddCandidateLoading] = useState(false);
 
   const isMounted = useRef(true);
 
@@ -71,6 +76,37 @@ export function MainNav({
     }
   };
 
+  console.log('CHECKLIST: ', selectedPosition?.checklist_status);
+
+  const handleAddCandidate = async (candidateInput: {
+    firstName: string;
+    lastName: string;
+    githubUsername: string;
+    email: string;
+  }) => {
+    setIsAddCandidateLoading(true);
+    try {
+      const response = await axiosInstance.post('/checklists/evaluate', {
+        checklist_id: selectedPosition?.checklist.id,
+        candidate_first_name: candidateInput.firstName,
+        candidate_last_name: candidateInput.lastName,
+        candidate_github_username: candidateInput.githubUsername,
+        candidate_email: candidateInput.email,
+      });
+      if (response.data.status === 'success') {
+        setShouldOpen({ ...shouldOpen, addCandidate: false });
+      }
+    } catch (error) {
+      const err = error as CustomError;
+      if (err.response.status === 400) {
+        console.error(err.response.data.message);
+      } else {
+        console.error('Something went wrong. Please try again.');
+      }
+    }
+    setIsAddCandidateLoading(false);
+  };
+
   return (
     <Sheet>
       <nav
@@ -85,7 +121,12 @@ export function MainNav({
               selectedPosition?.checklist_status !== 'unscheduled' &&
               selectedPosition?.checklist_status !== 'failed'
             }
-            onClick={() => setShouldOpen(!shouldOpen)}
+            onClick={() =>
+              setShouldOpen({
+                ...shouldOpen,
+                generateCriteria: !shouldOpen.generateCriteria,
+              })
+            }
           >
             {selectedPosition?.checklist_status === 'scheduled' && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
@@ -101,7 +142,33 @@ export function MainNav({
             <ChecklistSheet selectedPosition={selectedPosition} />
           </>
         ) : null}
-        <GenerateCriteriaDialog shouldOpen={shouldOpen} onClose={handleClose} />
+        {selectedPosition &&
+        selectedPosition.checklist_status === 'succeeded' ? (
+          <div>
+            <Button
+              onClick={() =>
+                setShouldOpen({ ...shouldOpen, addCandidate: true })
+              }
+              variant="outline"
+            >
+              Add Candidate
+            </Button>
+            <AddCandidateDialog
+              shouldOpen={shouldOpen.addCandidate}
+              isLoading={isAddCandidateLoading}
+              onClose={() =>
+                setShouldOpen({ ...shouldOpen, addCandidate: false })
+              }
+              onSubmit={handleAddCandidate}
+            />
+          </div>
+        ) : null}
+        <GenerateCriteriaDialog
+          shouldOpen={shouldOpen.generateCriteria}
+          onClose={() =>
+            setShouldOpen({ ...shouldOpen, generateCriteria: false })
+          }
+        />
       </nav>
     </Sheet>
   );
