@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/Button/Button';
 import { axiosInstance } from '@/helper';
 import { cn } from '@/lib/utils';
 import { usePositionStore } from '@/store/usePositionStore';
-import { CustomError } from '@/types';
+import { Candidate, CustomError } from '@/types';
 
 export function MainNav({
   className,
@@ -82,6 +82,9 @@ export function MainNav({
     githubUsername: string;
     email: string;
   }) => {
+    if (!selectedPosition?.checklist.id) {
+      return;
+    }
     setIsAddCandidateLoading(true);
     try {
       const response = await axiosInstance.post('/checklists/evaluate', {
@@ -92,6 +95,20 @@ export function MainNav({
         candidate_email: candidateInput.email,
       });
       if (response.data.status === 'success') {
+        const id = response.data.payload.candidate_id;
+        const candidate: Candidate = {
+          id: id,
+          first_name: candidateInput.firstName,
+          last_name: candidateInput.lastName,
+          email: candidateInput.email,
+          github_username: candidateInput.githubUsername,
+          total_score: 0,
+          summary: '',
+          status: 'scheduled',
+          assessments: [],
+        };
+        selectedPosition?.checklist.candidates.push(candidate);
+        selectPosition(selectedPosition);
         setShouldOpen({ ...shouldOpen, addCandidate: false });
       }
     } catch (error) {

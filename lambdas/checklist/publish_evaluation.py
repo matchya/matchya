@@ -188,7 +188,7 @@ def handler(event, context):
         body['candidate_result_id'] = candidate_result_id
         send_message_to_sqs(body)
         logger.info(f"Successfully sent message to SQS {body}")
-        return generate_success_response(origin_domain=origin)
+        return generate_success_response(origin_domain=origin, payload={"candidate_id": candidate_id})
     except RuntimeError as e:
         logger.error(e)
         return generate_error_response(origin, 400, str(e))
