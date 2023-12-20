@@ -5,9 +5,12 @@ import { CandidateDetailCard } from '@/components/ui/Card/CandidateDetailCard/Ca
 import { usePositionStore } from '@/store/usePositionStore';
 
 const Dashboard = () => {
-  const { selectedPosition, positions, selectCandidate } = usePositionStore();
+  const { selectedPosition, positions, selectedCandidate, selectCandidate } = usePositionStore();
 
   useEffect(() => {
+    if (selectedPosition && selectedPosition.candidates && selectedPosition?.candidates.find(c => c.id === selectedCandidate?.id)) {
+      return;
+    }
     if (selectedPosition?.checklist && selectedPosition.candidates) {
       selectCandidate(selectedPosition.candidates[0]);
     }

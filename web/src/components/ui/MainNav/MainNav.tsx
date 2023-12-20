@@ -21,7 +21,7 @@ export function MainNav({
     generateCriteria: false,
     addCandidate: false,
   });
-  const { selectedPosition, selectPosition, setPositionDetail } =
+  const { selectedPosition, selectPosition, setPositionDetail, updateCandidates } =
     usePositionStore();
   const [isAddCandidateLoading, setIsAddCandidateLoading] = useState(false);
 
@@ -33,6 +33,7 @@ export function MainNav({
     };
   }, []);
 
+  // Polling for checklist
   useEffect(() => {
     let interval: NodeJS.Timeout;
 
@@ -42,7 +43,7 @@ export function MainNav({
           return;
         }
         const response = await axiosInstance.get(
-          `/positions/status/checklist/${selectedPosition?.id}`
+          `/positions/status/checklist/${selectedPosition.id}`
         );
         if (response.data.payload.checklist_status === 'succeeded') {
           setPositionDetail(selectedPosition.id);
@@ -65,6 +66,36 @@ export function MainNav({
 
     return () => clearInterval(interval);
   }, [selectedPosition?.checklist_status]);
+
+  // Polling for candidates
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+
+    const fetchStatus = async () => {
+      try {
+        if (!selectedPosition) {
+          return;
+        }
+        const response = await axiosInstance.get(
+          `/positions/candidates/${selectedPosition.id}`
+        );
+        if (response.data.status === 'success') {
+          updateCandidates(response.data.payload.candidates);
+          if (response.data.payload.candidates.filter((candidate: Candidate) => candidate.status === 'scheduled').length === 0) {
+            clearInterval(interval);
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    if (selectedPosition && selectedPosition.candidates.filter((candidate) => candidate.status === 'scheduled').length > 0) {
+      interval = setInterval(fetchStatus, POLLING_INTERVAL);
+    }
+
+    return () => clearInterval(interval);
+  }, [selectedPosition?.candidates]);
 
   const getMessage = () => {
     if (selectedPosition?.checklist_status === 'scheduled') {
@@ -107,7 +138,7 @@ export function MainNav({
           status: 'scheduled',
           assessments: [],
         };
-        selectedPosition?.checklist.candidates.push(candidate);
+        selectedPosition?.candidates.push(candidate);
         selectPosition(selectedPosition);
         setShouldOpen({ ...shouldOpen, addCandidate: false });
       }
