@@ -41,7 +41,8 @@ interface CandidateRowProps {
 }
 
 const CandidateRow = ({ candidate }: CandidateRowProps) => {
-  const { selectedCandidate, selectCandidate } = usePositionStore();
+  const { selectedPosition, selectedCandidate, selectCandidate } = usePositionStore();
+
   const handleSelect = () => {
     if (selectedCandidate?.id === candidate.id) {
       return;
@@ -51,9 +52,12 @@ const CandidateRow = ({ candidate }: CandidateRowProps) => {
 
   const handleRetry = async () => {
     try {
+      if (!selectedCandidate) {
+        return;
+      }
       candidate.status = 'scheduled';
       await axiosInstance.post('/checklists/evaluate', {
-        checklist_id: candidate.id,
+        checklist_id: selectedPosition?.checklist.id,
         candidate_first_name: candidate.first_name,
         candidate_last_name: candidate.last_name,
         candidate_github_username: candidate.github_username,
@@ -61,7 +65,6 @@ const CandidateRow = ({ candidate }: CandidateRowProps) => {
       });
     } catch (error) {
       const err = error as CustomError;
-      candidate.status = 'failed';
       if (err.response.status === 400) {
         console.error(err.response.data.message);
       } else {
@@ -94,13 +97,13 @@ const CandidateRow = ({ candidate }: CandidateRowProps) => {
         <p className="text-sm text-muted-foreground">{candidate.email}</p>
       </div>
       {candidate.status == 'scheduled' ? (
-        <Icons.spinner className="ml-auto h-5 w-5 animate-spin" />
+        <Icons.spinner className="ml-auto mr-2 h-5 w-5 animate-spin" />
       ) : candidate.status == 'failed' ? (
         <div className="ml-auto font-medium" onClick={handleRetry}>
-          retry
+          Retry
         </div>
       ) : (
-        <div className="ml-auto font-medium">{candidate.total_score}</div>
+        <div className="ml-auto mr-2 font-medium">{candidate.total_score}</div>
       )}
     </div>
   );
