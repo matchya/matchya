@@ -37,12 +37,12 @@ export interface Position {
   name: string;
   checklist_status: string;
   checklist: Checklist;
+  candidates: Candidate[];
 }
 
 export interface Checklist {
   id: string;
   repository_names: string[];
-  candidates: Candidate[];
   criteria: Criterion[];
 }
 

@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 import { axiosInstance } from "@/helper";
-import { Candidate, Position } from "@/types";
+import { Assessment, Candidate, Criterion, Position } from "@/types";
 
 
 interface PositionState {
@@ -13,6 +13,22 @@ interface PositionState {
     selectedCandidate: Candidate | null;
     selectCandidate: (candidate: Candidate) => void;
     resetAll: () => void;
+}
+
+const assignCriteriaValueForCandidates = (candidates: Candidate[], criteria: Criterion[]): Candidate[] => {
+    const criteriaMap: { [key: string]: Criterion } = {}
+    criteria.forEach((criterion: Criterion) => {
+        criteriaMap[criterion.id] = criterion
+    })
+
+    candidates.forEach(candidate => {
+        if (candidate.status === 'succeeded') {
+            candidate.assessments.forEach((assessment: Assessment) => {
+                assessment.criterion = criteriaMap[assessment.criterion.id]
+            })
+        }
+    })
+    return candidates
 }
 
 export const usePositionStore = create<PositionState>((set, get) => ({
@@ -40,7 +56,8 @@ export const usePositionStore = create<PositionState>((set, get) => ({
                     selectedPosition: {
                         ...selectedPosition,
                         checklist_status: res.data.payload.checklist_status,
-                        checklist: res.data.payload.checklists[0],
+                        checklist: res.data.payload.checklist,
+                        candidates: assignCriteriaValueForCandidates(res.data.payload.candidates, res.data.payload.checklist.criteria),
                     },
                 });
             } else {
