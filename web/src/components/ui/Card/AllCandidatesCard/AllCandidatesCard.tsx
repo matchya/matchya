@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { Avatar } from '../../Avatar/Avatar';
 import {
   Card,
@@ -7,6 +9,7 @@ import {
   CardTitle,
 } from '../Card';
 
+import { Button } from '@/components/ui/Button/Button';
 import { Icons } from '@/components/ui/Icons/Icons';
 import { axiosInstance } from '@/helper';
 import { usePositionStore } from '@/store/usePositionStore';
@@ -41,7 +44,13 @@ interface CandidateRowProps {
 }
 
 const CandidateRow = ({ candidate }: CandidateRowProps) => {
-  const { selectedPosition, selectedCandidate, selectCandidate } = usePositionStore();
+  const [retryDisabled, setRetryDisabled] = useState(false);
+  const {
+    selectedPosition,
+    selectPosition,
+    selectedCandidate,
+    selectCandidate,
+  } = usePositionStore();
 
   const handleSelect = () => {
     if (selectedCandidate?.id === candidate.id) {
@@ -51,18 +60,27 @@ const CandidateRow = ({ candidate }: CandidateRowProps) => {
   };
 
   const handleRetry = async () => {
+    candidate = { ...candidate, status: 'scheduled' };
     try {
-      if (!selectedCandidate) {
+      if (!selectedPosition || !selectedCandidate) {
         return;
       }
-      candidate.status = 'scheduled';
-      await axiosInstance.post('/checklists/evaluate', {
+      setRetryDisabled(true);
+      const res = await axiosInstance.post('/checklists/evaluate', {
         checklist_id: selectedPosition?.checklist.id,
         candidate_first_name: candidate.first_name,
         candidate_last_name: candidate.last_name,
         candidate_github_username: candidate.github_username,
         candidate_email: candidate.email,
       });
+      if (res.data.status === 'success') {
+        selectPosition({
+          ...selectedPosition,
+          candidates: selectedPosition.candidates.map(c =>
+            c.id === candidate.id ? candidate : c
+          ),
+        });
+      }
     } catch (error) {
       const err = error as CustomError;
       if (err.response.status === 400) {
@@ -70,6 +88,8 @@ const CandidateRow = ({ candidate }: CandidateRowProps) => {
       } else {
         console.error('Something went wrong. Please try again.');
       }
+    } finally {
+      setRetryDisabled(false);
     }
   };
 
@@ -97,13 +117,19 @@ const CandidateRow = ({ candidate }: CandidateRowProps) => {
         <p className="text-sm text-muted-foreground">{candidate.email}</p>
       </div>
       {candidate.status == 'scheduled' ? (
-        <Icons.spinner className="ml-auto mr-2 h-5 w-5 animate-spin" />
+        <Icons.spinner className="ml-auto mr-5 h-5 w-5 animate-spin" />
       ) : candidate.status == 'failed' ? (
-        <div className="ml-auto font-medium" onClick={handleRetry}>
+        <Button
+          variant="outline"
+          disabled={retryDisabled}
+          size="sm"
+          className="ml-auto font-medium"
+          onClick={handleRetry}
+        >
           Retry
-        </div>
+        </Button>
       ) : (
-        <div className="ml-auto mr-2 font-medium">{candidate.total_score}</div>
+        <div className="ml-auto mr-5 font-medium">{candidate.total_score}</div>
       )}
     </div>
   );
