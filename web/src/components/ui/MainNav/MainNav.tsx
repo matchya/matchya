@@ -80,7 +80,6 @@ export function MainNav({
           `/positions/candidates/${selectedPosition.id}`
         );
         if (response.data.status === 'success') {
-          console.log(response.data.payload.candidates)
           updateCandidates(response.data.payload.candidates);
           if (response.data.payload.candidates.filter((candidate: Candidate) => candidate.status === 'scheduled').length === 0) {
             clearInterval(interval);
