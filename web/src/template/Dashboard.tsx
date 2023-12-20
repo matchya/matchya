@@ -1,18 +1,22 @@
+import { useEffect } from 'react';
+
 import { AllCandidatesCard } from '@/components/ui/Card/AllCandidatesCard/AllCandidatesCard';
 import { CandidateDetailCard } from '@/components/ui/Card/CandidateDetailCard/CandidateDetailCard';
-import { Position } from '@/types';
+import { usePositionStore } from '@/store/usePositionStore';
 
-interface DashboardProps {
-  selectedPosition: Position;
-  selectedCandidateId: string;
-  onCandidateSelect: (candidateId: string) => void;
-}
+const DashboardT = () => {
+  const { selectedPosition } = usePositionStore();
 
-const Dashboard = ({
-  selectedPosition,
-  selectedCandidateId,
-  onCandidateSelect,
-}: DashboardProps) => {
+  useEffect(() => {
+    if (selectedPosition?.checklist) {
+      setSelectedCandidateId(selectedPosition.checklist.candidates[0].id);
+    }
+  }, [selectedPosition]);
+
+  if (!selectedPosition) {
+    return <div>loading...</div>;
+  }
+
   return (
     <div className="bg-gray-100 overflow-hidden">
       <div className="w-full h-full mx-auto">
@@ -20,10 +24,8 @@ const Dashboard = ({
           <div className="justify-between items-center py-4">
             <div className="xl:flex flex-col lg:flex-row gap-4 px-4">
               <div className="w-full xl:max-w-[400px]">
-                {selectedPosition.checklist ? (
+                {selectedPosition?.checklist ? (
                   <AllCandidatesCard
-                    selectedCandidateId={selectedCandidateId}
-                    onCandidateSelect={onCandidateSelect}
                     candidates={selectedPosition.checklist.candidates}
                   />
                 ) : null}
@@ -41,4 +43,4 @@ const Dashboard = ({
   );
 };
 
-export default Dashboard;
+export default DashboardT;

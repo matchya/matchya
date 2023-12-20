@@ -1,18 +1,21 @@
 import { useEffect } from 'react';
 
-import DashboardHeader from './DashboardHeader';
-import ScoreCard from './ScoreCard';
-
+import { AllCandidatesCard } from '@/components/ui/Card/AllCandidatesCard/AllCandidatesCard';
+import { CandidateDetailCard } from '@/components/ui/Card/CandidateDetailCard/CandidateDetailCard';
 import { usePositionStore } from '@/store/usePositionStore';
 
 const Dashboard = () => {
-  const { positions, selectedPosition } = usePositionStore();
+  const { selectedPosition, positions, selectCandidate } = usePositionStore();
 
   useEffect(() => {
-    if (positions.length === 0) {
-      return;
+    if (selectedPosition?.checklist && selectedPosition.checklist.candidates) {
+      selectCandidate(selectedPosition.checklist.candidates[0]);
     }
-  }, [positions, selectedPosition]);
+  }, [selectedPosition]);
+
+  if (!selectedPosition) {
+    return <div>loading...</div>;
+  }
 
   const DashboardBody = () => {
     if (
@@ -25,22 +28,20 @@ const Dashboard = () => {
 
     return (
       <div>
-        <div className="w-full">
-          <DashboardHeader />
-        </div>
-        <div className="justify-between items-center py-6 px-10 mt-4">
-          <div className="flex flex-col lg:flex-row gap-4">
-            <div className="w-2/3 sm:rounded-md">
-              <h1 className="text-2xl font-bold text-gray-900 my-4 pl-6">
-                Top Candidates
-              </h1>
-              <div className="h-[calc(100vh-300px)] overflow-y-scroll">
-                {selectedPosition.checklist &&
-                  selectedPosition.checklist.candidates.map(
-                    (candidate, index) => (
-                      <ScoreCard key={index} candidate={candidate} />
-                    )
-                  )}
+        <div className="w-full h-full mx-auto">
+          <div>
+            <div className="justify-between items-center py-4">
+              <div className="xl:flex flex-col lg:flex-row gap-4 px-4">
+                <div className="w-full xl:max-w-[400px]">
+                  {selectedPosition?.checklist ? (
+                    <AllCandidatesCard
+                      candidates={selectedPosition.checklist.candidates}
+                    />
+                  ) : null}
+                </div>
+                <div className="hidden h-full flex-1 flex-col md:flex">
+                  <CandidateDetailCard />
+                </div>
               </div>
             </div>
           </div>
@@ -50,7 +51,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="bg-gray-100 h-screen overflow-hidden">
+    <div className="bg-gray-100 h-[calc(100vh-64px)] overflow-hidden">
       <div className="w-full h-full mx-auto">
         <DashboardBody />
       </div>
