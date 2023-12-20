@@ -41,6 +41,9 @@ interface CandidateRowProps {
 const CandidateRow = ({ candidate }: CandidateRowProps) => {
   const { selectedCandidate, selectCandidate } = usePositionStore();
   const handleSelect = () => {
+    if (selectedCandidate?.id === candidate.id) {
+      return;
+    }
     selectCandidate(candidate);
   };
 
@@ -53,13 +56,31 @@ const CandidateRow = ({ candidate }: CandidateRowProps) => {
     >
       <Avatar
         size={10}
-        altName={`${candidate.first_name[0].toUpperCase()}${candidate.last_name[0].toUpperCase()}`}
+        altName={`${
+          candidate.first_name.length > 0
+            ? candidate.first_name[0].toUpperCase()
+            : ''
+        }${
+          candidate.last_name.length > 0
+            ? candidate.last_name[0].toUpperCase()
+            : ''
+        }`}
       />
       <div className="ml-4 space-y-1">
         <p className="text-sm font-medium leading-none">{`${candidate.first_name} ${candidate.last_name}`}</p>
         <p className="text-sm text-muted-foreground">{candidate.email}</p>
       </div>
-      <div className="ml-auto font-medium">{candidate.total_score}</div>
+      {candidate.status == 'scheduled' ? (
+        <div className="ml-auto font-medium text-yellow-500">
+          {candidate.status}
+        </div>
+      ) : candidate.status == 'failed' ? (
+        <div className="ml-auto font-medium text-red-500">
+          {candidate.status}
+        </div>
+      ) : (
+        <div className="ml-auto font-medium">{candidate.total_score}</div>
+      )}
     </div>
   );
 };
