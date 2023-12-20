@@ -8,8 +8,9 @@ import {
 } from '../Card';
 
 import { Icons } from '@/components/ui/Icons/Icons';
+import { axiosInstance } from '@/helper';
 import { usePositionStore } from '@/store/usePositionStore';
-import { Candidate } from '@/types';
+import { Candidate, CustomError } from '@/types';
 
 interface AllCandidatesCardProps {
   candidates: Candidate[];
@@ -48,6 +49,27 @@ const CandidateRow = ({ candidate }: CandidateRowProps) => {
     selectCandidate(candidate);
   };
 
+  const handleRetry = async () => {
+    try {
+      candidate.status = 'scheduled';
+      await axiosInstance.post('/checklists/evaluate', {
+        checklist_id: candidate.id,
+        candidate_first_name: candidate.first_name,
+        candidate_last_name: candidate.last_name,
+        candidate_github_username: candidate.github_username,
+        candidate_email: candidate.email,
+      });
+    } catch (error) {
+      const err = error as CustomError;
+      candidate.status = 'failed';
+      if (err.response.status === 400) {
+        console.error(err.response.data.message);
+      } else {
+        console.error('Something went wrong. Please try again.');
+      }
+    }
+  };
+
   return (
     <div
       className={`flex items-center p-2 rounded-md ${
@@ -74,7 +96,9 @@ const CandidateRow = ({ candidate }: CandidateRowProps) => {
       {candidate.status == 'scheduled' ? (
         <Icons.spinner className="ml-auto h-5 w-5 animate-spin" />
       ) : candidate.status == 'failed' ? (
-        <div className="ml-auto font-medium">retry</div>
+        <div className="ml-auto font-medium" onClick={handleRetry}>
+          retry
+        </div>
       ) : (
         <div className="ml-auto font-medium">{candidate.total_score}</div>
       )}
