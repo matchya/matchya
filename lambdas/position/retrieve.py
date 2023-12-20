@@ -114,7 +114,7 @@ def process_position_from_sql_results(sql_results):
     logger.info("Processing position from sql results...")
     # if no checklist, return empty checklist
     if sql_results[0][3] is None:
-        return {"name": sql_results[0][1], "checklist_status": sql_results[0][2], "checklists": []}
+        return {"name": sql_results[0][1], "checklist_status": sql_results[0][2], "checklists": [], "candidates": []}
 
     position_data = {}
     for row in sql_results:
@@ -122,20 +122,19 @@ def process_position_from_sql_results(sql_results):
          github_username, total_score, summary, candidate_result_status, criterion_id, score, reason) = row
 
         if position_id not in position_data:
-            position_data[position_id] = {'name': position_name, 'checklist_status': checklist_status, 'checklists': {}}
+            position_data[position_id] = {'name': position_name, 'checklist_status': checklist_status, 'checklists': {}, 'candidates': {}}
 
         if checklist_id not in position_data[position_id]['checklists']:
             criteria = get_criteria_by_checklist_id(checklist_id)
             position_data[position_id]['checklists'][checklist_id] = {
                 'id': checklist_id,
                 'repository_names': set(),
-                'candidates': {},
                 'criteria': criteria
             }
 
         position_data[position_id]['checklists'][checklist_id]['repository_names'].add(repo_name)
 
-        candidates = position_data[position_id]['checklists'][checklist_id]['candidates']
+        candidates = position_data[position_id]['candidates']
         if email and email not in candidates:
             candidates[email] = {
                 'id': candidate_id,
@@ -152,24 +151,29 @@ def process_position_from_sql_results(sql_results):
         if email and candidate_result_status == 'succeeded':
             criterion = [criterion for criterion in criteria if criterion['id'] == criterion_id][0]
             candidates[email]['assessments'][criterion['id']] = {
-                'criterion': criterion,
+                'criterion': {
+                    'id': criterion['id'],
+                },
                 'score': score,
                 'reason': reason
             }
 
     final_data = []
     for pos_id, pos_info in position_data.items():
-        checklists = []
+        final_checklists = []
         for chk_id, chk_info in pos_info['checklists'].items():
             chk_info['repository_names'] = list(chk_info['repository_names'])
-            for can_email, can_info in chk_info['candidates'].items():
-                can_info['assessments'] = list(can_info['assessments'].values())
-            chk_info['candidates'] = list(chk_info['candidates'].values())
-            checklists.append(chk_info)
+            final_checklists.append(chk_info)
+
+        final_candidates = []
+        for can_email, can_info in pos_info['candidates'].items():
+            can_info['assessments'] = list(can_info['assessments'].values())
+            final_candidates.append(can_info)
         final_data.append({
             'name': pos_info['name'],
             'checklist_status': pos_info['checklist_status'],
-            'checklists': checklists
+            'checklist': final_checklists[0],  # Single checklist for now
+            'candidates': final_candidates
         })
 
     return final_data[0] if final_data else None
