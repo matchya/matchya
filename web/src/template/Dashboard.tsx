@@ -9,7 +9,7 @@ const DashboardT = () => {
 
   useEffect(() => {
     if (selectedPosition?.checklist) {
-      setSelectedCandidateId(selectedPosition.checklist.candidates[0].id);
+      setSelectedCandidateId(selectedPosition.candidates[0].id);
     }
   }, [selectedPosition]);
 
@@ -26,13 +26,13 @@ const DashboardT = () => {
               <div className="w-full xl:max-w-[400px]">
                 {selectedPosition?.checklist ? (
                   <AllCandidatesCard
-                    candidates={selectedPosition.checklist.candidates}
+                    candidates={selectedPosition.candidates}
                   />
                 ) : null}
               </div>
               <div className="hidden h-full flex-1 flex-col md:flex">
                 <CandidateDetailCard
-                  candidate={selectedPosition.checklist.candidates[0]}
+                  candidate={selectedPosition.candidates[0]}
                 />
               </div>
             </div>
