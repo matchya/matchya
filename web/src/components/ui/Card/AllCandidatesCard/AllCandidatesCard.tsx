@@ -7,34 +7,26 @@ import {
   CardTitle,
 } from '../Card';
 
+import { usePositionStore } from '@/store/usePositionStore';
 import { Candidate } from '@/types';
 
 interface AllCandidatesCardProps {
-  selectedCandidateId: string;
   candidates: Candidate[];
-  onCandidateSelect: (candidateId: string) => void;
 }
 
-export const AllCandidatesCard = ({
-  selectedCandidateId,
-  candidates,
-}: AllCandidatesCardProps) => {
+export const AllCandidatesCard = ({ candidates }: AllCandidatesCardProps) => {
   return (
-    <Card className="col-span-3 h-full">
+    <Card className="col-span-3 h-[calc(100vh-100px)] overflow-hidden">
       <CardHeader>
         <CardTitle>Candidates</CardTitle>
         <CardDescription>
           You evaluated {candidates.length} candidates
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-2">
+      <CardContent className="h-full">
+        <div className="space-y-2 h-full pb-24 overflow-y-scroll">
           {candidates.map(candidate => (
-            <CandidateRow
-              key={candidate.id}
-              candidate={candidate}
-              selectedCandidateId={selectedCandidateId}
-            />
+            <CandidateRow key={candidate.id} candidate={candidate} />
           ))}
         </div>
       </CardContent>
@@ -44,28 +36,51 @@ export const AllCandidatesCard = ({
 
 interface CandidateRowProps {
   candidate: Candidate;
-  selectedCandidateId: string;
 }
 
-const CandidateRow = ({
-  selectedCandidateId,
-  candidate,
-}: CandidateRowProps) => {
+const CandidateRow = ({ candidate }: CandidateRowProps) => {
+  const { selectedCandidate, selectCandidate } = usePositionStore();
+  const handleSelect = () => {
+    if (selectedCandidate?.id === candidate.id) {
+      return;
+    }
+    selectCandidate(candidate);
+  };
+
   return (
     <div
       className={`flex items-center p-2 rounded-md ${
-        selectedCandidateId === candidate.id ? 'bg-gray-50' : ''
+        selectedCandidate?.id === candidate.id ? 'bg-gray-50' : ''
       }`}
+      onClick={handleSelect}
     >
       <Avatar
         size={10}
-        altName={`${candidate.first_name[0].toUpperCase()}${candidate.last_name[0].toUpperCase()}`}
+        altName={`${
+          candidate.first_name.length > 0
+            ? candidate.first_name[0].toUpperCase()
+            : ''
+        }${
+          candidate.last_name.length > 0
+            ? candidate.last_name[0].toUpperCase()
+            : ''
+        }`}
       />
       <div className="ml-4 space-y-1">
         <p className="text-sm font-medium leading-none">{`${candidate.first_name} ${candidate.last_name}`}</p>
         <p className="text-sm text-muted-foreground">{candidate.email}</p>
       </div>
-      <div className="ml-auto font-medium">{candidate.total_score}</div>
+      {candidate.status == 'scheduled' ? (
+        <div className="ml-auto font-medium text-yellow-500">
+          {candidate.status}
+        </div>
+      ) : candidate.status == 'failed' ? (
+        <div className="ml-auto font-medium text-red-500">
+          {candidate.status}
+        </div>
+      ) : (
+        <div className="ml-auto font-medium">{candidate.total_score}</div>
+      )}
     </div>
   );
 };

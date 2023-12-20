@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 import { axiosInstance } from "@/helper";
-import { Position } from "@/types";
+import { Candidate, Position } from "@/types";
 
 
 interface PositionState {
@@ -10,6 +10,8 @@ interface PositionState {
     selectedPosition: Position | null;
     selectPosition: (position: Position) => void;
     setPositionDetail: (positionId: string) => Promise<void>;
+    selectedCandidate: Candidate | null;
+    selectCandidate: (candidate: Candidate) => void;
     resetAll: () => void;
 }
 
@@ -49,5 +51,7 @@ export const usePositionStore = create<PositionState>((set, get) => ({
         }
         return;
     },
-    resetAll: () => set({ positions: [], selectedPosition: null }),
+    selectedCandidate: null,
+    selectCandidate: (candidate: Candidate) => set({ selectedCandidate: candidate }),
+    resetAll: () => set({ positions: [], selectedPosition: null, selectedCandidate: null }),
 }));

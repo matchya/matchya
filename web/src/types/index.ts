@@ -15,6 +15,7 @@ export interface Candidate {
   github_username: string;
   total_score: number;
   summary: string;
+  status: string;
   assessments: Assessment[];
 }
 

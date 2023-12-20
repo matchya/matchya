@@ -60,7 +60,7 @@ export function EvaluationTable({ assessments }: EvaluationTableProps) {
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 h-full overflow-y-scroll pb-40">
       {/* <EvaluationTableToolbar table={table} /> */}
       <div className="rounded-md border">
         <Table>
