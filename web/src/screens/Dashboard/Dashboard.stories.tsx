@@ -32,8 +32,8 @@ export const Dashboard: Story = {
           id: '1',
           repository_names: ['Repo 1', 'Repo 2'],
           criteria: [],
-          candidates: [],
         },
+        candidates: [],
         checklist_status: 'active',
       },
       {
@@ -43,8 +43,8 @@ export const Dashboard: Story = {
           id: '2',
           repository_names: ['Repo 3', 'Repo 4'],
           criteria: [],
-          candidates: [],
         },
+        candidates: [],
         checklist_status: 'active',
       },
     ];
@@ -69,32 +69,33 @@ export const Dashboard: Story = {
             created_at: '2022-01-02T00:00:00Z',
           },
         ],
-        candidates: [
-          {
-            id: '1',
-            first_name: 'John',
-            last_name: 'Doe',
-            email: 'john.doe@example.com',
-            github_username: 'johndoe',
-            total_score: 100,
-            summary: 'Summary 1',
-            assessments: [],
-          },
-          {
-            id: '2',
-            first_name: 'Jane',
-            last_name: 'Doe',
-            email: 'jane.doe@example.com',
-            github_username: 'janedoe',
-            total_score: 90,
-            summary: 'Summary 2',
-            assessments: [],
-          },
-        ],
       },
+      candidates: [
+        {
+          id: '1',
+          first_name: 'John',
+          last_name: 'Doe',
+          email: 'john.doe@example.com',
+          github_username: 'johndoe',
+          total_score: 100,
+          summary: 'Summary 1',
+          status: 'succeeded',
+          assessments: [],
+        },
+        {
+          id: '2',
+          first_name: 'Jane',
+          last_name: 'Doe',
+          email: 'jane.doe@example.com',
+          github_username: 'janedoe',
+          total_score: 90,
+          summary: 'Summary 2',
+          status: 'succeeded',
+          assessments: [],
+        },
+      ],
       checklist_status: 'active',
     };
-    const selectedCandidateId = '1';
 
     return (
       <>
@@ -108,9 +109,6 @@ export const Dashboard: Story = {
           handleLogout={() => {}}
         />
         <Component
-          selectedPosition={selectedPosition}
-          selectedCandidateId={selectedCandidateId}
-          onCandidateSelect={() => {}}
         />
       </>
     );

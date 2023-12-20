@@ -110,7 +110,7 @@ def process_position_from_sql_results(sql_results):
         if email and candidate_result_status == 'succeeded':
             candidate_data[candidate_id]['assessments'].append({
                 'criterion': {
-                    'id': criterion_id,
+                    'id': criterion_id
                 },
                 'score': score,
                 'reason': reason

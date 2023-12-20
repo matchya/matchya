@@ -8,8 +8,8 @@ const Dashboard = () => {
   const { selectedPosition, positions, selectCandidate } = usePositionStore();
 
   useEffect(() => {
-    if (selectedPosition?.checklist && selectedPosition.checklist.candidates) {
-      selectCandidate(selectedPosition.checklist.candidates[0]);
+    if (selectedPosition?.checklist && selectedPosition.candidates) {
+      selectCandidate(selectedPosition.candidates[0]);
     }
   }, [selectedPosition]);
 
@@ -35,7 +35,7 @@ const Dashboard = () => {
                 <div className="w-full xl:max-w-[400px]">
                   {selectedPosition?.checklist ? (
                     <AllCandidatesCard
-                      candidates={selectedPosition.checklist.candidates}
+                      candidates={selectedPosition.candidates}
                     />
                   ) : null}
                 </div>
