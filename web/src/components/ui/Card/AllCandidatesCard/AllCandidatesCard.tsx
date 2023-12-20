@@ -7,6 +7,7 @@ import {
   CardTitle,
 } from '../Card';
 
+import { Icons } from '@/components/ui/Icons/Icons';
 import { usePositionStore } from '@/store/usePositionStore';
 import { Candidate } from '@/types';
 
@@ -71,13 +72,9 @@ const CandidateRow = ({ candidate }: CandidateRowProps) => {
         <p className="text-sm text-muted-foreground">{candidate.email}</p>
       </div>
       {candidate.status == 'scheduled' ? (
-        <div className="ml-auto font-medium text-yellow-500">
-          {candidate.status}
-        </div>
+        <Icons.spinner className="ml-auto h-5 w-5 animate-spin" />
       ) : candidate.status == 'failed' ? (
-        <div className="ml-auto font-medium text-red-500">
-          {candidate.status}
-        </div>
+        <div className="ml-auto font-medium">retry</div>
       ) : (
         <div className="ml-auto font-medium">{candidate.total_score}</div>
       )}
