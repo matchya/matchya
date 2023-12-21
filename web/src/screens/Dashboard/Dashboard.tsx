@@ -26,11 +26,7 @@ const Dashboard = () => {
   }
 
   const DashboardBody = () => {
-    if (
-      positions.length === 0 ||
-      !selectedPosition ||
-      !selectedPosition.checklist
-    ) {
+    if (positions.length === 0 || !selectedPosition) {
       return <div>loading...</div>;
     }
 
@@ -41,15 +37,13 @@ const Dashboard = () => {
             <div className="justify-between items-center py-4">
               <div className="xl:flex flex-col lg:flex-row gap-4 px-4">
                 <div className="w-full xl:max-w-[400px]">
-                  {selectedPosition?.checklist ? (
-                    <AllCandidatesCard
-                      candidates={selectedPosition.candidates.sort((a, b) => {
-                        const dateA = new Date(a.created_at);
-                        const dateB = new Date(b.created_at);
-                        return dateA > dateB ? 1 : -1;
-                      })}
-                    />
-                  ) : null}
+                  <AllCandidatesCard
+                    candidates={selectedPosition.candidates?.sort((a, b) => {
+                      const dateA = new Date(a.created_at);
+                      const dateB = new Date(b.created_at);
+                      return dateA > dateB ? 1 : -1;
+                    }) || []}
+                  />
                 </div>
                 <div className="hidden h-full flex-1 flex-col md:flex">
                   <CandidateDetailCard />
