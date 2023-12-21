@@ -53,7 +53,7 @@ def get_candidates_by_position_id(position_id):
     sql = """
         SELECT
             can.id AS candidate_id, can.first_name, can.last_name, can.email, can.github_username, 
-            can_res.total_score, can_res.summary, can_res.status AS candidate_result_status,
+            can_res.total_score, can_res.summary, can_res.status AS candidate_result_status, can_res.created_at,
             ass_crit.criterion_id, ass_crit.score, ass_crit.reason
         FROM
             position p
@@ -92,7 +92,7 @@ def process_position_from_sql_results(sql_results):
     candidate_data = {}
     for row in sql_results:
         (candidate_id, first_name, last_name, email, github_username,
-         total_score, summary, candidate_result_status, criterion_id, score, reason) = row
+         total_score, summary, candidate_result_status, created_at, criterion_id, score, reason) = row
 
         if candidate_id not in candidate_data:
             candidate_data[candidate_id] = {
@@ -104,6 +104,7 @@ def process_position_from_sql_results(sql_results):
                 'total_score': total_score,
                 'summary': summary,
                 'status': candidate_result_status,
+                'created_at': str(created_at),
                 'assessments': []
             }
 

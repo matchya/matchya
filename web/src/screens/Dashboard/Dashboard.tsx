@@ -5,10 +5,15 @@ import { CandidateDetailCard } from '@/components/ui/Card/CandidateDetailCard/Ca
 import { usePositionStore } from '@/store/usePositionStore';
 
 const Dashboard = () => {
-  const { selectedPosition, positions, selectedCandidate, selectCandidate } = usePositionStore();
+  const { selectedPosition, positions, selectedCandidate, selectCandidate } =
+    usePositionStore();
 
   useEffect(() => {
-    if (selectedPosition && selectedPosition.candidates && selectedPosition?.candidates.find(c => c.id === selectedCandidate?.id)) {
+    if (
+      selectedPosition &&
+      selectedPosition.candidates &&
+      selectedPosition?.candidates.find(c => c.id === selectedCandidate?.id)
+    ) {
       return;
     }
     if (selectedPosition?.checklist && selectedPosition.candidates) {
@@ -38,7 +43,11 @@ const Dashboard = () => {
                 <div className="w-full xl:max-w-[400px]">
                   {selectedPosition?.checklist ? (
                     <AllCandidatesCard
-                      candidates={selectedPosition.candidates}
+                      candidates={selectedPosition.candidates.sort((a, b) => {
+                        const dateA = new Date(a.created_at);
+                        const dateB = new Date(b.created_at);
+                        return dateA > dateB ? 1 : -1;
+                      })}
                     />
                   ) : null}
                 </div>

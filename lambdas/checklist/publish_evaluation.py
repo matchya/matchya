@@ -1,6 +1,7 @@
 import json
 import logging
 import uuid
+import datetime
 
 import boto3
 import psycopg2
@@ -123,19 +124,19 @@ def save_candidate_info_to_db(body: dict) -> str:
         raise RuntimeError("Failed to save candidate info")
 
 
-def create_candidate_result_to_db(checklist_id, candidate_id):
+def create_candidate_result_to_db(checklist_id, candidate_id) -> (str, str):
     """
     If there is failed candidate result, update the status to scheduled.
     If not, create a new candidate result with status scheduled.
 
     :param checklist_id: The id of the checklist to save.
     :param candidate_id: The id of the candidate to save.
-    :return: The id of the candidate result.
+    :return: The id and created_at of the candidate result.
     """
     logger.info("Saving the candidate result...")
     try:
         new_status = 'scheduled'
-        sql = f"SELECT id FROM candidate_result WHERE checklist_id = '{checklist_id}' AND candidate_id = '{candidate_id}' AND status = 'failed'"
+        sql = f"SELECT id, created_at FROM candidate_result WHERE checklist_id = '{checklist_id}' AND candidate_id = '{candidate_id}' AND status = 'failed'"
         db_cursor.execute(sql)
         result = db_cursor.fetchone()
 
@@ -143,13 +144,14 @@ def create_candidate_result_to_db(checklist_id, candidate_id):
             logger.info(f"Updating the candidate result status to scheduled, id: {result[0]}")
             sql = f"UPDATE candidate_result SET status = '{new_status}' WHERE id = '{result[0]}'"
             db_cursor.execute(sql)
-            return result[0]
+            return result[0], result[1]
 
         id = str(uuid.uuid4())
-        sql = "INSERT INTO candidate_result (id, checklist_id, candidate_id, status) VALUES (%s, %s, %s, %s)"
-        db_cursor.execute(sql, (id, checklist_id, candidate_id, new_status))
+        created_at = str(datetime.datetime.now())
+        sql = "INSERT INTO candidate_result (id, checklist_id, candidate_id, status, created_at) VALUES (%s, %s, %s, %s, %s)"
+        db_cursor.execute(sql, (id, checklist_id, candidate_id, new_status, created_at))
         logger.info(f"New candidate result is saved to db successfully id: {id}")
-        return id
+        return id, created_at
     except Exception as e:
         logger.error(f"Failed to save candidate result: {e}")
         raise RuntimeError("Failed to save candidate result")
@@ -182,13 +184,18 @@ def handler(event, context):
         if user_already_evaluated(checklist_id, candidate_id):
             raise RuntimeError(f"Candidate {body.get('candidate_email')} has already been evaluated")
 
-        candidate_result_id = create_candidate_result_to_db(checklist_id, candidate_id)
+        candidate_result_id, created_at = create_candidate_result_to_db(checklist_id, candidate_id)
         logger.info(f"Saved candidate result to database successfully with status 'scheduled': {candidate_result_id}")
 
         body['candidate_result_id'] = candidate_result_id
         send_message_to_sqs(body)
         logger.info(f"Successfully sent message to SQS {body}")
-        return generate_success_response(origin_domain=origin, payload={"candidate_id": candidate_id})
+        
+        data = {
+            "candidate_id": candidate_id,
+            "created_at": created_at,
+        }
+        return generate_success_response(origin_domain=origin, payload=data)
     except RuntimeError as e:
         logger.error(e)
         return generate_error_response(origin, 400, str(e))

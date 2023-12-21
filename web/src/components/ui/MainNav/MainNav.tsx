@@ -135,6 +135,7 @@ export function MainNav({
           github_username: candidateInput.githubUsername,
           total_score: 0,
           summary: '',
+          created_at: response.data.payload.created_at,
           status: 'scheduled',
           assessments: [],
         };
