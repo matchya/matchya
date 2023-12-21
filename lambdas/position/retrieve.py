@@ -79,7 +79,7 @@ def get_position_details_by_id(position_id):
             c.id AS checklist_id,
             cr.repository_name,
             can.id AS candidate_id, can.first_name, can.last_name, can.email, can.github_username, 
-            can_res.total_score, can_res.summary, can_res.status AS candidate_result_status,
+            can_res.total_score, can_res.summary, can_res.status AS candidate_result_status, can_res.created_at,
             ass_crit.criterion_id, ass_crit.score, ass_crit.reason
         FROM
             position p
@@ -119,7 +119,7 @@ def process_position_from_sql_results(sql_results):
     position_data = {}
     for row in sql_results:
         (position_id, position_name, checklist_status, checklist_id, repo_name, candidate_id, first_name, last_name, email,
-         github_username, total_score, summary, candidate_result_status, criterion_id, score, reason) = row
+         github_username, total_score, summary, candidate_result_status, created_at, criterion_id, score, reason) = row
 
         if position_id not in position_data:
             position_data[position_id] = {'name': position_name, 'checklist_status': checklist_status, 'checklists': {}, 'candidates': {}}
@@ -145,6 +145,7 @@ def process_position_from_sql_results(sql_results):
                 'total_score': total_score,
                 'summary': summary,
                 'status': candidate_result_status,
+                'created_at': str(created_at),
                 'assessments': {}
             }
 

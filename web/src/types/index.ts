@@ -16,6 +16,7 @@ export interface Candidate {
   total_score: number;
   summary: string;
   status: string;
+  created_at: string;
   assessments: Assessment[];
 }
 
