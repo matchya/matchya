@@ -23,6 +23,7 @@ interface AddCandidateDialogProps {
     githubUsername: string;
     email: string;
   }) => void;
+  errorMessage: string
 }
 
 export const AddCandidateDialog = ({
@@ -30,6 +31,7 @@ export const AddCandidateDialog = ({
   onClose,
   onSubmit,
   isLoading,
+  errorMessage,
 }: AddCandidateDialogProps) => {
   const [candidateInput, setCandidateInput] = useState({
     firstName: '',
@@ -37,6 +39,7 @@ export const AddCandidateDialog = ({
     githubUsername: '',
     email: '',
   });
+
 
   return (
     <Dialog open={shouldOpen} onOpenChange={onClose}>
@@ -133,8 +136,9 @@ export const AddCandidateDialog = ({
             </div>
           </div>
         </div>
+        <div className="text-red-500 text-sm">{errorMessage}</div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => {}}>
+          <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
           <Button onClick={() => onSubmit(candidateInput)}>

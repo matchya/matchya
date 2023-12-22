@@ -31,14 +31,16 @@ export const GenerateCriteriaDialog = ({
   const { selectedPosition } = usePositionStore();
   const [isLoading, setIsLoading] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
   const handleUnselect = useCallback((framework: string) => {
     setSelected(prev => prev.filter(s => s !== framework));
   }, []);
 
   const handleGenerateCriteria = async () => {
+    setErrorMessage('');
     if (!selectedPosition || selected.length === 0) {
-      console.error('Need to meet requirements');
+      setErrorMessage('Select at least one repository');
       return;
     }
     const userData = {
@@ -54,14 +56,14 @@ export const GenerateCriteriaDialog = ({
       if (response.data.status == 'success') {
         selectedPosition.checklist_status = 'scheduled';
         onClose();
+        setErrorMessage('');
       }
     } catch (error) {
       const err = error as CustomError;
-      // setMessageType('error');
       if (err.response.status === 400) {
-        console.error(err.response.data.message);
+        setErrorMessage(err.response.data.message);
       } else {
-        console.error('Something went wrong. Please try again.');
+        setErrorMessage('Something went wrong. Please try again.');
       }
     }
     setIsLoading(false);
@@ -94,7 +96,13 @@ export const GenerateCriteriaDialog = ({
   };
 
   return (
-    <Dialog open={shouldOpen} onOpenChange={onClose}>
+    <Dialog
+      open={shouldOpen}
+      onOpenChange={() => {
+        onClose();
+        setErrorMessage('');
+      }}
+    >
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Generate Criteria</DialogTitle>
@@ -111,8 +119,15 @@ export const GenerateCriteriaDialog = ({
             inputRef={inputRef}
           />
         </div>
+        <div className="text-red-500 text-sm">{errorMessage}</div>
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
+          <Button
+            variant="outline"
+            onClick={() => {
+              onClose();
+              setErrorMessage('');
+            }}
+          >
             Cancel
           </Button>
           <Button onClick={handleGenerateCriteria}>
