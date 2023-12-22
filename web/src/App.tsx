@@ -15,11 +15,11 @@ function App() {
     <Router>
       <Routes>
         <Route element={<AuthenticatedLayout />}>
-          <Route path="/" element={<HomePage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/settings" element={<SettingsPage />} />
         </Route>
         <Route element={<UnAuthenticatedLayout />}>
+          <Route path="/" element={<HomePage />} />
           <Route path="/auth" element={<AuthenticationPage />} />
           <Route
             path="/auth/github/callback"
