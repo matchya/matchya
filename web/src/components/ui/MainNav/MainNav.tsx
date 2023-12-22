@@ -21,9 +21,14 @@ export function MainNav({
     generateCriteria: false,
     addCandidate: false,
   });
-  const { selectedPosition, selectPosition, setPositionDetail, updateCandidates } =
-    usePositionStore();
+  const {
+    selectedPosition,
+    selectPosition,
+    setPositionDetail,
+    updateCandidates,
+  } = usePositionStore();
   const [isAddCandidateLoading, setIsAddCandidateLoading] = useState(false);
+  const [addCandidateError, setAddCandidateError] = useState<string>('');
 
   const isMounted = useRef(true);
 
@@ -81,7 +86,11 @@ export function MainNav({
         );
         if (response.data.status === 'success') {
           updateCandidates(response.data.payload.candidates);
-          if (response.data.payload.candidates.filter((candidate: Candidate) => candidate.status === 'scheduled').length === 0) {
+          if (
+            response.data.payload.candidates.filter(
+              (candidate: Candidate) => candidate.status === 'scheduled'
+            ).length === 0
+          ) {
             clearInterval(interval);
           }
         }
@@ -90,7 +99,12 @@ export function MainNav({
       }
     };
 
-    if (selectedPosition && selectedPosition.candidates.filter((candidate) => candidate.status === 'scheduled').length > 0) {
+    if (
+      selectedPosition &&
+      selectedPosition.candidates.filter(
+        candidate => candidate.status === 'scheduled'
+      ).length > 0
+    ) {
       interval = setInterval(fetchStatus, POLLING_INTERVAL);
     }
 
@@ -113,6 +127,7 @@ export function MainNav({
     githubUsername: string;
     email: string;
   }) => {
+    setAddCandidateError('');
     if (!selectedPosition?.checklist.id) {
       return;
     }
@@ -142,13 +157,14 @@ export function MainNav({
         selectedPosition?.candidates.push(candidate);
         selectPosition(selectedPosition);
         setShouldOpen({ ...shouldOpen, addCandidate: false });
+        setAddCandidateError('');
       }
     } catch (error) {
       const err = error as CustomError;
       if (err.response.status === 400) {
-        console.error(err.response.data.message);
+        setAddCandidateError(err.response.data.message);
       } else {
-        console.error('Something went wrong. Please try again.');
+        setAddCandidateError('Something went wrong. Please try again.');
       }
     }
     setIsAddCandidateLoading(false);
@@ -203,10 +219,12 @@ export function MainNav({
             <AddCandidateDialog
               shouldOpen={shouldOpen.addCandidate}
               isLoading={isAddCandidateLoading}
-              onClose={() =>
-                setShouldOpen({ ...shouldOpen, addCandidate: false })
-              }
+              onClose={() => {
+                setShouldOpen({ ...shouldOpen, addCandidate: false });
+                setAddCandidateError('');
+              }}
               onSubmit={handleAddCandidate}
+              errorMessage={addCandidateError}
             />
           </div>
         ) : null}
