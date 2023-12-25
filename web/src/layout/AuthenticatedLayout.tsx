@@ -57,7 +57,7 @@ const Layout = () => {
         handleLogout={handleLogout}
         positions={positions}
         selectPosition={selectPosition}
-        selectedPosition={selectedPosition}
+        selectedPosition={selectedPosition!}
       />
       <Outlet />
     </>
