@@ -26,7 +26,7 @@ jobs:
         uses: cycjimmy/semantic-release-action@v2
         with:
           semantic_version: 17
-          branches: 'main'
+          branches: '385-featci-set-up-pipeline-to-deploy-to-s3' # temporary
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create Release
