@@ -4,13 +4,10 @@ on:
   push:
 
 jobs:
-  deploy:
-    name: Deploy UI
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Call Deploy to S3
-        uses: ./.github/actions/call-deploy-to-s3/action.yml
-      - name: Call Version Release
-        uses: ./.github/actions/call-create-version-release/action.yml
+  deploy-to-s3:
+    name: Deploy to S3
+    uses: ./.github/workflows/job-deploy-to-s3.yml
+
+  create-version-release:
+    name: Create Version Release
+    uses: ./.github/workflows/create-version-release.yml

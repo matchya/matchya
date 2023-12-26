@@ -1,7 +1,14 @@
-name: 'Version Release'
-description: 'This action creates a new version release.'
-runs:
-  using: 'composite'
+on: workflow_call
+
+jobs:
+  name: Releasing New Version
+  timeout-minutes: 15
+  runs-on: ubuntu-latest
+  environment: production
+  strategy:
+    matrix:
+      package:
+        - composition
   steps:
     - name: Checkout code
       uses: actions/checkout@v2
