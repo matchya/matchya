@@ -1,0 +1,5 @@
+export {default as AuthenticationPageTemplate} from './AuthenticationPage/AuthenticationPage'
+export {default as DashboardPageTemplate} from './DashboardPage/DashboardPage'
+export {default as GithubAuthCallbackPageTemplate} from './GithubAuthCallbackPage/GithubAuthCallbackPage'
+export {default as HomePageTemplate} from './HomePage/HomePage'
+export {default as SettingsPageTemplate} from './SettingsPage/SettingsPage'

@@ -1,15 +1,14 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-import { AuthenticatedLayout, UnAuthenticatedLayout } from './layout';
 import { StoreProvider } from './store';
 
-import {
-  AuthenticationPage,
-  DashboardPage,
-  HomePage,
-  SettingsPage,
-} from '@/screens';
-import GithubAuthCallback from '@/screens/Authentication/GithubAuthCallback';
+import AuthenticatedLayout from '@/layout/Authenticated';
+import UnAuthenticatedLayout from '@/layout/UnAuthenticated';
+import AuthenticationPage from '@/screens/AuthenticationPage';
+import DashboardPage from '@/screens/DashboardPage';
+import GithubAuthCallbackPage from '@/screens/GithubAuthCallbackPage';
+import HomePage from '@/screens/HomePage';
+import SettingsPage from '@/screens/SettingsPage';
 
 function App() {
   return (
@@ -25,7 +24,7 @@ function App() {
             <Route path="/auth" element={<AuthenticationPage />} />
             <Route
               path="/auth/github/callback"
-              element={<GithubAuthCallback />}
+              element={<GithubAuthCallbackPage />}
             />
           </Route>
         </Routes>
