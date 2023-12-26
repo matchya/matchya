@@ -1,0 +1,26 @@
+{
+  "plugins": [
+    "@semantic-release/commit-analyzer",
+    "@semantic-release/release-notes-generator",
+    "@semantic-release/changelog",
+    [
+        "@semantic-release/npm",
+        {
+          "npmPublish": false
+        }
+    ],
+    "@semantic-release/git",
+    "@semantic-release/github"
+  ],
+  "branches": [
+    "master",
+    "main",
+    "next",
+    { "name": "beta", "prerelease": "beta" },
+    { "name": "alpha", "prerelease": "alpha" },
+    { "name": "feature/*", "prerelease": true },
+    { "name": "hotfix/*", "prerelease": true },
+    { "name": "debug/*", "prerelease": true },
+    {"name": "385-featci-set-up-pipeline-to-deploy-to-s3", "prerelease": true}
+  ]
+}
