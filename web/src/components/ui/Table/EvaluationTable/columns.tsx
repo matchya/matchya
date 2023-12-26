@@ -44,9 +44,7 @@ export const columns: ColumnDef<Assessment>[] = [
   },
 ];
 
-async function getAssessments() {
+export const getTransformedAssessments = async () => {
   const assessments = mockedAssessments;
   return z.array(assessmentSchema).parse(assessments);
-}
-
-export const assessments = await getAssessments();
+};

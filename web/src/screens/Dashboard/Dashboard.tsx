@@ -38,16 +38,20 @@ const Dashboard = () => {
               <div className="xl:flex flex-col lg:flex-row gap-4 px-4">
                 <div className="w-full xl:max-w-[400px]">
                   <AllCandidatesCard
-                    candidates={selectedPosition.candidates?.sort((a, b) => {
-                      const dateA = new Date(a.created_at);
-                      const dateB = new Date(b.created_at);
-                      return dateA > dateB ? 1 : -1;
-                    }) || []}
+                    candidates={
+                      selectedPosition.candidates?.sort((a, b) => {
+                        const dateA = new Date(a.created_at);
+                        const dateB = new Date(b.created_at);
+                        return dateA > dateB ? 1 : -1;
+                      }) || []
+                    }
                   />
                 </div>
-                <div className="hidden h-full flex-1 flex-col md:flex">
-                  <CandidateDetailCard />
-                </div>
+                {selectedCandidate ? (
+                  <div className="hidden h-full flex-1 flex-col md:flex">
+                    <CandidateDetailCard candidate={selectedCandidate} />
+                  </div>
+                ) : null}
               </div>
             </div>
           </div>

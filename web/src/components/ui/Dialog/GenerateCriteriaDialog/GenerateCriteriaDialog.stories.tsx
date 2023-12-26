@@ -12,11 +12,5 @@ export default meta;
 type Story = StoryObj<typeof Component>;
 
 export const GenerateCriteria: Story = {
-  render: () => (
-    <Component
-      shouldOpen={true}
-      onClose={() => {}}
-      onUpdateStatus={status => console.log(status)}
-    />
-  ),
+  render: () => <Component shouldOpen={true} onClose={() => {}} />,
 };

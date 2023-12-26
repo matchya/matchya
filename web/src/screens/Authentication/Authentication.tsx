@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { Button } from '@/components/ui/Button/Button';
 import { Icons } from '@/components/ui/Icons/Icons';
-import { githubClientId } from '@/config';
+import { clientEndpoint, githubClientId } from '@/config';
 import { cn } from '@/lib/utils';
 
 const Authentication = () => {
@@ -10,7 +10,7 @@ const Authentication = () => {
 
   const handleGithubLogin = () => {
     setIsLoading(true);
-    const redirectUri = 'http://127.0.0.1:5173/auth/github/callback';
+    const redirectUri = `${clientEndpoint}/auth/github/callback`;
     const loginUrl = `https://github.com/login/oauth/authorize?client_id=${githubClientId}&redirect_uri=${redirectUri}&scope=repo,user`;
 
     window.location.href = loginUrl;
@@ -75,7 +75,7 @@ const Authentication = () => {
                 type="button"
                 disabled={isLoading}
                 onClick={handleGithubLogin}
-                className='w-3/4 h-12 mx-auto text-white bg-black text-xl hover:bg-gray-600 hover:text-white dark:bg-white dark:text-black dark:border-black dark:hover:bg-gray-100 dark:hover:text-black dark:hover:border-black'
+                className="w-3/4 h-12 mx-auto text-white bg-black text-xl hover:bg-gray-600 hover:text-white dark:bg-white dark:text-black dark:border-black dark:hover:bg-gray-100 dark:hover:text-black dark:hover:border-black"
               >
                 {isLoading ? (
                   <Icons.spinner className="mr-2 h-6 w-6 animate-spin" />

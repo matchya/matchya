@@ -81,6 +81,7 @@ export const Dashboard: Story = {
           summary: 'Summary 1',
           status: 'succeeded',
           assessments: [],
+          created_at: '2022-01-01T00:00:00Z',
         },
         {
           id: '2',
@@ -92,6 +93,7 @@ export const Dashboard: Story = {
           summary: 'Summary 2',
           status: 'succeeded',
           assessments: [],
+          created_at: '2022-01-02T00:00:00Z',
         },
       ],
       checklist_status: 'active',
@@ -108,8 +110,7 @@ export const Dashboard: Story = {
           email={'email'}
           handleLogout={() => {}}
         />
-        <Component
-        />
+        <Component />
       </>
     );
   },
