@@ -3,6 +3,12 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "release": {
+    "branches": [
+      "main",
+      "385-featci-set-up-pipeline-to-deploy-to-s3"
+    ]
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
