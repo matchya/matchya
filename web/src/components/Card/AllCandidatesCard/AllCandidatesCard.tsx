@@ -1,6 +1,5 @@
 import { useState } from 'react';
 
-import { Avatar } from '../../Avatar/Avatar';
 import {
   Card,
   CardContent,
@@ -9,9 +8,8 @@ import {
   CardTitle,
 } from '../Card';
 
-import { Button } from '@/components/Button/Button';
-import { Icons } from '@/components/Icons/Icons';
-import { axiosInstance } from '@/lib';
+import { Avatar, Button, Icons } from '@/components';
+import { axiosInstance } from '@/lib/client';
 import { usePositionStore } from '@/store/store';
 import { Candidate, CustomError } from '@/types';
 

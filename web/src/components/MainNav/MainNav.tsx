@@ -1,13 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
 
-import { AddCandidateDialog } from '../Dialog/AddCandidateDialog/AddCandidateDialog';
-import { GenerateCriteriaDialog } from '../Dialog/GenerateCriteriaDialog/GenerateCriteriaDialog';
-import { Icons } from '../Icons/Icons';
-import { ChecklistSheet } from '../Sheet/ChecklistSheet/ChecklistSheet';
-import { Sheet, SheetTrigger } from '../Sheet/Sheet';
-
-import { Button } from '@/components/Button/Button';
-import { axiosInstance, cn } from '@/lib';
+import {
+  AddCandidateDialog,
+  GenerateCriteriaDialog,
+  Icons,
+  ChecklistSheet,
+  Sheet,
+  SheetTrigger,
+  Button,
+} from '@/components';
+import { axiosInstance } from '@/lib/client';
+import { cn } from '@/lib/utils';
 import { usePositionStore } from '@/store/store';
 import { Candidate, CustomError } from '@/types';
 

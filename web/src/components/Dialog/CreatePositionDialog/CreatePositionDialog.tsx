@@ -1,14 +1,14 @@
 import { Label } from '@radix-ui/react-label';
 
-import { Button } from '../../Button/Button';
-import { Input } from '../../Input/Input';
 import {
+  Button,
+  Input,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '../Dialog';
+} from '@/components';
 
 export const CreatePositionDialog = () => {
   return (

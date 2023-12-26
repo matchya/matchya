@@ -1,17 +1,17 @@
 import { useState } from 'react';
 
-import { Button } from '../../Button/Button';
-import { Icons } from '../../Icons/Icons';
-import { Input } from '../../Input/Input';
-import { Label } from '../../Label/Label';
 import {
+  Button,
+  Icons,
+  Input,
+  Label,
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '../Dialog';
+} from '@/components';
 
 interface AddCandidateDialogProps {
   shouldOpen: boolean;
@@ -23,7 +23,7 @@ interface AddCandidateDialogProps {
     githubUsername: string;
     email: string;
   }) => void;
-  errorMessage: string
+  errorMessage: string;
 }
 
 export const AddCandidateDialog = ({
@@ -39,7 +39,6 @@ export const AddCandidateDialog = ({
     githubUsername: '',
     email: '',
   });
-
 
   return (
     <Dialog open={shouldOpen} onOpenChange={onClose}>

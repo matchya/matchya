@@ -1,7 +1,6 @@
 import { useState } from 'react';
 
-import { Button } from '@/components/Button/Button';
-import { Icons } from '@/components/Icons/Icons';
+import { Button, Icons } from '@/components';
 import { clientEndpoint, githubClientId } from '@/config';
 import { cn } from '@/lib/utils';
 

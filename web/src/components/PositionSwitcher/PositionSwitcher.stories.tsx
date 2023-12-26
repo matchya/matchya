@@ -2,7 +2,7 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { PositionSwitcher as Component } from './PositionSwitcher';
 
-import { mockPositions, mockSelectedPosition } from '@/lib';
+import { mockPositions, mockSelectedPosition } from '@/data/mock';
 
 const meta: Meta<typeof Component> = {
   title: 'Component',

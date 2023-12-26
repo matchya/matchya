@@ -2,7 +2,7 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { CandidateDetailCard as Component } from './CandidateDetailCard';
 
-import { mockCandidate } from '@/lib';
+import { mockCandidate } from '@/data/mock';
 
 const meta: Meta<typeof Component> = {
   title: 'Component/Card',

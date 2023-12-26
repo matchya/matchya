@@ -2,9 +2,8 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { ChecklistSheet as Component } from './ChecklistSheet';
 
-import { Button } from '@/components/Button/Button';
-import { Sheet, SheetTrigger } from '@/components/Sheet/Sheet';
-import { mockSelectedPosition } from '@/lib';
+import { Button, Sheet, SheetTrigger } from '@/components';
+import { mockSelectedPosition } from '@/data/mock';
 
 const meta: Meta<typeof Component> = {
   title: 'Component/Sheet',

@@ -6,15 +6,14 @@ import {
 } from '@radix-ui/react-icons';
 import { Column } from '@tanstack/react-table';
 
-import { Button } from '../../Button/Button';
 import {
+  Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '../../DropdownMenu/DropdownMenu';
-
+} from '@/components';
 import { cn } from '@/lib/utils';
 
 interface EvaluationTableColumnHeaderProps<TData, TValue>

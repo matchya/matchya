@@ -1,5 +1,4 @@
-import { EvaluationTable } from '../../Table/EvaluationTable/EvaluationTable';
-
+import { EvaluationTable } from '@/components';
 import { Candidate } from '@/types';
 
 interface CandidateDetailCard {

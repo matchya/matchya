@@ -2,9 +2,9 @@ import { CheckIcon, PlusCircledIcon } from '@radix-ui/react-icons';
 import { Column } from '@tanstack/react-table';
 import * as React from 'react';
 
-import { Badge } from '../../Badge/Badge';
-import { Button } from '../../Button/Button';
 import {
+  Badge,
+  Button,
   Command,
   CommandEmpty,
   CommandGroup,
@@ -12,10 +12,11 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-} from '../../Command/Command';
-import { Popover, PopoverContent, PopoverTrigger } from '../../Popover/Popover';
-import { Separator } from '../../Seperator/Seperator';
-
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Separator,
+} from '@/components';
 import { cn } from '@/lib/utils';
 
 interface EvaluationTableFacetedFilterProps<TData, TValue> {

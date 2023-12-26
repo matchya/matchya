@@ -1,18 +1,17 @@
 import { useCallback, useRef, useState } from 'react';
 
-import { Button } from '../../Button/Button';
-import { Icons } from '../../Icons/Icons';
-import { MultiSelect } from '../../MultiSelect/MultiSelect';
 import {
+  Button,
+  Icons,
+  MultiSelect,
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '../Dialog';
-
-import { axiosInstance } from '@/lib';
+} from '@/components';
+import { axiosInstance } from '@/lib/client';
 import { useCompanyStore, usePositionStore } from '@/store/store';
 import { CustomError } from '@/types';
 

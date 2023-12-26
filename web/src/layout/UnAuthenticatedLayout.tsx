@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 
-import { Header } from '@/components/Header/Header';
+import { Header } from '@/components';
 import { useCompanyStore } from '@/store/store';
 
 const Layout = () => {

@@ -1,15 +1,15 @@
-import { Button } from '@/components/Button/Button';
 import {
+  Button,
   Card,
   CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/Card/Card';
-import { Icons } from '@/components/Icons/Icons';
-import { Input } from '@/components/Input/Input';
-import { Label } from '@/components/Label/Label';
+  Icons,
+  Input,
+  Label,
+} from '@/components';
 
 export interface CreateAccountProps {
   handleInputChange: (

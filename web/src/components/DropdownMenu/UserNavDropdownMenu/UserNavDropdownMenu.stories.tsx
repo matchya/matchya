@@ -4,10 +4,9 @@ import {
 } from '@radix-ui/react-dropdown-menu';
 import { Meta, StoryObj } from '@storybook/react';
 
-import { Avatar } from '../../Avatar/Avatar';
-import { Button } from '../../Button/Button';
-
 import { UserNavDropdownMenu as Component } from './UserNavDropdownMenu';
+
+import { Avatar, Button } from '@/components';
 
 const meta: Meta<typeof Component> = {
   title: 'Component/Dropdown Menu',

@@ -1,16 +1,15 @@
 import { useNavigate } from 'react-router-dom';
 
-import { Avatar } from '../Avatar/Avatar';
-import { Button } from '../Button/Button';
 import {
+  Avatar,
+  Button,
   DropdownMenu,
   DropdownMenuTrigger,
-} from '../DropdownMenu/DropdownMenu';
-import { UserNavDropdownMenu } from '../DropdownMenu/UserNavDropdownMenu/UserNavDropdownMenu';
-import { PositionSwitcher } from '../PositionSwitcher/PositionSwitcher';
-
-import { MainNav } from '@/components/MainNav/MainNav';
-import { axiosInstance } from '@/lib';
+  MainNav,
+  PositionSwitcher,
+  UserNavDropdownMenu,
+} from '@/components';
+import { axiosInstance } from '@/lib/client';
 import { useCompanyStore, usePositionStore } from '@/store/store';
 
 interface HeaderProps {

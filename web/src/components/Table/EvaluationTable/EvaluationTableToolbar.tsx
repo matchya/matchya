@@ -1,12 +1,11 @@
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { Table } from '@tanstack/react-table';
 
-import { Button } from '../../Button/Button';
-import { Input } from '../../Input/Input';
-
 import { priorities, statuses } from './data';
 import { EvaluationTableFacetedFilter } from './EvaluationTableFacetedFilter';
 import { EvaluationTableViewOptions } from './EvaluationTableViewOptions';
+
+import { Button, Input } from '@/components';
 
 interface EvaluationTableToolbarProps<TData> {
   table: Table<TData>;

@@ -1,10 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { Icons } from '../../components/Icons/Icons';
-
-import { Button } from '@/components/Button/Button';
-import { axiosInstance } from '@/helper';
+import { Button, Icons } from '@/components';
+import { axiosInstance } from '@/lib/client';
 
 const GithubAuthCallback = () => {
   const location = useLocation();

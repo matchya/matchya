@@ -5,11 +5,9 @@ import {
 } from '@radix-ui/react-icons';
 import * as React from 'react';
 
-import { CreatePositionDialog } from '../Dialog/CreatePositionDialog/CreatePositionDialog';
-
-import { Avatar } from '@/components/Avatar/Avatar';
-import { Button } from '@/components/Button/Button';
 import {
+  Avatar,
+  Button,
   Command,
   CommandEmpty,
   CommandGroup,
@@ -17,13 +15,13 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-} from '@/components/Command/Command';
-import { Dialog, DialogTrigger } from '@/components/Dialog/Dialog';
-import {
+  CreatePositionDialog,
+  Dialog,
+  DialogTrigger,
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/Popover/Popover';
+} from '@/components';
 import { cn } from '@/lib/utils';
 import { Position } from '@/types';
 

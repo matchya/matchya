@@ -1,4 +1,3 @@
-import { Badge } from '../../Badge/Badge';
 import {
   TableHeader,
   TableRow,
@@ -8,6 +7,7 @@ import {
   Table,
 } from '../Table';
 
+import { Badge } from '@/components';
 import { Checklist } from '@/types';
 
 interface ChecklistTableProps {
