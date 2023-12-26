@@ -29,7 +29,7 @@ export const UserNav: Story = {
       <Component
         companyName="Test Company"
         companyEmail="test@example.com"
-        onLogout={() => console.log('Logged out')}
+        onLogout={() => {}}
       />
     </DropdownMenu>
   ),
