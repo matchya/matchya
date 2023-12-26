@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Call Deploy UI
-        uses: ./.github/workflows/call-deploy-ui.yml
+      - name: Call Deploy to S3
+        uses: ./.github/actions/call-deploy-to-s3/action.yml
       - name: Call Version Release
-        uses: ./.github/workflows/call-version-release.yml
+        uses: ./.github/actions/call-create-version-release/action.yml
