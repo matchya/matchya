@@ -11,8 +11,7 @@ import { PositionSwitcher } from '../PositionSwitcher/PositionSwitcher';
 
 import { MainNav } from '@/components/ui/MainNav/MainNav';
 import { axiosInstance } from '@/helper';
-import { useCompanyStore } from '@/store/useCompanyStore';
-import { usePositionStore } from '@/store/usePositionStore';
+import { useCompanyStore, usePositionStore } from '@/store/store';
 
 interface HeaderProps {
   authenticated: boolean;

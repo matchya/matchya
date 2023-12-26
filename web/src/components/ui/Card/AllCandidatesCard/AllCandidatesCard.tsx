@@ -12,7 +12,7 @@ import {
 import { Button } from '@/components/ui/Button/Button';
 import { Icons } from '@/components/ui/Icons/Icons';
 import { axiosInstance } from '@/helper';
-import { usePositionStore } from '@/store/usePositionStore';
+import { usePositionStore } from '@/store/store';
 import { Candidate, CustomError } from '@/types';
 
 interface AllCandidatesCardProps {

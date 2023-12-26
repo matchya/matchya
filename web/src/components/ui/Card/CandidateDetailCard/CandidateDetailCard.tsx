@@ -1,6 +1,6 @@
 import { EvaluationTable } from '../../Table/EvaluationTable/EvaluationTable';
 
-import { usePositionStore } from '@/store/usePositionStore';
+import { usePositionStore } from '@/store/store';
 
 export const CandidateDetailCard = () => {
   const { selectedCandidate } = usePositionStore();

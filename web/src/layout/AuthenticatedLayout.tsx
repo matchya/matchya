@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import { Header } from '@/components/ui/Header/Header';
-import { useCompanyStore } from '@/store/useCompanyStore';
+import { useCompanyStore } from '@/store/store';
 
 const Layout = () => {
   const navigate = useNavigate();

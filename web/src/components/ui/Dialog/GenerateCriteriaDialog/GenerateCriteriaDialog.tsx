@@ -13,8 +13,7 @@ import {
 } from '../Dialog';
 
 import { axiosInstance } from '@/helper';
-import { useCompanyStore } from '@/store/useCompanyStore';
-import { usePositionStore } from '@/store/usePositionStore';
+import { useCompanyStore, usePositionStore } from '@/store/store';
 import { CustomError } from '@/types';
 
 interface GenerateCriteriaDialogProps {

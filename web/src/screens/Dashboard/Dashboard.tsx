@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 import { AllCandidatesCard } from '@/components/ui/Card/AllCandidatesCard/AllCandidatesCard';
 import { CandidateDetailCard } from '@/components/ui/Card/CandidateDetailCard/CandidateDetailCard';
-import { usePositionStore } from '@/store/usePositionStore';
+import { usePositionStore } from '@/store/store';
 
 const Dashboard = () => {
   const { selectedPosition, positions, selectedCandidate, selectCandidate } =

@@ -5,7 +5,8 @@ import { Link } from 'react-router-dom';
 import matchyaIcon from '/matchya-icon.png';
 
 import { axiosInstance } from '../../helper';
-import { useCompanyStore } from '../../store/useCompanyStore';
+
+import { useCompanyStore } from '@/store/store';
 
 const Header = () => {
   const navigate = useNavigate();
