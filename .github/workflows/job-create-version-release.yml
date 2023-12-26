@@ -2,7 +2,8 @@ on:
   workflow_call:
 
 jobs:
-  run:
+  web:
+    name: Web
     timeout-minutes: 15
     runs-on: ubuntu-latest
     environment: production
