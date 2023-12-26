@@ -3,7 +3,6 @@ on:
 
 jobs:
   run:
-    name: Deploying to S3
     timeout-minutes: 15
     runs-on: ubuntu-latest
     environment: production

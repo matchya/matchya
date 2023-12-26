@@ -3,14 +3,9 @@ on:
 
 jobs:
   run:
-    name: Releasing New Version
     timeout-minutes: 15
     runs-on: ubuntu-latest
     environment: production
-    strategy:
-      matrix:
-        package:
-          - composition
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
