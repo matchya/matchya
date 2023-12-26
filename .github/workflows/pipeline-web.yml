@@ -7,7 +7,7 @@ jobs:
   deploy-to-s3:
     name: Deploy to S3
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     environment: production
     steps:
       - name: Checkout code
@@ -21,10 +21,35 @@ jobs:
       - name: Deploy to S3
         shell: bash
         run: |
-          bash scripts/deploy_to_s3.sh --bucket-name ${{ secrets.WEBSITE_BUCKET_NAME }} --environment ${{ inputs.environment }}
+          cd scripts && ./deploy_to_s3.sh --bucket-name ${{ secrets.WEBSITE_BUCKET_NAME }} --environment ${{ inputs.environment }}
 
 
   create-version-release:
     name: Create Version Release
-    uses: ./.github/workflows/job-create-version-release.yml
-    secrets: inherit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - name: Install dependencies
+        run: |
+          cd web
+          npm install
+      - name: Build
+        run: |
+          cd web
+          npm run build
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          cache: npm
+          node-version: 18
+      - run: npm ci
+      - run: npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
