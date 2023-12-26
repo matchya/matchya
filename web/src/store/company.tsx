@@ -67,17 +67,12 @@ export const CompanyStoreProvider = ({
               github_username: payload.github_username,
               repository_names: payload.repository_names,
             });
-            console.log('WHAT1');
             await positionStore.setPositions(payload.positions);
-            console.log('WHAT2');
             await positionStore.selectPosition(payload.positions[0]);
-            console.log('WHAT3');
           } else {
-            console.log('WHAT4');
             throw new Error(res.data.payload.message);
           }
         } catch (err) {
-          console.log('WHAT5');
           throw new Error();
         }
       },

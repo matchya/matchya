@@ -92,7 +92,7 @@ export const PositionStoreProvider = ({ children }: ContextProviderProps) => {
         } catch (err) {
           const error = err as CustomError;
           if (error.response && error.response.data) {
-            console.log(error.response.data.message);
+            console.error(error.response.data.message);
           }
           throw new Error();
         }
