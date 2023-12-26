@@ -12,7 +12,7 @@ export const useCompanyStore = () => {
     store = useContext(CompanyStoreContext);
   }
   if (!store) {
-    throw new Error('Missing StoreProvider');
+    throw new Error('Missing CompanyStoreContext');
   }
   return useStore(store);
 };
@@ -25,7 +25,7 @@ export const usePositionStore = () => {
     store = useContext(PositionStoreContext);
   }
   if (!store) {
-    throw new Error('Missing StoreProvider');
+    throw new Error('Missing PositionStoreContext');
   }
   return useStore(store);
 };

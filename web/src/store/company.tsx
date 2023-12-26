@@ -3,10 +3,13 @@ import { createStore } from 'zustand';
 
 import { apiEndpoint } from '../config';
 
+import { StoreProviderProps } from './interface';
+import { PositionState } from './position';
+
 import { axiosInstance } from '@/helper';
 import { usePositionStore } from '@/store/store';
 
-interface CompanyState {
+export interface CompanyState {
   id: string;
   name: string;
   email: string;
@@ -19,13 +22,9 @@ interface CompanyState {
 export const StorybookCompanyStoreContext = createContext(null);
 export const CompanyStoreContext = createContext(null);
 
-interface CompanyStoreProviderProps {
-  children: React.ReactNode;
-}
-
 export const StorybookCompanyStoreProvider = ({
   children,
-}: CompanyStoreProviderProps) => {
+}: StoreProviderProps) => {
   const storeRef = useRef(
     createStore<CompanyState>(() => ({
       id: '12398723948',
@@ -45,9 +44,9 @@ export const StorybookCompanyStoreProvider = ({
   );
 };
 
-export const CompanyStoreProvider = ({
-  children,
-}: CompanyStoreProviderProps) => {
+export const CompanyStoreProvider = ({ children }: StoreProviderProps) => {
+  const positionStore: PositionState = usePositionStore();
+
   const storeRef = useRef(
     createStore<CompanyState>()(set => ({
       id: '',
@@ -86,7 +85,6 @@ export const CompanyStoreProvider = ({
         }),
     }))
   );
-  const positionStore = usePositionStore();
 
   return (
     <CompanyStoreContext.Provider value={storeRef.current}>

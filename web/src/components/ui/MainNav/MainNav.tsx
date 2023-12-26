@@ -27,7 +27,6 @@ export function MainNav({
     setPositionDetail,
     updateCandidates,
   } = usePositionStore();
-
   const [isAddCandidateLoading, setIsAddCandidateLoading] = useState(false);
   const [addCandidateError, setAddCandidateError] = useState<string>('');
 

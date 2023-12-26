@@ -1,7 +1,7 @@
 import { createContext, useRef } from 'react';
 import { createStore } from 'zustand';
 
-import { ContextProviderProps } from './interface';
+import { StoreProviderProps } from './interface';
 
 import { axiosInstance } from '@/helper';
 import {
@@ -12,7 +12,7 @@ import {
   Position,
 } from '@/types';
 
-interface PositionState {
+export interface PositionState {
   positions: Position[];
   setPositions: (positions: Position[]) => void;
   selectedPosition: Position | null;
@@ -29,7 +29,7 @@ export const PositionStoreContext = createContext(null);
 
 export const StorybookPositionStoreProvider = ({
   children,
-}: ContextProviderProps) => {
+}: StoreProviderProps) => {
   const storeRef = useRef(
     createStore<PositionState>(() => ({
       positions: [],
@@ -51,7 +51,7 @@ export const StorybookPositionStoreProvider = ({
   );
 };
 
-export const PositionStoreProvider = ({ children }: ContextProviderProps) => {
+export const PositionStoreProvider = ({ children }: StoreProviderProps) => {
   const storeRef = useRef(
     createStore<PositionState>((set, get) => ({
       positions: [],
