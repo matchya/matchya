@@ -34,12 +34,11 @@ jobs:
     timeout-minutes: 10
     environment: production
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: '14'
+          cache: npm
+          node-version: 18
       - name: Install dependencies
         run: |
           cd web
@@ -48,12 +47,6 @@ jobs:
         run: |
           cd web
           npm run build
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          cache: npm
-          node-version: 18
-      - run: npm ci
       - run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
