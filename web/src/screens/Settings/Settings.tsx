@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
-import FormInput from '../../components/FormInput';
+import { Input } from '@/components/ui/Input/Input';
+import { Label } from '@/components/ui/Label/Label';
 
 const Settings = () => {
   const [companyName, setCompanyName] = useState<string>('');
@@ -35,27 +36,33 @@ const Settings = () => {
     <div className="flex items-center justify-center h-screen bg-gray-100">
       <div className="p-8 bg-white shadow-md rounded-lg w-full max-w-md">
         <form onSubmit={handleSubmit} className="space-y-6">
-          <FormInput
-            label="Company Name"
-            id="company-name"
-            type="text"
-            value={companyName}
-            onChange={handleCompanyNameChange}
-          />
-          <FormInput
-            label="Email"
-            id="email"
-            type="email"
-            value={email}
-            onChange={handleEmailChange}
-          />
-          <FormInput
-            label="GitHub Account Username"
-            id="github-username"
-            type="text"
-            value={githubUsername}
-            onChange={handleGithubUsernameChange}
-          />
+          <div className="grid gap-1">
+            <Label htmlFor="company-name">Company Name</Label>
+            <Input
+              id="company-name"
+              type="text"
+              value={companyName}
+              onChange={handleCompanyNameChange}
+            />
+          </div>
+          <div>
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={handleEmailChange}
+            />
+          </div>
+          <div>
+            <Label htmlFor="github-username">Github Account Username</Label>
+            <Input
+              id="github-username"
+              type="text"
+              value={githubUsername}
+              onChange={handleGithubUsernameChange}
+            />
+          </div>
           <button
             type="submit"
             className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-lime-300 hover:bg-lime-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-lime-300"
