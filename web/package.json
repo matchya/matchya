@@ -42,6 +42,12 @@
     "zustand": "^4.4.6"
   },
   "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/commit-analyzer": "^11.1.0",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^9.2.6",
+    "@semantic-release/npm": "^11.0.2",
+    "@semantic-release/release-notes-generator": "^12.1.0",
     "@storybook/addon-essentials": "^7.6.6",
     "@storybook/addon-interactions": "^7.6.6",
     "@storybook/addon-links": "^7.6.6",
@@ -68,6 +74,7 @@
     "eslint-plugin-storybook": "^0.6.15",
     "postcss": "^8.4.31",
     "prettier": "^3.1.0",
+    "semantic-release": "^22.0.12",
     "storybook": "^7.6.6",
     "tailwindcss": "^3.3.5",
     "typescript": "^5.2.2",
