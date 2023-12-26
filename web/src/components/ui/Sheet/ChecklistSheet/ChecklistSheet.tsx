@@ -19,7 +19,7 @@ export const ChecklistSheet = ({ selectedPosition }: ChecklistSheetProps) => (
       <SheetDescription>See below for the generated checklist</SheetDescription>
     </SheetHeader>
     <div className="grid gap-4 py-4">
-      <ChecklistTable checklist={selectedPosition?.checklist.criteria} />
+      <ChecklistTable checklist={selectedPosition?.checklist} />
     </div>
     {/* not needed at this point in time */}
     {/* <SheetFooter>

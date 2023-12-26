@@ -1,46 +1,222 @@
-import { Score } from '../types';
+import { Assessment, Candidate, Checklist, Company, Position } from '../types';
 
-export const mockCriteria: string[] = ['Knows Python', 'Used Django before'];
 
-export const mockCandidates: Score[] = [
+export const mockCandidate: Candidate = {
+  id: '1',
+  first_name: 'John',
+  last_name: 'Doe',
+  email: 'john.doe@example.com',
+  github_username: 'johndoe',
+  total_score: 85,
+  summary: 'Experienced software developer',
+  status: 'active',
+  created_at: '2022-01-01T00:00:00Z',
+  assessments: [
+    {
+      criterion: {
+        id: '1',
+        keywords: ['Problem Solving'],
+        message: 'Ability to solve problems',
+        created_at: '2022-01-01T00:00:00Z',
+      },
+      score: 4,
+      reason: 'Good problem solving skills',
+    },
+    {
+      criterion: {
+        id: '2',
+        keywords: ['Communication'],
+        message: 'Ability to communicate effectively',
+        created_at: '2022-01-01T00:00:00Z',
+      },
+      score: 4,
+      reason: 'Good communication skills',
+    },
+  ],
+}
+
+export const mockCandidates: Candidate[] = [
+  mockCandidate,
   {
-    name: 'Ben Parker',
-    value: 8.0,
-    details:
-      "Ben Parker's problem-solving acumen is evident in his diverse project portfolio, which underscores his adaptability and mastery of software development principles. His commitment to clean, maintainable code and best practices contributes to project scalability and success. Moreover, his collaborative approach and strong communication skills make him an invaluable asset to any development team.",
-    evaluations: [
+    id: '2',
+    first_name: 'Jane',
+    last_name: 'Doe',
+    email: 'jane.doe@example.com',
+    github_username: 'janedoe',
+    total_score: 90,
+    summary: 'Skilled frontend developer',
+    status: 'active',
+    created_at: '2022-01-01T00:00:00Z',
+    assessments: [
       {
-        criteria: 'Knows Python',
-        score: 9.0,
-        reason:
-          'Ben exhibits a high level of proficiency in Python, with a keen understanding of advanced concepts such as generators, decorators, and context managers.',
+        criterion: {
+          id: '1',
+          keywords: ['Problem Solving'],
+          message: 'Ability to solve problems',
+          created_at: '2022-01-01T00:00:00Z',
+        },
+        score: 5,
+        reason: 'Excellent problem solving skills',
       },
       {
-        criteria: 'Used Django before',
-        score: 7.0,
-        reason:
-          "Ben has practical experience with Django, having developed several web applications. He is familiar with Django ORM, views, and templates, although there's room for deeper expertise in Django REST framework.",
+        criterion: {
+          id: '2',
+          keywords: ['Communication'],
+          message: 'Ability to communicate effectively',
+          created_at: '2022-01-01T00:00:00Z',
+        },
+        score: 4,
+        reason: 'Good communication skills',
       },
     ],
   },
-  {
-    name: 'Paul Carter',
-    value: 6.0,
-    details:
-      "Paul Carter's firm grasp of software development is reflected in his consistent problem-solving capabilities. His practical approach to complex challenges and reliable coding skills mark him as a promising candidate. His proactive learning attitude and ability to adapt to new technologies enhance his value as a team member.",
-    evaluations: [
+]
+
+export const mockSelectedPosition: Position = {
+  id: '1',
+  name: 'Position 1',
+  checklist: {
+    id: '1',
+    repository_names: ['Repo 1', 'Repo 2'],
+    criteria: [
       {
-        criteria: 'Knows Python',
-        score: 6.0,
-        reason:
-          'Paul has a competent grasp of Python, with experience in writing clean and maintainable code. He is comfortable with common Python libraries and frameworks and shows potential for further growth in this language.',
+        id: '1',
+        message: 'Criteria 1',
+        keywords: ['keyword1', 'keyword2'],
+        created_at: '2022-01-01T00:00:00Z',
       },
       {
-        criteria: 'Used Django before',
-        score: 6.0,
-        reason:
-          "Paul has hands-on experience with Django, capable of handling typical web development tasks. He understands the framework's structure and conventions and can navigate its documentation to implement required functionality.",
+        id: '2',
+        message: 'Criteria 2',
+        keywords: ['keyword3', 'keyword4'],
+        created_at: '2022-01-02T00:00:00Z',
       },
     ],
+  },
+  candidates: mockCandidates,
+  checklist_status: 'active',
+}
+
+export const mockPositions: Position[] = [
+  mockSelectedPosition,
+  {
+    id: '2',
+    name: 'Position 2',
+    checklist: {
+      id: '2',
+      repository_names: ['Repo 3', 'Repo 4'],
+      criteria: [],
+    },
+    candidates: [],
+    checklist_status: 'active',
   },
 ];
+
+export const mockCompanyInfo: Company = {
+  id: '12398723948',
+  name: 'Peter Parker',
+  email: 'peterparker@gmail.com',
+  github_username: 'peterparker',
+  repository_names: ['repo1', 'repo2', 'repo3'],
+  positions: []
+}
+
+export const mockChecklist: Checklist = {
+  id: '1',
+  repository_names: ['Repo 1', 'Repo 2'],
+  criteria: [
+    {
+      id: '1',
+      created_at: '2022-01-01',
+      keywords: ['react', 'typescript', 'firebase', 'yo'],
+      message: 'This is a description for the first item in the checklist',
+    },
+    {
+      id: '2',
+      created_at: '2022-01-02',
+      keywords: ['react', 'typescript'],
+      message: 'This is a description for the second item in the checklist',
+    },
+    {
+      id: '3',
+      created_at: '2022-01-03',
+      keywords: ['react', 'typescript'],
+      message: 'This is a description for the third item in the checklist',
+    },
+    {
+      id: '4',
+      created_at: '2022-01-04',
+      keywords: ['react', 'typescript'],
+      message: 'This is a description for the fourth item in the checklist',
+    },
+    {
+      id: '5',
+      created_at: '2022-01-05',
+      keywords: ['react', 'typescript'],
+      message: 'This is a description for the fifth item in the checklist',
+    }
+  ]
+}
+
+export const mockedAssessments: Assessment[] = [
+  {
+    "criterion": {
+      'id': '1',
+      'message': "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      'keywords': [],
+      'created_at': ''
+    },
+    "score": 7,
+    'reason':'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+  },
+  {
+    "criterion": {
+      'id': '1',
+      'message': "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      'keywords': [],
+      'created_at': ''
+    },
+    "score": 7,
+    'reason':'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+  },
+  {
+    "criterion": {
+      'id': '1',
+      'message': "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      'keywords': [],
+      'created_at': ''
+    },
+    "score": 7,
+    'reason':'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+  },{
+    "criterion": {
+      'id': '1',
+      'message': "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      'keywords': [],
+      'created_at': ''
+    },
+    "score": 7,
+    'reason':'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+  },
+  {
+    "criterion": {
+      'id': '1',
+      'message': "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      'keywords': [],
+      'created_at': ''
+    },
+    "score": 7,
+    'reason':'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+  },
+  {
+    "criterion": {
+      'id': '1',
+      'message': "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      'keywords': [],
+      'created_at': ''
+    },
+    "score": 7,
+    'reason':'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+  }
+]
+

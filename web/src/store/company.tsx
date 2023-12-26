@@ -1,12 +1,16 @@
 import { createContext, useRef } from 'react';
-import { createStore } from 'zustand';
+import { StoreApi, createStore } from 'zustand';
 
 import { apiEndpoint } from '../config';
 
+import { StoreProviderProps } from './interface';
+import { PositionState } from './position';
+
+import { mockCompanyInfo } from '@/data';
 import { axiosInstance } from '@/helper';
 import { usePositionStore } from '@/store/store';
 
-interface CompanyState {
+export interface CompanyState {
   id: string;
   name: string;
   email: string;
@@ -16,23 +20,18 @@ interface CompanyState {
   resetAll: () => void;
 }
 
-export const StorybookCompanyStoreContext = createContext(null);
-export const CompanyStoreContext = createContext(null);
-
-interface CompanyStoreProviderProps {
-  children: React.ReactNode;
-}
+export const StorybookCompanyStoreContext =
+  createContext<StoreApi<CompanyState> | null>(null);
+export const CompanyStoreContext = createContext<StoreApi<CompanyState> | null>(
+  null
+);
 
 export const StorybookCompanyStoreProvider = ({
   children,
-}: CompanyStoreProviderProps) => {
+}: StoreProviderProps) => {
   const storeRef = useRef(
     createStore<CompanyState>(() => ({
-      id: '12398723948',
-      name: 'Peter Parker',
-      email: 'peterparker@gmail.com',
-      github_username: 'peterparker',
-      repository_names: ['repo1', 'repo2', 'repo3'],
+      ...mockCompanyInfo,
       me: async () => alert('Triggered me'),
       resetAll: () => alert('Triggered resetAll'),
     }))
@@ -45,9 +44,9 @@ export const StorybookCompanyStoreProvider = ({
   );
 };
 
-export const CompanyStoreProvider = ({
-  children,
-}: CompanyStoreProviderProps) => {
+export const CompanyStoreProvider = ({ children }: StoreProviderProps) => {
+  const positionStore: PositionState = usePositionStore();
+
   const storeRef = useRef(
     createStore<CompanyState>()(set => ({
       id: '',
@@ -86,7 +85,6 @@ export const CompanyStoreProvider = ({
         }),
     }))
   );
-  const positionStore = usePositionStore();
 
   return (
     <CompanyStoreContext.Provider value={storeRef.current}>

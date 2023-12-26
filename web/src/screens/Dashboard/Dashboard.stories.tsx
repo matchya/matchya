@@ -14,12 +14,10 @@ export default meta;
 type Story = StoryObj<typeof Component>;
 
 export const Dashboard: Story = {
-  render: () => {
-    return (
-      <>
-        <Header authenticated={true} />
-        <Component />
-      </>
-    );
-  },
+  render: () => (
+    <>
+      <Header authenticated={true} />
+      <Component />
+    </>
+  ),
 };

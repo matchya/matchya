@@ -2,9 +2,9 @@ import { ColumnDef } from '@tanstack/react-table';
 import { z } from 'zod';
 
 import { EvaluationTableColumnHeader } from './EvaluationTableColumnHeader';
-import { mockedAssessments } from './mock';
 import { Assessment, assessmentSchema } from './schema';
 
+import { mockedAssessments } from '@/data';
 import { Criterion } from '@/types';
 
 export const columns: ColumnDef<Assessment>[] = [

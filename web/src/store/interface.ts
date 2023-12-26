@@ -1,3 +1,3 @@
-export interface ContextProviderProps {
+export interface StoreProviderProps {
   children: React.ReactNode
 }

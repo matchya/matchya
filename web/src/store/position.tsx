@@ -1,8 +1,9 @@
 import { createContext, useRef } from 'react';
-import { createStore } from 'zustand';
+import { StoreApi, createStore } from 'zustand';
 
-import { ContextProviderProps } from './interface';
+import { StoreProviderProps } from './interface';
 
+import { mockPositions, mockSelectedPosition } from '@/data';
 import { axiosInstance } from '@/helper';
 import {
   Assessment,
@@ -12,7 +13,7 @@ import {
   Position,
 } from '@/types';
 
-interface PositionState {
+export interface PositionState {
   positions: Position[];
   setPositions: (positions: Position[]) => void;
   selectedPosition: Position | null;
@@ -24,17 +25,19 @@ interface PositionState {
   resetAll: () => void;
 }
 
-export const StorybookPositionStoreContext = createContext(null);
-export const PositionStoreContext = createContext(null);
+export const StorybookPositionStoreContext =
+  createContext<StoreApi<PositionState> | null>(null);
+export const PositionStoreContext =
+  createContext<StoreApi<PositionState> | null>(null);
 
 export const StorybookPositionStoreProvider = ({
   children,
-}: ContextProviderProps) => {
+}: StoreProviderProps) => {
   const storeRef = useRef(
     createStore<PositionState>(() => ({
-      positions: [],
+      positions: mockPositions,
       setPositions: () => alert('Set positions'),
-      selectedPosition: null,
+      selectedPosition: mockSelectedPosition,
       selectPosition: () => alert('Select position'),
       setPositionDetail: async () => alert('Set position detail'),
       selectedCandidate: null,
@@ -51,7 +54,7 @@ export const StorybookPositionStoreProvider = ({
   );
 };
 
-export const PositionStoreProvider = ({ children }: ContextProviderProps) => {
+export const PositionStoreProvider = ({ children }: StoreProviderProps) => {
   const storeRef = useRef(
     createStore<PositionState>((set, get) => ({
       positions: [],

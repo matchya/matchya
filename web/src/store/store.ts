@@ -1,10 +1,10 @@
 import { useContext } from "react";
 import { useStore } from "zustand";
 
-import { StorybookCompanyStoreContext, CompanyStoreContext } from "./company";
-import { StorybookPositionStoreContext, PositionStoreContext } from "./position";
+import { StorybookCompanyStoreContext, CompanyStoreContext, CompanyState } from "./company";
+import { StorybookPositionStoreContext, PositionStoreContext, PositionState } from "./position";
 
-export const useCompanyStore = () => {
+export const useCompanyStore = (): CompanyState => {
   let store;
   if (import.meta.env.STORYBOOK === 'true') {
     store = useContext(StorybookCompanyStoreContext);
@@ -12,12 +12,12 @@ export const useCompanyStore = () => {
     store = useContext(CompanyStoreContext);
   }
   if (!store) {
-    throw new Error('Missing StoreProvider');
+    throw new Error('Missing CompanyStoreContext');
   }
   return useStore(store);
 };
 
-export const usePositionStore = () => {
+export const usePositionStore = (): PositionState => {
   let store;
   if (import.meta.env.STORYBOOK === 'true') {
     store = useContext(StorybookPositionStoreContext);
@@ -25,7 +25,7 @@ export const usePositionStore = () => {
     store = useContext(PositionStoreContext);
   }
   if (!store) {
-    throw new Error('Missing StoreProvider');
+    throw new Error('Missing PositionStoreContext');
   }
   return useStore(store);
 };

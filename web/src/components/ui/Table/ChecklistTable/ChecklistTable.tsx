@@ -8,10 +8,10 @@ import {
   Table,
 } from '../Table';
 
-import { Criterion } from '@/types';
+import { Checklist } from '@/types';
 
 interface ChecklistTableProps {
-  checklist: Criterion[];
+  checklist: Checklist;
 }
 
 export const ChecklistTable = ({ checklist }: ChecklistTableProps) => {
@@ -24,7 +24,7 @@ export const ChecklistTable = ({ checklist }: ChecklistTableProps) => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {checklist.map(item => (
+        {checklist.criteria.map(item => (
           <TableRow key={item.id}>
             <TableCell className="w-[250px] font-medium flex flex-wrap gap-2">
               {item.keywords.map(keyword => (
