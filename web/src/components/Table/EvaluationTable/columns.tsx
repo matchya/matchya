@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { EvaluationTableColumnHeader } from './EvaluationTableColumnHeader';
 import { Assessment, assessmentSchema } from './schema';
 
-import { mockedAssessments } from '@/data';
+import { mockedAssessments } from '@/lib';
 import { Criterion } from '@/types';
 
 export const columns: ColumnDef<Assessment>[] = [

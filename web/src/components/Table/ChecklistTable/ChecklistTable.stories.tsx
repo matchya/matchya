@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 
 import { ChecklistTable as Component } from '@/components/Table/ChecklistTable/ChecklistTable';
-import { mockChecklist } from '@/data';
+import { mockChecklist } from '@/lib';
 
 const meta: Meta<typeof Component> = {
   title: 'Component/Table',

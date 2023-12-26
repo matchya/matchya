@@ -3,8 +3,7 @@ import { StoreApi, createStore } from 'zustand';
 
 import { StoreProviderProps } from './interface';
 
-import { mockPositions, mockSelectedPosition } from '@/data';
-import { axiosInstance } from '@/helper';
+import { axiosInstance, mockPositions, mockSelectedPosition } from '@/lib';
 import {
   Assessment,
   Candidate,

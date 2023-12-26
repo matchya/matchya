@@ -10,7 +10,7 @@ import { UserNavDropdownMenu } from '../DropdownMenu/UserNavDropdownMenu/UserNav
 import { PositionSwitcher } from '../PositionSwitcher/PositionSwitcher';
 
 import { MainNav } from '@/components/MainNav/MainNav';
-import { axiosInstance } from '@/helper';
+import { axiosInstance } from '@/lib';
 import { useCompanyStore, usePositionStore } from '@/store/store';
 
 interface HeaderProps {

@@ -4,7 +4,7 @@ import { ChecklistSheet as Component } from './ChecklistSheet';
 
 import { Button } from '@/components/Button/Button';
 import { Sheet, SheetTrigger } from '@/components/Sheet/Sheet';
-import { mockSelectedPosition } from '@/data';
+import { mockSelectedPosition } from '@/lib';
 
 const meta: Meta<typeof Component> = {
   title: 'Component/Sheet',

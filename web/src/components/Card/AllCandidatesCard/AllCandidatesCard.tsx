@@ -11,7 +11,7 @@ import {
 
 import { Button } from '@/components/Button/Button';
 import { Icons } from '@/components/Icons/Icons';
-import { axiosInstance } from '@/helper';
+import { axiosInstance } from '@/lib';
 import { usePositionStore } from '@/store/store';
 import { Candidate, CustomError } from '@/types';
 

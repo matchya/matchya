@@ -12,7 +12,7 @@ import {
   DialogTitle,
 } from '../Dialog';
 
-import { axiosInstance } from '@/helper';
+import { axiosInstance } from '@/lib';
 import { useCompanyStore, usePositionStore } from '@/store/store';
 import { CustomError } from '@/types';
 
