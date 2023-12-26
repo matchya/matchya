@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { MainNav as Component } from './MainNav';
+import Component from './MainNav';
 
 const meta: Meta<typeof Component> = {
   title: 'Component',

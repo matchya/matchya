@@ -14,10 +14,10 @@ import { cn } from '@/lib/utils';
 import { usePositionStore } from '@/store/store';
 import { Candidate, CustomError } from '@/types';
 
-export function MainNav({
+const MainNav = ({
   className,
   ...props
-}: React.HTMLAttributes<HTMLElement>) {
+}: React.HTMLAttributes<HTMLElement>) => {
   const POLLING_INTERVAL = 20000;
   const [shouldOpen, setShouldOpen] = useState({
     generateCriteria: false,
@@ -239,4 +239,6 @@ export function MainNav({
       </nav>
     </Sheet>
   );
-}
+};
+
+export default MainNav;

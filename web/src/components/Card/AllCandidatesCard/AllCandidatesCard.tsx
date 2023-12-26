@@ -17,7 +17,7 @@ interface AllCandidatesCardProps {
   candidates: Candidate[];
 }
 
-export const AllCandidatesCard = ({ candidates }: AllCandidatesCardProps) => {
+const AllCandidatesCard = ({ candidates }: AllCandidatesCardProps) => {
   return (
     <Card className="col-span-3 h-[calc(100vh-100px)] overflow-hidden">
       <CardHeader>
@@ -132,3 +132,5 @@ const CandidateRow = ({ candidate }: CandidateRowProps) => {
     </div>
   );
 };
+
+export default AllCandidatesCard;

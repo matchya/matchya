@@ -26,7 +26,7 @@ interface AddCandidateDialogProps {
   errorMessage: string;
 }
 
-export const AddCandidateDialog = ({
+const AddCandidateDialog = ({
   shouldOpen,
   onClose,
   onSubmit,
@@ -151,3 +151,5 @@ export const AddCandidateDialog = ({
     </Dialog>
   );
 };
+
+export default AddCandidateDialog;

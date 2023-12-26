@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { PositionSwitcher as Component } from './PositionSwitcher';
+import Component from './PositionSwitcher';
 
 import { mockPositions, mockSelectedPosition } from '@/data/mock';
 
@@ -16,7 +16,6 @@ type Story = StoryObj<typeof Component>;
 export const PositionSwitcher: Story = {
   render: () => (
     <Component
-      className="mx-6"
       positions={mockPositions}
       selectedPosition={mockSelectedPosition}
       selectPosition={() => {}}

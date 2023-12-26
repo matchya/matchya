@@ -4,7 +4,7 @@ import {
 } from '@radix-ui/react-dropdown-menu';
 import { Meta, StoryObj } from '@storybook/react';
 
-import { UserNavDropdownMenu as Component } from './UserNavDropdownMenu';
+import Component from './UserNavDropdownMenu';
 
 import { Avatar, Button } from '@/components';
 
