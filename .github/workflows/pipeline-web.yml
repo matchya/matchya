@@ -10,4 +10,4 @@ jobs:
 
   create-version-release:
     name: Create Version Release
-    uses: ./.github/workflows/create-version-release.yml
+    uses: ./.github/workflows/job-create-version-release.yml
