@@ -1,11 +1,15 @@
 on:
   workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
 
 jobs:
   run:
     timeout-minutes: 15
     runs-on: ubuntu-latest
-    environment: production
+    environment: ${{ inputs.environment }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -18,4 +22,4 @@ jobs:
       - name: Deploy to S3
         shell: bash
         run: |
-          bash scripts/deploy_to_s3.sh --bucket-name ${{ secrets.WEBSITE_BUCKET_NAME }} --environment ${{ github.event.inputs.environment }}
+          bash scripts/deploy_to_s3.sh --bucket-name ${{ secrets.WEBSITE_BUCKET_NAME }} --environment ${{ inputs.environment }}
