@@ -72,3 +72,4 @@ if ! aws cloudfront create-invalidation --distribution-id $distribution_id --pat
     echo "CloudFront cache invalidation failed."
     exit 1
 fi
+echo "CloudFront cache invalidation was successful."
