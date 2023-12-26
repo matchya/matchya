@@ -2,8 +2,6 @@ name: UI Pipeline
 
 on:
   push:
-    branches:
-      - '385-featci-set-up-pipeline-to-deploy-to-s3'
 
 jobs:
   deploy:
