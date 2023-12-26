@@ -1,5 +1,4 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { BrowserRouter as Router } from 'react-router-dom';
 
 import { CandidateDetailCard as Component } from './CandidateDetailCard';
 
@@ -8,13 +7,6 @@ import { Candidate } from '@/types';
 const meta: Meta<typeof Component> = {
   title: 'Component/Card',
   component: Component,
-  decorators: [
-    Story => (
-      <Router>
-        <Story />
-      </Router>
-    ),
-  ],
 };
 
 export default meta;

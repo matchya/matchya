@@ -3,7 +3,6 @@ import {
   DropdownMenuTrigger,
 } from '@radix-ui/react-dropdown-menu';
 import { Meta, StoryObj } from '@storybook/react';
-import { BrowserRouter as Router } from 'react-router-dom';
 
 import { Avatar } from '../../Avatar/Avatar';
 import { Button } from '../../Button/Button';
@@ -13,13 +12,6 @@ import { UserNavDropdownMenu as Component } from './UserNavDropdownMenu';
 const meta: Meta<typeof Component> = {
   title: 'Component/Dropdown Menu',
   component: Component,
-  decorators: [
-    Story => (
-      <Router>
-        <Story />
-      </Router>
-    ),
-  ],
 };
 
 export default meta;

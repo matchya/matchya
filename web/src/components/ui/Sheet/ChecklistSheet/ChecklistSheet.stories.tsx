@@ -1,5 +1,4 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { BrowserRouter as Router } from 'react-router-dom';
 
 import { ChecklistSheet as Component } from './ChecklistSheet';
 
@@ -10,13 +9,6 @@ import { Position } from '@/types';
 const meta: Meta<typeof Component> = {
   title: 'Component/Sheet',
   component: Component,
-  decorators: [
-    Story => (
-      <Router>
-        <Story />
-      </Router>
-    ),
-  ],
 };
 
 export default meta;

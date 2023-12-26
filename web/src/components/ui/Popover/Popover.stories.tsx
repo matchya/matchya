@@ -1,7 +1,6 @@
 import { CaretSortIcon } from '@radix-ui/react-icons';
 import { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
 
 import { Avatar } from '@/components/ui/Avatar/Avatar';
 import { Button } from '@/components/ui/Button/Button';
@@ -15,13 +14,6 @@ import { cn } from '@/lib/utils';
 const meta: Meta<typeof Component> = {
   title: 'Component',
   component: Component,
-  decorators: [
-    Story => (
-      <Router>
-        <Story />
-      </Router>
-    ),
-  ],
 };
 
 export default meta;
