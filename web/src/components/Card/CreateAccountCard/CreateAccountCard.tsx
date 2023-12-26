@@ -11,7 +11,7 @@ import {
   Label,
 } from '@/components';
 
-export interface CreateAccountProps {
+interface CreateAccountProps {
   handleInputChange: (
     field: string,
     event: React.ChangeEvent<HTMLInputElement>
@@ -22,13 +22,13 @@ export interface CreateAccountProps {
   email: string;
 }
 
-export function CreateAccountCard({
+const CreateAccountCard = ({
   handleInputChange,
   handleGithubAuthentication,
   handleCreateAccount,
   password,
   email,
-}: CreateAccountProps) {
+}: CreateAccountProps) => {
   return (
     <Card>
       <CardHeader className="space-y-1">
@@ -81,4 +81,6 @@ export function CreateAccountCard({
       </CardFooter>
     </Card>
   );
-}
+};
+
+export default CreateAccountCard;

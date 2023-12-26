@@ -29,7 +29,7 @@ interface EvaluationTableProps {
   assessments: Assessment[];
 }
 
-export function EvaluationTable({ assessments }: EvaluationTableProps) {
+const EvaluationTable = ({ assessments }: EvaluationTableProps) => {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -115,4 +115,6 @@ export function EvaluationTable({ assessments }: EvaluationTableProps) {
       {/* <EvaluationTablePagination table={table} /> */}
     </div>
   );
-}
+};
+
+export default EvaluationTable;

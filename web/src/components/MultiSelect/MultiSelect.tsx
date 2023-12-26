@@ -14,7 +14,7 @@ interface MultiSelectProps {
   inputRef: React.RefObject<HTMLInputElement>;
 }
 
-export function MultiSelect({
+const MultiSelect = ({
   options = [],
   selected,
   placeholder,
@@ -22,7 +22,7 @@ export function MultiSelect({
   onKeyDown,
   onAddItem,
   inputRef,
-}: MultiSelectProps) {
+}: MultiSelectProps) => {
   const [open, setOpen] = React.useState(false);
 
   const [inputValue, setInputValue] = React.useState('');
@@ -95,4 +95,6 @@ export function MultiSelect({
       </div>
     </Command>
   );
-}
+};
+
+export default MultiSelect;

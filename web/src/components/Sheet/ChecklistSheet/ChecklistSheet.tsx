@@ -1,4 +1,3 @@
-import { ChecklistTable } from '../../Table/ChecklistTable/ChecklistTable';
 import {
   SheetContent,
   SheetDescription,
@@ -6,13 +5,14 @@ import {
   SheetTitle,
 } from '../Sheet';
 
+import { ChecklistTable } from '@/components';
 import { Position } from '@/types';
 
 interface ChecklistSheetProps {
   selectedPosition: Position;
 }
 
-export const ChecklistSheet = ({ selectedPosition }: ChecklistSheetProps) => (
+const ChecklistSheet = ({ selectedPosition }: ChecklistSheetProps) => (
   <SheetContent>
     <SheetHeader>
       <SheetTitle>Checklist</SheetTitle>
@@ -29,3 +29,5 @@ export const ChecklistSheet = ({ selectedPosition }: ChecklistSheetProps) => (
 </SheetFooter> */}
   </SheetContent>
 );
+
+export default ChecklistSheet;

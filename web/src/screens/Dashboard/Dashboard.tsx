@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 
-import { AllCandidatesCard } from '@/components/Card/AllCandidatesCard/AllCandidatesCard';
-import { CandidateDetailCard } from '@/components/Card/CandidateDetailCard/CandidateDetailCard';
+import { AllCandidatesCard, CandidateDetailCard } from '@/components';
 import { usePositionStore } from '@/store/store';
 
 const Dashboard = () => {

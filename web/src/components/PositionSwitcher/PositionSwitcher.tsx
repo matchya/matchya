@@ -35,12 +35,12 @@ interface PositionSwitcherProps extends PopoverTriggerProps {
   selectPosition: (position: Position) => void;
 }
 
-export function PositionSwitcher({
+const PositionSwitcher = ({
   className,
   positions,
   selectedPosition,
   selectPosition,
-}: PositionSwitcherProps) {
+}: PositionSwitcherProps) => {
   const [open, setOpen] = React.useState(false);
   const [showNewPositionDialog, setShowNewPositionDialog] =
     React.useState(false);
@@ -127,4 +127,6 @@ export function PositionSwitcher({
       <CreatePositionDialog />
     </Dialog>
   );
-}
+};
+
+export default PositionSwitcher;

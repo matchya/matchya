@@ -1,8 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { Label } from '../Label/Label';
+import Component from './Input';
 
-import { Input as Component, Input } from './Input';
+import { Label } from '@/components';
 
 const meta: Meta<typeof Component> = {
   title: 'Component/Input',
@@ -17,7 +17,7 @@ export const Email: Story = {
   render: () => (
     <div className="grid gap-1">
       <Label htmlFor="email">Email</Label>
-      <Input
+      <Component
         id="email"
         placeholder="name@example.com"
         type="email"
@@ -36,7 +36,7 @@ export const Password: Story = {
   render: () => (
     <div className="grid gap-1">
       <Label htmlFor="password">Password</Label>
-      <Input
+      <Component
         id="password"
         placeholder="password"
         type="password"

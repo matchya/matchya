@@ -10,7 +10,7 @@ import {
   DialogTitle,
 } from '@/components';
 
-export const CreatePositionDialog = () => {
+const CreatePositionDialog = () => {
   return (
     <DialogContent>
       <DialogHeader>
@@ -36,3 +36,5 @@ export const CreatePositionDialog = () => {
     </DialogContent>
   );
 };
+
+export default CreatePositionDialog;

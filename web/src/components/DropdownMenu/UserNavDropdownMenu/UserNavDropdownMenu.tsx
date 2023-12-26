@@ -8,13 +8,13 @@ import {
   DropdownMenuSeparator,
 } from '../DropdownMenu';
 
-export interface UserNavProps {
+interface UserNavProps {
   companyName?: string;
   companyEmail?: string;
   onLogout: () => void;
 }
 
-export const UserNavDropdownMenu = ({
+const UserNavDropdownMenu = ({
   companyName = 'shadcn',
   companyEmail = 'me@example.com',
   onLogout,
@@ -48,3 +48,5 @@ export const UserNavDropdownMenu = ({
     </DropdownMenuContent>
   );
 };
+
+export default UserNavDropdownMenu;

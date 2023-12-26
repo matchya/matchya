@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { ChecklistSheet as Component } from './ChecklistSheet';
+import Component from './ChecklistSheet';
 
 import { Button, Sheet, SheetTrigger } from '@/components';
 import { mockSelectedPosition } from '@/data/mock';

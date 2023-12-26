@@ -16,7 +16,7 @@ interface HeaderProps {
   authenticated: boolean;
 }
 
-export const Header = ({ authenticated }: HeaderProps) => {
+const Header = ({ authenticated }: HeaderProps) => {
   const navigate = useNavigate();
   const { resetAll, name, email } = useCompanyStore();
   const { positions, selectedPosition, selectPosition } = usePositionStore();
@@ -83,3 +83,5 @@ export const Header = ({ authenticated }: HeaderProps) => {
     </div>
   );
 };
+
+export default Header;

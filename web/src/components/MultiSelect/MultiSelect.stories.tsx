@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
 
-import { MultiSelect as Component } from './MultiSelect';
+import Component from './MultiSelect';
 
 const meta: Meta<typeof Component> = {
   title: 'Component',

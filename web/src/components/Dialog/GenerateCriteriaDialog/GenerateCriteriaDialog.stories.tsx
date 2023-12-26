@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { GenerateCriteriaDialog as Component } from './GenerateCriteriaDialog';
+import Component from './GenerateCriteriaDialog';
 
 const meta: Meta<typeof Component> = {
   title: 'Component/Dialog',

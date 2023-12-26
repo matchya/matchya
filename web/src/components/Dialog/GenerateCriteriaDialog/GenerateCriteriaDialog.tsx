@@ -20,7 +20,7 @@ interface GenerateCriteriaDialogProps {
   onClose: () => void;
 }
 
-export const GenerateCriteriaDialog = ({
+const GenerateCriteriaDialog = ({
   shouldOpen,
   onClose,
 }: GenerateCriteriaDialogProps) => {
@@ -139,3 +139,5 @@ export const GenerateCriteriaDialog = ({
     </Dialog>
   );
 };
+
+export default GenerateCriteriaDialog;

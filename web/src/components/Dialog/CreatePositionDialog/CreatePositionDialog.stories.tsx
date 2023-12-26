@@ -2,7 +2,7 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { Dialog } from '../Dialog';
 
-import { CreatePositionDialog as Component } from './CreatePositionDialog';
+import Component from './CreatePositionDialog';
 
 const meta: Meta<typeof Component> = {
   title: 'Component/Dialog',

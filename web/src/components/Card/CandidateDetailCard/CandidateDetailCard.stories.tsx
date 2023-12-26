@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { CandidateDetailCard as Component } from './CandidateDetailCard';
+import Component from './CandidateDetailCard';
 
 import { mockCandidate } from '@/data/mock';
 

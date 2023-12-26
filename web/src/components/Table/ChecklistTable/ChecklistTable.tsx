@@ -14,7 +14,7 @@ interface ChecklistTableProps {
   checklist: Checklist;
 }
 
-export const ChecklistTable = ({ checklist }: ChecklistTableProps) => {
+const ChecklistTable = ({ checklist }: ChecklistTableProps) => {
   return (
     <Table>
       <TableHeader>
@@ -38,3 +38,5 @@ export const ChecklistTable = ({ checklist }: ChecklistTableProps) => {
     </Table>
   );
 };
+
+export default ChecklistTable;
