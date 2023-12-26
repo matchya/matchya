@@ -14,5 +14,3 @@ jobs:
         shell: bash
         run: |
           bash scripts/deploy_to_s3.sh --bucket-name ${{ secrets.WEBSITE_BUCKET_NAME }} --environment ${{ github.event.inputs.environment }}
-      - name: Version Release
-        uses: ./.github/workflows/call-version-release.yml

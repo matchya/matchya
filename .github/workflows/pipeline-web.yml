@@ -7,6 +7,7 @@ jobs:
   deploy-to-s3:
     name: Deploy to S3
     uses: ./.github/workflows/job-deploy-to-s3.yml
+    secrets: inherit
 
   create-version-release:
     name: Create Version Release
