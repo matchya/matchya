@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { Button } from '@/components/ui/Button/Button';
 import { Icons } from '@/components/ui/Icons/Icons';
-import { githubClientId } from '@/config';
+import { clientEndpoint, githubClientId } from '@/config';
 import { cn } from '@/lib/utils';
 
 const Authentication = () => {
@@ -10,7 +10,7 @@ const Authentication = () => {
 
   const handleGithubLogin = () => {
     setIsLoading(true);
-    const redirectUri = 'http://127.0.0.1:5173/auth/github/callback';
+    const redirectUri = `${clientEndpoint}/auth/github/callback`;
     const loginUrl = `https://github.com/login/oauth/authorize?client_id=${githubClientId}&redirect_uri=${redirectUri}&scope=repo,user`;
 
     window.location.href = loginUrl;
