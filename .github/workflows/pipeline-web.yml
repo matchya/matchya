@@ -4,8 +4,22 @@ on:
   push:
 
 jobs:
+  cleanup:
+    environment: production
+    runs-on: ubuntu-latest
+    permissions: write-all
+
+    steps:
+      - name: 🗑 Delete deployment
+        uses: strumwolf/delete-deployment-environment@v2
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          environment: production
+          onlyRemoveDeployments: true
+
   deploy-to-s3:
     name: Deploy to S3
+    needs: cleanup
     runs-on: ubuntu-latest
     timeout-minutes: 10
     environment: production
@@ -30,6 +44,7 @@ jobs:
 
   create-version-release:
     name: Create Version Release
+    needs: cleanup
     runs-on: ubuntu-latest
     timeout-minutes: 10
     environment: production
@@ -47,6 +62,9 @@ jobs:
         run: |
           cd web
           npm run build
-      - run: npm run release
+      - name: Release
+        run: |
+          cd web
+          npm run release
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
