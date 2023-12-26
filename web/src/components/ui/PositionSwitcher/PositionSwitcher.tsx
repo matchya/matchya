@@ -5,6 +5,8 @@ import {
 } from '@radix-ui/react-icons';
 import * as React from 'react';
 
+import { CreatePositionDialog } from '../Dialog/CreatePositionDialog/CreatePositionDialog';
+
 import { Avatar } from '@/components/ui/Avatar/Avatar';
 import { Button } from '@/components/ui/Button/Button';
 import {
@@ -16,32 +18,14 @@ import {
   CommandList,
   CommandSeparator,
 } from '@/components/ui/Command/Command';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/Dialog/Dialog';
-import { Input } from '@/components/ui/Input/Input';
-import { Label } from '@/components/ui/Label/Label';
+import { Dialog, DialogTrigger } from '@/components/ui/Dialog/Dialog';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/Popover/Popover';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/Select/Select';
 import { cn } from '@/lib/utils';
 import { Position } from '@/types';
-import { CreatePositionDialog } from '../Dialog/CreatePositionDialog/CreatePositionDialog';
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<
   typeof PopoverTrigger

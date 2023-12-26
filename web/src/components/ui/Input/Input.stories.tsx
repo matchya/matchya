@@ -1,5 +1,4 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { BrowserRouter as Router } from 'react-router-dom';
 
 import { Label } from '../Label/Label';
 
@@ -8,13 +7,6 @@ import { Input as Component, Input } from './Input';
 const meta: Meta<typeof Component> = {
   title: 'Component/Input',
   component: Component,
-  decorators: [
-    Story => (
-      <Router>
-        <Story />
-      </Router>
-    ),
-  ],
 };
 
 export default meta;

@@ -1,18 +1,10 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { BrowserRouter as Router } from 'react-router-dom';
 
 import { Separator as Component } from './Seperator';
 
 const meta: Meta<typeof Component> = {
   title: 'Component',
   component: Component,
-  decorators: [
-    Story => (
-      <Router>
-        <Story />
-      </Router>
-    ),
-  ],
 };
 
 export default meta;
