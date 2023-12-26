@@ -17,6 +17,7 @@ export const AddCandidate: Story = {
   render: () => (
     <Dialog open={true} onOpenChange={() => {}}>
       <Component
+        errorMessage="Error"
         shouldOpen={true}
         isLoading={false}
         onClose={() => {}}

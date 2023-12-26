@@ -9,7 +9,7 @@ import { Sheet, SheetTrigger } from '../Sheet/Sheet';
 import { Button } from '@/components/ui/Button/Button';
 import { axiosInstance } from '@/helper';
 import { cn } from '@/lib/utils';
-import { usePositionStore } from '@/store/usePositionStore';
+import { usePositionStore } from '@/store/store';
 import { Candidate, CustomError } from '@/types';
 
 export function MainNav({

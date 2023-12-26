@@ -1,8 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { mockedAssessments } from './mock';
-
 import { EvaluationTable as Component } from '@/components/ui/Table/EvaluationTable/EvaluationTable';
+import { mockedAssessments } from '@/data';
 
 const meta: Meta<typeof Component> = {
   title: 'Component/Table',
