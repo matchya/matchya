@@ -1,9 +1,16 @@
 #!/bin/bash
 
-# Check if AWS_PROFILE is set
-if [ -z "$AWS_PROFILE" ]; then
-    echo "AWS_PROFILE is not set. Please set it before running this script."
-    exit 1
+# Setting AWS configuration
+if [ "$environment" == "production" ]; then
+    if [ -z "$AWS_ACCESS_KEY" ] || [ -z "$AWS_SECRET_ACCESS_KEY" ]; then
+        echo "AWS_ACCESS_KEY or AWS_SECRET_ACCESS_KEY is not set. Please set it before running this script."
+        exit 1
+    fi
+else
+    if [ -z "$AWS_PROFILE" ]; then
+        echo "AWS_PROFILE is not set. Please set it before running this script."
+        exit 1
+    fi
 fi
 
 # Parse command line arguments for bucket name and environment
