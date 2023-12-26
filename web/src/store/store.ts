@@ -5,12 +5,7 @@ import { StorybookCompanyStoreContext, CompanyStoreContext, CompanyState } from 
 import { StorybookPositionStoreContext, PositionStoreContext, PositionState } from "./position";
 
 export const useCompanyStore = (): CompanyState => {
-  let store;
-  if (import.meta.env.STORYBOOK === 'true') {
-    store = useContext(StorybookCompanyStoreContext);
-  } else {
-    store = useContext(CompanyStoreContext);
-  }
+  const store = useContext(import.meta.env.STORYBOOK === 'true' ? StorybookCompanyStoreContext : CompanyStoreContext)
   if (!store) {
     throw new Error('Missing CompanyStoreContext');
   }
@@ -18,12 +13,7 @@ export const useCompanyStore = (): CompanyState => {
 };
 
 export const usePositionStore = (): PositionState => {
-  let store;
-  if (import.meta.env.STORYBOOK === 'true') {
-    store = useContext(StorybookPositionStoreContext);
-  } else {
-    store = useContext(PositionStoreContext);
-  }
+  const store = useContext(import.meta.env.STORYBOOK === 'true' ? StorybookPositionStoreContext : PositionStoreContext)
   if (!store) {
     throw new Error('Missing PositionStoreContext');
   }
