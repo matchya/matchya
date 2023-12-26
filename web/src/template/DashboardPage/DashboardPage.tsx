@@ -1,29 +1,17 @@
-import { useEffect } from 'react';
-
 import { AllCandidatesCard, CandidateDetailCard } from '@/components';
-import { usePositionStore } from '@/store/store';
+import { Candidate, Position } from '@/types';
 
-const Dashboard = () => {
-  const { selectedPosition, positions, selectedCandidate, selectCandidate } =
-    usePositionStore();
+interface DashboardPageTemplateProps {
+  positions: Position[];
+  selectedPosition: Position;
+  selectedCandidate: Candidate | null;
+}
 
-  useEffect(() => {
-    if (
-      selectedPosition &&
-      selectedPosition.candidates &&
-      selectedPosition?.candidates.find(c => c.id === selectedCandidate?.id)
-    ) {
-      return;
-    }
-    if (selectedPosition?.checklist && selectedPosition.candidates) {
-      selectCandidate(selectedPosition.candidates[0]);
-    }
-  }, [selectedPosition]);
-
-  if (!selectedPosition) {
-    return <div>loading...</div>;
-  }
-
+const DashboardPageTemplate = ({
+  positions,
+  selectedPosition,
+  selectedCandidate,
+}: DashboardPageTemplateProps) => {
   const DashboardBody = () => {
     if (positions.length === 0 || !selectedPosition) {
       return <div>loading...</div>;
@@ -68,4 +56,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default DashboardPageTemplate;

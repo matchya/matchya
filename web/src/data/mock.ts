@@ -1,7 +1,7 @@
 import { Assessment, Candidate, Checklist, Company, Position } from '../types';
 
 
-export const mockCandidate: Candidate = {
+export const mockSelectedCandidate: Candidate = {
   id: '1',
   first_name: 'John',
   last_name: 'Doe',
@@ -36,7 +36,7 @@ export const mockCandidate: Candidate = {
 }
 
 export const mockCandidates: Candidate[] = [
-  mockCandidate,
+  mockSelectedCandidate,
   {
     id: '2',
     first_name: 'Jane',

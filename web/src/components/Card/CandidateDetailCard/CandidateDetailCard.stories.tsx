@@ -2,7 +2,7 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import Component from './CandidateDetailCard';
 
-import { mockCandidate } from '@/data/mock';
+import { mockSelectedCandidate } from '@/data/mock';
 
 const meta: Meta<typeof Component> = {
   title: 'Component/Card',
@@ -14,5 +14,5 @@ export default meta;
 type Story = StoryObj<typeof Component>;
 
 export const CandidateDetail: Story = {
-  render: () => <Component candidate={mockCandidate} />,
+  render: () => <Component candidate={mockSelectedCandidate} />,
 };

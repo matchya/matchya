@@ -1,17 +1,12 @@
-import { useNavigate } from 'react-router-dom';
-
-import sampleCandidates from './sample-candidates.png';
-import sampleChecklist from './sample-checklist.png';
-
+import sampleCandidates from '@/assets/sample-candidates.png';
+import sampleChecklist from '@/assets/sample-checklist.png';
 import { Button } from '@/components';
 
-function Home() {
-  const navigate = useNavigate();
+interface HomePageTemplateProps {
+  onNavigateToAuth: () => void;
+}
 
-  const navigateAuth = () => {
-    navigate('/auth');
-  };
-
+const HomePageTemplate = ({ onNavigateToAuth }: HomePageTemplateProps) => {
   return (
     <div className="w-full flex flex-col items-center">
       <div className="text-center mt-16 w-full flex flex-col justify-center">
@@ -67,7 +62,7 @@ function Home() {
             size="lg"
             type="button"
             className="m-6 rounded-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 px-4"
-            onClick={navigateAuth}
+            onClick={onNavigateToAuth}
           >
             Get Started
           </Button>
@@ -75,6 +70,6 @@ function Home() {
       </div>
     </div>
   );
-}
+};
 
-export default Home;
+export default HomePageTemplate;

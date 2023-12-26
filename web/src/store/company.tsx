@@ -1,11 +1,10 @@
 import { createContext, useRef } from 'react';
 import { StoreApi, createStore } from 'zustand';
 
-import { apiEndpoint } from '../config';
-
 import { StoreProviderProps } from './interface';
 import { PositionState } from './position';
 
+import { apiEndpoint } from '@/config/env';
 import { mockCompanyInfo } from '@/data/mock';
 import { axiosInstance } from '@/lib/client';
 import { usePositionStore } from '@/store/store';
