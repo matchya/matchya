@@ -9,7 +9,7 @@ import {
 import { UserNavDropdownMenu } from '../DropdownMenu/UserNavDropdownMenu/UserNavDropdownMenu';
 import { PositionSwitcher } from '../PositionSwitcher/PositionSwitcher';
 
-import { MainNav } from '@/components/ui/MainNav/MainNav';
+import { MainNav } from '@/components/MainNav/MainNav';
 import { axiosInstance } from '@/helper';
 import { useCompanyStore, usePositionStore } from '@/store/store';
 

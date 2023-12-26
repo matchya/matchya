@@ -2,12 +2,12 @@ import { Command as CommandPrimitive } from 'cmdk';
 import { X } from 'lucide-react';
 import * as React from 'react';
 
-import { Badge } from '@/components/ui/Badge/Badge';
+import { Badge } from '@/components/Badge/Badge';
 import {
   Command,
   CommandGroup,
   CommandItem,
-} from '@/components/ui/Command/Command';
+} from '@/components/Command/Command';
 
 interface MultiSelectProps {
   options?: string[];

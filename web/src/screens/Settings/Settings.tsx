@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
-import { Input } from '@/components/ui/Input/Input';
-import { Label } from '@/components/ui/Label/Label';
+import { Input } from '@/components/Input/Input';
+import { Label } from '@/components/Label/Label';
 
 const Settings = () => {
   const [companyName, setCompanyName] = useState<string>('');

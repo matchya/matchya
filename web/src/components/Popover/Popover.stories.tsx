@@ -2,13 +2,13 @@ import { CaretSortIcon } from '@radix-ui/react-icons';
 import { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
 
-import { Avatar } from '@/components/ui/Avatar/Avatar';
-import { Button } from '@/components/ui/Button/Button';
+import { Avatar } from '@/components/Avatar/Avatar';
+import { Button } from '@/components/Button/Button';
 import {
   Popover as Component,
   PopoverTrigger,
   PopoverContent,
-} from '@/components/ui/Popover/Popover';
+} from '@/components/Popover/Popover';
 import { cn } from '@/lib/utils';
 
 const meta: Meta<typeof Component> = {

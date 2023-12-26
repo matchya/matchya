@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/Button/Button';
+import { Button } from '@/components/Button/Button';
 import {
   Card,
   CardContent,
@@ -6,10 +6,10 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/Card/Card';
-import { Icons } from '@/components/ui/Icons/Icons';
-import { Input } from '@/components/ui/Input/Input';
-import { Label } from '@/components/ui/Label/Label';
+} from '@/components/Card/Card';
+import { Icons } from '@/components/Icons/Icons';
+import { Input } from '@/components/Input/Input';
+import { Label } from '@/components/Label/Label';
 
 export interface CreateAccountProps {
   handleInputChange: (

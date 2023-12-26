@@ -6,7 +6,7 @@ import { Icons } from '../Icons/Icons';
 import { ChecklistSheet } from '../Sheet/ChecklistSheet/ChecklistSheet';
 import { Sheet, SheetTrigger } from '../Sheet/Sheet';
 
-import { Button } from '@/components/ui/Button/Button';
+import { Button } from '@/components/Button/Button';
 import { axiosInstance } from '@/helper';
 import { cn } from '@/lib/utils';
 import { usePositionStore } from '@/store/store';

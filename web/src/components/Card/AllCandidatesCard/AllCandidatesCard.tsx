@@ -9,8 +9,8 @@ import {
   CardTitle,
 } from '../Card';
 
-import { Button } from '@/components/ui/Button/Button';
-import { Icons } from '@/components/ui/Icons/Icons';
+import { Button } from '@/components/Button/Button';
+import { Icons } from '@/components/Icons/Icons';
 import { axiosInstance } from '@/helper';
 import { usePositionStore } from '@/store/store';
 import { Candidate, CustomError } from '@/types';

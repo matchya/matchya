@@ -7,8 +7,8 @@ import * as React from 'react';
 
 import { CreatePositionDialog } from '../Dialog/CreatePositionDialog/CreatePositionDialog';
 
-import { Avatar } from '@/components/ui/Avatar/Avatar';
-import { Button } from '@/components/ui/Button/Button';
+import { Avatar } from '@/components/Avatar/Avatar';
+import { Button } from '@/components/Button/Button';
 import {
   Command,
   CommandEmpty,
@@ -17,13 +17,13 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-} from '@/components/ui/Command/Command';
-import { Dialog, DialogTrigger } from '@/components/ui/Dialog/Dialog';
+} from '@/components/Command/Command';
+import { Dialog, DialogTrigger } from '@/components/Dialog/Dialog';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/Popover/Popover';
+} from '@/components/Popover/Popover';
 import { cn } from '@/lib/utils';
 import { Position } from '@/types';
 

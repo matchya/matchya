@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { Icons } from '../../components/ui/Icons/Icons';
+import { Icons } from '../../components/Icons/Icons';
 
-import { Button } from '@/components/ui/Button/Button';
+import { Button } from '@/components/Button/Button';
 import { axiosInstance } from '@/helper';
 
 const GithubAuthCallback = () => {
@@ -41,7 +41,9 @@ const GithubAuthCallback = () => {
           <Icons.spinner className="mb-3 h-10 w-10 animate-spin" />
         )}
         <p className="text-xl">
-          {!loginFailed ? 'Logging in with GitHub...' : 'Login with GitHub Failed. Please try again.'}
+          {!loginFailed
+            ? 'Logging in with GitHub...'
+            : 'Login with GitHub Failed. Please try again.'}
         </p>
         {loginFailed && (
           <Button

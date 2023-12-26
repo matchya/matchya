@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import sampleCandidates from './sample-candidates.png';
 import sampleChecklist from './sample-checklist.png';
 
-import { Button } from '@/components/ui/Button/Button';
+import { Button } from '@/components/Button/Button';
 
 function Home() {
   const navigate = useNavigate();
