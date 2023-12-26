@@ -6,8 +6,8 @@ import { apiEndpoint } from '../config';
 import { StoreProviderProps } from './interface';
 import { PositionState } from './position';
 
-import { mockCompanyInfo } from '@/data';
-import { axiosInstance } from '@/helper';
+import { mockCompanyInfo } from '@/data/mock';
+import { axiosInstance } from '@/lib/client';
 import { usePositionStore } from '@/store/store';
 
 export interface CompanyState {
