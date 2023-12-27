@@ -321,7 +321,7 @@ def save_candidate_assessments(candidate_result_id: str, assessments: dict):
         raise RuntimeError("Failed to save candidate assessments")
 
 
-def update_candidate_result_status(candidate_result_id: str, status: str):
+def update_candidate_result_status(candidate_result_id: str, status='failed'):
     """
     Updates the status of the candidate result.
 
