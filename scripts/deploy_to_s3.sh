@@ -1,11 +1,5 @@
 #!/bin/bash
 
-# Check if AWS_PROFILE is set
-if [ -z "$AWS_PROFILE" ]; then
-    echo "AWS_PROFILE is not set. Please set it before running this script."
-    exit 1
-fi
-
 # Parse command line arguments for bucket name and environment
 while (( "$#" )); do
   case "$1" in
@@ -23,6 +17,14 @@ while (( "$#" )); do
       ;;
   esac
 done
+
+# Setting AWS configuration
+if [ "$environment" != "production" ]; then
+    if [ -z "$AWS_PROFILE" ]; then
+        echo "AWS_PROFILE is not set. Please set it before running this script."
+        exit 1
+    fi
+fi
 
 # Check if bucket name is provided
 if [ -z "$bucket_name" ]; then
@@ -44,6 +46,16 @@ if [ -z "$distribution_id" ]; then
 fi
 echo "Distribution ID found: $distribution_id"
 
+if [ ! -d "$(dirname "$0")/../web/node_modules" ]; then
+    echo "node_modules not found in web directory. Installing packages..."
+    cd $(dirname "$0")/../web
+    if ! npm install; then
+        echo "Package installation failed. Exiting without deploying to S3."
+        exit 1
+    fi
+    cd -
+fi
+
 # Build the UI bundle
 cd $(dirname "$0")/../web
 if ! npm run build; then
@@ -60,3 +72,4 @@ if ! aws cloudfront create-invalidation --distribution-id $distribution_id --pat
     echo "CloudFront cache invalidation failed."
     exit 1
 fi
+echo "CloudFront cache invalidation was successful."
