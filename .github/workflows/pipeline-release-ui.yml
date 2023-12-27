@@ -20,9 +20,9 @@ jobs:
       - name: Cherry pick commits
         run: |
           git fetch origin develop
-          git cherry-pick $(git log --grep='feat(ui)' --format="%H" origin/develop)
-          git cherry-pick $(git log --grep='fix(ui)' --format="%H" origin/develop)
-          git cherry-pick $(git log --grep='chore(ui)' --format="%H" origin/develop)
+          git cherry-pick $(git log --grep='feat(ui)' --format="%H" origin/develop) --no-commit
+          git cherry-pick $(git log --grep='fix(ui)' --format="%H" origin/develop) --no-commit
+          git cherry-pick $(git log --grep='chore(ui)' --format="%H" origin/develop) --no-commit
 
     # TODO: implement in the near future...
     #   - name: Run E2E tests
@@ -41,16 +41,16 @@ jobs:
             });
             return result.data;
 
-      - name: Semantic Release
-        run: |
-          cd web
-          npm run release
+    #   - name: Semantic Release
+    #     run: |
+    #       cd web
+    #       npm run release
 
-      - name: Push to release-ui branch
-        run: git push origin release-ui
+    #   - name: Push to release-ui branch
+    #     run: git push origin release-ui
 
-      - name: Merge to main branch
-        run: |
-          git checkout main
-          git merge --no-ff release-ui
-          git push origin main
+    #   - name: Merge to main branch
+    #     run: |
+    #       git checkout main
+    #       git merge --no-ff release-ui
+    #       git push origin main
