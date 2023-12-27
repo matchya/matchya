@@ -8,6 +8,8 @@ provider:
   architecture: arm64
   stage: dev
   region: us-east-1
+  iam:
+    role: ${ssm:/terraform/shared/iam/lambda_role_arn}
   deploymentBucket:
     name: ${self:provider.stage}-sls-authorizer
   ecr:
