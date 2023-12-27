@@ -1,10 +1,11 @@
-name: Release UI
+name: Release Web
 
 on:
   push:
 
 jobs:
   release-ui:
+    name: Release (Web)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout release-ui branch
@@ -20,9 +21,15 @@ jobs:
       - name: Cherry pick commits
         run: |
           git fetch origin develop
-          git cherry-pick $(git log --grep='feat(ui)' --format="%H" origin/develop) --no-commit
-          git cherry-pick $(git log --grep='fix(ui)' --format="%H" origin/develop) --no-commit
-          git cherry-pick $(git log --grep='chore(ui)' --format="%H" origin/develop) --no-commit
+          for commit in $(git log --grep='feat(ui)' --format="%H" origin/develop); do
+            git cherry-pick $commit --no-commit
+          done
+          for commit in $(git log --grep='fix(ui)' --format="%H" origin/develop); do
+            git cherry-pick $commit --no-commit
+          done
+          for commit in $(git log --grep='chore(ui)' --format="%H" origin/develop); do
+            git cherry-pick $commit --no-commit
+          done
 
     # TODO: implement in the near future...
     #   - name: Run E2E tests
