@@ -17,10 +17,7 @@
     "main",
     "next",
     { "name": "beta", "prerelease": "beta" },
-    { "name": "alpha", "prerelease": "alpha" },
-    { "name": "feature/*", "prerelease": true },
-    { "name": "hotfix/*", "prerelease": true },
-    { "name": "debug/*", "prerelease": true },
-    {"name": "385-featci-set-up-pipeline-to-deploy-to-s3", "prerelease": true}
+    { "name": "feat/*", "prerelease": true },
+    { "name": "fix/*", "prerelease": true }
   ]
 }
