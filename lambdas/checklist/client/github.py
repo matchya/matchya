@@ -26,14 +26,14 @@ class GithubClient:
 
         self.logger.propagate = False
 
-    def get_programming_languages_used(self, repository_name: list) -> dict:
+    def get_programming_languages_used(self, repository_full_name: list) -> dict:
         """
         Retrieves programming languages used in a specified GitHub repository.
 
         :param repository_name: Name of the GitHub repository.
         :return: A map of programming languages containing the bytes of code written in each language and its name.
         """
-        url = Config.GITHUB_API_REPO_URL + self.github_username + "/" + repository_name + "/languages"
+        url = Config.GITHUB_API_REPO_URL + repository_full_name + "/languages"
         try:
             res = requests.get(url, headers=self.github_header)
         except Exception:
@@ -43,7 +43,7 @@ class GithubClient:
         data = json.loads(res.content)
         return data
 
-    def get_repository_tree(self, repository_name: str) -> list:
+    def get_repository_tree(self, repository_full_name: str) -> list:
         """
         Retrieves the file tree of a GitHub repository.
 
@@ -51,12 +51,12 @@ class GithubClient:
         :return: A list of files and folders in the repository.
         """
         try:
-            branch = self._get_default_branch(repository_name)
+            branch = self._get_default_branch(repository_full_name)
         except Exception as e:
             self.logger.error(f"Error getting file tree. Unable to get default branch name. {e}")
             raise RuntimeError("Error getting file tree. Unable to get default branch name.")
 
-        url = Config.GITHUB_API_REPO_URL + self.github_username + "/" + repository_name + "/git/trees/" + branch + "?recursive=1"
+        url = Config.GITHUB_API_REPO_URL + repository_full_name + "/git/trees/" + branch + "?recursive=1"
         try:
             res = requests.get(url, headers=self.github_header)
             if res.status_code == 409:
@@ -74,7 +74,7 @@ class GithubClient:
         tree = data['tree']
         return tree
 
-    def read_file(self, repository_name: str, file_path: str) -> str:
+    def read_file(self, repository_full_name: str, file_path: str) -> str:
         """
         Retrieves the contents of a file from a GitHub repository.
 
@@ -82,7 +82,7 @@ class GithubClient:
         :param file_path: Path of the file in the repository.
         :return: The content of the file as a string.
         """
-        url = Config.GITHUB_API_REPO_URL + self.github_username + "/" + repository_name + "/contents/" + file_path
+        url = Config.GITHUB_API_REPO_URL + repository_full_name + "/contents/" + file_path
         try:
             res = requests.get(url, headers=self.github_header)
         except Exception as e:
@@ -112,7 +112,7 @@ class GithubClient:
                         edges {
                             node {
                                 ... on Repository {
-                                    name
+                                    nameWithOwner
                                     owner {
                                         login
                                     }
@@ -134,7 +134,7 @@ class GithubClient:
         for edge in edges:
             node = edge.get("node")
             if node.get("owner").get("login") == self.github_username:
-                repo_names.append(node.get("name"))
+                repo_names.append(node.get("nameWithOwner"))
 
         return repo_names
 
@@ -264,13 +264,13 @@ class GithubClient:
 
         return tree_to_string(tree).rstrip()
 
-    def _get_default_branch(self, repo_name: str) -> str:
+    def _get_default_branch(self, repo_full_name: str) -> str:
         """
         Fetches the default branch name of a given GitHub repository.
 
         :param repo_name: The name of the GitHub repository.
         """
-        url = Config.GITHUB_API_REPO_URL + self.github_username + "/" + repo_name
+        url = Config.GITHUB_API_REPO_URL + repo_full_name
         try:
             res = requests.get(url, headers=self.github_header)
         except Exception as e:
