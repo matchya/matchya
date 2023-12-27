@@ -2,6 +2,8 @@ name: Web Pipeline
 
 on:
   push:
+    branches:
+      - main
 
 jobs:
   cleanup:
