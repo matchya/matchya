@@ -1,5 +1,5 @@
-import sampleCandidates from '@/assets/sample-candidates.png';
 import sampleChecklist from '@/assets/sample-checklist.png';
+import sampleEvaluations from '@/assets/sample-evaluations.png';
 import { Button } from '@/components';
 
 interface HomePageTemplateProps {
@@ -40,7 +40,7 @@ const HomePageTemplate = ({ onNavigateToAuth }: HomePageTemplateProps) => {
 
       <div className="w-full flex justify-around items-center py-10 px-28 bg-green-200">
         <div className="w-1/2 flex justify-center items-center mx-20">
-          <img src={sampleCandidates} alt="candidates-screen" />
+          <img src={sampleEvaluations} alt="candidates-screen" />
         </div>
         <div className="w-1/2">
           <p className="text-md indent-6">
