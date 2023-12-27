@@ -1,7 +1,7 @@
 name: Release UI
 
 on:
-  workflow_dispatch:
+  push:
 
 jobs:
   release-ui:
