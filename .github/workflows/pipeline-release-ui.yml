@@ -9,12 +9,12 @@ on:
 jobs:
   prepare-ui-release:
     runs-on: ubuntu-latest
-    if: github.head_ref == 'develop' && github.base_ref == 'main'
+    if: github.head_ref == '405-feat-ci-set-up-ui-release-pipeline' && github.base_ref == 'main'
     steps:
       - name: Checkout develop branch
         uses: actions/checkout@v2
         with:
-          ref: 'develop'
+          ref: '405-feat-ci-set-up-ui-release-pipeline'
           fetch-depth: 0
 
       - name: Setup Git
