@@ -1,63 +1,72 @@
-name: Release Web
+name: Prepare UI Release
 
 on:
-  push:
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened]
 
 jobs:
-  release-ui:
-    name: Release (Web)
+  prepare-ui-release:
     runs-on: ubuntu-latest
+    if: github.head_ref == 'develop' && github.base_ref == 'main'
     steps:
-      - name: Checkout release-ui branch
+      - name: Checkout develop branch
         uses: actions/checkout@v2
         with:
-          ref: release-ui
+          ref: 'develop'
+          fetch-depth: 0
 
-      - name: Pull main branch commits
+      - name: Setup Git
         run: |
-          git fetch origin main
-          git merge origin/main
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
 
-      - name: Cherry pick commits
+      - name: Cherry-pick commits to release-ui
+        id: cherry-pick
         run: |
-          git fetch origin develop
-          for commit in $(git log --grep='feat(ui)' --format="%H" origin/develop); do
-            git cherry-pick $commit --no-commit
-          done
-          for commit in $(git log --grep='fix(ui)' --format="%H" origin/develop); do
-            git cherry-pick $commit --no-commit
-          done
-          for commit in $(git log --grep='chore(ui)' --format="%H" origin/develop); do
-            git cherry-pick $commit --no-commit
+          git fetch origin release-ui
+          git checkout -b temp-release-ui origin/release-ui
+
+          set +e  # Disable error stopping
+          conflict_found=false
+          commit_messages=""
+
+          for commit in $(git log --grep='feat(ui)\|fix(ui)\|chore(ui)' --format="%H" origin/develop); do
+            git cherry-pick $commit
+            if [ $? -ne 0 ]; then
+              echo "Merge conflict detected in commit $commit. Exiting."
+              conflict_found=true
+              break
+            fi
+            commit_messages+=$(git log -1 --format="%h %s%n")
           done
 
-    # TODO: implement in the near future...
-    #   - name: Run E2E tests
-    #     run: npm run test:e2e
+          if [ "$conflict_found" = true ]; then
+            git reset --hard
+            git checkout develop
+            exit 1
+          fi
 
-      - name: Wait for approval
+          set -e  # Re-enable error stopping
+          echo "::set-output name=commit_messages::$commit_messages"
+
+      - name: Push changes to release-ui
+        if: steps.cherry-pick.outputs.conflict_found != 'true'
+        run: |
+          git push origin temp-release-ui:release-ui
+
+      - name: Comment on PR with list of commits
+        if: steps.cherry-pick.outputs.conflict_found != 'true'
         uses: actions/github-script@v3
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const issue_number = context.issue.number;
-            const result = await github.pulls.createReviewRequest({
+            const comment = `Cherry-picked commits:\n${{ steps.cherry-pick.outputs.commit_messages }}`;
+            github.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              pull_number: issue_number,
-              reviewers: ['kokiebisu']
+              issue_number: issue_number,
+              body: comment
             });
-            return result.data;
-
-    #   - name: Semantic Release
-    #     run: |
-    #       cd web
-    #       npm run release
-
-    #   - name: Push to release-ui branch
-    #     run: git push origin release-ui
-
-    #   - name: Merge to main branch
-    #     run: |
-    #       git checkout main
-    #       git merge --no-ff release-ui
-    #       git push origin main
