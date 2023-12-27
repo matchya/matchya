@@ -78,7 +78,7 @@ def retrieve_repositories_data(github_client: GithubClient, repository_names: li
     Retrieves the repositories' data from GitHub.
 
     :param github_client: An instance of the GitHub client.
-    :param repository_names: A list of repository names.
+    :param repository_names: A list of repository full names.
     :return: A list of dictionaries containing the repositories' data.
     """
 
@@ -291,7 +291,7 @@ def save_repository_names_to_db(checklist_id: str, repository_names: list):
     Saves the repository names to the database.
 
     :param checklist_id: Unique identifier for the checklist.
-    :param repository_names: A list of repository names.
+    :param repository_names: A list of repository full names.
     """
     logger.info("Saving repository names to db...")
     sql = "INSERT INTO checklist_repository (id, checklist_id, repository_name) VALUES"
