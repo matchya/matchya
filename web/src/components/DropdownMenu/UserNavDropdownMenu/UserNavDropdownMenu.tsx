@@ -20,7 +20,7 @@ const UserNavDropdownMenu = ({
   onLogout,
 }: UserNavProps) => {
   const navigate = useNavigate();
-  const navigateToSettingsPage = () => navigate('/settings');
+  // const navigateToSettingsPage = () => navigate('/settings');
   const navigateToDashboardPage = () => navigate('/dashboard');
   return (
     <DropdownMenuContent className="w-56" align="end" forceMount>
@@ -38,10 +38,10 @@ const UserNavDropdownMenu = ({
           Dashboard
           {/* <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut> */}
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={navigateToSettingsPage}>
-          Settings
-          {/* <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut> */}
-        </DropdownMenuItem>
+        {/* <DropdownMenuItem onClick={navigateToSettingsPage}> */}
+        {/* Settings */}
+        {/* <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut> */}
+        {/* </DropdownMenuItem> */}
       </DropdownMenuGroup>
       <DropdownMenuSeparator />
       <DropdownMenuItem onClick={onLogout}>Log out</DropdownMenuItem>
