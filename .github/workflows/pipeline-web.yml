@@ -14,6 +14,7 @@ jobs:
       - name: 🗑 Delete deployment
         uses: strumwolf/delete-deployment-environment@v2
         with:
+          environment: production
           token: ${{ secrets.GH_TOKEN }}
           onlyRemoveDeployments: true
 
