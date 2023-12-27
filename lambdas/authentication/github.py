@@ -133,7 +133,7 @@ def get_company_repository_names(github_username: str, github_access_token: str)
     if response.status_code != 200:
         raise RuntimeError(f"Error getting repositories from GitHub: {response.content}")
     repositories = response.json()
-    repo_names = [repository['name'] for repository in repositories]
+    repo_names = [repository['full_name'] for repository in repositories]
     return repo_names
 
 
