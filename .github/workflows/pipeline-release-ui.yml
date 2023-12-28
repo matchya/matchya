@@ -27,13 +27,11 @@ jobs:
           git fetch origin develop
           changes=$(git log --pretty=format:"%s" origin/main..origin/develop | grep -E 'chore')
           if [ -n "$changes" ]; then
-            echo "Changes detected:"
-            echo "$changes"
             echo "::set-output name=should_prepare_ui_release::true"
-            gh pr comment ${{ github.event.pull_request.number }} --body "$changes"
+            gh pr comment ${{ github.event.pull_request.number }} --body "🚀 **Significant modifications detected:**\n\n$changes\n\nThese changes will be incorporated into the forthcoming UI release."
           else
-            echo "No changes detected."
             echo "::set-output name=should_prepare_ui_release::false"
+            gh pr comment ${{ github.event.pull_request.number }} --body "🔍 **No significant changes detected.**\n\nThe current UI release will remain unchanged."
           fi
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
