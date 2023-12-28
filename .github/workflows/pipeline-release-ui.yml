@@ -1,0 +1,71 @@
+name: UI Release Pipeline
+
+on:
+  pull_request:
+    branches:
+      - 'main'
+    types:
+      - opened
+      - reopened
+
+jobs:
+  analyze-commits:
+    name: Analyze Commits in Develop
+    runs-on: ubuntu-latest
+    outputs:
+      should_prepare_ui_release: ${{ steps.analyze.outputs.should_prepare_ui_release }}
+    steps:
+      - name: Checkout develop branch
+        uses: actions/checkout@v2
+        with:
+          ref: 'develop'
+          fetch-depth: 0
+
+      - name: Setup Git
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+      - name: Gather and comment PR with changes
+        id: analyze
+        run: |
+          git fetch origin main
+          git fetch origin develop
+          changes=$(git log --pretty=format:"%s" origin/main..origin/develop | grep -E 'feat\(ui\)|fix\(ui\)|chore\(ui\)')
+          if [ -n "$changes" ]; then
+            echo "::set-output name=should_prepare_ui_release::true"
+            gh pr comment ${{ github.event.pull_request.number }} --body $'### 🚀 **Preparing for UI release**\nThese changes will be incorporated into the forthcoming release:\n\n'"$changes"$''
+          else
+            echo "::set-output name=should_prepare_ui_release::false"
+            gh pr comment ${{ github.event.pull_request.number }} --body $'### **Skipping UI release**\n\nUI release will be skipped this time'
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
+  create-ui-release:
+    name: Create Release (UI)
+    needs: analyze-commits
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: production
+    if: ${{ needs.analyze-commits.outputs.should_prepare_ui_release == 'true' }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          cache: npm
+          node-version: 18
+      - name: Install dependencies
+        run: |
+          cd web
+          npm install
+      - name: Build
+        run: |
+          cd web
+          npm run build
+      - name: Release
+        run: |
+          cd web
+          npm run release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
