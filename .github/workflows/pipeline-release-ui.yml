@@ -28,10 +28,18 @@ jobs:
           changes=$(git log --pretty=format:"%s" origin/main..origin/develop | grep -E 'chore')
           if [ -n "$changes" ]; then
             echo "::set-output name=should_prepare_ui_release::true"
-            gh pr comment ${{ github.event.pull_request.number }} --body "🚀 **Significant modifications detected:**\n\n$changes\n\nThese changes will be incorporated into the forthcoming UI release."
+            gh pr comment ${{ github.event.pull_request.number }} --body <<EOF
+              🚀 *Significant modifications detected:*
+              $changes
+              These changes will be incorporated into the forthcoming UI release.
+            EOF
           else
             echo "::set-output name=should_prepare_ui_release::false"
-            gh pr comment ${{ github.event.pull_request.number }} --body "🔍 **No significant changes detected.**\n\nThe current UI release will remain unchanged."
+            gh pr comment ${{ github.event.pull_request.number }} --body <<EOF🔍
+              *No significant modifications detected*
+
+              The UI release will be skipped this time
+            EOF
           fi
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
