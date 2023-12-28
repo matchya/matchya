@@ -1,20 +1,40 @@
-name: Prepare UI Release
+name: UI Release Pipeline
 
 on:
-  pull_request:
+  push:
     branches:
       - main
-    types: [opened, synchronize, reopened]
 
 jobs:
-  prepare-ui-release:
+  analyze-commits:
     runs-on: ubuntu-latest
-    if: github.head_ref == '405-feat-ci-set-up-ui-release-pipeline' && github.base_ref == 'main'
+    outputs:
+      should_prepare_release: ${{ steps.analyze.outputs.should_prepare_release }}
     steps:
       - name: Checkout develop branch
         uses: actions/checkout@v2
         with:
-          ref: '405-feat-ci-set-up-ui-release-pipeline'
+          ref: 'develop'
+          fetch-depth: 0
+
+      - name: Analyze commits
+        id: analyze
+        run: |
+          if git log --pretty=format:"%s" -n 1 | grep -qE 'feat\(ui\)|fix\(ui\)|chore\(ui\)'; then
+            echo "::set-output name=should_prepare_release::true"
+          else
+            echo "::set-output name=should_prepare_release::false"
+          fi
+
+  prepare-ui-release:
+    needs: analyze-commits
+    runs-on: ubuntu-latest
+    if: ${{ needs.analyze-commits.outputs.should_prepare_release == 'true' }}
+    steps:
+      - name: Checkout develop branch
+        uses: actions/checkout@v2
+        with:
+          ref: 'develop'
           fetch-depth: 0
 
       - name: Setup Git
@@ -22,51 +42,6 @@ jobs:
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
 
-      - name: Cherry-pick commits to release-ui
-        id: cherry-pick
+      - name: Create UI Release
         run: |
-          git fetch origin release-ui
-          git checkout -b temp-release-ui origin/release-ui
-
-          set +e  # Disable error stopping
-          conflict_found=false
-          commit_messages=""
-
-          for commit in $(git log --grep='feat(ui)\|fix(ui)\|chore(ui)' --format="%H" origin/develop); do
-            git cherry-pick $commit
-            if [ $? -ne 0 ]; then
-              echo "Merge conflict detected in commit $commit. Exiting."
-              conflict_found=true
-              break
-            fi
-            commit_messages+=$(git log -1 --format="%h %s%n")
-          done
-
-          if [ "$conflict_found" = true ]; then
-            git reset --hard
-            git checkout develop
-            exit 1
-          fi
-
-          set -e  # Re-enable error stopping
-          echo "::set-output name=commit_messages::$commit_messages"
-
-      - name: Push changes to release-ui
-        if: steps.cherry-pick.outputs.conflict_found != 'true'
-        run: |
-          git push origin temp-release-ui:release-ui
-
-      - name: Comment on PR with list of commits
-        if: steps.cherry-pick.outputs.conflict_found != 'true'
-        uses: actions/github-script@v3
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const issue_number = context.issue.number;
-            const comment = `Cherry-picked commits:\n${{ steps.cherry-pick.outputs.commit_messages }}`;
-            github.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: issue_number,
-              body: comment
-            });
+          echo "Creating UI Release..."
