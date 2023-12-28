@@ -26,7 +26,7 @@ jobs:
         run: |
           git fetch origin main
           git fetch origin develop
-          changes=$(git log --pretty=format:"%s" origin/main..origin/develop | grep -E 'chore')
+          changes=$(git log --pretty=format:"%s" origin/main..origin/develop | grep -E 'feat\(ui\)|fix\(ui\)|chore\(ui\)')
           if [ -n "$changes" ]; then
             echo "::set-output name=should_prepare_ui_release::true"
             gh pr comment ${{ github.event.pull_request.number }} --body $'### 🚀 **Preparing for UI release**\nThese changes will be incorporated into the forthcoming release:\n\n'"$changes"$''
