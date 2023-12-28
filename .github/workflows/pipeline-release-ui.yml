@@ -7,27 +7,7 @@ jobs:
   analyze-commits:
     runs-on: ubuntu-latest
     outputs:
-      should_prepare_release: ${{ steps.analyze.outputs.should_prepare_release }}
-    steps:
-      - name: Checkout develop branch
-        uses: actions/checkout@v2
-        with:
-          ref: 'develop'
-          fetch-depth: 0
-
-      - name: Analyze commits
-        id: analyze
-        run: |
-          if git log --pretty=format:"%s" -n 1 | grep -qE 'feat\(ui\)|fix\(ui\)|chore\(ui\)'; then
-            echo "::set-output name=should_prepare_release::true"
-          else
-            echo "::set-output name=should_prepare_release::false"
-          fi
-
-  prepare-ui-release:
-    needs: analyze-commits
-    runs-on: ubuntu-latest
-    if: ${{ needs.analyze-commits.outputs.should_prepare_release == 'true' }}
+      should_prepare_ui_release: ${{ steps.analyze.outputs.should_prepare_ui_release }}
     steps:
       - name: Checkout develop branch
         uses: actions/checkout@v2
@@ -40,6 +20,47 @@ jobs:
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
 
-      - name: Create UI Release
+      - name: Gather and comment PR with changes
+        id: analyze
         run: |
-          echo "Creating UI Release..."
+          git fetch origin main
+          changes=$(git log --pretty=format:"%s" origin/main..develop | grep -E 'feat\(ui\)|fix\(ui\)|chore\(ui\)')
+          if [ -n "$changes" ]; then
+            echo "Changes detected:"
+            echo "$changes"
+            echo "::set-output name=should_prepare_ui_release::true"
+            gh pr comment ${{ github.event.pull_request.number }} --body "$changes"
+          else
+            echo "No changes detected."
+            echo "::set-output name=should_prepare_ui_release::false"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
+  create-ui-release:
+    name: UI
+    needs: analyze-commits
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: production
+    if: ${{ needs.analyze-commits.outputs.should_prepare_ui_release == 'true' }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          cache: npm
+          node-version: 18
+      - name: Install dependencies
+        run: |
+          cd web
+          npm install
+      - name: Build
+        run: |
+          cd web
+          npm run build
+      - name: Release
+        run: |
+          cd web
+          npm run release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
