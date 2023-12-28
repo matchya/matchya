@@ -29,7 +29,7 @@ jobs:
           changes=$(git log --pretty=format:"%s" origin/main..origin/develop | grep -E 'chore')
           if [ -n "$changes" ]; then
             echo "::set-output name=should_prepare_ui_release::true"
-            gh pr comment ${{ github.event.pull_request.number }} --body $'### 🚀 **UI modifications detected:**\n\n'"$changes"$'\n\nThese changes will be incorporated into the forthcoming UI release.'
+            gh pr comment ${{ github.event.pull_request.number }} --body $'### 🚀 **UI modifications detected:**\nThese changes will be incorporated into the forthcoming UI release.\n\n'"$changes"$''
           else
             echo "::set-output name=should_prepare_ui_release::false"
             gh pr comment ${{ github.event.pull_request.number }} --body $'### **No UI modifications detected**\n\nUI release will be skipped this time'
