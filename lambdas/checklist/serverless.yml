@@ -67,6 +67,8 @@ functions:
           method: GET
           cors:
             origins:
+              - https://www.matchyaa.com
+              - https://matchyaa.com
               - http://127.0.0.1:5173
             allowCredentials: true
           authorizer:
@@ -92,6 +94,8 @@ functions:
           method: POST
           cors:
             origins:
+              - https://www.matchyaa.com
+              - https://matchyaa.com
               - http://127.0.0.1:5173
             allowCredentials: true
           authorizer:
@@ -114,6 +118,8 @@ functions:
           method: POST
           cors:
             origins:
+              - https://www.matchyaa.com
+              - https://matchyaa.com
               - http://127.0.0.1:5173
             allowCredentials: true
           authorizer:
