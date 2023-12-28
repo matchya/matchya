@@ -1,6 +1,13 @@
 {
   "plugins": [
-    "@semantic-release/commit-analyzer",
+    [
+      "@semantic-release/commit-analyzer",
+      {
+        "releaseRules": [
+          { "type": "feat", "scope": "ui", "release": "minor" }
+        ]
+      }
+    ],
     "@semantic-release/release-notes-generator",
     "@semantic-release/changelog",
     [
@@ -14,10 +21,6 @@
   ],
   "branches": [
     "master",
-    "main",
-    "next",
-    { "name": "beta", "prerelease": "beta" },
-    { "name": "feat/*", "prerelease": true },
-    { "name": "fix/*", "prerelease": true }
+    "main"
   ]
 }
