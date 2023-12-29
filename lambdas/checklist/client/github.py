@@ -123,7 +123,7 @@ class GithubClient:
                 }
             }
         }
-        """ % self.github_username, n
+        """ % (self.github_username, n)
         data = self._run_github_query(query)
         if data is None or data.get("repositoryOwner") is None or data.get("repositoryOwner").get("pinnableItems") is None:
             self.logger.error("Getting pinned repositories failed. No data found.")
@@ -137,6 +137,50 @@ class GithubClient:
                 repo_names.append(node.get("nameWithOwner"))
 
         return repo_names
+
+    def get_general_repository_information(self, repository_full_name: str):
+        """
+        Get information about a repository using github graphql API.
+
+        :param github_username: GitHub username
+        :param repository_name: Repository name
+        :return: Repository information
+        """
+        owner, repo = repository_full_name.split("/")
+        query = """
+            {
+                repository(owner: "%s", name: "%s") {
+                    createdAt
+                    mentionableUsers {
+                        totalCount
+                    }
+                    defaultBranchRef {
+                        target {
+                            ... on Commit {
+                                history(first: 1) {
+                                    totalCount
+                                }
+                            }
+                        }
+                    }
+                    issues {
+                        totalCount
+                    }
+                    pullRequests {
+                        totalCount
+                    }
+                    updatedAt
+                }
+            }
+        """ % (owner, repo)
+        data = self._run_github_query(query)
+        formatted_data = {}
+        formatted_data["created_at"] = data["repository"]["createdAt"]
+        formatted_data["contributors"] = data["repository"]["mentionableUsers"]["totalCount"]
+        formatted_data["num_commits"] = data["repository"]["defaultBranchRef"]["target"]["history"]["totalCount"]
+        formatted_data["issues_and_pull_requests"] = data["repository"]["issues"]["totalCount"] + data["repository"]["pullRequests"]["totalCount"]
+        formatted_data["last_updated_at"] = data["repository"]["updatedAt"]
+        return formatted_data
 
     @staticmethod
     def get_package_file_paths_to_read(file_paths: list, languages: dict) -> list:
@@ -176,7 +220,8 @@ class GithubClient:
         :param languages: A list of programming languages (and their usage details) used in the repository.
         :return: A list of file names that are important for the given programming languages.
         """
-        important_file_names = ["README.md"]
+        important_file_names = []
+        # important_file_names.append("README.md")
 
         package_file_names = {
             "Python": "requirements.txt",

@@ -115,6 +115,8 @@ def retrieve_candidate_github_data(github_client: GithubClient) -> list:
 
             programming_languages: dict = github_client.get_programming_languages_used(repository_name)
             repo_tree: list = github_client.get_repository_tree(repository_name)
+            num_of_files = len([branch['path'] for branch in repo_tree if branch["type"] == "blob"])
+            num_of_dirs = len([branch['path'] for branch in repo_tree if branch["type"] == "tree"])
 
             n = 5
             depth_n_files = [branch['path'] for branch in repo_tree if branch["path"].count("/") < n and branch["type"] == "blob"]
@@ -125,7 +127,17 @@ def retrieve_candidate_github_data(github_client: GithubClient) -> list:
             repo_structure: str = GithubClient.get_organized_folder_structure(depth_n_files)
             package_files: list = GithubClient.get_package_file_paths_to_read(depth_n_files, programming_languages)
 
-            repo_data = {'name': repository_name, 'languages': programming_languages, 'structure': repo_structure, 'files': []}
+            general_info = github_client.get_general_repository_information(repository_name)
+            general_info['languages'] = programming_languages
+            general_info['num_dirs'] = num_of_dirs
+            general_info['num_files'] = num_of_files
+            repo_data = {
+                'name': repository_name,
+                'general_info': general_info,
+                'structure': repo_structure,
+                'files': []
+            }
+
             for file_path in package_files:
                 file_content = github_client.read_file(repository_name, file_path)
                 compressed_content = compress_file_content(file_path, file_content)
@@ -156,39 +168,55 @@ def get_system_and_user_message(repositories_data: list, criteria: dict) -> tupl
 
         Consider the following factors:
         1. **Accuracy and Consistency:**
-        - Assess the candidate's skillset based on files like "README.md," "package.json," and "requirements.txt."
-        - Larger repositories may indicate experience with larger projects, making certain technologies more significant.
-        - Repeated use of a technology across repositories suggests familiarity and expertise.
+        - Assess the candidate's skillset based on the repositories provided.
+        - Experience with a technology in a larger repository is more valuable than using it in smaller repositories multiple times.
+        - IMPORTANT!!! If the candidate has used the technology at least once in a large repository, the score must be higher than 7.
+        - Evaluation is based on how the candidate used the technology in the repository, not on the size of the repository and other factors like github statistics.
+        - Even if the size of the repository is large, if the candidate has not used the technology at all including the related technology, the score must be 0.
+        - Do not give high scores when you cannot find any evidence of the technology.
         - Always evaluate all criteria, even if the candidate has no repositories that demonstrate a skill.
-        - To evaluate a candidate accurately and consistently, follow the guildelines below.
-        score_guidelines = {
-            0: "Candidate lacks essential skills outlined in the criteria. For example, if Frontend development requires TypeScript and React, a score of 0 implies a complete absence of these skills.",
-            1: "Candidate exhibits minimal skills related to the specified message and keywords, or shows basic skills in similar areas. If the criterion is proficiency in Python for backend development, a score of 1 might be assigned if the candidate demonstrates basic experience with similar backend technologies.",
-            2: "Candidate displays limited proficiency related to the specified message and keywords or exhibits minimal skills in similar areas. A score of 2 suggests a partial alignment with the criterion, but the essential skill is not fully present.",
-            3: "Candidate demonstrates below-average proficiency in the specified skillset. There is limited evidence of relevant experience in the repositories, indicating a basic understanding but falling short of moderate proficiency.",
-            4: "Candidate shows moderate proficiency. Evidence in repositories indicates a clear understanding and application of the specified skillset.",
-            5: "Candidate demonstrates moderate proficiency. Evidence in repositories indicates a clear understanding and application of the specified skillset.",
-            6: "Candidate exhibits above-average proficiency in the specified skillset. There is clear evidence of relevant experience in the repositories, demonstrating a stronger understanding and application of the specified skillset but falling short of significant proficiency.",
-            7: "Candidate demonstrates significant proficiency in the specified skillset. There is clear evidence of relevant experience in the repositories, demonstrating a strong understanding and application of the specified skillset.",
-            8: "Candidate shows significant proficiency. Clear evidence in repositories, for instance in Frontend development with React, multiple repositories showcase well-implemented React components.",
-            9: "Candidate exhibits exceptional proficiency. Evidence in repositories indicates advanced skills and significant experience, such as proficiency in multiple programming languages and frameworks.",
-            10: "Candidate possesses extensive experience using the specified skillset, likely in large or multiple projects. Proficiency is evident, and the candidate is highly skilled and knowledgeable in the relevant technologies. If the criterion involves expertise in a specific framework like Django for backend development, a score of 10 may be given if the candidate has successfully implemented and maintained complex Django projects at scale."
+        - To evaluate a candidate accurately and consistently, always follow the guildelines below.
+        "score_guidelines": {
+            "0": "No use of the technology or related technologies.",
+            "1": "No direct use of the technology; related technology used in small repositories.",
+            "2": "No direct use of the technology; related technology used in medium-sized repositories.",
+            "3": "No direct use of the technology; related technology used in large repositories.",
+            "4": "No direct use of the technology; but related technology used multiple times or once in a very large repository.",
+            "5": "Technology used once in a small-sized repository, or related technology used in large repositories.",
+            "6": "Technology used once in a medium-sized repository, or twice in small-sized repositories.",
+            "7": "Technology used once in a large repository, or twice in medium or small repositories.",
+            "8": "Technology used once in a very large repository, or twice in medium or large repositories",
+            "9": "Technology used more than twice across large or medium repositories.",
+            "10": "Technology used more than twice across a mix of large and very large repositories."
+        }
+
+        - As mentioned above, the size of the project is a very important factor to get higher scores, so you need to consider the size of the project when scoring.
+        - To examine the size of the project, consider all the criteria blow, and determine the size of the repository in general:
+        "repository_size_guidelines": {
+            "number_of_languages": "1-2 languages indicate a smaller project; 3-5 a medium-sized; 6+ a large project; 10+ a very large project.",
+            "combined_size_of_languages": "Fewer than 100,000 bytes indicate a small project; 100,000-500,000 a medium-sized; 500,000+ a large project; 1,000,000+ a very large project. // this is for all languages combined",
+            "number_of_commits": "Fewer than 100 commits indicate a small project; 100-500 a medium-sized; 500+ a large project; 1000+ a very large project.",
+            "repository_age": "Less than 1 year old is considered new; 1-3 years old a medium-aged; 3+ years old a well-established project; 5+ years old a very well-established project.",
+            "number_of_files_and_directories": "Fewer than 200 items indicate a small project; 200-500 a medium-sized; 500+ a large project; 1000+ a very large project.",
+            "contributors": "1-2 contributors indicate a smaller project; 3-10 a medium-sized; 10+ a large project; 20+ a very large project.",
+            "issues_and_pull_requests": "Fewer than 300 indicate a small project; 300-1000 a medium-sized; 1000 a large project; 2000+ a very large project.",
         }
         - Note: The value of the score is absolute and does not change depending on the score of other criteria. Score each criterion as a separate one with an absolute rating.
 
-        2. **Message Importance:**
-        - Emphasize that the evaluation is primarily based on the message, not just keywords.
-        - A candidate doesn't need to have skills in all of the keywords; proficiency in the mentioned technology is crucial.
-        - Provide scores and reasoning that align clearly with the message content.
-        - Even if the candidate does not have the exactly same skills in the keywords, if the candidate has similar skills according to the message, you can give some points.
+        2. **Detailed Reasoning:**
+        - Precision and detail in reasoning are vital, state clearly why you gave the score.
+        - If you cannot find any evidence of the technology, say so.
+        - !Important: Never ever mention the name of any files and information like the number of commits, number of files, etc. in the reason.
+        - Never mention other criteria or technologies that are not related to the criterion.
+        - This reasoning is based on how the candidate used the technology in the criterion and other factors like github statistics.
+        - For higher scores,always mention the repository name, criterion technology, the reason why you gave the score. Only if you want to emphasize why the score is, mention the size of the repository as well.
+        - If you found the related technology, mention which technology you found.
+        Examples: 
+            - "No evidence of the use of NextJS and other frontend frameworks in the account."
+            - "The repository 'my-repository' contains evidence of Docker usage, containerizing an application for deploying. However, the experience is not extensive enough to give a higher score."
+            - "The candidate has extensive evidence of using Python across multiple repositories like 'python-repo', for backend service and machine learning. This candidate has a lot of experience with Python."
 
-        3. **Detailed Reasoning:**
-        - Precision and detail in reasoning are vital.
-        - For lower scores, explain why, highlighting factors like project size or similar skills.
-        - Higher scores (7, 8, or above) require clear identification of repositories showcasing skills and their quality.
-        - Always explain which repositories demonstrate the candidate's skillset and why they are significant if the candidate has the skill. However, NEVER EVER mention the name files because we want to hide what file you read.
-
-        4. **Total Score Calculation:**
+        3. **Total Score Calculation:**
         - THIS IS VERY IMPORTANT!!!: The total score MUST be the AVERAGE VALUE of scores for each criterion.
         - YOU MUST CALCULATE the AVERAGE VALUE after scoring all criteria. Add each score and divide by the number of criteria. The avarage score can contain one decimal point.
         - For example, if there are 3 criteria and the scores are 5, 8, and 9, the total score will be (5 + 8 + 9) / 3 = 7.3
@@ -209,30 +237,43 @@ def get_system_and_user_message(repositories_data: list, criteria: dict) -> tupl
         }
     """
 
-    user_message = "First of all, here are criteria that the company needs candidates to have. You need to assess candidates on each criteria with keywords and a message : "
+    user_message = "First of all, here are criteria that the company needs candidates to have. You need to assess candidates on each criteria: "
     for i in range(len(criteria)):
         criterion = criteria[i]
-        user_message += "\n" + "criterion" + str(i + 1) + ". id: " + criterion['id'] + criterion["message"] + " (keywords: " + ", ".join(criterion["keywords"]) + ")"
+        user_message += "\n" + "criterion" + str(i + 1) + ". id: " + criterion['id'] + criterion["message"]
     user_message += "\n\n"
 
     user_message += """
         Next, here are the data from the candidate's GitHub Account. 
         Note: The contents of the file have been modified to reduce the number of TOKEN and may not be written in correct syntax. 
         In that case, you must guess the contents of the original file yourself and do the evaluation accordingly. 
-        The fact that the content is syntactically incorrect has no effect on the evaluation at all:\n
+        The fact that the content is syntactically incorrect has no effect on the evaluation at all.
+        Do not miss any information in the data below when evaluating the candidate especially keywords and technologies in criteria above.\n:
     """
     for repository_data in repositories_data:
+        general = repository_data['general_info']
         user_message += "Repository: " + repository_data['name'] + "\n"
 
         user_message += "This repository uses the following programming languages: "
-        for name, bytes in repository_data['languages'].items():
+        for name, bytes in general['languages'].items():
             user_message += name + "(" + str(bytes) + " bytes), "
         user_message += "\n"
+
+        user_message += f"""
+            number of commits: {general['num_commits']}
+            created_at: {general['created_at']}
+            last updated_at: {general['last_updated_at']}
+            number of files: {general['num_files']}
+            number of directories: {general['num_dirs']}
+            number of contributors: {general['contributors']}
+            number of issues and pull requests: {general['issues_and_pull_requests']}
+        """
 
         user_message += "This repository has the following file structure: \n"
         user_message += repository_data['structure'] + "\n"
 
         if len(user_message) > 50000:
+            logger.info("User message is too long, truncating...")
             break
 
         for file_data in repository_data['files']:
@@ -242,6 +283,7 @@ def get_system_and_user_message(repositories_data: list, criteria: dict) -> tupl
         user_message += "Repository " + repository_data['name'] + " ends here.\n\n"
 
         if len(user_message) > 50000:
+            logger.info("User message is too long, truncating...")
             user_message = user_message[:50000] + "...\n Repository " + repository_data['name'] + " ends here.\n\n"
             break
 
@@ -381,7 +423,7 @@ def handler(event, context):
 
         criteria = get_criteria_from_dynamodb(checklist_id)
         repositories_data = retrieve_candidate_github_data(github_client)
-        logger.info(f'Repositories data retrieved successfully for position: {repositories_data}')
+        logger.info(f'Repositories data retrieved successfully for the user: {repositories_data}')
 
         system_message, user_message = get_system_and_user_message(repositories_data, criteria)
         candidate_result = evaluate_candidate_with_gpt(system_message, user_message,)
