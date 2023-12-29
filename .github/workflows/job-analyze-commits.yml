@@ -4,13 +4,6 @@ on:
       pull_request_number:
         required: true
         type: number
-    outputs:
-      should_prepare_web_release:
-        description: "Indicates if a Web release should be prepared"
-        value: ${{ jobs.run.outputs.should_prepare_web_release }}
-      should_prepare_server_release:
-        description: "Indicates if a Server release should be prepared"
-        value: ${{ jobs.run.outputs.should_prepare_server_release }}
 
 jobs:
   run:

@@ -11,6 +11,7 @@ on:
 
 jobs:
   cleanup-artifacts:
+    name: Clean artifacts
     runs-on: ubuntu-latest
     steps:
       - name: Remove previous artifacts
