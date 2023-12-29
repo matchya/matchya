@@ -1,9 +1,6 @@
 on:
   workflow_call:
     inputs:
-      component:
-        required: true
-        type: string
       pull_request_number:
         required: true
         type: number
@@ -17,8 +14,11 @@ on:
 
 jobs:
   run:
-    name: ${{ inputs.component }}
+    name: Commits
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        component: ['web', 'server']
     outputs:
       should_prepare_web_release: ${{ steps.analyze.outputs.should_prepare_web_release }}
       should_prepare_server_release: ${{ steps.analyze.outputs.should_prepare_server_release }}
@@ -54,9 +54,9 @@ jobs:
             echo "WASNT CHANGES"
             echo "::set-output name=should_prepare_web_release::false"
             echo "::set-output name=should_prepare_server_release::false"
-            gh pr comment $PULL_REQUEST_NUMBER --body $'### **Skipping '"$COMPONENT"' release**\n\n'"$COMPONENT"' release will be skipped this time'
+            gh pr comment $PULL_REQUEST_NUMBER --body $'### **Skipping \'"$COMPONENT"\' release**\n\n\''"$COMPONENT"\' release will be skipped this time'
           fi
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          COMPONENT: ${{ inputs.component }}
+          COMPONENT: ${{ matrix.component }}
           PULL_REQUEST_NUMBER: ${{ inputs.pull_request_number }}

@@ -10,14 +10,10 @@ on:
       - synchronize
 
 jobs:
-    analyze-commits:
-      name: Analyze Commits
+    analyze:
+      name: Analyze
       uses: ./.github/workflows/job-analyze-commits.yml
-      strategy:
-        matrix:
-          component: ['web', 'server']
       with:
-        component: ${{ matrix.component }}
         pull_request_number: ${{ github.event.pull_request.number }}
       secrets: inherit
 
