@@ -1,12 +1,12 @@
 on:
-    workflow_call:
-      inputs:
-        component:
-          required: true
-          type: string
-        environment:
-          required: true
-          type: string
+  workflow_call:
+    inputs:
+      component:
+        required: true
+        type: string
+      environment:
+        required: true
+        type: string
 
 jobs:
   run:
@@ -23,10 +23,28 @@ jobs:
 
     - name: Install dependencies
       run: |
+        cd ${{inputs.component}}
         npm install
+      if: inputs.component == 'web'
+
+    - name: Install dependencies
+      run: |
+        npm install
+      if: inputs.component != 'web'
+      working-directory: lambdas/${{inputs.component}}
 
     - name: Release
       run: |
-        npm run release:${{ inputs.component }}
+        npm run release
       env:
         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      if: inputs.component == 'web'
+      working-directory: ${{inputs.component}}
+
+    - name: Release
+      run: |
+        npm run release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      if: inputs.component != 'web'
+      working-directory: lambdas/${{inputs.component}}
