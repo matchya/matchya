@@ -48,7 +48,7 @@ jobs:
           for scope_item in "${scopes[@]}"; do
             scope_changes=$(git log --pretty=format:"%s" origin/main..origin/develop | grep -E "feat\($scope_item\)|fix\($scope_item\)|chore\($scope_item\)" || echo "")
             if [ -n "$scope_changes" ]; then
-              changes+="$scope_changes\n"
+              changes+='"$scope_changes"$\n'
             fi
           done
           if [ -n "$changes" ]; then
