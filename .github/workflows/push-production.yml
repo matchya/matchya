@@ -63,6 +63,12 @@ jobs:
           echo "VITE_GITHUB_CLIENT_ID=${{ secrets.VITE_GITHUB_CLIENT_ID }}" >> web/.env
           echo "VITE_CLIENT_URL=${{ secrets.VITE_CLIENT_URL }}" >> web/.env
 
+      - name: Fetch environment variables and create .env in web folder
+        run: |
+          echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" >> web/.env
+          echo "VITE_GITHUB_CLIENT_ID=${{ secrets.VITE_GITHUB_CLIENT_ID }}" >> web/.env
+          echo "VITE_CLIENT_URL=${{ secrets.VITE_CLIENT_URL }}" >> web/.env
+
       - name: Set execute permissions for deploy script
         run: chmod +x scripts/deploy_to_s3.sh
       - name: Deploy to S3
