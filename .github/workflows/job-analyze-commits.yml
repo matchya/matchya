@@ -29,14 +29,11 @@ jobs:
             ref: 'develop'
             fetch-depth: 0
 
-      - name: Setup Git
-        run: |
-            git config user.name "GitHub Actions"
-            git config user.email "actions@github.com"
-
       - name: Gather and comment PR with changes
         id: analyze
         run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
           git fetch origin main
           git fetch origin develop
           changes=$(git log --pretty=format:"%s" origin/main..origin/develop | grep -E "feat\($COMPONENT\)|fix\($COMPONENT\)|chore\($COMPONENT\)" || echo "")
@@ -50,7 +47,7 @@ jobs:
           else
             echo "::set-output name=should_prepare_web_release::false"
             echo "::set-output name=should_prepare_server_release::false"
-            gh pr comment "$PULL_REQUEST_NUMBER" --body $'Skipping '"$COMPONENT"$' release'
+            gh pr comment "$PULL_REQUEST_NUMBER" --body $'### **Skipping '"$COMPONENT"$' release**\nDon't mind'
           fi
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
