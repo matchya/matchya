@@ -25,6 +25,7 @@ jobs:
       package_changed: ${{ steps.changes.outputs.package }}
     steps:
       - uses: actions/checkout@v3
+
       - uses: dorny/paths-filter@v2
         id: changes
         with:
@@ -48,7 +49,6 @@ jobs:
         with:
           cache: npm
           node-version: 18
-        if: steps.changes.outputs.package == 'true'
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -56,7 +56,18 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
-        if: steps.changes.outputs.package == 'true'
+
+      - name: Fetch environment variables and create .env in web folder
+        run: |
+          echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" >> web/.env
+          echo "VITE_GITHUB_CLIENT_ID=${{ secrets.VITE_GITHUB_CLIENT_ID }}" >> web/.env
+          echo "VITE_CLIENT_URL=${{ secrets.VITE_CLIENT_URL }}" >> web/.env
+
+      - name: Fetch environment variables and create .env in web folder
+        run: |
+          echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" >> web/.env
+          echo "VITE_GITHUB_CLIENT_ID=${{ secrets.VITE_GITHUB_CLIENT_ID }}" >> web/.env
+          echo "VITE_CLIENT_URL=${{ secrets.VITE_CLIENT_URL }}" >> web/.env
 
       - name: Fetch environment variables and create .env in web folder
         run: |
@@ -70,5 +81,4 @@ jobs:
         shell: bash
         run: |
           cd scripts && ./deploy_to_s3.sh --bucket-name ${{ secrets.WEBSITE_BUCKET_NAME }} --environment ${{ env.ENVIRONMENT }}
-        if: steps.changes.outputs.package == 'true'
 
