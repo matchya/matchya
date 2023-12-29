@@ -1,4 +1,4 @@
-name: Production Web
+name: Push Pipeline (Production)
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   cleanup:
-    name: Clean up Deployment History
+    name: Clean up deployment history
     runs-on: ubuntu-latest
     permissions: write-all
     steps:
@@ -19,7 +19,7 @@ jobs:
           onlyRemoveDeployments: true
 
   check-for-web-folder-changes:
-    name: Check for changes in Web
+    name: Check for changes in web
     runs-on: ubuntu-latest
     outputs:
       package_changed: ${{ steps.changes.outputs.package }}
