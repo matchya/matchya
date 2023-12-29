@@ -18,16 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        component: [
-          {
-            'type': 'web',
-            'scope': ['web']
-          },
-          {
-            'type': 'server',
-            'scope': ['authentication', 'authorizer', 'checklist', 'company', 'position']
-          }
-        ]
+        component: ['web', 'server']
     outputs:
       should_prepare_web_release: ${{ steps.analyze.outputs.should_prepare_web_release }}
       should_prepare_server_release: ${{ steps.analyze.outputs.should_prepare_server_release }}
@@ -46,7 +37,12 @@ jobs:
           git fetch origin main
           git fetch origin develop
           changes=""
-          for scope_item in "${SCOPE[@]}"; do
+          if [ "${{ matrix.component }}" == "web" ]; then
+            scopes=('web')
+          elif [ "${{ matrix.component }}" == "server" ]; then
+            scopes=('authentication' 'authorizer' 'checklist' 'company' 'position')
+          fi
+          for scope_item in "${scopes[@]}"; do
             scope_changes=$(git log --pretty=format:"%s" origin/main..origin/develop | grep -E "feat\($scope_item\)|fix\($scope_item\)|chore\($scope_item\)" || echo "")
             changes+="$scope_changes\n"
           done
@@ -64,5 +60,4 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COMPONENT: ${{ matrix.component.type }}
-          SCOPE: ${{ matrix.component.scope }}
           PULL_REQUEST_NUMBER: ${{ inputs.pull_request_number }}
