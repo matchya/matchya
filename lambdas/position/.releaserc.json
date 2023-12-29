@@ -1,0 +1,29 @@
+{
+  "plugins": [
+    [
+      "@semantic-release/commit-analyzer",
+      {
+        "releaseRules": [
+          { "type": "feat", "scope": "position", "release": "minor" },
+          { "type": "fix", "scope": "position", "release": "patch" },
+          { "type": "chore", "scope": "position", "release": "patch" }
+        ]
+      }
+    ],
+    "@semantic-release/release-notes-generator",
+    "@semantic-release/changelog",
+    [
+        "@semantic-release/npm",
+        {
+          "npmPublish": false
+        }
+    ],
+    "@semantic-release/git",
+    "@semantic-release/github"
+  ],
+  "branches": [
+    "master",
+    "main",
+    "staging"
+  ]
+}

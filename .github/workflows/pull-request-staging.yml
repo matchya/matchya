@@ -1,0 +1,25 @@
+name: PR Pipeline (Staging)
+
+on:
+  pull_request:
+    branches:
+      - staging
+    types:
+      - opened
+      - reopened
+      - synchronize
+
+jobs:
+  analyze-commits:
+    name: Analyze
+    uses: ./.github/workflows/job-analyze-commits.yml
+    with:
+      pull_request_number: ${{ github.event.pull_request.number }}
+    secrets: inherit
+
+  automated-tests:
+    name: Automated Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run
+        run: echo "Running Automated Tests"
