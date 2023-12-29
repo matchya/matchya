@@ -37,6 +37,7 @@ jobs:
     needs: [cleanup, check-for-web-folder-changes]
     if: needs.check-for-web-folder-changes.outputs.package_changed == 'true'
     runs-on: ubuntu-latest
+    environment: production
     timeout-minutes: 15
     env:
       ENVIRONMENT: production
