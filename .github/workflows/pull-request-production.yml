@@ -10,7 +10,7 @@ on:
       - synchronize
 
 jobs:
-    analyze:
+    analyze-commits:
       name: Analyze
       uses: ./.github/workflows/job-analyze-commits.yml
       with:
