@@ -47,16 +47,16 @@ jobs:
           fi
           for scope_item in "${scopes[@]}"; do
             scope_changes=$(git log --pretty=format:"%s" origin/main..origin/develop | grep -E "feat\($scope_item\)|fix\($scope_item\)|chore\($scope_item\)" || echo "")
-            if [ -n "$scope_changes" ]; then
+            if [ "$scope_changes" == "" ]; then
               changes+="$scope_changes"$'\n'
             fi
           done
           echo "$changes"
-          if [ -n "$changes" ]; then
-            if [ "${{ matrix.component.type }}" == "web" ]; then
+          if [ "$changes" == "" ]; then
+            if [ "${{ matrix.component }}" == "web" ]; then
               echo "There were changes in web..."
               echo "::set-output name=should_prepare_web_release::true"
-            elif [ "${{ matrix.component.type }}" == "server" ]; then
+            elif [ "${{ matrix.component }}" == "server" ]; then
               echo "There were changes in server..."
               echo "::set-output name=should_prepare_server_release::true"
             fi
