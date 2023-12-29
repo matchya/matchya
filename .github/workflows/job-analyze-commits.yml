@@ -51,6 +51,7 @@ jobs:
               changes+="$scope_changes"$'\n'
             fi
           done
+          echo "$changes"
           if [ -n "$changes" ]; then
             if [ "${{ matrix.component.type }}" == "web" ]; then
               echo "There were changes in web..."
