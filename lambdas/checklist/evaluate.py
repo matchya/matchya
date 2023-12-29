@@ -329,6 +329,22 @@ def update_candidate_result_status(candidate_result_id: str, status='failed'):
     :param status: The status of the candidate result.
     """
     logger.info("Updating the candidate result status...")
+    sql = f"SELECT status FROM candidate_result WHERE id = '{candidate_result_id}';"
+    try:
+        db_cursor.execute(sql)
+        result = db_cursor.fetchone()
+        if result and result[0]:
+            current_status = result[0]
+        else:
+            current_status = None
+    except Exception as e:
+        logger.error(f"Failed to get candidate result status: {e}")
+        raise RuntimeError("Failed to get candidate result status")
+
+    if current_status is None or current_status != 'scheduled':
+        logger.info(f"Evaluation status is not scheduled, nothing to update. status: {current_status}")
+        return
+
     try:
         sql = f"UPDATE candidate_result SET status = '{status}' WHERE id = '{candidate_result_id}';"
         db_cursor.execute(sql)
