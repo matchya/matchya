@@ -7,7 +7,9 @@
           { "type": "feat", "scope": "web", "release": "minor" },
           { "type": "fix", "scope": "web", "release": "patch" },
           { "type": "chore", "scope": "web", "release": "patch" },
-          { "type": "*", "release": false }
+          { "type": "feat", "scope": "!web", "release": false },
+          { "type": "fix", "scope": "!web", "release": false },
+          { "type": "chore", "scope": "!web", "release": false }
         ]
       }
     ],
@@ -19,13 +21,17 @@
           "npmPublish": false
         }
     ],
+    [
+      "@semantic-release/exec",
+      {
+        "generateNotesCmd": "npx conventional-changelog -p angular -i CHANGELOG.md -s -r 0 -k ./changelog.config.js"
+      }
+    ],
     "@semantic-release/git",
     "@semantic-release/github"
   ],
   "branches": [
-    "master",
-    "main",
     "staging"
   ],
-  "tagFormat": "web-${version}"
+  "tagFormat": "web-v${version}"
 }
