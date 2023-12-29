@@ -54,7 +54,7 @@ jobs:
               echo "There were changes in server..."
               echo "::set-output name=should_prepare_server_release::true"
             fi
-            gh pr comment "$PULL_REQUEST_NUMBER" --body $'### 🚀 **Preparing for '"$COMPONENT"' release**\nThese changes will be incorporated into the forthcoming release:\n\n'"$changes"$''
+            gh pr comment "$PULL_REQUEST_NUMBER" --body $'### 🚀 **Preparing for '"$COMPONENT"$' release**\nThese changes will be incorporated into the forthcoming release:\n\n'"$changes"$''
           else
             echo "No Changes..."
             echo "::set-output name=should_prepare_web_release::false"
@@ -62,5 +62,5 @@ jobs:
           fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          COMPONENT: ${{ matrix.component.type }}
+          COMPONENT: ${{ matrix.component }}
           PULL_REQUEST_NUMBER: ${{ inputs.pull_request_number }}
