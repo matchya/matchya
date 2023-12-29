@@ -6,7 +6,8 @@
         "releaseRules": [
           { "type": "feat", "scope": "web", "release": "minor" },
           { "type": "fix", "scope": "web", "release": "patch" },
-          { "type": "chore", "scope": "web", "release": "patch" }
+          { "type": "chore", "scope": "web", "release": "patch" },
+          { "type": "*", "release": false }
         ]
       }
     ],
@@ -25,5 +26,6 @@
     "master",
     "main",
     "staging"
-  ]
+  ],
+  "tagFormat": "web-${version}"
 }

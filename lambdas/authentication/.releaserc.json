@@ -6,7 +6,8 @@
         "releaseRules": [
           { "type": "feat", "scope": "authentication", "release": "minor" },
           { "type": "fix", "scope": "authentication", "release": "patch" },
-          { "type": "chore", "scope": "authentication", "release": "patch" }
+          { "type": "chore", "scope": "authentication", "release": "patch" },
+          { "type": "*", "release": false }
         ]
       }
     ],
@@ -22,8 +23,7 @@
     "@semantic-release/github"
   ],
   "branches": [
-    "master",
-    "main",
     "staging"
-  ]
+  ],
+  "tagFormat": "authentication-v${version}"
 }

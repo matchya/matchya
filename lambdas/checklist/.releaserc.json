@@ -6,7 +6,8 @@
         "releaseRules": [
           { "type": "feat", "scope": "checklist", "release": "minor" },
           { "type": "fix", "scope": "checklist", "release": "patch" },
-          { "type": "chore", "scope": "checklist", "release": "patch" }
+          { "type": "chore", "scope": "checklist", "release": "patch" },
+          { "type": "*", "release": false }
         ]
       }
     ],
@@ -25,5 +26,6 @@
     "master",
     "main",
     "staging"
-  ]
+  ],
+  "tagFormat": "checklist-v${version}"
 }

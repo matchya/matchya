@@ -6,7 +6,8 @@
         "releaseRules": [
           { "type": "feat", "scope": "authorizer", "release": "minor" },
           { "type": "fix", "scope": "authorizer", "release": "patch" },
-          { "type": "chore", "scope": "authorizer", "release": "patch" }
+          { "type": "chore", "scope": "authorizer", "release": "patch" },
+          { "type": "*", "release": false }
         ]
       }
     ],
@@ -25,5 +26,6 @@
     "master",
     "main",
     "staging"
-  ]
+  ],
+  "tagFormat": "authorizer-v${version}"
 }

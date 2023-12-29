@@ -7,28 +7,15 @@
   "author": "",
   "license": "ISC",
   "scripts": {
-    "prepare": "husky install",
-    "release:web": "semantic-release --extends ./web/.releaserc.json",
-    "release:authentication": "semantic-release --extends ./lambdas/authentication/.releaserc.json",
-    "release:authorizer": "semantic-release --extends ./lambdas/authorizer/.releaserc.json",
-    "release:checklist": "semantic-release --extends ./lambdas/checklist/.releaserc.json",
-    "release:company": "semantic-release --extends ./lambdas/company/.releaserc.json",
-    "release:position": "semantic-release --extends ./lambdas/position/.releaserc.json"
+    "prepare": "husky install"
   },
   "lint-staged": {
     "web/**/*.{js,jsx,ts,tsx}": "cd web && npm run lint && npm run format",
     "lambdas/**/*.py": "cd lambdas && flake8"
   },
   "devDependencies": {
-    "@semantic-release/changelog": "^6.0.3",
-    "@semantic-release/commit-analyzer": "^11.1.0",
-    "@semantic-release/git": "^10.0.1",
-    "@semantic-release/github": "^9.2.6",
-    "@semantic-release/npm": "^11.0.2",
-    "@semantic-release/release-notes-generator": "^12.1.0",
     "husky": "^8.0.3",
     "lint-staged": "^15.1.0",
-    "semantic-release": "^22.0.12",
     "serverless": "^3.36.0"
   }
 }

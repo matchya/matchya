@@ -6,7 +6,8 @@
         "releaseRules": [
           { "type": "feat", "scope": "company", "release": "minor" },
           { "type": "fix", "scope": "company", "release": "patch" },
-          { "type": "chore", "scope": "company", "release": "patch" }
+          { "type": "chore", "scope": "company", "release": "patch" },
+          { "type": "*", "release": false }
         ]
       }
     ],
@@ -25,5 +26,6 @@
     "master",
     "main",
     "staging"
-  ]
+  ],
+  "tagFormat": "company-v${version}"
 }

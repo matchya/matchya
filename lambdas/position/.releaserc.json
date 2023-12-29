@@ -6,7 +6,8 @@
         "releaseRules": [
           { "type": "feat", "scope": "position", "release": "minor" },
           { "type": "fix", "scope": "position", "release": "patch" },
-          { "type": "chore", "scope": "position", "release": "patch" }
+          { "type": "chore", "scope": "position", "release": "patch" },
+          { "type": "*", "release": false }
         ]
       }
     ],
@@ -25,5 +26,6 @@
     "master",
     "main",
     "staging"
-  ]
+  ],
+  "tagFormat": "position-v${version}"
 }
