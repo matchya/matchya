@@ -8,7 +8,7 @@
   "license": "ISC",
   "scripts": {
     "prepare": "husky install",
-    "release:web": "semantic-release --extends ./client/.releaserc",
+    "release:web": "semantic-release --extends ./web/.releaserc",
     "release:server": "semantic-release --extends ./lambdas/.releaserc"
   },
   "lint-staged": {

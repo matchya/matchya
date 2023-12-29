@@ -27,6 +27,6 @@ jobs:
 
     - name: Release
       run: |
-        npm run release:server
+        npm run release:${{ inputs.component }}
       env:
         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
