@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'web/**'
 
 jobs:
   cleanup:
@@ -29,19 +27,33 @@ jobs:
       ENVIRONMENT: production
     steps:
       - uses: actions/checkout@v3
+
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            package:
+              - 'web/**'
+
       - uses: actions/setup-node@v3
         with:
           cache: npm
           node-version: 18
+        if: steps.changes.outputs.package == 'true'
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
+        if: steps.changes.outputs.package == 'true'
+
       - name: Set execute permissions for deploy script
         run: chmod +x scripts/deploy_to_s3.sh
       - name: Deploy to S3
         shell: bash
         run: |
           cd scripts && ./deploy_to_s3.sh --bucket-name ${{ secrets.WEBSITE_BUCKET_NAME }} --environment ${{ env.ENVIRONMENT }}
+        if: steps.changes.outputs.package == 'true'
+
