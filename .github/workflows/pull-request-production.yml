@@ -10,33 +10,36 @@ on:
       - synchronize
 
 jobs:
-    analyze-commits:
-      name: Analyze
-      uses: ./.github/workflows/job-analyze-commits.yml
-      with:
-        pull_request_number: ${{ github.event.pull_request.number }}
-      secrets: inherit
+  cleanup-artifacts:
+    name: Clean artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Remove previous artifacts
+        uses: actions/github-script@v5
+        with:
+          script: |
+            const repoOwner = context.repo.owner
+            const repoName = context.repo.repo
+            const runId = context.runId
+            const artifactResponse = await github.rest.actions.listWorkflowRunArtifacts({
+              owner: repoOwner,
+              repo: repoName,
+              run_id: runId
+            });
+            const artifacts = artifactResponse.data.artifacts;
+            console.log(`Found ${artifacts.length} artifacts.`);
+            for (const artifact of artifacts) {
+              await github.rest.actions.deleteArtifact({
+                owner: repoOwner,
+                repo: repoName,
+                artifact_id: artifact.id
+              });
+              console.log(`Deleted artifact: ${artifact.name} (${artifact.id})`);
+            }
 
-    create-release-web:
-      needs: analyze-commits
-      if: ${{ needs.analyze-commits.outputs.should_prepare_web_release == 'true' }}
-      name: Create Release (web)
-      environment: production
-      runs-on: ubuntu-latest
-      timeout-minutes: 15
-      steps:
-        - uses: ./.github/workflows/job-create-release.yml
-          with:
-            component: web
-
-    create-release-server:
-      needs: analyze-commits
-      if: ${{ needs.analyze-commits.outputs.should_prepare_server_release == 'true' }}
-      name: Create Release (server)
-      environment: production
-      runs-on: ubuntu-latest
-      timeout-minutes: 15
-      steps:
-        - uses: ./.github/workflows/job-create-release.yml
-          with:
-            component: server
+  analyze-commits:
+    name: Analyze
+    uses: ./.github/workflows/job-analyze-commits.yml
+    with:
+      pull_request_number: ${{ github.event.pull_request.number }}
+    secrets: inherit

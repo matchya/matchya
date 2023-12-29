@@ -4,13 +4,6 @@ on:
       pull_request_number:
         required: true
         type: number
-    outputs:
-      should_prepare_web_release:
-        description: "Indicates if a Web release should be prepared"
-        value: ${{ jobs.run.outputs.should_prepare_web_release }}
-      should_prepare_server_release:
-        description: "Indicates if a Server release should be prepared"
-        value: ${{ jobs.run.outputs.should_prepare_server_release }}
 
 jobs:
   run:
@@ -47,25 +40,31 @@ jobs:
           fi
           for scope_item in "${scopes[@]}"; do
             scope_changes=$(git log --pretty=format:"%s" origin/main..origin/develop | grep -E "feat\($scope_item\)|fix\($scope_item\)|chore\($scope_item\)" || echo "")
-            if [ -n "$scope_changes" ]; then
+            if [ "$scope_changes" == "" ]; then
               changes+="$scope_changes"$'\n'
             fi
           done
-          if [ -n "$changes" ]; then
-            if [ "${{ matrix.component.type }}" == "web" ]; then
+          if [ "$changes" == "" ]; then
+            if [ "${{ matrix.component }}" == "web" ]; then
               echo "There were changes in web..."
-              echo "::set-output name=should_prepare_web_release::true"
-            elif [ "${{ matrix.component.type }}" == "server" ]; then
+              echo "true" > web_release_decision.txt
+            elif [ "${{ matrix.component }}" == "server" ]; then
               echo "There were changes in server..."
+              echo "true" > server_release_decision.txt
               echo "::set-output name=should_prepare_server_release::true"
             fi
             gh pr comment "$PULL_REQUEST_NUMBER" --body $'### 🚀 **Preparing for '"$COMPONENT"$' release**\nThese changes will be incorporated into the forthcoming release:\n\n'"$changes"$''
           else
             echo "No Changes..."
-            echo "::set-output name=should_prepare_web_release::false"
-            echo "::set-output name=should_prepare_server_release::false"
+            echo "false" > web_release_decision.txt
+            echo "false" > server_release_decision.txt
           fi
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          COMPONENT: ${{ matrix.component }}
-          PULL_REQUEST_NUMBER: ${{ inputs.pull_request_number }}
+      - name: Upload release decision artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{matrix.component}}_release_decision
+          path: ${{matrix.component}}_release_decision.txt
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      COMPONENT: ${{ matrix.component }}
+      PULL_REQUEST_NUMBER: ${{ inputs.pull_request_number }}

@@ -4,19 +4,29 @@ on:
         component:
           required: true
           type: string
+        environment:
+          required: true
+          type: string
 
 jobs:
   run:
     name: ${{ inputs.component }}
     runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
     steps:
     - uses: actions/checkout@v3
+
     - uses: actions/setup-node@v3
       with:
         cache: npm
         node-version: 18
+
+    - name: Install dependencies
+      run: |
+        npm install
+
     - name: Release
       run: |
-        npm run release:server
-        env:
+        npm run release:${{ inputs.component }}
+      env:
         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
