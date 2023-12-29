@@ -63,6 +63,34 @@ jobs:
   automated-tests:
     name: Automated Tests
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        component: ['authentication', 'authorizer', 'checklist', 'company', 'position']
     steps:
-      - name: Run
-        run: echo "Running Automated Tests"
+      - uses: actions/checkout@v3
+
+      - uses: dorny/paths-filter@v2
+        if: matrix.component == 'web'
+        id: changes-web
+        with:
+          filters: |
+            package:
+              - '${{matrix.component}}/**'
+
+      - uses: dorny/paths-filter@v2
+        if: matrix.component != 'web'
+        id: changes-lambda
+        with:
+          filters: |
+            package:
+              - 'lambdas/${{matrix.component}}/**'
+
+      - name: Run (${{matrix.component}})
+        if: matrix.component == 'web' && steps.changes-web.outputs.package == 'true'
+        run: echo "Running automated tests..."
+        working-directory: ${{matrix.component}}
+
+      - name: Run (${{matrix.component}})
+        if: matrix.component != 'web' && steps.changes-lambda.outputs.package == 'true'
+        run: echo "Running automated tests..."
+        working-directory: lambdas/${{matrix.component}}

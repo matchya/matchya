@@ -27,12 +27,12 @@ jobs:
               - '${{matrix.component}}/**'
 
       - name: Run Tests (${{matrix.component}})
-        if: matrix.component == 'web'
+        if: matrix.component == 'web' && steps.changes.outputs.package == 'true'
         run: echo "Running unit tests..."
         working-directory: ${{matrix.component}}
 
       - name: Run Tests (${{matrix.component}})
-        if: matrix.component != 'web'
+        if: matrix.component != 'web' && steps.changes.outputs.package == 'true'
         run: echo "Running unit tests..."
         working-directory: lambdas/${{matrix.component}}
 
@@ -46,18 +46,27 @@ jobs:
       - uses: actions/checkout@v3
 
       - uses: dorny/paths-filter@v2
-        id: changes
+        if: matrix.component == 'web'
+        id: changes-web
         with:
           filters: |
             package:
               - '${{matrix.component}}/**'
 
+      - uses: dorny/paths-filter@v2
+        if: matrix.component != 'web'
+        id: changes-lambda
+        with:
+          filters: |
+            package:
+              - 'lambdas/${{matrix.component}}/**'
+
       - name: Run (${{matrix.component}})
-        if: matrix.component == 'web'
+        if: matrix.component == 'web' && steps.changes-web.outputs.package == 'true'
         run: echo "Running api tests..."
         working-directory: ${{matrix.component}}
 
       - name: Run (${{matrix.component}})
-        if: matrix.component != 'web'
+        if: matrix.component != 'web' && steps.changes-lambda.outputs.package == 'true'
         run: echo "Running api tests..."
         working-directory: lambdas/${{matrix.component}}
