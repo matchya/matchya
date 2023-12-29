@@ -305,7 +305,7 @@ def save_repository_names_to_db(checklist_id: str, repository_names: list):
         raise RuntimeError("Error saving repository names to postgres")
 
 
-def update_generation_status(position_id: str, checklist_status: str):
+def update_generation_status(position_id: str, checklist_status='failed'):
     """
     Updates the generation status of the position.
 
@@ -313,6 +313,22 @@ def update_generation_status(position_id: str, checklist_status: str):
     :param checklist_status: The status of the checklist.
     """
     logger.info("Updating the generation status...")
+    sql = f"SELECT checklist_generation_status FROM position WHERE id = '{position_id}';"
+    try:
+        db_cursor.execute(sql)
+        result = db_cursor.fetchone()
+        if result and result[0]:
+            current_status = result[0]
+        else:
+            current_status = None
+    except Exception as e:
+        logger.error(f"Error getting generation status from postgres: {e}")
+        raise RuntimeError("Error getting generation status from postgres")
+
+    if current_status is None or current_status != 'scheduled':
+        logger.info(f"Generation status is not scheduled, nothing to update. status: {current_status}")
+        return
+
     sql = f"UPDATE position SET checklist_generation_status = '{checklist_status}' WHERE id = '{position_id}';"
     try:
         db_cursor.execute(sql)

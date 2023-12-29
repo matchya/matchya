@@ -18,9 +18,24 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
           onlyRemoveDeployments: true
 
+  check-for-web-folder-changes:
+    name: Check for changes in Web
+    runs-on: ubuntu-latest
+    outputs:
+      package_changed: ${{ steps.changes.outputs.package }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            package:
+              - 'web/**'
+
   deploy-to-s3:
     name: Deploy to S3
-    needs: cleanup
+    needs: [cleanup, check-for-web-folder-changes]
+    if: needs.check-for-changes.outputs.package_changed == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
