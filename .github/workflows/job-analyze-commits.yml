@@ -39,22 +39,20 @@ jobs:
         run: |
           git fetch origin main
           git fetch origin develop
-          echo "BEFORE CHANGES"
           changes=$(git log --pretty=format:"%s" origin/main..origin/develop | grep -E "feat\($COMPONENT\)|fix\($COMPONENT\)|chore\($COMPONENT\)" || echo "")
-          echo "Changes: $changes"
           if [ "$changes" != "" ]; then
-            echo "WAS CHANGES"
             if [ "$COMPONENT" == "web" ]; then
               echo "::set-output name=should_prepare_web_release::true"
             elif [ "$COMPONENT" == "server" ]; then
               echo "::set-output name=should_prepare_server_release::true"
             fi
-            gh pr comment $PULL_REQUEST_NUMBER --body $'### 🚀 **Preparing for '"$COMPONENT"' release**\nThese changes will be incorporated into the forthcoming release:\n\n'"$changes"$''
+            comment_body="### 🚀 **Preparing for $COMPONENT release**\nThese changes will be incorporated into the forthcoming release:\n\n$changes"
+            gh pr comment "$PULL_REQUEST_NUMBER" --body "$comment_body"
           else
-            echo "WASNT CHANGES"
             echo "::set-output name=should_prepare_web_release::false"
             echo "::set-output name=should_prepare_server_release::false"
-            gh pr comment $PULL_REQUEST_NUMBER --body $'### **Skipping \'"$COMPONENT"\' release**\n\n\''"$COMPONENT"\' release will be skipped this time'
+            comment_body="### **Skipping $COMPONENT release**\n\n$COMPONENT release will be skipped this time"
+            gh pr comment "$PULL_REQUEST_NUMBER" --body "$comment_body"
           fi
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
