@@ -1,13 +1,15 @@
-name: PR Pipeline
+name: PR Pipeline (Develop)
 
 on:
   pull_request:
+    branches:
+        - develop
+    types:
+    - opened
+    - reopened
+    - synchronize
 
 jobs:
-  validate:
-    name: Validate
-    uses: ./.github/workflows/job-validate-pr-title.yml
-
   unit-tests:
     name: Unit Tests
     runs-on: ubuntu-latest

@@ -9,7 +9,11 @@
   "scripts": {
     "prepare": "husky install",
     "release:web": "semantic-release --extends ./web/.releaserc.json",
-    "release:server": "semantic-release --extends ./lambdas/.releaserc.json"
+    "release:authentication": "semantic-release --extends ./lambdas/authentication/.releaserc.json",
+    "release:authorizer": "semantic-release --extends ./lambdas/authorizer/.releaserc.json",
+    "release:checklist": "semantic-release --extends ./lambdas/checklist/.releaserc.json",
+    "release:company": "semantic-release --extends ./lambdas/company/.releaserc.json",
+    "release:position": "semantic-release --extends ./lambdas/position/.releaserc.json"
   },
   "lint-staged": {
     "web/**/*.{js,jsx,ts,tsx}": "cd web && npm run lint && npm run format",
