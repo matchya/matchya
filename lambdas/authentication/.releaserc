@@ -6,7 +6,10 @@
         "releaseRules": [
           { "type": "feat", "scope": "authentication", "release": "minor" },
           { "type": "fix", "scope": "authentication", "release": "patch" },
-          { "type": "chore", "scope": "authentication", "release": "patch" }
+          { "type": "chore", "scope": "authentication", "release": "patch" },
+          { "type": "feat", "scope": "!authentication", "release": false },
+          { "type": "fix", "scope": "!authentication", "release": false },
+          { "type": "chore", "scope": "!authentication", "release": false }
         ]
       }
     ],
