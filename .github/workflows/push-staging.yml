@@ -80,3 +80,4 @@ jobs:
     with:
       component: ${{matrix.component}}
       environment: staging
+    secrets: inherit
