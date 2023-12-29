@@ -16,11 +16,11 @@ jobs:
         matrix:
           component: ['web', 'server']
       with:
-        component: ${{matrix.component}}
+        component: ${{ matrix.component }}
 
     create-release-web:
       needs: analyze-commits
-      if: ${{ needs.analyze-commits.outputs.should_prepare_ui_release == 'true' }}
+      if: ${{ needs.analyze-commits.outputs.should_prepare_web_release == 'true' }}
       name: Create Release (Web)
       environment: production
       runs-on: ubuntu-latest

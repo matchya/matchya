@@ -5,19 +5,19 @@ on:
         required: true
         type: string
     outputs:
-      should_prepare_ui_release:
-        description: "Indicates if a UI release should be prepared"
-        value: ${{ jobs.analyze-commits.outputs.should_prepare_ui_release }}
+      should_prepare_web_release:
+        description: "Indicates if a Web release should be prepared"
+        value: ${{ jobs.analyze-commits.outputs.should_prepare_web_release }}
       should_prepare_server_release:
         description: "Indicates if a Server release should be prepared"
-        value: ${{ jobs.analyze-commits.outputs.should_prepare_ui_release }}
+        value: ${{ jobs.analyze-commits.outputs.should_prepare_web_release }}
 
 jobs:
   analyze-commits:
     name: Analyze Commits
     runs-on: ubuntu-latest
     outputs:
-      should_prepare_ui_release: ${{ steps.analyze.outputs.should_prepare_ui_release }}
+      should_prepare_web_release: ${{ steps.analyze.outputs.should_prepare_web_release }}
       should_prepare_server_release: ${{ steps.analyze.outputs.should_prepare_server_release }}
     steps:
       - name: Checkout develop branch
