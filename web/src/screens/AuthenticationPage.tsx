@@ -8,7 +8,8 @@ const AuthenticationPage = () => {
 
   const handleGithubLogin = () => {
     setIsLoading(true);
-    const redirectUri = `${clientEndpoint}/auth/github/callback`;
+    // const redirectUri = `${clientEndpoint}/auth/github/callback`;
+    const redirectUri = 'https://www.matchyaa.com/auth/github/callback';
     const loginUrl = `https://github.com/login/oauth/authorize?client_id=${githubClientId}&redirect_uri=${redirectUri}&scope=repo,user`;
 
     window.location.href = loginUrl;
