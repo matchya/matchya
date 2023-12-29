@@ -4,11 +4,15 @@ on:
         component:
           required: true
           type: string
+        environment:
+          required: true
+          type: string
 
 jobs:
   run:
     name: ${{ inputs.component }}
     runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
     steps:
     - uses: actions/checkout@v3
 

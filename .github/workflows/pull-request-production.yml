@@ -21,22 +21,16 @@ jobs:
       needs: analyze-commits
       if: ${{ needs.analyze-commits.outputs.should_prepare_web_release == 'true' }}
       name: Create Release (web)
-      environment: production
-      runs-on: ubuntu-latest
-      timeout-minutes: 15
-      steps:
-        - uses: ./.github/workflows/job-create-release.yml
-          with:
-            component: web
+      uses: ./.github/workflows/job-create-release.yml
+      with:
+        component: web
+        environment: production
 
     create-release-server:
       needs: analyze-commits
       if: ${{ needs.analyze-commits.outputs.should_prepare_server_release == 'true' }}
       name: Create Release (server)
-      environment: production
-      runs-on: ubuntu-latest
-      timeout-minutes: 15
-      steps:
-        - uses: ./.github/workflows/job-create-release.yml
-          with:
-            component: server
+      uses: ./.github/workflows/job-create-release.yml
+      with:
+        component: server
+        environment: production
