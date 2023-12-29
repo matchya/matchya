@@ -34,20 +34,21 @@ jobs:
       - name: Gather and comment PR with changes
         id: analyze
         run: |
-            git fetch origin main
-            git fetch origin develop
-            changes=$(git log --pretty=format:"%s" origin/main..origin/develop | grep -E 'feat\(${{inputs.component}}\)|fix\(${{inputs.component}}\)|chore\(${{inputs.component}}\)')
-            if [ -n "$changes" ]; then
-              if [ "${{ inputs.component }}" == "web" ]; then
-                echo "::set-output name=should_prepare_web_release::true"
-              elif [ "${{ inputs.component }}" == "server" ]; then
-                echo "::set-output name=should_prepare_server_release::true"
+          git fetch origin main
+          git fetch origin develop
+          changes=$(git log --pretty=format:"%s" origin/main..origin/develop | grep -E "feat\($COMPONENT\)|fix\($COMPONENT\)|chore\($COMPONENT\)")
+          if [ -n "$changes" ]; then
+            if [ "$COMPONENT" == "web" ]; then
+              echo "::set-output name=should_prepare_web_release::true"
+            elif [ "$COMPONENT" == "server" ]; then
+              echo "::set-output name=should_prepare_server_release::true"
             fi
-            gh pr comment ${{ github.event.pull_request.number }} --body $'### 🚀 **Preparing for ${{ inputs.component }} release**\nThese changes will be incorporated into the forthcoming release:\n\n'"$changes"$''
-            else
-              echo "::set-output name=should_prepare_web_release::false"
-              echo "::set-output name=should_prepare_server_release::false"
-            gh pr comment ${{ github.event.pull_request.number }} --body $'### **Skipping ${{ inputs.component }} release**\n\n${{inputs.component}} release will be skipped this time'
-            fi
+            gh pr comment ${{ github.event.pull_request.number }} --body $'### 🚀 **Preparing for '"$COMPONENT"' release**\nThese changes will be incorporated into the forthcoming release:\n\n'"$changes"$''
+          else
+            echo "::set-output name=should_prepare_web_release::false"
+            echo "::set-output name=should_prepare_server_release::false"
+            gh pr comment ${{ github.event.pull_request.number }} --body $'### **Skipping '"$COMPONENT"' release**\n\n'"$COMPONENT"' release will be skipped this time'
+          fi
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          COMPONENT: ${{ inputs.component }}
