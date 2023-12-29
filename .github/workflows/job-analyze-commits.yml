@@ -39,6 +39,7 @@ jobs:
         run: |
           git fetch origin main
           git fetch origin develop
+          echo "BEFORE CHANGES"
           changes=$(git log --pretty=format:"%s" origin/main..origin/develop | grep -E "feat\($COMPONENT\)|fix\($COMPONENT\)|chore\($COMPONENT\)")
           echo "Changes: $changes"
           if [ -n "$changes" ]; then
