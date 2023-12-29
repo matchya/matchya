@@ -71,19 +71,11 @@ jobs:
   #       run: |
   #         cd scripts && ./deploy_to_s3.sh --bucket-name ${{ secrets.WEBSITE_BUCKET_NAME }} --environment ${{ env.ENVIRONMENT }}
 
-  create-release-web:
-    name: Create Release (web)
-    uses: ./.github/workflows/job-create-release.yml
-    with:
-      component: web
-      environment: staging
-    secrets: inherit
-
-  create-release-server:
-    name: Create Release (server)
+  create-release:
+    name: Create Release
     strategy:
       matrix:
-        component: ['authentication', 'authorizer', 'checklist', 'company', 'position']
+        component: ['web', 'authentication', 'authorizer', 'checklist', 'company', 'position']
     uses: ./.github/workflows/job-create-release.yml
     with:
       component: ${{matrix.component}}

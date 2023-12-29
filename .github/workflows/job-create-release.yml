@@ -1,12 +1,12 @@
 on:
-    workflow_call:
-      inputs:
-        component:
-          required: true
-          type: string
-        environment:
-          required: true
-          type: string
+  workflow_call:
+    inputs:
+      component:
+        required: true
+        type: string
+      environment:
+        required: true
+        type: string
 
 jobs:
   run:
