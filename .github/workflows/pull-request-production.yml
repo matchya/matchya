@@ -25,24 +25,9 @@ jobs:
       runs-on: ubuntu-latest
       timeout-minutes: 15
       steps:
-        - uses: actions/checkout@v3
-        - uses: actions/setup-node@v3
+        - uses: ./.github/workflows/job-create-release.yml
           with:
-            cache: npm
-            node-version: 18
-        - name: Install dependencies
-          run: |
-            cd web
-            npm install
-        - name: Build
-          run: |
-            cd web
-            npm run build
-        - name: Release
-          run: |
-            npm run release:web
-          env:
-            GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+            component: web
 
     create-release-server:
       needs: analyze-commits
@@ -52,13 +37,6 @@ jobs:
       runs-on: ubuntu-latest
       timeout-minutes: 15
       steps:
-        - uses: actions/checkout@v3
-        - uses: actions/setup-node@v3
+        - uses: ./.github/workflows/job-create-release.yml
           with:
-            cache: npm
-            node-version: 18
-        - name: Release
-          run: |
-              npm run release:server
-          env:
-            GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+            component: server
