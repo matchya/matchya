@@ -1,0 +1,54 @@
+on:
+  workflow_call:
+    inputs:
+      pull_request_number:
+        required: true
+        type: number
+    outputs:
+      should_prepare_web_release:
+        description: "Indicates if a Web release should be prepared"
+        value: ${{ jobs.analyze-commits.outputs.should_prepare_web_release }}
+      should_prepare_server_release:
+        description: "Indicates if a Server release should be prepared"
+        value: ${{ jobs.analyze-commits.outputs.should_prepare_server_release }}
+
+jobs:
+  run:
+    name: Commits
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        component: ['web', 'server']
+    outputs:
+      should_prepare_web_release: ${{ steps.analyze.outputs.should_prepare_web_release }}
+      should_prepare_server_release: ${{ steps.analyze.outputs.should_prepare_server_release }}
+    steps:
+      - name: Checkout develop branch
+        uses: actions/checkout@v2
+        with:
+            ref: 'develop'
+            fetch-depth: 0
+
+      - name: Gather and comment PR with changes
+        id: analyze
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git fetch origin main
+          git fetch origin develop
+          changes=$(git log --pretty=format:"%s" origin/main..origin/develop | grep -E "feat\($COMPONENT\)|fix\($COMPONENT\)|chore\($COMPONENT\)" || echo "")
+          if [ "$changes" != "" ]; then
+            if [ "$COMPONENT" == "web" ]; then
+              echo "::set-output name=should_prepare_web_release::true"
+            elif [ "$COMPONENT" == "server" ]; then
+              echo "::set-output name=should_prepare_server_release::true"
+            fi
+            gh pr comment "$PULL_REQUEST_NUMBER" --body $'### 🚀 **Preparing for release**\nThese changes will be incorporated into the forthcoming release:\n\n'"$changes"$''
+          else
+            echo "::set-output name=should_prepare_web_release::false"
+            echo "::set-output name=should_prepare_server_release::false"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COMPONENT: ${{ matrix.component }}
+          PULL_REQUEST_NUMBER: ${{ inputs.pull_request_number }}

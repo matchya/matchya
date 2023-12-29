@@ -1,0 +1,46 @@
+name: Web Pipeline
+
+on:
+  pull_request:
+    branches:
+      - 'main'
+    types:
+      - opened
+      - reopened
+      - synchronize
+
+jobs:
+    analyze-commits:
+      name: Analyze
+      uses: ./.github/workflows/job-analyze-commits.yml
+      with:
+        pull_request_number: ${{ github.event.pull_request.number }}
+      secrets: inherit
+
+    create-release-web:
+      needs: analyze-commits
+      if: ${{ needs.analyze-commits.outputs.should_prepare_web_release == 'true' }}
+      name: Create Release (web)
+      environment: production
+      runs-on: ubuntu-latest
+      timeout-minutes: 15
+      steps:
+        - uses: actions/checkout@v3
+        - uses: actions/setup-node@v3
+          with:
+            cache: npm
+            node-version: 18
+        - name: Install dependencies
+          run: |
+            cd web
+            npm install
+        - name: Build
+          run: |
+            cd web
+            npm run build
+        - name: Release
+          run: |
+              cd web
+              npm run release
+          env:
+            GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
