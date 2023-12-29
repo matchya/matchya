@@ -10,8 +10,11 @@ jobs:
       run: |
         PR_TITLE="${{ github.event.pull_request.title }}"
         PATTERN="^(feat|fix|chore)(\(web\)|\(authentication\)|\(authorizer\)|\(checklist\)|\(company\)|\(position\)|\(ci\)|\(terraform\)): .+"
+        EXCEPTIONS=("Production Deployment" "chore")
 
-        if ! [[ $PR_TITLE =~ $PATTERN ]]; then
+        if [[ " ${EXCEPTIONS[@]} " =~ " $PR_TITLE " ]]; then
+            echo "PR title is an allowed exception."
+        elif ! [[ $PR_TITLE =~ $PATTERN ]]; then
             echo "PR title does not match the required format 'type(scope): description' or 'type: description'"
             exit 1
         fi
