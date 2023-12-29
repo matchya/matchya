@@ -4,8 +4,7 @@ module.exports = {
     if (commit.scope === 'authentication') {
         return commit;
     }
-
     return false;
     }
-}
+  }
 };
