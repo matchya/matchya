@@ -47,7 +47,7 @@ jobs:
           else
             echo "::set-output name=should_prepare_web_release::false"
             echo "::set-output name=should_prepare_server_release::false"
-            gh pr comment "$PULL_REQUEST_NUMBER" --body $'### **Skipping '"$COMPONENT"$' release**\nDon't mind'
+            gh pr comment "$PULL_REQUEST_NUMBER" --body $'### **Skipping '"$COMPONENT"$' release**\nDont mind'
           fi
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
