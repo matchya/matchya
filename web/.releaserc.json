@@ -23,6 +23,7 @@
   ],
   "branches": [
     "master",
-    "main"
+    "main",
+    "develop"
   ]
 }
