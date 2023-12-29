@@ -16,9 +16,6 @@ jobs:
     strategy:
       matrix:
         component: ['web', 'server']
-    outputs:
-      should_prepare_web_release: ${{ steps.analyze.outputs.should_prepare_web_release }}
-      should_prepare_server_release: ${{ steps.analyze.outputs.should_prepare_server_release }}
     steps:
       - name: Checkout develop branch
         uses: actions/checkout@v2
