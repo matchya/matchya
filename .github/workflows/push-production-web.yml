@@ -35,7 +35,7 @@ jobs:
   deploy-to-s3:
     name: Deploy to S3
     needs: [cleanup, check-for-web-folder-changes]
-    if: needs.check-for-changes.outputs.package_changed == 'true'
+    if: needs.check-for-web-folder-changes.outputs.package_changed == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
