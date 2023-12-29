@@ -40,7 +40,25 @@ jobs:
             npm run build
         - name: Release
           run: |
-              cd web
-              npm run release
+            npm run release:web
+          env:
+            GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
+    create-release-server:
+      needs: analyze-commits
+      if: ${{ needs.analyze-commits.outputs.should_prepare_server_release == 'true' }}
+      name: Create Release (server)
+      environment: production
+      runs-on: ubuntu-latest
+      timeout-minutes: 15
+      steps:
+        - uses: actions/checkout@v3
+        - uses: actions/setup-node@v3
+          with:
+            cache: npm
+            node-version: 18
+        - name: Release
+          run: |
+              npm run release:server
           env:
             GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}

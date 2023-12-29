@@ -29,22 +29,39 @@ jobs:
             ref: 'develop'
             fetch-depth: 0
 
-      - name: Gather and comment PR with changes
-        id: analyze
+      - name: Set up Git
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
+
+      - name: Gather and comment PR with changes
+        id: analyze
+        run: |
           git fetch origin main
           git fetch origin develop
-          changes=$(git log --pretty=format:"%s" origin/main..origin/develop | grep -E "feat\($COMPONENT\)|fix\($COMPONENT\)|chore\($COMPONENT\)" || echo "")
-          if [ "$changes" != "" ]; then
-            if [ "$COMPONENT" == "web" ]; then
+          changes=""
+          if [ "${{ matrix.component }}" == "web" ]; then
+            scopes=('web')
+          elif [ "${{ matrix.component }}" == "server" ]; then
+            scopes=('authentication' 'authorizer' 'checklist' 'company' 'position')
+          fi
+          for scope_item in "${scopes[@]}"; do
+            scope_changes=$(git log --pretty=format:"%s" origin/main..origin/develop | grep -E "feat\($scope_item\)|fix\($scope_item\)|chore\($scope_item\)" || echo "")
+            if [ -n "$scope_changes" ]; then
+              changes+="$scope_changes\n"
+            fi
+          done
+          if [ -n "$changes" ]; then
+            if [ "${{ matrix.component.type }}" == "web" ]; then
+              echo "There were changes in web..."
               echo "::set-output name=should_prepare_web_release::true"
-            elif [ "$COMPONENT" == "server" ]; then
+            elif [ "${{ matrix.component.type }}" == "server" ]; then
+              echo "There were changes in server..."
               echo "::set-output name=should_prepare_server_release::true"
             fi
-            gh pr comment "$PULL_REQUEST_NUMBER" --body $'### 🚀 **Preparing for release**\nThese changes will be incorporated into the forthcoming release:\n\n'"$changes"$''
+            gh pr comment "$PULL_REQUEST_NUMBER" --body $'### 🚀 **Preparing for '"$COMPONENT"$' release**\nThese changes will be incorporated into the forthcoming release:\n\n'"$changes"$''
           else
+            echo "No Changes..."
             echo "::set-output name=should_prepare_web_release::false"
             echo "::set-output name=should_prepare_server_release::false"
           fi
