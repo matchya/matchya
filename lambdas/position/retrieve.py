@@ -149,7 +149,7 @@ def process_position_from_sql_results(sql_results):
                 'assessments': {}
             }
 
-        if email and candidate_result_status == 'succeeded':
+        if email and criterion_id and candidate_result_status == 'succeeded':
             criterion = [criterion for criterion in criteria if criterion['id'] == criterion_id][0]
             candidates[email]['assessments'][criterion['id']] = {
                 'criterion': {
