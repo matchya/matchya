@@ -3,12 +3,13 @@ on:
 
 jobs:
   validate-title:
+    name: PR Title
     runs-on: ubuntu-latest
     steps:
     - name: Check PR Title
       run: |
         PR_TITLE="${{ github.event.pull_request.title }}"
-        PATTERN="^(feat|fix|chore)(\(web\)|\(lambda\)|): .+"
+        PATTERN="^(feat|fix|chore)(\(web\)|\(lambda\)|\(ci\)|\(terraform\)): .+"
 
         if ! [[ $PR_TITLE =~ $PATTERN ]]; then
             echo "PR title does not match the required format 'type(scope): description' or 'type: description'"
