@@ -7,10 +7,10 @@ on:
     outputs:
       should_prepare_web_release:
         description: "Indicates if a Web release should be prepared"
-        value: ${{ jobs.analyze-commits.outputs.should_prepare_web_release }}
+        value: ${{ jobs.run.outputs.should_prepare_web_release }}
       should_prepare_server_release:
         description: "Indicates if a Server release should be prepared"
-        value: ${{ jobs.analyze-commits.outputs.should_prepare_server_release }}
+        value: ${{ jobs.run.outputs.should_prepare_server_release }}
 
 jobs:
   run:
