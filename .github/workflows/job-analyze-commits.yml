@@ -54,18 +54,24 @@ jobs:
           if [ "$changes" == "" ]; then
             if [ "${{ matrix.component }}" == "web" ]; then
               echo "There were changes in web..."
-              echo "::set-output name=should_prepare_web_release::true"
+              echo "true" > web_release_decision.txt
             elif [ "${{ matrix.component }}" == "server" ]; then
               echo "There were changes in server..."
+              echo "true" > server_release_decision.txt
               echo "::set-output name=should_prepare_server_release::true"
             fi
             gh pr comment "$PULL_REQUEST_NUMBER" --body $'### 🚀 **Preparing for '"$COMPONENT"$' release**\nThese changes will be incorporated into the forthcoming release:\n\n'"$changes"$''
           else
             echo "No Changes..."
-            echo "::set-output name=should_prepare_web_release::false"
-            echo "::set-output name=should_prepare_server_release::false"
+            echo "false" > web_release_decision.txt
+            echo "false" > server_release_decision.txt
           fi
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          COMPONENT: ${{ matrix.component }}
-          PULL_REQUEST_NUMBER: ${{ inputs.pull_request_number }}
+      - name: Upload release decision artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{matrix.component}}-release-decision
+          path: ${{matrix.component}}-release_decision.txt
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      COMPONENT: ${{ matrix.component }}
+      PULL_REQUEST_NUMBER: ${{ inputs.pull_request_number }}

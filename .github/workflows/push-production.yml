@@ -70,3 +70,60 @@ jobs:
         run: |
           cd scripts && ./deploy_to_s3.sh --bucket-name ${{ secrets.WEBSITE_BUCKET_NAME }} --environment ${{ env.ENVIRONMENT }}
 
+  determine-release-web:
+    runs-on: ubuntu-latest
+    outputs:
+      should_release_web: ${{steps.read_decision.outputs.should_release_web}}
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Download web release decision artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: web-release-decision
+          path: artifact
+
+      - name: Read release decision
+        id: read_decision
+        run: |
+          decision=$(cat artifact/web_release_decision.txt)
+          echo "Release decision: $decision"
+          echo "::set-output name=should_release_web::$decision"
+
+  determine-release-server:
+    runs-on: ubuntu-latest
+    outputs:
+      should_release_server: ${{steps.read_decision.outputs.should_release_server}}
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Download server release decision artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: server-release-decision
+          path: artifact
+
+      - name: Read release decision
+        id: read_decision
+        run: |
+          decision=$(cat artifact/server_release_decision.txt)
+          echo "Release decision: $decision"
+          echo "::set-output name=should_release_server::$decision"
+
+  create-release-web:
+    needs: determine-release-web
+    if: ${{ needs.determine-release-web.outputs.should_release_web == 'true' }}
+    name: Create Release (web)
+    uses: ./.github/workflows/job-create-release.yml
+    with:
+      component: web
+      environment: production
+
+  create-release-server:
+    needs: determine-release-server
+    if: ${{ needs.determine-release-server.outputs.should_release_server == 'true' }}
+    name: Create Release (server)
+    uses: ./.github/workflows/job-create-release.yml
+    with:
+      component: server
+      environment: production
