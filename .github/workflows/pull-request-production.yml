@@ -11,12 +11,14 @@ on:
 
 jobs:
     analyze-commits:
+      name: Analyze Commits
       uses: ./.github/workflows/job-analyze-commits.yml
       strategy:
         matrix:
           component: ['web', 'server']
       with:
         component: ${{ matrix.component }}
+      secrets: inherit
 
     create-release-web:
       needs: analyze-commits
