@@ -1,10 +1,9 @@
-name: Pull Request Pipeline
+name: PR Pipeline
 
 on:
   pull_request:
 
 jobs:
-    validate:
-      name: Validate
-      uses: ./.github/workflows/job-validate-pr-title.yml
-
+  validate:
+    name: Validate
+    uses: ./.github/workflows/job-validate-pr-title.yml
