@@ -21,6 +21,12 @@
           "npmPublish": false
         }
     ],
+    [
+      "@semantic-release/exec",
+      {
+        "generateNotesCmd": "npx conventional-changelog -p angular -i CHANGELOG.md -s -r 0 -k ./changelog.config.js"
+      }
+    ],
     "@semantic-release/git",
     "@semantic-release/github"
   ],
