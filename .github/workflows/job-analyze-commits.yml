@@ -36,6 +36,8 @@ jobs:
         run: |
           git fetch origin main
           git fetch origin develop
+          echo "HELLO"
+          echo "$COMPONENT"
           changes=$(git log --pretty=format:"%s" origin/main..origin/develop | grep -E "feat\($COMPONENT\)|fix\($COMPONENT\)|chore\($COMPONENT\)")
           if [ -n "$changes" ]; then
             if [ "$COMPONENT" == "web" ]; then
