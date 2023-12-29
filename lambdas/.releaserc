@@ -1,0 +1,40 @@
+{
+  "plugins": [
+    [
+      "@semantic-release/commit-analyzer",
+      {
+        "releaseRules": [
+          { "type": "feat", "scope": "authentication", "release": "minor" },
+          { "type": "feat", "scope": "authorizer", "release": "minor" },
+          { "type": "feat", "scope": "checklist", "release": "minor" },
+          { "type": "feat", "scope": "company", "release": "minor" },
+          { "type": "feat", "scope": "position", "release": "minor" },
+          { "type": "fix", "scope": "authentication", "release": "patch" },
+          { "type": "fix", "scope": "authorizer", "release": "patch" },
+          { "type": "fix", "scope": "checklist", "release": "patch" },
+          { "type": "fix", "scope": "company", "release": "patch" },
+          { "type": "fix", "scope": "position", "release": "patch" },
+          { "type": "chore", "scope": "authentication", "release": "patch" },
+          { "type": "chore", "scope": "authorizer", "release": "patch" },
+          { "type": "chore", "scope": "checklist", "release": "patch" },
+          { "type": "chore", "scope": "company", "release": "patch" },
+          { "type": "chore", "scope": "position", "release": "patch" }
+        ]
+      }
+    ],
+    "@semantic-release/release-notes-generator",
+    "@semantic-release/changelog",
+    [
+        "@semantic-release/npm",
+        {
+          "npmPublish": false
+        }
+    ],
+    "@semantic-release/git",
+    "@semantic-release/github"
+  ],
+  "branches": [
+    "master",
+    "main"
+  ]
+}

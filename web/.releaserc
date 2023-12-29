@@ -4,10 +4,9 @@
       "@semantic-release/commit-analyzer",
       {
         "releaseRules": [
-          { "type": "feat", "scope": "ui", "release": "minor" },
-          { "type": "fix", "scope": "ui", "release": "patch" },
-          { "type": "chore", "scope": "ui", "release": "patch" },
-          {"type": "chore",  "release": "patch"}
+          { "type": "feat", "scope": "web", "release": "minor" },
+          { "type": "fix", "scope": "web", "release": "patch" },
+          { "type": "chore", "scope": "web", "release": "patch" }
         ]
       }
     ],

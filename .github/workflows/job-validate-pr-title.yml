@@ -9,7 +9,7 @@ jobs:
     - name: Check PR Title
       run: |
         PR_TITLE="${{ github.event.pull_request.title }}"
-        PATTERN="^(feat|fix|chore)(\(web\)|\(lambda\)|\(ci\)|\(terraform\)): .+"
+        PATTERN="^(feat|fix|chore)(\(web\)|\(authentication\)|\(authorizer\)|\(checklist\)|\(company\)|\(position\)|\(ci\)|\(terraform\)): .+"
 
         if ! [[ $PR_TITLE =~ $PATTERN ]]; then
             echo "PR title does not match the required format 'type(scope): description' or 'type: description'"

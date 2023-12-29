@@ -18,7 +18,16 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        component: ['web', 'server']
+        component: [
+          {
+            'type': 'web',
+            'scope': ['web']
+          },
+          {
+            'type': 'server',
+            'scope': ['authentication', 'authorizer', 'checklist', 'company', 'position']
+          }
+        ]
     outputs:
       should_prepare_web_release: ${{ steps.analyze.outputs.should_prepare_web_release }}
       should_prepare_server_release: ${{ steps.analyze.outputs.should_prepare_server_release }}
@@ -36,19 +45,24 @@ jobs:
           git config user.email "actions@github.com"
           git fetch origin main
           git fetch origin develop
-          changes=$(git log --pretty=format:"%s" origin/main..origin/develop | grep -E "feat\($COMPONENT\)|fix\($COMPONENT\)|chore\($COMPONENT\)" || echo "")
-          if [ "$changes" != "" ]; then
-            if [ "$COMPONENT" == "web" ]; then
+          changes=""
+          for scope_item in "${SCOPE[@]}"; do
+            scope_changes=$(git log --pretty=format:"%s" origin/main..origin/develop | grep -E "feat\($scope_item\)|fix\($scope_item\)|chore\($scope_item\)" || echo "")
+            changes+="$scope_changes\n"
+          done
+          if [ -n "$changes" ]; then
+            if [ "${{ matrix.component.type }}" == "web" ]; then
               echo "::set-output name=should_prepare_web_release::true"
-            elif [ "$COMPONENT" == "server" ]; then
+            elif [ "${{ matrix.component.type }}" == "server" ]; then
               echo "::set-output name=should_prepare_server_release::true"
             fi
-            gh pr comment "$PULL_REQUEST_NUMBER" --body $'### 🚀 **Preparing for release**\nThese changes will be incorporated into the forthcoming release:\n\n'"$changes"$''
+            gh pr comment "$PULL_REQUEST_NUMBER" --body $'### 🚀 **Preparing for '"$COMPONENT"' release**\nThese changes will be incorporated into the forthcoming release:\n\n'"$changes"$''
           else
             echo "::set-output name=should_prepare_web_release::false"
             echo "::set-output name=should_prepare_server_release::false"
           fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          COMPONENT: ${{ matrix.component }}
+          COMPONENT: ${{ matrix.component.type }}
+          SCOPE: ${{ matrix.component.scope }}
           PULL_REQUEST_NUMBER: ${{ inputs.pull_request_number }}
