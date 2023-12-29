@@ -69,8 +69,8 @@ jobs:
       - name: Upload release decision artifact
         uses: actions/upload-artifact@v2
         with:
-          name: ${{matrix.component}}-release-decision
-          path: ${{matrix.component}}-release_decision.txt
+          name: ${{matrix.component}}_release_decision
+          path: ${{matrix.component}}_release_decision.txt
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       COMPONENT: ${{ matrix.component }}
