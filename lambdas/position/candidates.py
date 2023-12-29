@@ -94,7 +94,7 @@ def process_position_from_sql_results(sql_results):
         (candidate_id, first_name, last_name, email, github_username,
          total_score, summary, candidate_result_status, created_at, criterion_id, score, reason) = row
 
-        if candidate_id not in candidate_data:
+        if candidate_id and candidate_id not in candidate_data:
             candidate_data[candidate_id] = {
                 'id': candidate_id,
                 'first_name': first_name,
