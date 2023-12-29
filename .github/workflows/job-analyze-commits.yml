@@ -29,11 +29,14 @@ jobs:
             ref: 'develop'
             fetch-depth: 0
 
-      - name: Gather and comment PR with changes
-        id: analyze
+      - name: Set up Git
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
+
+      - name: Gather and comment PR with changes
+        id: analyze
+        run: |
           git fetch origin main
           git fetch origin develop
           changes=""
