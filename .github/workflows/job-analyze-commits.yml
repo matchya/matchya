@@ -44,7 +44,7 @@ jobs:
           fi
           for scope_item in "${scopes[@]}"; do
             scope_changes=$(git log --pretty=format:"%s" origin/main..origin/develop | grep -E "feat\($scope_item\)|fix\($scope_item\)|chore\($scope_item\)" || echo "")
-            changes+="$scope_changes\n"
+            changes+=''"$scope_changes"$'\n'
           done
           if [ -n "$changes" ]; then
             if [ "${{ matrix.component.type }}" == "web" ]; then
