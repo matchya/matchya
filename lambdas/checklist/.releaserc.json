@@ -7,7 +7,9 @@
           { "type": "feat", "scope": "checklist", "release": "minor" },
           { "type": "fix", "scope": "checklist", "release": "patch" },
           { "type": "chore", "scope": "checklist", "release": "patch" },
-          { "type": "*", "release": false }
+          { "type": "feat", "scope": "!checklist", "release": false },
+          { "type": "fix", "scope": "!checklist", "release": false },
+          { "type": "chore", "scope": "!checklist", "release": false }
         ]
       }
     ],
@@ -19,12 +21,16 @@
           "npmPublish": false
         }
     ],
+    [
+      "@semantic-release/exec",
+      {
+        "generateNotesCmd": "npx conventional-changelog -p angular -i CHANGELOG.md -s -r 0 -k ./changelog.config.js"
+      }
+    ],
     "@semantic-release/git",
     "@semantic-release/github"
   ],
   "branches": [
-    "master",
-    "main",
     "staging"
   ],
   "tagFormat": "checklist-v${version}"
