@@ -98,7 +98,7 @@ class GithubClient:
         content = decoded.decode("utf-8")
         return content
 
-    def get_pinned_repositories_name(self) -> list:
+    def get_n_repositories_name(self, n=6) -> list:
         """
         Retrieves the names of the pinned repositories of a GitHub user.
 
@@ -108,7 +108,7 @@ class GithubClient:
         {
             repositoryOwner(login: "%s") {
                 ... on User {
-                    pinnableItems(first: 6, types: REPOSITORY) {
+                    pinnableItems(first: %s, types: REPOSITORY) {
                         edges {
                             node {
                                 ... on Repository {
@@ -123,7 +123,7 @@ class GithubClient:
                 }
             }
         }
-        """ % self.github_username
+        """ % self.github_username, n
         data = self._run_github_query(query)
         if data is None or data.get("repositoryOwner") is None or data.get("repositoryOwner").get("pinnableItems") is None:
             self.logger.error("Getting pinned repositories failed. No data found.")

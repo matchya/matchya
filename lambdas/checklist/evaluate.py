@@ -106,7 +106,8 @@ def retrieve_candidate_github_data(github_client: GithubClient) -> list:
     :param github_client: The GitHub client.
     :return: The candidate's GitHub repository data.
     """
-    pinned_repositories = github_client.get_pinned_repositories_name()
+    n_repositories = 8
+    pinned_repositories = github_client.get_n_repositories_name(n=n_repositories)
     logger.info("Retrieving repositories data...")
     try:
         repositories_data = []
