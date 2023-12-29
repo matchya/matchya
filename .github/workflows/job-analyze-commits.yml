@@ -16,8 +16,8 @@ on:
         value: ${{ jobs.analyze-commits.outputs.should_prepare_server_release }}
 
 jobs:
-  analyze-commits:
-    name: Analyze Commits
+  run:
+    name: ${{ inputs.component }}
     runs-on: ubuntu-latest
     outputs:
       should_prepare_web_release: ${{ steps.analyze.outputs.should_prepare_web_release }}
@@ -40,9 +40,9 @@ jobs:
           git fetch origin main
           git fetch origin develop
           echo "BEFORE CHANGES"
-          changes=$(git log --pretty=format:"%s" origin/main..origin/develop | grep -E "feat\($COMPONENT\)|fix\($COMPONENT\)|chore\($COMPONENT\)")
+          changes=$(git log --pretty=format:"%s" origin/main..origin/develop | grep -E "feat\($COMPONENT\)|fix\($COMPONENT\)|chore\($COMPONENT\)" || echo "")
           echo "Changes: $changes"
-          if [ -n "$changes" ]; then
+          if [ "$changes" != "" ]; then
             echo "WAS CHANGES"
             if [ "$COMPONENT" == "web" ]; then
               echo "::set-output name=should_prepare_web_release::true"
