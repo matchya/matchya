@@ -18,6 +18,7 @@ jobs:
           component: ['web', 'server']
       with:
         component: ${{ matrix.component }}
+        pull_request_number: ${{ github.event.pull_request.number }}
       secrets: inherit
 
     create-release-web:

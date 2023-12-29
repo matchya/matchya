@@ -4,6 +4,9 @@ on:
       component:
         required: true
         type: string
+      pull_request_number:
+        required: true
+        type: number
     outputs:
       should_prepare_web_release:
         description: "Indicates if a Web release should be prepared"
@@ -36,10 +39,10 @@ jobs:
         run: |
           git fetch origin main
           git fetch origin develop
-          echo "HELLO"
-          echo "$COMPONENT"
           changes=$(git log --pretty=format:"%s" origin/main..origin/develop | grep -E "feat\($COMPONENT\)|fix\($COMPONENT\)|chore\($COMPONENT\)")
+          echo "Changes: $changes"
           if [ -n "$changes" ]; then
+            echo "WAS CHANGES"
             if [ "$COMPONENT" == "web" ]; then
               echo "::set-output name=should_prepare_web_release::true"
             elif [ "$COMPONENT" == "server" ]; then
@@ -47,10 +50,12 @@ jobs:
             fi
             gh pr comment ${{ github.event.pull_request.number }} --body $'### 🚀 **Preparing for '"$COMPONENT"' release**\nThese changes will be incorporated into the forthcoming release:\n\n'"$changes"$''
           else
+            echo "WASNT CHANGES"
             echo "::set-output name=should_prepare_web_release::false"
             echo "::set-output name=should_prepare_server_release::false"
-            gh pr comment ${{ github.event.pull_request.number }} --body $'### **Skipping '"$COMPONENT"' release**\n\n'"$COMPONENT"' release will be skipped this time'
+            gh pr comment ${{  }} --body $'### **Skipping '"$COMPONENT"' release**\n\n'"$COMPONENT"' release will be skipped this time'
           fi
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           COMPONENT: ${{ inputs.component }}
+          PULL_REQUEST_NUMBER: ${{ inputs.pull_request_number }}
