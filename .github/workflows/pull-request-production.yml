@@ -1,4 +1,4 @@
-name: Web Pipeline
+name: Pull Request Pipeline (Production)
 
 on:
   pull_request:
