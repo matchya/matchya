@@ -77,6 +77,7 @@ jobs:
     with:
       component: web
       environment: staging
+    secrets: inherit
 
   create-release-server:
     name: Create Release (server)
@@ -87,3 +88,4 @@ jobs:
     with:
       component: ${{matrix.component}}
       environment: staging
+    secrets: inherit

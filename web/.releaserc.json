@@ -24,6 +24,6 @@
   "branches": [
     "master",
     "main",
-    "develop"
+    "staging"
   ]
 }
