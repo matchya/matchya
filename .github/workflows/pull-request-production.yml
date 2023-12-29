@@ -20,7 +20,7 @@ jobs:
     create-release-web:
       needs: analyze-commits
       if: ${{ needs.analyze-commits.outputs.should_prepare_web_release == 'true' }}
-      name: Create Release (Web)
+      name: Create Release (web)
       environment: production
       runs-on: ubuntu-latest
       timeout-minutes: 15

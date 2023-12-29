@@ -50,6 +50,6 @@ jobs:
             gh pr comment "$PULL_REQUEST_NUMBER" --body $'### **Skipping '"$COMPONENT"$' release**\nDon\'t mind'
           fi
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COMPONENT: ${{ matrix.component }}
           PULL_REQUEST_NUMBER: ${{ inputs.pull_request_number }}
