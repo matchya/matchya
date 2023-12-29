@@ -144,7 +144,7 @@ def create_candidate_result_to_db(checklist_id, candidate_id) -> (str, str):
             logger.info(f"Updating the candidate result status to scheduled, id: {result[0]}")
             sql = f"UPDATE candidate_result SET status = '{new_status}' WHERE id = '{result[0]}'"
             db_cursor.execute(sql)
-            return result[0], result[1]
+            return result[0], str(result[1])
 
         id = str(uuid.uuid4())
         created_at = str(datetime.datetime.now())
