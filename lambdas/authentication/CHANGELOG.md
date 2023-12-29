@@ -1,22 +1,21 @@
-## [1.0.1](https://github.com/kokiebisu/matchya/compare/authentication-v1.0.0...authentication-v1.0.1) (2023-12-29)
+## [1.0.2](https://github.com/kokiebisu/matchya/compare/authentication-v1.0.1...authentication-v1.0.2) (2023-12-29)
 
 
 ### Bug Fixes
 
-* **authentication:** test ([0c3ac6a](https://github.com/kokiebisu/matchya/commit/0c3ac6a03e64b439c2e46871f020b56ca70a661c))
+* **authentication:** experiment ([6e1e78d](https://github.com/kokiebisu/matchya/commit/6e1e78d8db02b2d5411883c1725b1755413fe8dd))
+* **authentication:** minor fix ([e6a19d5](https://github.com/kokiebisu/matchya/commit/e6a19d5d793633be11b5a18f6aa85e88e46fa293))
 
-
-### Features
-
-* **lambda:** improve evaluation algorithm to give higher scores ([#425](https://github.com/kokiebisu/matchya/issues/425)) ([65b0f10](https://github.com/kokiebisu/matchya/commit/65b0f102bce5e16aaec561b29a7d150e121b956f))
-
-# 1.0.0 (2023-12-29)
+#  (2023-12-29)
 
 
 ### Bug Fixes
 
 * adjust lambda environment variables to follow new terraform structure ([#103](https://github.com/kokiebisu/matchya/issues/103)) ([a3ad0be](https://github.com/kokiebisu/matchya/commit/a3ad0be5a582c6e8f1cea5dee50c6d2409ffdc0f))
+* **authentication:** experiment ([6e1e78d](https://github.com/kokiebisu/matchya/commit/6e1e78d8db02b2d5411883c1725b1755413fe8dd))
+* **authentication:** minor fix ([e6a19d5](https://github.com/kokiebisu/matchya/commit/e6a19d5d793633be11b5a18f6aa85e88e46fa293))
 * **authentication:** table names in queries should be snakecase ([#140](https://github.com/kokiebisu/matchya/issues/140)) ([bd5dffc](https://github.com/kokiebisu/matchya/commit/bd5dffc01ec8f96815751b0eecee3ce1350c6be9))
+* **authentication:** test ([0c3ac6a](https://github.com/kokiebisu/matchya/commit/0c3ac6a03e64b439c2e46871f020b56ca70a661c))
 * **ci:** add pr title exceptions ([46c6072](https://github.com/kokiebisu/matchya/commit/46c60726ceeeda87aaff7b7081affb9d573cbd38))
 * **ci:** add step to install dependencies in create-release job ([82d3760](https://github.com/kokiebisu/matchya/commit/82d3760f57285be4026ac13ec2e316ddb6898f12))
 * **ci:** configuration files not being properly loaded ([e99ab55](https://github.com/kokiebisu/matchya/commit/e99ab55d8ac6ad1799095a59cccf32c39513146a))
@@ -89,6 +88,7 @@
 * **infra:** set up sqs for criteria generate ([#184](https://github.com/kokiebisu/matchya/issues/184)) ([2b0810b](https://github.com/kokiebisu/matchya/commit/2b0810b33546869912447143189b49cfd1eeb722))
 * **infra:** set up test rds inside vpc ([#177](https://github.com/kokiebisu/matchya/issues/177)) ([49d48a2](https://github.com/kokiebisu/matchya/commit/49d48a29655b45f594093fcdd4e61e41f2f5d370))
 * **infra:** split terraform by environment and shared ([#100](https://github.com/kokiebisu/matchya/issues/100)) ([0380903](https://github.com/kokiebisu/matchya/commit/0380903ab21ed83a156276a5a73ceaa32a8d25f9))
+* **lambda:** improve evaluation algorithm to give higher scores ([#425](https://github.com/kokiebisu/matchya/issues/425)) ([65b0f10](https://github.com/kokiebisu/matchya/commit/65b0f102bce5e16aaec561b29a7d150e121b956f))
 * make register attach cookie instead of response body ([#156](https://github.com/kokiebisu/matchya/issues/156)) ([8a3c142](https://github.com/kokiebisu/matchya/commit/8a3c14250e3571bdbdfb3cf57e297abcc25d643a))
 * mechanism to load up sql tables on db startup ([#117](https://github.com/kokiebisu/matchya/issues/117)) ([282d033](https://github.com/kokiebisu/matchya/commit/282d033d3d87536ea6d8b0ee71ff9a5ee9963fff))
 * set up authorizer lambda ([#26](https://github.com/kokiebisu/matchya/issues/26)) ([81b620f](https://github.com/kokiebisu/matchya/commit/81b620f2bc7de904468b7d260f73807f196c6c99))
