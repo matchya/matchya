@@ -1,3 +1,15 @@
+## [1.0.1](https://github.com/kokiebisu/matchya/compare/authentication-v1.0.0...authentication-v1.0.1) (2023-12-29)
+
+
+### Bug Fixes
+
+* **authentication:** test ([0c3ac6a](https://github.com/kokiebisu/matchya/commit/0c3ac6a03e64b439c2e46871f020b56ca70a661c))
+
+
+### Features
+
+* **lambda:** improve evaluation algorithm to give higher scores ([#425](https://github.com/kokiebisu/matchya/issues/425)) ([65b0f10](https://github.com/kokiebisu/matchya/commit/65b0f102bce5e16aaec561b29a7d150e121b956f))
+
 # 1.0.0 (2023-12-29)
 
 
