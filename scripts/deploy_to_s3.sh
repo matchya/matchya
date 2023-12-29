@@ -56,6 +56,13 @@ if [ ! -d "$(dirname "$0")/../web/node_modules" ]; then
     cd -
 fi
 
+# Check if .env file exists in the web directory
+env_file="$(dirname "$0")/../web/.env"
+if [ ! -f "$env_file" ]; then
+    echo ".env file not found in web directory. Please ensure it exists before building."
+    exit 1
+fi
+
 # Build the UI bundle
 cd $(dirname "$0")/../web
 if ! npm run build; then
