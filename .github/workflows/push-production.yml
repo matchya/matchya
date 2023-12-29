@@ -58,12 +58,6 @@ jobs:
           aws-region: us-east-1
         if: steps.changes.outputs.package == 'true'
 
-      - name: Testing ENV
-        run: |
-          echo "VITE_API_URL=${{ secrets.VITE_API_URL }}"
-          echo "VITE_GITHUB_CLIENT_ID=${{ secrets.VITE_GITHUB_CLIENT_ID }}"
-          echo "VITE_CLIENT_URL=${{ secrets.VITE_CLIENT_URL }}"
-
       - name: Fetch environment variables and create .env in web folder
         run: |
           echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" >> web/.env
