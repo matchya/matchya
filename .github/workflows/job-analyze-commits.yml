@@ -1,0 +1,48 @@
+on:
+  workflow_call:
+    inputs:
+      component:
+        required: true
+        type: string
+    outputs:
+      should_prepare_ui_release:
+        description: "Indicates if a UI release should be prepared"
+        value: ${{ jobs.analyze-commits.outputs.should_prepare_ui_release }}
+      should_prepare_server_release:
+        description: "Indicates if a Server release should be prepared"
+        value: ${{ jobs.analyze-commits.outputs.should_prepare_ui_release }}
+
+jobs:
+  analyze-commits:
+    name: Analyze Commits
+    runs-on: ubuntu-latest
+    outputs:
+      should_prepare_ui_release: ${{ steps.analyze.outputs.should_prepare_ui_release }}
+      should_prepare_server_release: ${{ steps.analyze.outputs.should_prepare_server_release }}
+    steps:
+      - name: Checkout develop branch
+        uses: actions/checkout@v2
+        with:
+            ref: 'develop'
+            fetch-depth: 0
+
+      - name: Setup Git
+        run: |
+            git config user.name "GitHub Actions"
+            git config user.email "actions@github.com"
+
+      - name: Gather and comment PR with changes
+        id: analyze
+        run: |
+            git fetch origin main
+            git fetch origin develop
+            changes=$(git log --pretty=format:"%s" origin/main..origin/develop | grep -E 'feat\(${{inputs.component}}\)|fix\(${{inputs.component}}\)|chore\(${{inputs.component}}\)')
+            if [ -n "$changes" ]; then
+              echo "::set-output name=should_prepare_${{ inputs.component }}_release::true"
+              gh pr comment ${{ github.event.pull_request.number }} --body $'### 🚀 **Preparing for ${{ inputs.component }} release**\nThese changes will be incorporated into the forthcoming release:\n\n'"$changes"$''
+            else
+              echo "::set-output name=should_prepare_${{ inputs.component }}_release::false"
+              gh pr comment ${{ github.event.pull_request.number }} --body $'### **Skipping ${{ inputs.component }} release**\n\n${{inputs.component}} release will be skipped this time'
+            fi
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
