@@ -37,88 +37,59 @@ jobs:
     name: Deploy to S3
     needs: [cleanup, check-for-web-folder-changes]
     if: needs.check-for-web-folder-changes.outputs.package_changed == 'true'
-    runs-on: ubuntu-latest
-    environment: staging
-    timeout-minutes: 15
-    env:
-      ENVIRONMENT: staging
-    steps:
-      - uses: actions/checkout@v3
-
-      - uses: actions/setup-node@v3
-        with:
-          cache: npm
-          node-version: 18
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-
-      - name: Fetch environment variables and create .env in web folder
-        run: |
-          echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" >> web/.env
-          echo "VITE_GITHUB_CLIENT_ID=${{ secrets.VITE_GITHUB_CLIENT_ID }}" >> web/.env
-          echo "VITE_CLIENT_URL=${{ secrets.VITE_CLIENT_URL }}" >> web/.env
-
-      - name: Set execute permissions for deploy script
-        run: chmod +x scripts/deploy_to_s3.sh
-      - name: Deploy to S3
-        shell: bash
-        run: |
-          cd scripts && ./deploy_to_s3.sh --bucket-name ${{ secrets.WEBSITE_BUCKET_NAME }} --environment ${{ env.ENVIRONMENT }}
-
-  create-release-web:
-    name: Create Release (web)
-    uses: ./.github/workflows/job-create-release.yml
+    uses: ./.github/workflows/job-deploy-to-s3.yml
     with:
-      component: web
       environment: staging
-    secrets: inherit
 
-  create-release-authentication:
-    name: Create Release (authentication)
-    needs: create-release-web
-    uses: ./.github/workflows/job-create-release.yml
-    with:
-      component: authentication
-      environment: staging
-    secrets: inherit
+  # create-release-web:
+  #   name: Create Release (web)
+  #   uses: ./.github/workflows/job-create-release.yml
+  #   with:
+  #     component: web
+  #     environment: staging
+  #   secrets: inherit
 
-  create-release-authorizer:
-    name: Create Release (authorizer)
-    needs: create-release-authentication
-    uses: ./.github/workflows/job-create-release.yml
-    with:
-      component: authorizer
-      environment: staging
-    secrets: inherit
+  # create-release-authentication:
+  #   name: Create Release (authentication)
+  #   needs: create-release-web
+  #   uses: ./.github/workflows/job-create-release.yml
+  #   with:
+  #     component: authentication
+  #     environment: staging
+  #   secrets: inherit
 
-  create-release-checklist:
-    name: Create Release (checklist)
-    needs: create-release-authorizer
-    uses: ./.github/workflows/job-create-release.yml
-    with:
-      component: checklist
-      environment: staging
-    secrets: inherit
+  # create-release-authorizer:
+  #   name: Create Release (authorizer)
+  #   needs: create-release-authentication
+  #   uses: ./.github/workflows/job-create-release.yml
+  #   with:
+  #     component: authorizer
+  #     environment: staging
+  #   secrets: inherit
 
-  create-release-company:
-    name: Create Release (company)
-    needs: create-release-checklist
-    uses: ./.github/workflows/job-create-release.yml
-    with:
-      component: company
-      environment: staging
-    secrets: inherit
+  # create-release-checklist:
+  #   name: Create Release (checklist)
+  #   needs: create-release-authorizer
+  #   uses: ./.github/workflows/job-create-release.yml
+  #   with:
+  #     component: checklist
+  #     environment: staging
+  #   secrets: inherit
 
-  create-release-position:
-    name: Create Release (position)
-    needs: create-release-company
-    uses: ./.github/workflows/job-create-release.yml
-    with:
-      component: position
-      environment: staging
-    secrets: inherit
+  # create-release-company:
+  #   name: Create Release (company)
+  #   needs: create-release-checklist
+  #   uses: ./.github/workflows/job-create-release.yml
+  #   with:
+  #     component: company
+  #     environment: staging
+  #   secrets: inherit
+
+  # create-release-position:
+  #   name: Create Release (position)
+  #   needs: create-release-company
+  #   uses: ./.github/workflows/job-create-release.yml
+  #   with:
+  #     component: position
+  #     environment: staging
+  #   secrets: inherit
