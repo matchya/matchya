@@ -18,8 +18,7 @@ while (( "$#" )); do
   esac
 done
 
-# Setting AWS configuration
-if [ "$environment" != "production" ]; then
+if [ "$environment" != "production" ] && [ "$environment" != "staging" ]; then
     if [ -z "$AWS_PROFILE" ]; then
         echo "AWS_PROFILE is not set. Please set it before running this script."
         exit 1
