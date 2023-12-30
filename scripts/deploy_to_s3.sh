@@ -39,7 +39,7 @@ if [ -z "$environment" ]; then
 fi
 
 # Get the distribution id from SSM parameter
-distribution_id=$(aws ssm get-parameter --name "/terraform/shared/${environment}/www/cloudfront_distribution_id" --query "Parameter.Value" --output text)
+distribution_id=$(aws ssm get-parameter --name "/terraform/shared/${bucket_name}/www/cloudfront_distribution_id" --query "Parameter.Value" --output text)
 if [ -z "$distribution_id" ]; then
     echo "Distribution ID not found. Exiting without deploying to S3."
     exit 1
