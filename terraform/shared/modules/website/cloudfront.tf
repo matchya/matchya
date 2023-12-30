@@ -1,7 +1,11 @@
-resource "aws_cloudfront_distribution" "www_root" {
+resource "aws_cloudfront_distribution" "www" {
+  depends_on = [
+    aws_s3_bucket.www,
+    aws_acm_certificate_validation.cert
+  ]
   origin {
-    domain_name = aws_s3_bucket.www_root.bucket_regional_domain_name
-    origin_id   = "S3-${aws_s3_bucket.www_root.bucket}"
+    domain_name = aws_s3_bucket.www.bucket_regional_domain_name
+    origin_id   = "S3-${aws_s3_bucket.www.bucket}"
 
     s3_origin_config {
       origin_access_identity = aws_cloudfront_origin_access_identity.origin_access_identity.cloudfront_access_identity_path
@@ -46,7 +50,7 @@ resource "aws_cloudfront_distribution" "www_root" {
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD"]
     cached_methods   = ["GET", "HEAD"]
-    target_origin_id = "S3-${aws_s3_bucket.www_root.bucket}"
+    target_origin_id = "S3-${aws_s3_bucket.www.bucket}"
 
     forwarded_values {
       query_string = false
@@ -77,11 +81,15 @@ resource "aws_cloudfront_distribution" "www_root" {
   }
 }
 
-resource "aws_cloudfront_distribution" "root" {
+resource "aws_cloudfront_distribution" "main" {
+   depends_on = [
+    aws_s3_bucket.main,
+    aws_acm_certificate_validation.cert
+  ]
   enabled = true
 
   origin {
-    origin_id                = "S3-${aws_s3_bucket.root.bucket}"
+    origin_id                = "S3-${aws_s3_bucket.main.bucket}"
     domain_name              = "${var.domain_name}.s3-website-${var.region}.amazonaws.com"
     custom_origin_config {
       http_port              = 80
@@ -92,7 +100,7 @@ resource "aws_cloudfront_distribution" "root" {
   }
 
   default_cache_behavior {
-    target_origin_id = "S3-${aws_s3_bucket.root.bucket}"
+    target_origin_id = "S3-${aws_s3_bucket.main.bucket}"
     allowed_methods  = ["GET", "HEAD"]
     cached_methods   = ["GET", "HEAD"]
 

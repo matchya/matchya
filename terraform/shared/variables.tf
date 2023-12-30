@@ -1,3 +1,4 @@
 variable "domain_name" {
-  type = string
+  description = "Map of domain names for different environments"
+  type = map(string)
 }

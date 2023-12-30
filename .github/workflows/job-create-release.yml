@@ -16,6 +16,11 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: Update local branch
+      run: |
+        git fetch
+        git merge origin/staging
+
     - uses: actions/setup-node@v3
       with:
         cache: npm
