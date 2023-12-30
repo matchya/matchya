@@ -36,7 +36,6 @@ jobs:
   deploy-to-s3:
     name: Deploy to S3
     needs: [cleanup]
-    if: needs.check-for-web-folder-changes.outputs.package_changed == 'true'
     uses: ./.github/workflows/job-deploy-to-s3.yml
     with:
       environment: staging
