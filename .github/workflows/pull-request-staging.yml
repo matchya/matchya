@@ -10,62 +10,13 @@ on:
       - synchronize
 
 jobs:
-  analyze-commits:
-    name: Analyze Commits
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        component: ['web', 'server']
-    steps:
-      - name: Checkout develop branch
-        uses: actions/checkout@v2
-        with:
-            ref: 'develop'
-            fetch-depth: 0
-
-      - name: Set up Git
-        run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-
-      - name: Gather and comment PR with changes
-        id: analyze
-        run: |
-          git fetch origin main
-          git fetch origin develop
-          changes=""
-          if [ "${{ matrix.component }}" == "web" ]; then
-            scopes=('web')
-          elif [ "${{ matrix.component }}" == "server" ]; then
-            scopes=('authentication' 'authorizer' 'checklist' 'company' 'position')
-          fi
-          for scope_item in "${scopes[@]}"; do
-            scope_changes=$(git log --pretty=format:"%s" origin/main..origin/develop | grep -E "feat\($scope_item\)|fix\($scope_item\)|chore\($scope_item\)" || echo "")
-            if [ "$scope_changes" == "" ]; then
-              changes+="$scope_changes"$'\n'
-            fi
-          done
-          if [ "$changes" == "" ]; then
-            if [ "${{ matrix.component }}" == "web" ]; then
-              echo "There were changes in web..."
-            elif [ "${{ matrix.component }}" == "server" ]; then
-              echo "There were changes in server..."
-            fi
-            gh pr comment "$PULL_REQUEST_NUMBER" --body $'### 🚀 **Preparing for '"$COMPONENT"$' release**\nThese changes will be incorporated into the forthcoming release:\n\n'"$changes"$''
-          else
-            echo "No Changes..."
-          fi
-    env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      COMPONENT: ${{ matrix.component }}
-      PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
-
   automated-tests:
     name: Automated Tests
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        component: ['authentication', 'authorizer', 'checklist', 'company', 'position']
+        component:
+          ["authentication", "authorizer", "checklist", "company", "position"]
     steps:
       - uses: actions/checkout@v3
 
