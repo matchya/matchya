@@ -56,7 +56,7 @@ resource "aws_cloudfront_distribution" "www" {
       query_string = false
 
       cookies {
-        forward = "none"
+        forward = "all"
       }
     }
 
