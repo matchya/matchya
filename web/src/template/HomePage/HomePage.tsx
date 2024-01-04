@@ -121,10 +121,10 @@ const HomePageTemplate = ({ onNavigateToAuth }: HomePageTemplateProps) => {
           Generate a technical checklist for your company's needs
         </h4>
         <div className="w-full mt-8 flex justify-around items-center">
-          <div className="w-1/2 flex justify-center items-center mx-20">
+          <div className="w-3/5 flex justify-center items-center mr-10">
             <img src={sampleChecklist} alt="checklist-screen" />
           </div>
-          <div className="w-1/2">
+          <div className="w-2/5 mr-2">
             <p className="text-md indent-6">
               Initially, it conducts a deep dive into your company's GitHub
               data, extracting key skills indicative of your operational
@@ -141,10 +141,10 @@ const HomePageTemplate = ({ onNavigateToAuth }: HomePageTemplateProps) => {
           Evaluate candidates automatically with AI
         </h4>
         <div className="w-full mt-8 flex justify-around items-center">
-          <div className="w-1/2 flex justify-center items-center mx-20">
+          <div className="w-3/5 flex justify-center items-center mr-10">
             <img src={sampleEvaluations} alt="candidates-screen" />
           </div>
-          <div className="w-1/2">
+          <div className="w-2/5 mr-2">
             <p className="text-md indent-6">
               It evaluates their technical contributions, coding quality, and
               project relevance, providing a nuanced understanding of their
@@ -179,7 +179,7 @@ const HomePageTemplate = ({ onNavigateToAuth }: HomePageTemplateProps) => {
 
       <div className="w-full mx-auto px-28 mt-48">
         <h3 className="text-3xl font-bold text-center">
-          Ready to begin your journey with Matchya?
+        Ready to begin your journey with Matchya?
         </h3>
         <p className="text-md mt-2 text-center">
           Sign up for free and start finding the right talent today.
