@@ -39,7 +39,7 @@ fi
 
 echo "$bucket_name"
 
-param_path="/terraform/shared/${bucket_name}/www/cloudfront_distribution_id"
+param_path="/terraform/shared/${bucket_name}/cloudfront_distribution_id"
 
 echo "$param_path"
 
