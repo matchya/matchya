@@ -10,7 +10,7 @@ interface HomePageTemplateProps {
 const HomePageTemplate = ({ onNavigateToAuth }: HomePageTemplateProps) => {
   return (
     <div className="w-full h-2/3 flex flex-col items-center">
-      <div className='flex'>
+      <div className="flex">
         <div className=" mt-16 w-1/3 ml-auto mt-32">
           <h2 className="text-2xl font-bold">AI Recruiting Software</h2>
 
@@ -27,7 +27,7 @@ const HomePageTemplate = ({ onNavigateToAuth }: HomePageTemplateProps) => {
             finding the right talent is as smart and swift as the technology
             that powers it.
           </p>
-          <div className='buttons mt-10'>
+          <div className="buttons mt-10">
             <Button
               variant="default"
               size="lg"
@@ -49,9 +49,68 @@ const HomePageTemplate = ({ onNavigateToAuth }: HomePageTemplateProps) => {
           </div>
         </div>
         <div className="w-1/2 flex justify-center items-center mx-20">
-          <img src={hpImage} alt="checklist-screen" className='rounded-3xl h-3/4' />
-          </div>
+          <img
+            src={hpImage}
+            alt="checklist-screen"
+            className="rounded-3xl h-3/4"
+          />
+        </div>
       </div>
+
+      <div className="w-full mx-auto px-28">
+        <h3 className="text-3xl font-bold text-center">
+          Having trouble finding the right talent?
+        </h3>
+        <div className="w-full flex justify-around items-center mt-8 py-3 px-28">
+          <h4 className="text-2xl font-bold text-center w-1/2">
+            1. Identifying True Talent
+          </h4>
+          <p className="w-1/2">
+            Assessing a software engineer's skill set isn't straightforward.
+            Coding tests and interviews can reveal some information, but they
+            don't always show how a candidate will perform in real-world
+            scenarios. Moreover, some candidates might perform poorly in
+            high-pressure interview situations despite being highly skilled.
+          </p>
+        </div>
+        <div className="w-full flex justify-around items-center py-3 px-28">
+          <h4 className="text-2xl font-bold text-center w-1/2">
+            2. Technical Compatibility
+          </h4>
+          <p className="w-1/2">
+            It's vital to ensure that a candidate's experience aligns with the
+            specific technologies and methodologies used in your company. Even
+            skilled engineers may struggle if they're unfamiliar with your tech
+            stack, potentially leading to significant onboarding time and
+            productivity challenges.
+          </p>
+        </div>
+        <div className="w-full flex justify-around items-center py-3 px-28">
+          <h4 className="text-2xl font-bold text-center w-1/2">
+            3. Understanding Needs
+          </h4>
+          <p className="w-1/2">
+            Sometimes, companies struggle to define what they actually need in a
+            software engineer. Without a clear understanding of the necessary
+            skills and experience for a particular role, it's hard to find and
+            evaluate suitable candidates.
+          </p>
+        </div>
+        <div className="w-full flex justify-around items-center py-3 px-28">
+          <h4 className="text-2xl font-bold text-center w-1/2">
+            4. Time Investment
+          </h4>
+          <p className="w-1/2">
+            Finding the right engineer with the ideal mix of skills, cultural
+            fit, and technical compatibility can be a lengthy process. It often
+            involves sifting through numerous candidates and conducting
+            extensive interviews, leading to significant time commitments from
+            your team.
+          </p>
+        </div>
+      </div>
+
+      
 
       <div className="w-full flex justify-around items-center mt-16 py-10 px-28 bg-green-100">
         <div className="w-1/2 flex justify-center items-center mx-20">
