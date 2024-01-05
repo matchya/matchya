@@ -39,10 +39,10 @@ jobs:
 
       - name: Embed Terraform Variables
         run: |
-          echo 'domain_name = {
-            "prod": "${{ secrets.TF_PRODUCTION_DOMAIN_NAME}}",
-            "staging": "${{ secrets.TF_STAGING_DOMAIN_NAME}}"
-          }' > terraform.tfvars
+          echo 'domain_name = {' > terraform.tfvars
+          echo '  "prod": "${{ secrets.TF_PRODUCTION_DOMAIN_NAME }}",' >> terraform.tfvars
+          echo '  "staging": "${{ secrets.TF_STAGING_DOMAIN_NAME }}"' >> terraform.tfvars
+          echo '}' >> terraform.tfvars
         working-directory: terraform/shared
 
       - name: Terraform Plan
