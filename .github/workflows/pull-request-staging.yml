@@ -31,6 +31,14 @@ jobs:
         run: terraform init
         working-directory: terraform/shared
 
+      - name: Embed Terraform Variables
+        run: |
+          echo 'domain_name = {
+            "prod": "${{ secrets.TF_PRODUCTION_DOMAIN_NAME}}",
+            "staging": "${{ secrets.TF_STAGING_DOMAIN_NAME}}"
+          }' > terraform.tfvars
+        working-directory: terraform/shared
+
       - name: Terraform Plan
         id: plan
         run: |
@@ -80,6 +88,13 @@ jobs:
           set +e
           terraform workspace select staging || terraform workspace new staging
           set -e
+        working-directory: terraform/environment
+
+      - name: Set Terraform Variables
+        run: |
+          echo 'namespace = "${{ secrets.TF_NAMESPACE}}"' >> terraform.tfvars
+          echo 'db_username = "${{ secrets.TF_DB_USERNAME }}"' >> terraform.tfvars
+          echo 'db_password = "${{ secrets.TF_DB_PASSWORD}}"' >> terraform.tfvars
         working-directory: terraform/environment
 
       - name: Terraform Plan
