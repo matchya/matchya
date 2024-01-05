@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# This script is used to deploy the web app to S3 and invalidate the CloudFront cache.
+# This script is assumed to run in the ci/cd pipeline.
+
 # Parse command line arguments for bucket name and environment
 while (( "$#" )); do
   case "$1" in
