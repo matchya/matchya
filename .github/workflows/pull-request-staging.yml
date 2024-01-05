@@ -37,6 +37,7 @@ jobs:
           set +e
           terraform plan -no-color | tee plan_output.txt
           set -e
+        working-directory: terraform/shared
 
       - name: Comment PR
         uses: actions/github-script@v3
@@ -79,6 +80,7 @@ jobs:
           set +e
           terraform workspace select staging || terraform workspace new staging
           set -e
+        working-directory: terraform/environment
 
       - name: Terraform Plan
         id: plan
@@ -86,6 +88,7 @@ jobs:
           set +e
           terraform plan -no-color | tee plan_output.txt
           set -e
+        working-directory: terraform/environment
 
       - name: Comment PR
         uses: actions/github-script@v3
