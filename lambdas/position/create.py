@@ -45,10 +45,11 @@ def create_position_record(body) -> str:
     :return: The id of the newly created position record.
     """
     logger.info("Creating a position record...")
-    sql = "INSERT INTO position (id, company_id, name) VALUES (%s, %s, %s);"
+    name = body['type'] + ' ' + body['level']
+    sql = "INSERT INTO position (id, company_id, name, type, level) VALUES (%s, %s, %s);"
     try:
         position_id = str(uuid.uuid4())
-        db_cursor.execute(sql, (position_id, body['company_id'], body['type']))
+        db_cursor.execute(sql, (position_id, body['company_id'], name, body['type'], body['level']))
         return position_id
     except Exception as e:
         raise RuntimeError(f"Error saving to position table: {e}")
