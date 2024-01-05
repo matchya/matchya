@@ -12,7 +12,7 @@ jobs:
         run: |
           PR_TITLE="${{ github.event.pull_request.title }}"
           PATTERN="^(feat|fix|chore)(\(web\)|\(authentication\)|\(authorizer\)|\(checklist\)|\(company\)|\(position\)|\(ci\)|\(terraform\)): .+"
-          EXCEPTIONS=("Production Deployment" "Staging Deployment" "chore")
+          EXCEPTIONS=("Merge to Production" "Merge to Staging" "chore")
 
           if [[ " ${EXCEPTIONS[@]} " =~ " $PR_TITLE " ]]; then
               echo "PR title is an allowed exception."
