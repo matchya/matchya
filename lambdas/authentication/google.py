@@ -33,10 +33,6 @@ access_token_table = dynamodb.Table(f'{Config.ENVIRONMENT}-AccessToken')
 db_conn = None
 db_cursor = None
 
-# Google
-# CLIENT_ID = Config.GITHUB_CLIENT_ID
-# CLIENT_SECRET = Config.GITHUB_CLIENT_SECRET
-
 
 def connect_to_db():
     """
@@ -69,7 +65,7 @@ def get_company_id(email):
     return result[0][0]
 
 
-def validate_company_data(body):
+def validate_request_body(body):
     """
     Validates the necessary fields in the company data.
 
@@ -166,14 +162,14 @@ def get_user_details(access_token):
 
 def handler(event, context):
     try:
-        logger.info('Github Authentication started...')
+        logger.info('Google Authentication started...')
         connect_to_db()
 
         logger.info("Parsing the request body...")
         body = parse_request_body(event)
         logger.info("Parsing the request header...")
         origin, host = parse_header(event)
-        validate_company_data(body)
+        validate_request_body(body)
 
         token = body.get('token')
         username, email = get_user_details(token)
