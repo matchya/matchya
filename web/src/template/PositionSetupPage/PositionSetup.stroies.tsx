@@ -17,7 +17,13 @@ export const DashboardPage: Story = {
   render: () => (
     <>
       <Header authenticated={true} />
-      <Component />
+      <Component
+        type="default"
+        level="default"
+        handleSelectType={() => {}}
+        handleSelectLevel={() => {}}
+        handleSubmit={() => {}}
+      />
     </>
   ),
 };

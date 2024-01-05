@@ -1,39 +1,19 @@
-import { useState } from 'react';
-
 import { Button } from '@/components';
-import { axiosInstance } from '@/lib/client';
-import { useCompanyStore } from '@/store/store';
+interface PositionSetupPageProps {
+  type: string;
+  level: string;
+  handleSelectType: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  handleSelectLevel: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  handleSubmit: () => void;
+}
 
-const PositionSetupPage = () => {
-  const { id, me } = useCompanyStore();
-  const [type, setType] = useState('default');
-  const [level, setLevel] = useState('default');
-
-  const handleSelectType = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setType(e.target.value);
-  };
-
-  const handleSelectLevel = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setLevel(e.target.value);
-  };
-
-  const handleSubmit = async () => {
-    console.log(type, level);
-    const data = {
-      company_id: id,
-      type: type,
-      level: level,
-    };
-    try {
-      const res = await axiosInstance.post('/positions', data);
-      if (res.data.status === 'success') {
-        me();
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
+const PositionSetupPage = ({
+  type,
+  level,
+  handleSelectType,
+  handleSelectLevel,
+  handleSubmit,
+}: PositionSetupPageProps) => {
   return (
     <div className="bg-gray-100 h-[calc(100vh-64px)] overflow-hidden">
       <div className="w-full h-full mx-auto">
