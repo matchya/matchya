@@ -9,11 +9,11 @@ const PositionSetupPage = () => {
   const [type, setType] = useState('default');
   const [level, setLevel] = useState('default');
 
-  const handleSelectType = e => {
+  const handleSelectType = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setType(e.target.value);
   };
 
-  const handleSelectLevel = e => {
+  const handleSelectLevel = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setLevel(e.target.value);
   };
 
