@@ -23,6 +23,9 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
+      - name: Select Workspace
+        run: terraform workspace select staging
+
       - name: Terraform Plan
         id: plan
         run: |
