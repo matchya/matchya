@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { clientEndpoint, githubClientId } from '@/config/env';
+import { clientEndpoint, githubClientId, googleClientId } from '@/config/env';
 import { AuthenticationPageTemplate } from '@/template';
 
 const AuthenticationPage = () => {
@@ -14,10 +14,20 @@ const AuthenticationPage = () => {
     window.location.href = loginUrl;
   };
 
+  const handleGoogleLogin = () => {
+    setIsLoading(true);
+    // const redirectUri = `${clientEndpoint}/auth/google/callback`;
+    const redirectUri = 'http://127.0.0.1:5173/auth/google/callback';
+    const loginUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${googleClientId}&redirect_uri=${redirectUri}&response_type=token&scope=openid%20email%20profile`;
+
+    window.location.href = loginUrl;
+  };
+
   return (
     <AuthenticationPageTemplate
       isLoading={isLoading}
       onGithubLogin={handleGithubLogin}
+      onGoogleLogin={handleGoogleLogin}
     />
   );
 };

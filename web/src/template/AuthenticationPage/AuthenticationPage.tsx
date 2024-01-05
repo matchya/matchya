@@ -5,11 +5,13 @@ import { cn } from '@/lib/utils';
 interface AuthenticationPageTemplateProps {
   isLoading: boolean;
   onGithubLogin: () => void;
+  onGoogleLogin: () => void;
 }
 
 const AuthenticationPageTemplate = ({
   isLoading,
   onGithubLogin,
+  onGoogleLogin,
 }: AuthenticationPageTemplateProps) => (
   <div>
     <div className="md:hidden">
@@ -79,6 +81,21 @@ const AuthenticationPageTemplate = ({
               )}{' '}
               GitHub
             </Button>
+            <Button
+              variant="outline"
+              type="button"
+              disabled={isLoading}
+              onClick={onGoogleLogin}
+              className="w-3/4 h-12 mx-auto text-white bg-black text-xl hover:bg-gray-600 hover:text-white dark:bg-white dark:text-black dark:border-black dark:hover:bg-gray-100 dark:hover:text-black dark:hover:border-black"
+            >
+              {isLoading ? (
+                <Icons.spinner className="mr-2 h-6 w-6 animate-spin" />
+              ) : (
+                <Icons.google className="mr-2 h-6 w-6" />
+              )}{' '}
+              Google
+            </Button>
+            
           </div>
           {/* To be implemented... */}
           {/* <p className="px-8 text-center text-sm text-muted-foreground">
