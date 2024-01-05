@@ -16,7 +16,7 @@ const CandidateDetailCard = ({ candidate }: CandidateDetailCard) => {
           <p className="text-muted-foreground">{candidate?.summary}</p>
         </div>
         <div className="text-2xl font-bold tracking-tight">
-          {candidate?.total_score}
+          {candidate?.total_score.toFixed(1)}
         </div>
       </div>
       <EvaluationTable assessments={candidate ? candidate.assessments : []} />
