@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { usePositionStore } from '@/store/store';
-import { DashboardPageTemplate } from '@/template';
+import { DashboardPageTemplate, PositionSetupPageTemplate } from '@/template';
 
 const DashboardPage = () => {
   const { selectedPosition, positions, selectedCandidate, selectCandidate } =
@@ -20,8 +20,12 @@ const DashboardPage = () => {
     }
   }, [selectedPosition]);
 
-  if (!selectedPosition) {
+  if (!selectedPosition && positions.length > 0) {
     return <div>loading...</div>;
+  }
+
+  if (!selectedPosition) {
+    return <PositionSetupPageTemplate />;
   }
 
   return (
