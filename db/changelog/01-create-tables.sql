@@ -130,3 +130,9 @@ ALTER TABLE candidate_result ADD COLUMN status varchar(30) DEFAULT 'scheduled';
 --changeset author:17
 ALTER TABLE checklist ADD COLUMN status varchar(30) DEFAULT 'scheduled';
 --rollback ALTER TABLE checklist DROP COLUMN status;
+
+--changeset author:18
+ALTER TABLE position ADD COLUMN type varchar(30);
+ALTER TABLE position ADD COLUMN level varchar(30);
+--rollback ALTER TABLE position DROP COLUMN type;
+--rollback ALTER TABLE position DROP COLUMN level;
