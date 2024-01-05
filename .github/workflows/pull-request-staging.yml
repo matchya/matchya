@@ -13,6 +13,7 @@ jobs:
   plan-shared-infrastructure:
     name: Plan Shared Infrastructure
     runs-on: ubuntu-latest
+    environment: staging
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -37,13 +38,17 @@ jobs:
         run: terraform init
         working-directory: terraform/shared
 
-      - name: Embed Terraform Variables
+      - name: Set Terraform Variables
         run: |
           echo 'domain_name = {' > terraform.tfvars
           echo '  "prod": "${{ secrets.TF_PRODUCTION_DOMAIN_NAME }}",' >> terraform.tfvars
           echo '  "staging": "${{ secrets.TF_STAGING_DOMAIN_NAME }}"' >> terraform.tfvars
           echo '}' >> terraform.tfvars
         working-directory: terraform/shared
+
+      - name: Print
+        run: |
+          cat terraform/shared/terraform.tfvars
 
       - name: Terraform Plan
         id: plan
@@ -70,6 +75,7 @@ jobs:
   plan-environment-infrastructure:
     name: Plan Environment Infrastructure
     runs-on: ubuntu-latest
+    environment: staging
     needs: [plan-shared-infrastructure]
     steps:
       - name: Checkout
@@ -117,7 +123,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const fs = require('fs');
-            const output = fs.readFileSync('plan_output.txt', 'utf8');
+            const output = fs.readFileSync('terraform/environment/plan_output.txt', 'utf8');
             github.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
