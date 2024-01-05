@@ -33,3 +33,19 @@ def parse_request_parameter(event, parameter_name):
         return parameter
     except Exception as e:
         raise ValueError(f"Error parsing parameter {parameter_name}: {e}")
+
+
+def parse_request_body(event):
+    """
+    Parses the request body from an event and returns it as a JSON object.
+
+    :param event: The event object containing the request data.
+    :return: Parsed JSON object from the request body.
+    """
+    try:
+        body = event.get('body', '')
+        if not body:
+            raise ValueError("Empty body")
+        return json.loads(body)
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Invalid JSON in request body: {e}")
