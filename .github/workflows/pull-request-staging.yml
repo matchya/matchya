@@ -27,16 +27,16 @@ jobs:
         id: plan
         run: |
           set +e
-          OUTPUT=$(terraform plan -no-color)
-          echo "::set-output name=plan::$OUTPUT"
+          terraform plan -no-color | tee plan_output.txt
           set -e
 
       - name: Comment PR
         uses: actions/github-script@v3
         with:
-          github-token: ${{ secrets.GH_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const output = `${{ steps.plan.outputs.plan }}`
+            const fs = require('fs');
+            const output = fs.readFileSync('plan_output.txt', 'utf8');
             github.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
