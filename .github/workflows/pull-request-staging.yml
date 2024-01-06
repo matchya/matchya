@@ -121,7 +121,7 @@ jobs:
         working-directory: terraform/environment
 
       - name: Upload Terraform Plan to S3
-        run: aws s3 cp terraform/environment/environment.tfplan s3://github-actions/${{env.ENVIRONMENT}}/plans/environment.tfplan
+        run: aws s3 cp terraform/environment/environment.tfplan s3://github-actions-remote-artifacts/${{env.ENVIRONMENT}}/plans/environment.tfplan
 
       - name: Comment PR
         uses: actions/github-script@v6
