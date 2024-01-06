@@ -22,7 +22,7 @@ jobs:
           fi
 
   check-web-build:
-    name: Check if web can be built
+    name: Check Web Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
