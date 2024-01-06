@@ -61,7 +61,7 @@ jobs:
           path: terraform/shared/shared.tfplan
 
       - name: Comment PR
-        uses: actions/github-script@v4
+        uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -126,7 +126,7 @@ jobs:
           path: terraform/environment/environment.tfplan
 
       - name: Comment PR
-        uses: actions/github-script@v4
+        uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -142,6 +142,7 @@ jobs:
   automated-tests:
     name: Automated Tests
     runs-on: ubuntu-latest
+    needs: [terraform-environment-plan]
     strategy:
       matrix:
         component:
