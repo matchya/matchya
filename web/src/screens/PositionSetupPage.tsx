@@ -17,6 +17,7 @@ const PositionSetupPage = () => {
     []
   );
   const [phase, setPhase] = useState(github_username ? 1 : 0);
+  const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -40,29 +41,11 @@ const PositionSetupPage = () => {
     setSelectedLevel(level);
   };
 
-  const handlePositionSubmit = async () => {
-    const data = {
-      company_id: id,
-      type: selectedType,
-      level: selectedLevel,
-    };
-    try {
-      const res = await axiosInstance.post('/positions', data);
-      if (res.data.status === 'success') {
-        me();
-        setupPosition(false);
-        navigate('/dashboard');
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   const handleNext = () => {
     if (phase === 1 && selectedType === '') return;
     if (phase === 2 && selectedLevel === '') return;
-    if (phase === 2 && github_username) setPhase(4);
-    else if (phase === 3 || phase === 5) handlePositionSubmit();
+    if (phase === 4 || (phase === 2 && !github_username))
+      handlePositionSubmit();
     else setPhase(phase + 1);
   };
 
@@ -97,9 +80,50 @@ const PositionSetupPage = () => {
     setSelectedRepositories((prev: string[]) => [...prev, item]);
   };
 
+  const handleGenerateCriteria = async (position_id: string) => {
+    const userData = {
+      position_id,
+      repository_names: selectedRepositories,
+    };
+    try {
+      const response = await axiosInstance.post(
+        '/checklists/generate',
+        userData
+      );
+      if (response.data.status == 'success') {
+        me();
+        setupPosition(false);
+        setIsLoading(false);
+        navigate('/dashboard');
+      }
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+    }
+  };
+
+  const handlePositionSubmit = async () => {
+    setIsLoading(true);
+    const data = {
+      company_id: id,
+      type: selectedType,
+      level: selectedLevel,
+    };
+    try {
+      const res = await axiosInstance.post('/positions', data);
+      if (res.data.status === 'success') {
+        const position_id = res.data.payload.position_id;
+        await handleGenerateCriteria(position_id);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <PositionSetupPageTemplate
       inputRef={inputRef}
+      isLoading={isLoading}
       phase={phase}
       selectedRepositories={selectedRepositories}
       selectedType={selectedType}
