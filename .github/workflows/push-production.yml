@@ -18,10 +18,10 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
           onlyRemoveDeployments: true
 
-  deploy-to-s3:
+  deploy-website:
     name: Deployment
     needs: [cleanup]
     if: needs.check-for-web-folder-changes.outputs.package_changed == 'true'
-    uses: ./.github/workflows/job-deploy-to-s3.yml
+    uses: ./.github/workflows/job-deploy-website.yml
     with:
       environment: production
