@@ -4,22 +4,21 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { axiosInstance } from '@/lib/client';
 import { OAuthCallbackPageTemplate } from '@/template';
 
-const GithubAuthCallback = () => {
+const GoogleAuthCallback = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [loginFailed, setLoginFailed] = useState(false);
 
   useEffect(() => {
-    const code = new URLSearchParams(location.search).get('code');
-    if (code) {
-      handleGithubLogin(code);
+    const token = new URLSearchParams(location.hash).get('#access_token');
+    if (token) {
+      handleGoogleLogin(token);
     }
   }, [location]);
 
-  const handleGithubLogin = async (code: string) => {
+  const handleGoogleLogin = async (token: string) => {
     try {
-      const response = await axiosInstance.post('/github', { code });
-
+      const response = await axiosInstance.post('/google', { token });
       if (response.data.status === 'success') {
         navigate('/dashboard');
       }
@@ -38,9 +37,9 @@ const GithubAuthCallback = () => {
     <OAuthCallbackPageTemplate
       isLoginFailed={loginFailed}
       onRetryLogin={handleRetryLogin}
-      authType="GitHub"
+      authType="Google"
     />
   );
 };
 
-export default GithubAuthCallback;
+export default GoogleAuthCallback;

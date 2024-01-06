@@ -68,5 +68,22 @@ functions:
               - http://127.0.0.1:5173
             allowCredentials: true
 
+  google:
+    name: ${self:provider.stage}-authentication-google
+    image:
+      name: default
+      command:
+        - google.handler
+    events:
+      - http:
+          path: /google
+          method: POST
+          cors:
+            origins:
+              - https://www.matchyaa.com
+              - https://matchyaa.com
+              - http://127.0.0.1:5173
+            allowCredentials: true
+
 plugins:
   - serverless-deployment-bucket

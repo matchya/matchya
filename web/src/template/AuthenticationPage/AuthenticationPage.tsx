@@ -3,13 +3,17 @@ import { Button, Icons } from '@/components';
 import { cn } from '@/lib/utils';
 
 interface AuthenticationPageTemplateProps {
-  isLoading: boolean;
+  isGitHubLoading: boolean;
+  isGoogleLoading: boolean;
   onGithubLogin: () => void;
+  onGoogleLogin: () => void;
 }
 
 const AuthenticationPageTemplate = ({
-  isLoading,
+  isGitHubLoading,
+  isGoogleLoading,
   onGithubLogin,
+  onGoogleLogin,
 }: AuthenticationPageTemplateProps) => (
   <div>
     <div className="md:hidden">
@@ -68,17 +72,32 @@ const AuthenticationPageTemplate = ({
             <Button
               variant="outline"
               type="button"
-              disabled={isLoading}
+              disabled={isGitHubLoading || isGoogleLoading}
               onClick={onGithubLogin}
               className="w-3/4 h-12 mx-auto text-white bg-black text-xl hover:bg-gray-600 hover:text-white dark:bg-white dark:text-black dark:border-black dark:hover:bg-gray-100 dark:hover:text-black dark:hover:border-black"
             >
-              {isLoading ? (
+              {isGitHubLoading ? (
                 <Icons.spinner className="mr-2 h-6 w-6 animate-spin" />
               ) : (
                 <Icons.gitHub className="mr-2 h-6 w-6" />
               )}{' '}
               GitHub
             </Button>
+            <Button
+              variant="outline"
+              type="button"
+              disabled={isGitHubLoading || isGoogleLoading}
+              onClick={onGoogleLogin}
+              className="w-3/4 h-12 mx-auto border border-2 text-black bg-white text-xl hover:bg-gray-100 hover:text-black dark:bg-white dark:text-black dark:border-black dark:hover:bg-gray-100 dark:hover:text-black dark:hover:border-black"
+            >
+              {isGoogleLoading ? (
+                <Icons.spinner className="mr-2 h-6 w-6 animate-spin" />
+              ) : (
+                <Icons.google className="mr-2 h-6 w-6" />
+              )}{' '}
+              Google
+            </Button>
+            
           </div>
           {/* To be implemented... */}
           {/* <p className="px-8 text-center text-sm text-muted-foreground">

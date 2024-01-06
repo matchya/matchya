@@ -1,5 +1,6 @@
 resource "aws_security_group" "lambda" {
   count      = var.create_new ? 1 : 0
+  name = "lambda"
   description = "Security group for Serverless functions"
   vpc_id      = aws_vpc.main[0].id
 
@@ -49,9 +50,9 @@ resource "aws_security_group" "lambda" {
   }
 }
 
-resource "aws_security_group" "rds" {
+resource "aws_security_group" "rds_postgres_insecure" {
   count      = var.create_new ? 1 : 0
-  name        = "rds-security-group"
+  name = "rds-postgres-insecure"
   description = "Security group for RDS instance"
   vpc_id      = data.aws_vpc.default.id
 
@@ -70,14 +71,14 @@ resource "aws_security_group" "rds" {
   }
 
   tags = {
-    Name = "rds-security-group"
+    Name = "rds-postgres-insecure"
   }
 }
 
 # testing new one inside vpc
-resource "aws_security_group" "rds_postgres" {
+resource "aws_security_group" "rds_postgres_secure" {
   count      = var.create_new ? 1 : 0
-  name        = "rds-security-group-new"
+  name = "rds-postgres-secure"
   description = "Security group for RDS Postgres database"
   vpc_id      = aws_vpc.main[0].id
 
@@ -103,7 +104,7 @@ resource "aws_security_group" "rds_postgres" {
   }
 
   tags = {
-    Name = "rds-postgres-new"
+    Name = "rds-postgres-secure"
   }
 }
 
@@ -116,6 +117,14 @@ resource "aws_security_group" "ec2_public" {
   ingress {
     from_port        = 22
     to_port          = 22
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  ingress {
+    from_port        = 5432
+    to_port          = 5432
     protocol         = "tcp"
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
@@ -160,6 +169,7 @@ resource "aws_security_group" "ec2_public" {
 
 resource "aws_security_group" "vpc_endpoint" {
   count      = var.create_new ? 1 : 0
+  name = "vpc-endpoint"
   description = "Security group for VPC Endpoint"
   vpc_id      = aws_vpc.main[0].id
 
@@ -182,15 +192,15 @@ resource "aws_security_group" "vpc_endpoint" {
   }
 }
 
-# DATA
-data "aws_security_group" "rds" {
+# Data sources
+data "aws_security_group" "rds_postgres_insecure" {
   count      = var.create_new ? 0 : 1
-  name = "rds-security-group"
+  name = "rds-postgres-insecure"
 }
 
-data "aws_security_group" "rds_postgres" {
+data "aws_security_group" "rds_postgres_secure" {
   count      = var.create_new ? 0 : 1
-  name = "rds-security-group-new"
+  name = "rds-postgres-secure"
 }
 
 data "aws_security_group" "ec2_public" {

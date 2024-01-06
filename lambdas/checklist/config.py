@@ -1,4 +1,5 @@
 import os
+from default_criteria import DEFAULT_CRITERIA
 
 
 class Config:
@@ -22,6 +23,8 @@ class Config:
     GITHUB_API_REPO_URL = "https://api.github.com/repos/"
     GITHUB_GRAPHQL_API_URL = "https://api.github.com/graphql"
     GITHUB_FERNET_KEY = os.getenv('GITHUB_FERNET_KEY')
+
+    DEFAULT_CRITERIA = DEFAULT_CRITERIA
 
     @classmethod
     def validate(cls):

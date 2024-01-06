@@ -37,8 +37,7 @@ const GenerateCriteriaDialog = ({
 
   const handleGenerateCriteria = async () => {
     setErrorMessage('');
-    if (!selectedPosition || selected.length === 0) {
-      setErrorMessage('Select at least one repository');
+    if (!selectedPosition) {
       return;
     }
     const userData = {

@@ -11,8 +11,8 @@ jobs:
       - name: Compare PR title with Regex
         run: |
           PR_TITLE="${{ github.event.pull_request.title }}"
-          PATTERN="^(feat|fix|chore)(\(web\)|\(authentication\)|\(authorizer\)|\(checklist\)|\(company\)|\(position\)|\(ci\)|\(terraform\)): .+"
-          EXCEPTIONS=("Production Deployment" "Staging Deployment" "chore")
+          PATTERN="^(feat|fix|chore)(\(web\)|\(authentication\)|\(authorizer\)|\(checklist\)|\(company\)|\(position\)|\(question\)|\(ci\)|\(terraform\)|\(db\)): .+"
+          EXCEPTIONS=("Merge to Production" "Merge to Staging" "chore")
 
           if [[ " ${EXCEPTIONS[@]} " =~ " $PR_TITLE " ]]; then
               echo "PR title is an allowed exception."

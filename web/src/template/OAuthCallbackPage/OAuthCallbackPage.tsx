@@ -1,14 +1,16 @@
 import { Button, Icons } from '@/components';
 
-interface GithubAuthCallbackPageTemplateProps {
+interface OuthCallbackPageTemplateProps {
   isLoginFailed: boolean;
   onRetryLogin: () => void;
+  authType: string;
 }
 
-const GithubAuthCallbackPageTemplate = ({
+const OAuthCallbackPageTemplate = ({
   isLoginFailed,
   onRetryLogin,
-}: GithubAuthCallbackPageTemplateProps) => (
+  authType,
+}: OuthCallbackPageTemplateProps) => (
   <div className="h-screen flex justify-center items-center">
     <div className="flex flex-col justify-center items-center mb-5">
       {!isLoginFailed && (
@@ -16,8 +18,8 @@ const GithubAuthCallbackPageTemplate = ({
       )}
       <p className="text-xl">
         {!isLoginFailed
-          ? 'Logging in with GitHub...'
-          : 'Login with GitHub Failed. Please try again.'}
+          ? `Logging in with ${authType}...`
+          : `Login with ${authType} Failed. Please try again.`}
       </p>
       {isLoginFailed && (
         <Button
@@ -32,4 +34,4 @@ const GithubAuthCallbackPageTemplate = ({
   </div>
 );
 
-export default GithubAuthCallbackPageTemplate;
+export default OAuthCallbackPageTemplate;

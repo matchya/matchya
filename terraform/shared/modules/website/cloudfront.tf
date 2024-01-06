@@ -14,7 +14,6 @@ resource "aws_cloudfront_distribution" "www" {
 
   enabled             = true
   is_ipv6_enabled     = true
-  comment             = "S3 bucket distribution"
   default_root_object = "index.html"
 
   aliases = [ "www.${var.domain_name}" ]

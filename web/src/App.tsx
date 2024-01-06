@@ -7,6 +7,7 @@ import UnAuthenticatedLayout from '@/layout/UnAuthenticated';
 import AuthenticationPage from '@/screens/AuthenticationPage';
 import DashboardPage from '@/screens/DashboardPage';
 import GithubAuthCallbackPage from '@/screens/GithubAuthCallbackPage';
+import GoogleAuthCallbackPage from '@/screens/GoogleAuthCallbackPage';
 import HomePage from '@/screens/HomePage';
 // import SettingsPage from '@/screens/SettingsPage';
 
@@ -25,6 +26,10 @@ function App() {
             <Route
               path="/auth/github/callback"
               element={<GithubAuthCallbackPage />}
+            />
+            <Route
+              path="/auth/google/callback"
+              element={<GoogleAuthCallbackPage />}
             />
           </Route>
         </Routes>

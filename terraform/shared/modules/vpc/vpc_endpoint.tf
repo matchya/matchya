@@ -1,5 +1,6 @@
 resource "aws_vpc_endpoint" "rds" {
-  count      = 0 // save money, only switch when using
+  depends_on = [ aws_security_group.vpc_endpoint ]
+  count      = var.create_new ? 1 : 0
   vpc_id              = aws_vpc.main[0].id
   service_name        = "com.amazonaws.us-east-1.rds"
   vpc_endpoint_type   = "Interface"

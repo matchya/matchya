@@ -131,7 +131,9 @@ def handler(event, context):
         connect_to_db()
         body = parse_request_body(event)
         origin = parse_header(event)
-        validate_request_body(body, ['position_id', 'repository_names'])
+        validate_request_body(body, ['position_id'])
+        if not body['repository_names']:
+            body['repository_names'] = []
 
         if checklist_already_exist(body['position_id']):
             logger.error(f"Checklist for position {body['position_id']} already exists")

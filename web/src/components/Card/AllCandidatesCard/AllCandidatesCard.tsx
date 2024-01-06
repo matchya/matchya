@@ -127,7 +127,9 @@ const CandidateRow = ({ candidate }: CandidateRowProps) => {
           Retry
         </Button>
       ) : (
-        <div className="ml-auto mr-5 font-medium">{candidate.total_score}</div>
+        <div className="ml-auto mr-5 font-medium">
+          {candidate.total_score.toFixed(1)}
+        </div>
       )}
     </div>
   );
