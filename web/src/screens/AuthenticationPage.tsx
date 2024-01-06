@@ -17,8 +17,7 @@ const AuthenticationPage = () => {
 
   const handleGoogleLogin = () => {
     setIsGoogleLoading(true);
-    // const redirectUri = `${clientEndpoint}/auth/google/callback`;
-    const redirectUri = 'http://127.0.0.1:5173/auth/google/callback';
+    const redirectUri = `${clientEndpoint}/auth/google/callback`;
     const scope = "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email"
     const loginUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${googleClientId}&redirect_uri=${redirectUri}&response_type=token&scope=${scope}`;
 

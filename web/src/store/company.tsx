@@ -65,8 +65,12 @@ export const CompanyStoreProvider = ({ children }: StoreProviderProps) => {
               github_username: payload.github_username,
               repository_names: payload.repository_names,
             });
-            await positionStore.setPositions(payload.positions);
-            await positionStore.selectPosition(payload.positions[0]);
+            if (payload.positions.length > 0) {
+              await positionStore.setPositions(payload.positions);
+              await positionStore.selectPosition(payload.positions[0]);
+            } else {
+              positionStore.setupPosition(true);
+            }
           } else {
             throw new Error(res.data.payload.message);
           }

@@ -14,6 +14,8 @@ import {
 } from '@/types';
 
 export interface PositionState {
+  setupRequired: boolean;
+  setupPosition: (setup: boolean) => void;
   positions: Position[];
   setPositions: (positions: Position[]) => void;
   selectedPosition: Position | null;
@@ -35,6 +37,8 @@ export const StorybookPositionStoreProvider = ({
 }: StoreProviderProps) => {
   const storeRef = useRef(
     createStore<PositionState>(() => ({
+      setupRequired: false,
+      setupPosition: () => alert('Setup position'),
       positions: mockPositions,
       setPositions: () => alert('Set positions'),
       selectedPosition: mockSelectedPosition,
@@ -57,6 +61,10 @@ export const StorybookPositionStoreProvider = ({
 export const PositionStoreProvider = ({ children }: StoreProviderProps) => {
   const storeRef = useRef(
     createStore<PositionState>((set, get) => ({
+      setupRequired: false,
+      setupPosition: (setup: boolean) => {
+        set({ setupRequired: setup });
+      },
       positions: [],
       setPositions: (positions: Position[]) => {
         set({ positions });
