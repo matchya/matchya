@@ -10,7 +10,7 @@ import {
 } from '@/data/mock';
 
 const meta: Meta<typeof Component> = {
-  title: 'Template/Dashboard',
+  title: 'Template/DashboardPage',
   component: Component,
 };
 

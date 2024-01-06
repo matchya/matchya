@@ -11,10 +11,10 @@ jobs:
       - name: Compare PR title with Regex
         run: |
           PR_TITLE="${{ github.event.pull_request.title }}"
-          PATTERN="^(feat|fix|chore)(\(web\)|\(authentication\)|\(authorizer\)|\(checklist\)|\(company\)|\(position\)|\(question\)|\(ci\)|\(terraform\)|\(db\)): .+"
-          EXCEPTIONS=("Merge to Production" "Merge to Staging" "chore")
+          PATTERN="^(feat|fix)(\(web\)|\(authentication\)|\(authorizer\)|\(checklist\)|\(company\)|\(position\)|\(question\)|\(ci\)|\(terraform\)|\(db\)): .+"
+          EXCEPTIONS="^(Merge to Production|Merge to Staging|chore\(.*\))$"
 
-          if [[ " ${EXCEPTIONS[@]} " =~ " $PR_TITLE " ]]; then
+          if [[ $PR_TITLE =~ $EXCEPTIONS ]]; then
               echo "PR title is an allowed exception."
           elif ! [[ $PR_TITLE =~ $PATTERN ]]; then
               echo "PR title does not match the required format 'type(scope): description' or 'type: description'"
