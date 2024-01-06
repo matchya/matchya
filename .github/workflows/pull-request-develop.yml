@@ -3,11 +3,11 @@ name: PR Pipeline (Develop)
 on:
   pull_request:
     branches:
-        - develop
+      - develop
     types:
-    - opened
-    - reopened
-    - synchronize
+      - opened
+      - reopened
+      - synchronize
 
 jobs:
   unit-tests:
@@ -15,11 +15,20 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        component: ['web', 'authentication', 'authorizer', 'checklist', 'company', 'position']
+        component:
+          [
+            "web",
+            "authentication",
+            "authorizer",
+            "checklist",
+            "company",
+            "position",
+          ]
     steps:
       - uses: actions/checkout@v3
 
-      - uses: dorny/paths-filter@v2
+      - name: Check Files Changed
+        uses: dorny/paths-filter@v2
         id: changes
         with:
           filters: |
@@ -41,11 +50,20 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        component: ['web', 'authentication', 'authorizer', 'checklist', 'company', 'position']
+        component:
+          [
+            "web",
+            "authentication",
+            "authorizer",
+            "checklist",
+            "company",
+            "position",
+          ]
     steps:
       - uses: actions/checkout@v3
 
-      - uses: dorny/paths-filter@v2
+      - name: Check Web Files Changed
+        uses: dorny/paths-filter@v2
         if: matrix.component == 'web'
         id: changes-web
         with:
@@ -53,7 +71,8 @@ jobs:
             package:
               - '${{matrix.component}}/**'
 
-      - uses: dorny/paths-filter@v2
+      - name: Check Files Changed
+        uses: dorny/paths-filter@v2
         if: matrix.component != 'web'
         id: changes-lambda
         with:
