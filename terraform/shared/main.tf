@@ -11,6 +11,10 @@ module "iam" {
   create_new = true
 }
 
+module "s3" {
+  source = "./modules/s3"
+}
+
 module "website_production" {
   source = "./modules/website"
 
