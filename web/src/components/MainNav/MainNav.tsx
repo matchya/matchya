@@ -105,6 +105,7 @@ const MainNav = ({
 
     if (
       selectedPosition &&
+      selectedPosition.candidates &&
       selectedPosition.candidates.filter(
         candidate => candidate.status === 'scheduled'
       ).length > 0
