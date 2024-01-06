@@ -10,7 +10,7 @@ on:
       - synchronize
 
 jobs:
-  plan-shared-infrastructure:
+  terraform-shared-plan:
     name: Plan Shared Infrastructure
     runs-on: ubuntu-latest
     environment: staging
@@ -74,7 +74,7 @@ jobs:
               body: '```terraform\n' + output + '\n```'
             })
 
-  plan-environment-infrastructure:
+  terraform-environment-plan:
     name: Plan Environment Infrastructure
     runs-on: ubuntu-latest
     environment: staging

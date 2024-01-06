@@ -30,7 +30,7 @@ jobs:
       - name: Download Terraform Plan
         uses: actions/download-artifact@v2
         with:
-          name: shared.tfplan
+          name: terraform-shared-plan
           path: terraform/shared
 
       - name: Setup Terraform
@@ -43,6 +43,35 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -auto-approve shared.tfplan
         working-directory: terraform/shared
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+  terraform-environment-deploy:
+    name: Deploy environment infrastructure
+    runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Download Terraform Plan
+        uses: actions/download-artifact@v2
+        with:
+          name: terraform-environment-plan
+          path: terraform/environment
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: terraform/environment
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve environment.tfplan
+        working-directory: terraform/environment
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
