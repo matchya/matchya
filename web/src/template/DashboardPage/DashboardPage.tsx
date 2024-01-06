@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import {
   AllCandidatesCard,
   CandidateDetailCard,
@@ -6,18 +8,20 @@ import {
 import { Candidate, Position } from '@/types';
 
 interface DashboardPageTemplateProps {
-  shouldShowQuestions: boolean;
   positions: Position[];
   selectedPosition: Position;
   selectedCandidate: Candidate | null;
 }
 
 const DashboardPageTemplate = ({
-  shouldShowQuestions,
   positions,
   selectedPosition,
   selectedCandidate,
 }: DashboardPageTemplateProps) => {
+  const [shouldShowQuestions, setShouldShowQuestions] = useState(false);
+  const handleShouldShowQuestionsChange = () => {
+    setShouldShowQuestions(!shouldShowQuestions);
+  };
   const DashboardBody = () => {
     if (positions.length === 0 || !selectedPosition) {
       return <div>loading...</div>;
@@ -31,6 +35,10 @@ const DashboardPageTemplate = ({
               <div className="xl:flex flex-col lg:flex-row gap-4 px-4">
                 <div className="w-full xl:max-w-[400px]">
                   <AllCandidatesCard
+                    onShouldShowQuestionsCheckedChanged={
+                      handleShouldShowQuestionsChange
+                    }
+                    shouldShowQuestions={shouldShowQuestions}
                     candidates={
                       selectedPosition.candidates?.sort((a, b) => {
                         const dateA = new Date(a.created_at);

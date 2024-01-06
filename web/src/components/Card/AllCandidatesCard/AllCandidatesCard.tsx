@@ -8,23 +8,44 @@ import {
   CardTitle,
 } from '../Card';
 
-import { Avatar, Button, Icons } from '@/components';
+import { Avatar, Button, Icons, Label, Switch } from '@/components';
 import { axiosInstance } from '@/lib/client';
 import { usePositionStore } from '@/store/store';
 import { Candidate, CustomError } from '@/types';
 
 interface AllCandidatesCardProps {
   candidates: Candidate[];
+  shouldShowQuestions: boolean;
+  onShouldShowQuestionsCheckedChanged: () => void;
 }
 
-const AllCandidatesCard = ({ candidates }: AllCandidatesCardProps) => {
+const AllCandidatesCard = ({
+  candidates,
+  shouldShowQuestions,
+  onShouldShowQuestionsCheckedChanged,
+}: AllCandidatesCardProps) => {
   return (
     <Card className="col-span-3 h-[calc(100vh-100px)] overflow-hidden">
       <CardHeader>
-        <CardTitle>Candidates</CardTitle>
-        <CardDescription>
-          You evaluated {candidates.length} candidates
-        </CardDescription>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle>Candidates</CardTitle>
+            <CardDescription>
+              You evaluated {candidates.length} candidates
+            </CardDescription>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="candidate-info-display-mode"
+              onCheckedChange={onShouldShowQuestionsCheckedChanged}
+              checked={shouldShowQuestions}
+            />
+            <Label htmlFor="candidate-info-display-mode">
+              Switch to{' '}
+              {shouldShowQuestions ? 'Github Analysis' : 'Interview Questions'}
+            </Label>
+          </div>
+        </div>
       </CardHeader>
       <CardContent className="h-full">
         <div className="space-y-2 h-full pb-24 overflow-y-scroll">

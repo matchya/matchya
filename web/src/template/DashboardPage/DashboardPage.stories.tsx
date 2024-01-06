@@ -23,7 +23,6 @@ export const GithubAnalysis: Story = {
     <>
       <Header authenticated={true} />
       <Component
-        shouldShowQuestions={false}
         positions={mockPositions}
         selectedPosition={mockSelectedPosition}
         selectedCandidate={mockSelectedCandidate}
@@ -37,7 +36,6 @@ export const InterviewQuestions: Story = {
     <>
       <Header authenticated={true} />
       <Component
-        shouldShowQuestions={true}
         positions={mockPositions}
         selectedPosition={mockSelectedPosition}
         selectedCandidate={mockSelectedCandidate}

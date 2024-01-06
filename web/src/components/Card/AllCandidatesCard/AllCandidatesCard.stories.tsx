@@ -15,6 +15,12 @@ type Story = StoryObj<typeof Component>;
 
 export const AllCandidates: Story = {
   render: () => {
-    return <Component candidates={mockCandidates} />;
+    return (
+      <Component
+        shouldShowQuestions={true}
+        onShouldShowQuestionsCheckedChanged={() => {}}
+        candidates={mockCandidates}
+      />
+    );
   },
 };
