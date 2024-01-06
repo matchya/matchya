@@ -7,36 +7,46 @@ on:
 
 jobs:
   cleanup:
-    name: Clean up deployment history
+    name: Clean Deployment History
     runs-on: ubuntu-latest
+    environment: staging
+    env:
+      ENVIRONMENT: staging
     permissions: write-all
     steps:
       - name: 🗑 Delete deployment
         uses: strumwolf/delete-deployment-environment@v2
         with:
-          environment: staging
+          environment: ${{env.ENVIRONMENT}}
           token: ${{ secrets.GH_TOKEN }}
           onlyRemoveDeployments: true
 
-  # check-for-web-folder-changes:
-  #   name: Check for changes in web
-  #   runs-on: ubuntu-latest
-  #   outputs:
-  #     package_changed: ${{ steps.changes.outputs.package }}
-  #   steps:
-  #     - uses: actions/checkout@v3
-
-  #     - uses: dorny/paths-filter@v2
-  #       id: changes
-  #       with:
-  #         filters: |
-  #           package:
-  #             - 'web/**'
-
-  deploy-to-s3:
-    name: Deploy to S3
+  deploy-terraform-shared:
+    name: Deployment
+    permissions: write-all
     needs: [cleanup]
-    uses: ./.github/workflows/job-deploy-to-s3.yml
+    uses: ./.github/workflows/job-deploy-terraform.yml
+    with:
+      label: Shared
+      component: shared
+      environment: staging
+    secrets: inherit
+
+  deploy-terraform-environment:
+    name: Deployment
+    permissions: write-all
+    needs: [deploy-terraform-shared]
+    uses: ./.github/workflows/job-deploy-terraform.yml
+    with:
+      label: Environment
+      component: environment
+      environment: staging
+    secrets: inherit
+
+  deploy-website:
+    name: Deployment
+    needs: [cleanup]
+    uses: ./.github/workflows/job-deploy-website.yml
     with:
       environment: staging
     secrets: inherit

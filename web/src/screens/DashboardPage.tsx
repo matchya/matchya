@@ -5,6 +5,7 @@ import PositionSetupPage from './PositionSetupPage';
 import { usePositionStore } from '@/store/store';
 import { DashboardPageTemplate } from '@/template';
 
+
 const DashboardPage = () => {
   const {
     selectedPosition,
@@ -39,6 +40,7 @@ const DashboardPage = () => {
 
   return (
     <DashboardPageTemplate
+      shouldShowQuestions={shouldShowQuestions}
       positions={positions}
       selectedPosition={selectedPosition}
       selectedCandidate={selectedCandidate}

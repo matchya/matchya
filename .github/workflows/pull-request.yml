@@ -2,6 +2,7 @@ name: PR Pipeline
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened, edited]
 
 jobs:
   validate:
@@ -11,12 +12,54 @@ jobs:
       - name: Compare PR title with Regex
         run: |
           PR_TITLE="${{ github.event.pull_request.title }}"
-          PATTERN="^(feat|fix|chore)(\(web\)|\(authentication\)|\(authorizer\)|\(checklist\)|\(company\)|\(position\)|\(ci\)|\(terraform\)): .+"
-          EXCEPTIONS=("Merge to Production" "Merge to Staging" "chore")
+          PATTERN="^(feat|fix)(\(web\)|\(authentication\)|\(authorizer\)|\(checklist\)|\(company\)|\(position\)|\(question\)|\(ci\)|\(terraform\)|\(db\)): .+"
+          EXCEPTIONS="^(Merge to Production|Merge to Staging|chore|chore\(.*\))$"
 
-          if [[ " ${EXCEPTIONS[@]} " =~ " $PR_TITLE " ]]; then
+          if [[ $PR_TITLE =~ $EXCEPTIONS ]]; then
               echo "PR title is an allowed exception."
           elif ! [[ $PR_TITLE =~ $PATTERN ]]; then
-              echo "PR title does not match the required format 'type(scope): description' or 'type: description'"
+              echo "PR title does not match the required format 'type(scope): description' or 'Merge to {environment}' or 'chore(type)'"
               exit 1
+          fi
+
+  check-web-build:
+    name: Check Web Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Check Web Files Changed
+        uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            package:
+              - 'web/**'
+
+      - uses: actions/setup-node@v3
+        if: steps.changes.outputs.package == 'true'
+        with:
+          cache: npm
+          node-version: 18
+
+      - name: Install dependencies
+        if: steps.changes.outputs.package == 'true'
+        run: npm install
+        working-directory: web
+
+      - name: Build
+        if: steps.changes.outputs.package == 'true'
+        id: build
+        run: npm run build || echo "::set-output name=status::failed"
+        working-directory: web
+
+      - name: Check build
+        if: steps.changes.outputs.package == 'true'
+        run: |
+          if [ "${{ steps.build.outputs.status }}" = "failed" ]; then
+            echo "The build failed. Please fix the errors and try again."
+            exit 1
+          else
+            echo "The build was successful; proceeding."
           fi

@@ -7,7 +7,7 @@ on:
 
 jobs:
   cleanup:
-    name: Clean up deployment history
+    name: Clean Deployment History
     runs-on: ubuntu-latest
     permissions: write-all
     steps:
@@ -18,26 +18,9 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
           onlyRemoveDeployments: true
 
-  check-for-web-folder-changes:
-    name: Check for changes in web
-    runs-on: ubuntu-latest
-    outputs:
-      package_changed: ${{ steps.changes.outputs.package }}
-    steps:
-      - uses: actions/checkout@v3
-
-      - uses: dorny/paths-filter@v2
-        id: changes
-        with:
-          filters: |
-            package:
-              - 'web/**'
-
-  deploy-to-s3:
-    name: Deploy to S3
-    needs: [cleanup, check-for-web-folder-changes]
-    if: needs.check-for-web-folder-changes.outputs.package_changed == 'true'
-    uses: ./.github/workflows/job-deploy-to-s3.yml
+  deploy-website:
+    name: Deployment
+    needs: [cleanup]
+    uses: ./.github/workflows/job-deploy-website.yml
     with:
       environment: production
-

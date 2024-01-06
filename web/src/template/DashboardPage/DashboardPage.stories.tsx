@@ -10,7 +10,7 @@ import {
 } from '@/data/mock';
 
 const meta: Meta<typeof Component> = {
-  title: 'Template',
+  title: 'Template/DashboardPage',
   component: Component,
 };
 
@@ -18,11 +18,26 @@ export default meta;
 
 type Story = StoryObj<typeof Component>;
 
-export const DashboardPage: Story = {
+export const GithubAnalysis: Story = {
   render: () => (
     <>
       <Header authenticated={true} />
       <Component
+        shouldShowQuestions={false}
+        positions={mockPositions}
+        selectedPosition={mockSelectedPosition}
+        selectedCandidate={mockSelectedCandidate}
+      />
+    </>
+  ),
+};
+
+export const InterviewQuestions: Story = {
+  render: () => (
+    <>
+      <Header authenticated={true} />
+      <Component
+        shouldShowQuestions={true}
         positions={mockPositions}
         selectedPosition={mockSelectedPosition}
         selectedCandidate={mockSelectedCandidate}

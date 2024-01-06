@@ -10,35 +10,50 @@ on:
       - synchronize
 
 jobs:
-  plan-shared-infrastructure:
+  plan-terraform-shared:
     name: Plan Shared Infrastructure
     runs-on: ubuntu-latest
     environment: staging
+    env:
+      ENVIRONMENT: staging
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+
+      - name: Check Terraform Files Changed
+        uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            package:
+              - 'terraform/**'
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
+        if: steps.changes.outputs.package == 'true'
+        uses: hashicorp/setup-terraform@v2
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        if: steps.changes.outputs.package == 'true'
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
       - name: Setup SSH Key
+        if: steps.changes.outputs.package == 'true'
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PUBLIC_KEY }}" > ~/.ssh/id_rsa_matchya.pub
           chmod 600 ~/.ssh/id_rsa_matchya.pub
 
       - name: Terraform Init
+        if: steps.changes.outputs.package == 'true'
         run: terraform init
         working-directory: terraform/shared
 
       - name: Set Terraform Variables
+        if: steps.changes.outputs.package == 'true'
         run: |
           echo 'domain_name = {' > terraform.tfvars
           echo '  "prod": "${{ secrets.TF_PRODUCTION_DOMAIN_NAME }}",' >> terraform.tfvars
@@ -46,56 +61,72 @@ jobs:
           echo '}' >> terraform.tfvars
         working-directory: terraform/shared
 
-      - name: Print
-        run: |
-          cat terraform/shared/terraform.tfvars
-
       - name: Terraform Plan
+        if: steps.changes.outputs.package == 'true'
         id: plan
         run: |
           set +e
-          terraform plan -no-color | tee plan_output.txt
+          terraform plan -out=shared.tfplan -no-color | tee plan_output.txt
           set -e
         working-directory: terraform/shared
 
+      - name: Upload Terraform Plan to S3
+        if: steps.changes.outputs.package == 'true'
+        run: aws s3 cp terraform/shared/shared.tfplan s3://github-actions-remote-artifacts/${{env.ENVIRONMENT}}/plans/shared.tfplan
+
       - name: Comment PR
-        uses: actions/github-script@v3
+        if: steps.changes.outputs.package == 'true'
+        uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const fs = require('fs');
             const output = fs.readFileSync('terraform/shared/plan_output.txt', 'utf8');
-            github.issues.createComment({
+            github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: '```terraform\n' + output + '\n```'
             })
 
-  plan-environment-infrastructure:
+  plan-terraform-environment:
     name: Plan Environment Infrastructure
     runs-on: ubuntu-latest
     environment: staging
-    needs: [plan-shared-infrastructure]
+    env:
+      ENVIRONMENT: staging
+    needs: [plan-terraform-shared]
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+
+      - name: Check Terraform Files Changed
+        uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            package:
+              - 'terraform/**'
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
+        if: steps.changes.outputs.package == 'true'
+        uses: hashicorp/setup-terraform@v2
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        if: steps.changes.outputs.package == 'true'
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
       - name: Terraform Init
+        if: steps.changes.outputs.package == 'true'
         run: terraform init
         working-directory: terraform/environment
 
       - name: Select Workspace
+        if: steps.changes.outputs.package == 'true'
         run: |
           set +e
           terraform workspace select staging || terraform workspace new staging
@@ -103,6 +134,7 @@ jobs:
         working-directory: terraform/environment
 
       - name: Set Terraform Variables
+        if: steps.changes.outputs.package == 'true'
         run: |
           echo 'namespace = "${{ secrets.TF_NAMESPACE}}"' >> terraform.tfvars
           echo 'db_username = "${{ secrets.TF_DB_USERNAME }}"' >> terraform.tfvars
@@ -110,21 +142,27 @@ jobs:
         working-directory: terraform/environment
 
       - name: Terraform Plan
+        if: steps.changes.outputs.package == 'true'
         id: plan
         run: |
           set +e
-          terraform plan -no-color | tee plan_output.txt
+          terraform plan -out=environment.tfplan -no-color | tee plan_output.txt
           set -e
         working-directory: terraform/environment
 
+      - name: Upload Terraform Plan to S3
+        if: steps.changes.outputs.package == 'true'
+        run: aws s3 cp terraform/environment/environment.tfplan s3://github-actions-remote-artifacts/${{env.ENVIRONMENT}}/plans/environment.tfplan
+
       - name: Comment PR
-        uses: actions/github-script@v3
+        if: steps.changes.outputs.package == 'true'
+        uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const fs = require('fs');
             const output = fs.readFileSync('terraform/environment/plan_output.txt', 'utf8');
-            github.issues.createComment({
+            github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -134,6 +172,7 @@ jobs:
   automated-tests:
     name: Automated Tests
     runs-on: ubuntu-latest
+    needs: [plan-terraform-environment]
     strategy:
       matrix:
         component:
@@ -141,7 +180,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: dorny/paths-filter@v2
+      - name: Check Web Files Changed
+        uses: dorny/paths-filter@v2
         if: matrix.component == 'web'
         id: changes-web
         with:
@@ -149,7 +189,8 @@ jobs:
             package:
               - '${{matrix.component}}/**'
 
-      - uses: dorny/paths-filter@v2
+      - name: Check Files Changed
+        uses: dorny/paths-filter@v2
         if: matrix.component != 'web'
         id: changes-lambda
         with:

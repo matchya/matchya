@@ -6,11 +6,11 @@ variable "db_password" {
   type = string
 }
 
-variable "rds_security_group" {
+variable "rds_postgres_insecure_security_group" {
   type = any
 }
 
-variable "rds_security_group_new" {
+variable "rds_postgres_secure_security_group" {
   type = any
 }
 
