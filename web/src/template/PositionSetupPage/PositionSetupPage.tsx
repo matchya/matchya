@@ -8,6 +8,7 @@ interface PositionSetupPageProps {
   selectedRepositories: string[];
   selectedType: string;
   selectedLevel: string;
+  integrateGitHub: () => void;
   handleSelectType: (type: string) => void;
   handleSelectLevel: (level: string) => void;
   handleNext: () => void;
@@ -23,6 +24,7 @@ const PositionSetupPageTemplate = ({
   selectedRepositories,
   selectedType,
   selectedLevel,
+  integrateGitHub,
   handleSelectType,
   handleSelectLevel,
   handleNext,
@@ -69,14 +71,22 @@ const PositionSetupPageTemplate = ({
       <div className="w-full h-full mx-auto flex justify-center items-center">
         <div className="h-3/4 w-2/3 mx-auto rounded-2xl flex flex-col items-center">
           <h3 className="text-2xl font-bold mt-16 mb-10 md:mb-24">
+            {phase === 0 && 'Integrate with GitHub for better experience'}
             {phase === 1 && 'What type of engineers are you hiring?'}
             {phase === 2 && 'What level of engineers are you hiring?'}
-            {phase === 3 && 'Integrate with GitHub for better experience'}
-            {phase === 4 &&
+            {phase === 3 &&
               "What is the company's GitHub username / organization name?"}
-            {phase === 5 && 'Which repositories do you want to use?'}
+            {phase === 4 && 'Which repositories do you want to use?'}
           </h3>
           <div className="flex flex-wrap justify-center">
+            {phase == 0 && (
+              <div>
+                <Button className="rounded-full mx-8 mb-5 w-60 bg-white border border-black text-black hover:bg-gray-200"
+                onClick={integrateGitHub}>
+                  Integrate with GitHub
+                </Button>
+              </div>
+            )}
             {phase == 1 &&
               types.map((type, index) => (
                 <Button
@@ -105,14 +115,8 @@ const PositionSetupPageTemplate = ({
                   {level}
                 </Button>
               ))}
+
             {phase == 3 && (
-              <div>
-                <Button className="rounded-full mx-8 mb-5 w-60 bg-white border border-black text-black hover:bg-gray-200">
-                  Integrate with GitHub
-                </Button>
-              </div>
-            )}
-            {phase == 4 && (
               <div>
                 <input
                   type="text"
@@ -122,7 +126,7 @@ const PositionSetupPageTemplate = ({
                 />
               </div>
             )}
-            {phase == 5 && (
+            {phase == 4 && (
               <MultiSelect
                 options={repository_names.sort((a, b) => {
                   if (a.split('/')[0] === organizationName) return -1;
@@ -139,15 +143,18 @@ const PositionSetupPageTemplate = ({
             )}
           </div>
           <div className="w-full flex justify-between items-center my-5 md:my-24">
-            <Button onClick={handlePrev} disabled={phase === 1}>
+            <Button
+              onClick={handlePrev}
+              disabled={phase === 0 || (phase === 1 && github_username !== '')}
+            >
               Back
             </Button>
             <Button onClick={handleNext}>
+              {phase === 0 && 'Continue without GitHub'}
               {phase === 1 && 'Next'}
               {phase === 2 && 'Next'}
-              {phase === 3 && 'Continue without GitHub'}
-              {phase === 4 && 'Next'}
-              {phase === 5 && 'Finish'}
+              {phase === 3 && 'Next'}
+              {phase === 4 && 'Finish'}
             </Button>
           </div>
         </div>

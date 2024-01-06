@@ -1,6 +1,7 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { clientEndpoint, githubClientId } from '@/config/env';
 import { axiosInstance } from '@/lib/client';
 import { useCompanyStore, usePositionStore } from '@/store/store';
 import { PositionSetupPageTemplate } from '@/template';
@@ -15,8 +16,21 @@ const PositionSetupPage = () => {
   const [selectedRepositories, setSelectedRepositories] = useState<string[]>(
     []
   );
-  const [phase, setPhase] = useState(1);
+  const [phase, setPhase] = useState(github_username ? 1 : 0);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (phase === 0 && github_username) {
+      setPhase(1);
+    }
+  }, [github_username]);
+
+  const integrateGitHub = async () => {
+    const redirectUri = `${clientEndpoint}/auth/github/callback`;
+    const loginUrl = `https://github.com/login/oauth/authorize?client_id=${githubClientId}&redirect_uri=${redirectUri}&scope=repo,user`;
+
+    window.location.href = loginUrl;
+  };
 
   const handleSelectType = (type: string) => {
     setSelectedType(type);
@@ -90,6 +104,7 @@ const PositionSetupPage = () => {
       selectedRepositories={selectedRepositories}
       selectedType={selectedType}
       selectedLevel={selectedLevel}
+      integrateGitHub={integrateGitHub}
       handleSelectType={handleSelectType}
       handleSelectLevel={handleSelectLevel}
       handleNext={handleNext}
