@@ -51,6 +51,7 @@ jobs:
     name: Deploy environment infrastructure
     runs-on: ubuntu-latest
     permissions: write-all
+    needs: [terraform-shared-deploy]
     steps:
       - uses: actions/checkout@v2
         with:

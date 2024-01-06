@@ -78,7 +78,7 @@ jobs:
     name: Plan Environment Infrastructure
     runs-on: ubuntu-latest
     environment: staging
-    needs: [plan-shared-infrastructure]
+    needs: [terraform-shared-plan]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
