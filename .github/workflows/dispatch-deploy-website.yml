@@ -1,3 +1,5 @@
+name: Manually Deploy Website
+
 on:
   workflow_dispatch:
     inputs:

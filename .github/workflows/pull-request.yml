@@ -13,12 +13,12 @@ jobs:
         run: |
           PR_TITLE="${{ github.event.pull_request.title }}"
           PATTERN="^(feat|fix)(\(web\)|\(authentication\)|\(authorizer\)|\(checklist\)|\(company\)|\(position\)|\(question\)|\(ci\)|\(terraform\)|\(db\)): .+"
-          EXCEPTIONS="^(Merge to Production|Merge to Staging|chore\(.*\))$"
+          EXCEPTIONS="^(Merge to Production|Merge to Staging|chore|chore\(.*\))$"
 
           if [[ $PR_TITLE =~ $EXCEPTIONS ]]; then
               echo "PR title is an allowed exception."
           elif ! [[ $PR_TITLE =~ $PATTERN ]]; then
-              echo "PR title does not match the required format 'type(scope): description' or 'type: description'"
+              echo "PR title does not match the required format 'type(scope): description' or 'Merge to {environment}' or 'chore(type)'"
               exit 1
           fi
 
