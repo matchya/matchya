@@ -19,6 +19,7 @@ export const PositionSetupPage: Story = {
       <Header authenticated={true} />
       <Component
         inputRef={{} as React.RefObject<HTMLInputElement>}
+        isLoading={false}
         phase={1}
         selectedRepositories={[]}
         integrateGitHub={() => {}}

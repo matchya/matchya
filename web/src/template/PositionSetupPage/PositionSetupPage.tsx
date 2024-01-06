@@ -64,7 +64,7 @@ const PositionSetupPageTemplate = ({
       case 'Senior-level':
         return 'senior';
       default:
-        return 'default';
+        return 'software';
     }
   };
 
