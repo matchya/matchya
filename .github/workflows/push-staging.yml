@@ -21,9 +21,10 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
           onlyRemoveDeployments: true
 
-  terraform-shared-deploy:
-    name: Deploy Infrastructure
+  deploy-terraform-shared:
+    name: Deployment
     permissions: write-all
+    needs: [cleanup]
     uses: ./.github/workflows/job-deploy-terraform.yml
     with:
       label: Shared
@@ -31,10 +32,10 @@ jobs:
       environment: staging
     secrets: inherit
 
-  terraform-environment-deploy:
-    name: Deploy Infrastructure
+  deploy-terraform-environment:
+    name: Deployment
     permissions: write-all
-    needs: [terraform-shared-deploy]
+    needs: [deploy-terraform-shared]
     uses: ./.github/workflows/job-deploy-terraform.yml
     with:
       label: Environment
@@ -42,10 +43,10 @@ jobs:
       environment: staging
     secrets: inherit
 
-  deploy-to-s3:
+  deploy-website:
     name: Deployment
     needs: [cleanup]
-    uses: ./.github/workflows/job-deploy-to-s3.yml
+    uses: ./.github/workflows/job-deploy-website.yml
     with:
       environment: staging
     secrets: inherit
