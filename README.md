@@ -4,6 +4,12 @@
 
 Accessing the staging or production database involves creating a secure connection to the database server. This is often done using a method called SSH tunneling.
 
+Before you start, make sure you have set your AWS profile. You can do this by running the following command in your terminal:
+
+```sh
+export AWS_PROFILE=your-profile-name
+```
+
 ### How to Create an SSH Tunnel?
 
 We have a script in our project that simplifies this process. Here's how you can use it:
