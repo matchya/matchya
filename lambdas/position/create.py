@@ -46,7 +46,7 @@ def create_position_record(body) -> str:
     """
     logger.info("Creating a position record...")
     name = body['type'] + ' ' + body['level']
-    sql = "INSERT INTO position (id, company_id, name, type, level) VALUES (%s, %s, %s);"
+    sql = "INSERT INTO position (id, company_id, name, type, level) VALUES (%s, %s, %s, %s, %s);"
     try:
         position_id = str(uuid.uuid4())
         db_cursor.execute(sql, (position_id, body['company_id'], name, body['type'], body['level']))
