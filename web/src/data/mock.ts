@@ -1,5 +1,24 @@
-import { Assessment, Candidate, Checklist, Company, Position } from '../types';
+import {
+  Assessment,
+  Candidate,
+  Checklist,
+  Company,
+  Position,
+  Question,
+} from '../types';
 
+export const mockQuestion: Question = {
+  question:
+    'How would you optimize a Dockerfile for a web application to ensure efficient build times and image sizes? Describe the steps you would take and the rationale behind them.',
+  metrics: [
+    'Knowledge of Dockerfile optimization techniques',
+    'Efficient image construction and management',
+    'Rationale behind optimization choices',
+    'Awareness of potential pitfalls and best practices.',
+  ],
+  keyword: 'typescript',
+  difficulty: 'medium',
+};
 
 export const mockSelectedCandidate: Candidate = {
   id: '1',
@@ -33,7 +52,7 @@ export const mockSelectedCandidate: Candidate = {
       reason: 'Good communication skills',
     },
   ],
-}
+};
 
 export const mockCandidates: Candidate[] = [
   mockSelectedCandidate,
@@ -70,7 +89,7 @@ export const mockCandidates: Candidate[] = [
       },
     ],
   },
-]
+];
 
 export const mockSelectedPosition: Position = {
   id: '1',
@@ -95,7 +114,7 @@ export const mockSelectedPosition: Position = {
   },
   candidates: mockCandidates,
   checklist_status: 'active',
-}
+};
 
 export const mockPositions: Position[] = [
   mockSelectedPosition,
@@ -118,8 +137,8 @@ export const mockCompanyInfo: Company = {
   email: 'peterparker@gmail.com',
   github_username: 'peterparker',
   repository_names: ['repo1', 'repo2', 'repo3'],
-  positions: []
-}
+  positions: [],
+};
 
 export const mockChecklist: Checklist = {
   id: '1',
@@ -154,69 +173,69 @@ export const mockChecklist: Checklist = {
       created_at: '2022-01-05',
       keywords: ['react', 'typescript'],
       message: 'This is a description for the fifth item in the checklist',
-    }
-  ]
-}
+    },
+  ],
+};
 
 export const mockedAssessments: Assessment[] = [
   {
-    "criterion": {
-      'id': '1',
-      'message': "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      'keywords': [],
-      'created_at': ''
+    criterion: {
+      id: '1',
+      message: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+      keywords: [],
+      created_at: '',
     },
-    "score": 7,
-    'reason':'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+    score: 7,
+    reason: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
   },
   {
-    "criterion": {
-      'id': '1',
-      'message': "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      'keywords': [],
-      'created_at': ''
+    criterion: {
+      id: '1',
+      message: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+      keywords: [],
+      created_at: '',
     },
-    "score": 7,
-    'reason':'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+    score: 7,
+    reason: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
   },
   {
-    "criterion": {
-      'id': '1',
-      'message': "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      'keywords': [],
-      'created_at': ''
+    criterion: {
+      id: '1',
+      message: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+      keywords: [],
+      created_at: '',
     },
-    "score": 7,
-    'reason':'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
-  },{
-    "criterion": {
-      'id': '1',
-      'message': "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      'keywords': [],
-      'created_at': ''
-    },
-    "score": 7,
-    'reason':'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+    score: 7,
+    reason: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
   },
   {
-    "criterion": {
-      'id': '1',
-      'message': "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      'keywords': [],
-      'created_at': ''
+    criterion: {
+      id: '1',
+      message: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+      keywords: [],
+      created_at: '',
     },
-    "score": 7,
-    'reason':'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+    score: 7,
+    reason: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
   },
   {
-    "criterion": {
-      'id': '1',
-      'message': "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      'keywords': [],
-      'created_at': ''
+    criterion: {
+      id: '1',
+      message: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+      keywords: [],
+      created_at: '',
     },
-    "score": 7,
-    'reason':'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
-  }
-]
-
+    score: 7,
+    reason: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+  },
+  {
+    criterion: {
+      id: '1',
+      message: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+      keywords: [],
+      created_at: '',
+    },
+    score: 7,
+    reason: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+  },
+];

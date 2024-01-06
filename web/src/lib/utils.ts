@@ -1,5 +1,5 @@
-import { type ClassValue, clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { type ClassValue, clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 /**
  *
@@ -10,5 +10,19 @@ import { twMerge } from "tailwind-merge"
  * @returns
  */
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
+}
+
+/**
+ * This function capitalizes the first letter of a string.
+ * If the string contains more than two words, it capitalizes the first letter of each word.
+ * @param str The string to capitalize
+ * @returns The capitalized string
+ */
+export function capitalize(str: string): string {
+  const words = str.split(' ');
+  const capitalizedWords = words.map(
+    word => word.charAt(0).toUpperCase() + word.slice(1)
+  );
+  return capitalizedWords.join(' ');
 }
