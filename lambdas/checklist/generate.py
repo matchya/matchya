@@ -373,8 +373,8 @@ def get_default_criteria(position_id: str) -> list:
         position_type = get_position_type(position_id)
         return Config.DEFAULT_CRITERIA[position_type]
     except Exception as e:
-        logger.error(f"Error getting default criteria from postgres: {e}")
-        raise RuntimeError(f"Error getting default criteria from postgres: {e}")
+        logger.error(f"Error getting default criteria: {e}")
+        raise RuntimeError(f"Error getting default criteria: {e}")
 
 
 def handler(event, context):
