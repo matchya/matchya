@@ -7,7 +7,7 @@ interface CandidateDetailCard {
 
 const CandidateDetailCard = ({ candidate }: CandidateDetailCard) => {
   return (
-    <div className="h-[calc(100vh-100px)] overflow-hidden space-y-8 p-6 rounded-lg border border-slate-200 bg-white text-slate-950 shadow-sm dark:border-slate-800 dark:bg-slate-950 dark:text-slate-50 col-span-3">
+    <div>
       <div className="flex justify-between">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">
