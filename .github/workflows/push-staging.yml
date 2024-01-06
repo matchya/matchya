@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions: write-all
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
@@ -34,7 +34,7 @@ jobs:
           path: terraform/shared
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
+        uses: hashicorp/setup-terraform@v2
 
       - name: Terraform Init
         run: terraform init
@@ -53,7 +53,7 @@ jobs:
     permissions: write-all
     needs: [terraform-shared-deploy]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
@@ -64,7 +64,7 @@ jobs:
           path: terraform/environment
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
+        uses: hashicorp/setup-terraform@v2
 
       - name: Terraform Init
         run: terraform init
