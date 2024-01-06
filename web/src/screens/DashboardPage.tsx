@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import PositionSetupPage from './PositionSetupPage';
 
 import { usePositionStore } from '@/store/store';
 import { DashboardPageTemplate } from '@/template';
-
 
 const DashboardPage = () => {
   const {
@@ -14,7 +13,6 @@ const DashboardPage = () => {
     selectCandidate,
     setupRequired,
   } = usePositionStore();
-  const [shouldShowQuestions] = useState(false);
 
   useEffect(() => {
     if (
@@ -41,7 +39,6 @@ const DashboardPage = () => {
 
   return (
     <DashboardPageTemplate
-      shouldShowQuestions={shouldShowQuestions}
       positions={positions}
       selectedPosition={selectedPosition}
       selectedCandidate={selectedCandidate}
