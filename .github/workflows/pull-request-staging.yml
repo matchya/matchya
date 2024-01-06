@@ -20,10 +20,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            package:
+              - 'terraform/**'
+
       - name: Setup Terraform
+        if: steps.changes.outputs.package == 'true'
         uses: hashicorp/setup-terraform@v2
 
       - name: Configure AWS Credentials
+        if: steps.changes.outputs.package == 'true'
         uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -31,16 +40,19 @@ jobs:
           aws-region: us-east-1
 
       - name: Setup SSH Key
+        if: steps.changes.outputs.package == 'true'
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PUBLIC_KEY }}" > ~/.ssh/id_rsa_matchya.pub
           chmod 600 ~/.ssh/id_rsa_matchya.pub
 
       - name: Terraform Init
+        if: steps.changes.outputs.package == 'true'
         run: terraform init
         working-directory: terraform/shared
 
       - name: Set Terraform Variables
+        if: steps.changes.outputs.package == 'true'
         run: |
           echo 'domain_name = {' > terraform.tfvars
           echo '  "prod": "${{ secrets.TF_PRODUCTION_DOMAIN_NAME }}",' >> terraform.tfvars
@@ -49,6 +61,7 @@ jobs:
         working-directory: terraform/shared
 
       - name: Terraform Plan
+        if: steps.changes.outputs.package == 'true'
         id: plan
         run: |
           set +e
@@ -57,9 +70,11 @@ jobs:
         working-directory: terraform/shared
 
       - name: Upload Terraform Plan to S3
+        if: steps.changes.outputs.package == 'true'
         run: aws s3 cp terraform/shared/shared.tfplan s3://github-actions-remote-artifacts/${{env.ENVIRONMENT}}/plans/shared.tfplan
 
       - name: Comment PR
+        if: steps.changes.outputs.package == 'true'
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -84,10 +99,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            package:
+              - 'terraform/**'
+
       - name: Setup Terraform
+        if: steps.changes.outputs.package == 'true'
         uses: hashicorp/setup-terraform@v2
 
       - name: Configure AWS Credentials
+        if: steps.changes.outputs.package == 'true'
         uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -95,10 +119,12 @@ jobs:
           aws-region: us-east-1
 
       - name: Terraform Init
+        if: steps.changes.outputs.package == 'true'
         run: terraform init
         working-directory: terraform/environment
 
       - name: Select Workspace
+        if: steps.changes.outputs.package == 'true'
         run: |
           set +e
           terraform workspace select staging || terraform workspace new staging
@@ -106,6 +132,7 @@ jobs:
         working-directory: terraform/environment
 
       - name: Set Terraform Variables
+        if: steps.changes.outputs.package == 'true'
         run: |
           echo 'namespace = "${{ secrets.TF_NAMESPACE}}"' >> terraform.tfvars
           echo 'db_username = "${{ secrets.TF_DB_USERNAME }}"' >> terraform.tfvars
@@ -113,6 +140,7 @@ jobs:
         working-directory: terraform/environment
 
       - name: Terraform Plan
+        if: steps.changes.outputs.package == 'true'
         id: plan
         run: |
           set +e
@@ -121,9 +149,11 @@ jobs:
         working-directory: terraform/environment
 
       - name: Upload Terraform Plan to S3
+        if: steps.changes.outputs.package == 'true'
         run: aws s3 cp terraform/environment/environment.tfplan s3://github-actions-remote-artifacts/${{env.ENVIRONMENT}}/plans/environment.tfplan
 
       - name: Comment PR
+        if: steps.changes.outputs.package == 'true'
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
