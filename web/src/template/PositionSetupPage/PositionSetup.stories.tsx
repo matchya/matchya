@@ -13,16 +13,24 @@ export default meta;
 
 type Story = StoryObj<typeof Component>;
 
-export const DashboardPage: Story = {
+export const PositionSetupPage: Story = {
   render: () => (
     <>
       <Header authenticated={true} />
       <Component
-        type="default"
-        level="default"
+        inputRef={{} as React.RefObject<HTMLInputElement>}
+        phase={1}
+        selectedRepositories={[]}
+        integrateGitHub={() => {}}
+        handleNext={() => {}}
+        handlePrev={() => {}}
+        handleUnselect={() => {}}
+        handleKeyDown={() => {}}
+        handleAddItem={() => {}}
+        selectedType="frontend"
+        selectedLevel="mid"
         handleSelectType={() => {}}
         handleSelectLevel={() => {}}
-        handleSubmit={() => {}}
       />
     </>
   ),
