@@ -20,7 +20,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - uses: dorny/paths-filter@v2
+      - name: Check Terraform Files Changed
+        uses: dorny/paths-filter@v2
         id: changes
         with:
           filters: |
@@ -99,7 +100,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - uses: dorny/paths-filter@v2
+      - name: Check Terraform Files Changed
+        uses: dorny/paths-filter@v2
         id: changes
         with:
           filters: |
@@ -178,7 +180,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: dorny/paths-filter@v2
+      - name: Check Web Files Changed
+        uses: dorny/paths-filter@v2
         if: matrix.component == 'web'
         id: changes-web
         with:
@@ -186,7 +189,8 @@ jobs:
             package:
               - '${{matrix.component}}/**'
 
-      - uses: dorny/paths-filter@v2
+      - name: Check Files Changed
+        uses: dorny/paths-filter@v2
         if: matrix.component != 'web'
         id: changes-lambda
         with:
