@@ -46,17 +46,19 @@ jobs:
           echo '}' >> terraform.tfvars
         working-directory: terraform/shared
 
-      - name: Print
-        run: |
-          cat terraform/shared/terraform.tfvars
-
       - name: Terraform Plan
         id: plan
         run: |
           set +e
-          terraform plan -no-color | tee plan_output.txt
+          terraform plan -out=shared.tfplan -no-color | tee plan_output.txt
           set -e
         working-directory: terraform/shared
+
+      - name: Upload Terraform Plan
+        uses: actions/upload-artifact@v2
+        with:
+          name: terraform-plan
+          path: terraform/shared/shared.tfplan
 
       - name: Comment PR
         uses: actions/github-script@v3
@@ -113,9 +115,15 @@ jobs:
         id: plan
         run: |
           set +e
-          terraform plan -no-color | tee plan_output.txt
+          terraform plan -out=environment.tfplan -no-color | tee plan_output.txt
           set -e
         working-directory: terraform/environment
+
+      - name: Upload Terraform Plan
+        uses: actions/upload-artifact@v2
+        with:
+          name: terraform-plan
+          path: terraform/shared/environment.tfplan
 
       - name: Comment PR
         uses: actions/github-script@v3

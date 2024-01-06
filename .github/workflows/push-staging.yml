@@ -18,6 +18,35 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
           onlyRemoveDeployments: true
 
+  terraform-shared-deploy:
+    name: Deploy shared infrastructure
+    runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Download Terraform Plan
+        uses: actions/download-artifact@v2
+        with:
+          name: shared.tfplan
+          path: terraform/shared
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: terraform/shared
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve shared.tfplan
+        working-directory: terraform/shared
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
   # check-for-web-folder-changes:
   #   name: Check for changes in web
   #   runs-on: ubuntu-latest
