@@ -1,7 +1,7 @@
-import json
-import requests
 import logging
 import uuid
+import requests
+import json
 
 import boto3
 import psycopg2
@@ -9,10 +9,10 @@ import psycopg2
 from config import Config
 from utils.response import generate_success_response, generate_error_response
 from utils.request import parse_header, parse_request_body
-from utils.token import generate_access_token, encrypt_github_access_token
+from utils.token import generate_access_token
 
 # Logger
-logger = logging.getLogger('github authentication')
+logger = logging.getLogger('google authentication')
 logger.setLevel(logging.INFO)
 
 formatter = logging.Formatter('[%(levelname)s]:%(funcName)s:%(lineno)d:%(message)s')
@@ -32,10 +32,6 @@ access_token_table = dynamodb.Table(f'{Config.ENVIRONMENT}-AccessToken')
 # Postgres
 db_conn = None
 db_cursor = None
-
-# Github
-CLIENT_ID = Config.GITHUB_CLIENT_ID
-CLIENT_SECRET = Config.GITHUB_CLIENT_SECRET
 
 
 def connect_to_db():
@@ -69,14 +65,14 @@ def get_company_id(email):
     return result[0][0]
 
 
-def validate_company_data(body):
+def validate_request_body(body):
     """
     Validates the necessary fields in the company data.
 
     :param body: The request body containing company data.
     """
     logger.info("Validating the company data...")
-    required_fields = ['code']
+    required_fields = ['token']
     if not all(body.get(field) for field in required_fields):
         raise ValueError('Missing required fields.')
 
@@ -89,52 +85,13 @@ def create_company_record(company_id: str, body: dict):
     :param body: The request body containing company data.
     """
     logger.info("Creating the company record...")
-    sql = "INSERT INTO company (id, name, email, github_username, github_access_token) VALUES (%s, %s, %s, %s, %s);"
+    sql = "INSERT INTO company (id, name, email) VALUES (%s, %s, %s);"
     try:
-        db_cursor.execute(sql, (company_id, body['name'], body['email'], body['github_username'], encrypt_github_access_token(body['github_access_token'])))
+        db_cursor.execute(sql, (company_id, body['name'], body['email']))
     except psycopg2.IntegrityError:
         raise RuntimeError(f"Email address is already used: {body['email']}")
     except Exception as e:
         raise RuntimeError(f"Error saving to company table: {e}")
-
-
-def save_company_repositories(company_id: str, github_username: str, github_access_token: str):
-    """
-    Saves the repositories of the company to the database.
-
-    :param company_id: Unique identifier for the company.
-    :param github_username: The GitHub username of the company.
-    """
-    logger.info("Saving the company repositories...")
-    repositories = get_company_repository_names(github_username, github_access_token)
-    sql = "INSERT INTO company_repository (id, company_id, repository_name) VALUES"
-    for repository in repositories:
-        sql += f" ('{str(uuid.uuid4())}', '{company_id}', '{repository}'),"
-    sql = sql[:-1] + ';'
-    try:
-        db_cursor.execute(sql)
-    except Exception as e:
-        raise RuntimeError(f"Error saving to repository table: {e}")
-
-
-def get_company_repository_names(github_username: str, github_access_token: str):
-    """
-    Gets the repositories of a company from GitHub.
-
-    :param github_username: The GitHub username of the company.
-    :param github_access_token: The GitHub access token of the company.
-    :return: A list of repositories of the company.
-    """
-    logger.info("Getting the company repository names...")
-    url = "https://api.github.com/user/repos"
-    response = requests.get(url, headers={'Authorization': f'Bearer {github_access_token}'})
-    if response.status_code == 404:
-        raise RuntimeError(f"Repository not found for the User: {github_username}")
-    if response.status_code != 200:
-        raise RuntimeError(f"Error getting repositories from GitHub: {response.content}")
-    repositories = response.json()
-    repo_names = [repository['full_name'] for repository in repositories]
-    return repo_names
 
 
 def create_access_token_record(company_id, access_token):
@@ -171,7 +128,7 @@ def company_already_exists(email):
         raise RuntimeError(f"Error checking if user already exists: {e}")
 
 
-def get_user_details(gh_access_token):
+def get_user_details(access_token):
     """
     Gets the GitHub username and email address of the user.
 
@@ -179,96 +136,47 @@ def get_user_details(gh_access_token):
     :return: The GitHub username and email address of the user.
     """
     try:
-        logger.info("Getting the GitHub username and email address...")
-        user_response = requests.get(
-            'https://api.github.com/user',
-            headers={'Authorization': f'Bearer {gh_access_token}'}
-        )
-        user_details = json.loads(user_response.content)
-
-        username = user_details.get('login', None)
-        if not username:
-            raise RuntimeError(f"Error getting username from GitHub: {user_details}")
-
-        emails_response = requests.get(
-            'https://api.github.com/user/emails',
-            headers={'Authorization': f'Bearer {gh_access_token}'}
-        )
-        emails = json.loads(emails_response.content)
-
-        email = next((item['email'] for item in emails if item['primary'] and item['verified']), None)
-
-        return username, email
+        logger.info("Getting the Google username and email address...")
+        res = requests.get("https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=" + access_token)
+        data = json.loads(res.content)
+        return data['name'], data['email']
     except Exception as e:
         raise RuntimeError(f"Error getting GitHub user details: {e}")
 
 
-def get_github_access_token(code: str):
-    """
-    Gets the GitHub access token using the authorization code.
-
-    :param code: The authorization code.
-    :return: The GitHub access token.
-    """
-    logger.info("Getting the GitHub access token...")
-    try:
-        response = requests.post(
-            'https://github.com/login/oauth/access_token',
-            headers={
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            json={
-                'client_id': CLIENT_ID,
-                'client_secret': CLIENT_SECRET,
-                'code': code
-            }
-        )
-        content = json.loads(response.content)
-        access_token = content.get('access_token')
-        return access_token
-    except Exception as e:
-        raise RuntimeError(f"Error getting GitHub access token: {e}")
-
-
 def handler(event, context):
     try:
-        logger.info('Github Authentication started...')
+        logger.info('Google Authentication started...')
         connect_to_db()
 
         logger.info("Parsing the request body...")
         body = parse_request_body(event)
         logger.info("Parsing the request header...")
         origin, host = parse_header(event)
-        validate_company_data(body)
+        validate_request_body(body)
 
-        code = body.get('code')
-        github_access_token = get_github_access_token(code)
-        username, email = get_user_details(github_access_token)
+        token = body.get('token')
+        username, email = get_user_details(token)
 
         data = {
             "name": username,
-            "email": email,
-            "github_username": username,
-            "github_access_token": github_access_token
+            "email": email
         }
 
         if company_already_exists(email):
             company_id = get_company_id(email)
             access_token = generate_access_token(company_id)
-            logger.info('Github Login successful: %s', email)
+            logger.info('Google Login successful: %s', email)
             return generate_success_response(origin, host, access_token)
 
         company_id = str(uuid.uuid4())
         create_company_record(company_id, data)
 
-        save_company_repositories(company_id, username, github_access_token)
-
         access_token = generate_access_token(company_id)
         create_access_token_record(company_id, access_token)
 
         db_conn.commit()
-        logger.info('Github Registration successful: %s', email)
+        logger.info('Google Registration successful: %s', email)
         return generate_success_response(origin, host, access_token)
 
     except (ValueError, RuntimeError) as e:
