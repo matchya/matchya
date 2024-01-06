@@ -114,6 +114,7 @@ export const mockSelectedPosition: Position = {
   },
   candidates: mockCandidates,
   checklist_status: 'active',
+  questions: [mockQuestion, mockQuestion, mockQuestion],
 };
 
 export const mockPositions: Position[] = [
@@ -128,6 +129,7 @@ export const mockPositions: Position[] = [
     },
     candidates: [],
     checklist_status: 'active',
+    questions: [mockQuestion],
   },
 ];
 
