@@ -39,6 +39,7 @@ export interface Position {
   checklist_status: string;
   checklist: Checklist;
   candidates: Candidate[];
+  questions: Question[];
 }
 
 export interface Checklist {
