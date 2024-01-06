@@ -43,19 +43,21 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
+      - name: Select Terraform Workspace
+        if: ${{inputs.component == 'environment'}}
+        run: terraform workspace select ${{inputs.environment}}
+        working-directory: terraform/${{inputs.component}}
+
       - name: Download Terraform Plan from S3
-        run: aws s3 cp s3://github-actions-remote-artifacts/${{inputs.environment}}/plans/environment.tfplan terraform/environment/environment.tfplan
+        run: aws s3 cp s3://github-actions-remote-artifacts/${{inputs.environment}}/plans/${{inputs.component}}.tfplan terraform/${{inputs.component}}/${{inputs.component}}.tfplan
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
 
       - name: Terraform Init
         run: terraform init
-        working-directory: terraform/environment
+        working-directory: terraform/${{inputs.component}}
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve environment.tfplan
-        working-directory: terraform/environment
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: terraform apply -auto-approve ${{inputs.component}}.tfplan
+        working-directory: terraform/${{inputs.component}}

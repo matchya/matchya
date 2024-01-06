@@ -24,6 +24,7 @@ jobs:
   terraform-shared-deploy:
     name: Deploy Infrastructure
     permissions: write-all
+    needs: [cleanup]
     uses: ./.github/workflows/job-deploy-terraform.yml
     with:
       label: Shared
