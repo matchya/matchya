@@ -1,13 +1,19 @@
-import { AllCandidatesCard, CandidateDetailCard } from '@/components';
+import {
+  AllCandidatesCard,
+  CandidateDetailCard,
+  QuestionCard,
+} from '@/components';
 import { Candidate, Position } from '@/types';
 
 interface DashboardPageTemplateProps {
+  shouldShowQuestions: boolean;
   positions: Position[];
   selectedPosition: Position;
   selectedCandidate: Candidate | null;
 }
 
 const DashboardPageTemplate = ({
+  shouldShowQuestions,
   positions,
   selectedPosition,
   selectedCandidate,
@@ -35,10 +41,20 @@ const DashboardPageTemplate = ({
                   />
                 </div>
                 {selectedCandidate ? (
-                  <div className="hidden h-full flex-1 flex-col md:flex">
-                    <CandidateDetailCard candidate={selectedCandidate} />
+                  <div className="hidden flex-1 flex-col md:flex h-[calc(100vh-100px)] p-6 rounded-lg border border-slate-200 bg-white text-slate-950 shadow-sm dark:border-slate-800 dark:bg-slate-950 dark:text-slate-50 col-span-3 overflow-y-auto">
+                    <div className="space-y-8 h-full overflow-y-auto">
+                      {shouldShowQuestions ? (
+                        selectedPosition.questions.map(question => (
+                          <QuestionCard {...question} />
+                        ))
+                      ) : (
+                        <CandidateDetailCard candidate={selectedCandidate} />
+                      )}
+                    </div>
                   </div>
-                ) : null}
+                ) : (
+                  <div>No Candidates</div>
+                )}
               </div>
             </div>
           </div>
@@ -48,7 +64,7 @@ const DashboardPageTemplate = ({
   };
 
   return (
-    <div className="bg-gray-100 h-[calc(100vh-64px)] overflow-hidden">
+    <div className="bg-gray-100 h-full min-h-[calc(100vh-64px)] overflow-hidden">
       <div className="w-full h-full mx-auto">
         <DashboardBody />
       </div>
