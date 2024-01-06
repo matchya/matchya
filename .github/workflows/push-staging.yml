@@ -25,7 +25,7 @@ jobs:
     name: Deploy Infrastructure
     permissions: write-all
     uses: ./.github/workflows/job-deploy-terraform.yml
-        with:
+    with:
       label: Shared
       component: shared
       environment: staging
@@ -36,14 +36,14 @@ jobs:
     permissions: write-all
     needs: [terraform-shared-deploy]
     uses: ./.github/workflows/job-deploy-terraform.yml
-        with:
+    with:
       label: Environment
       component: environment
       environment: staging
     secrets: inherit
 
   deploy-to-s3:
-    name: Deploy to S3
+    name: Deployment
     needs: [cleanup]
     uses: ./.github/workflows/job-deploy-to-s3.yml
     with:
