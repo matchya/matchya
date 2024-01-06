@@ -11,6 +11,11 @@ const GithubAuthCallback = () => {
 
   useEffect(() => {
     const code = new URLSearchParams(location.search).get('code');
+    const error = new URLSearchParams(location.search).get('error');
+    if (error) {
+      setLoginFailed(true);
+      navigate('/auth');
+    }
     if (code) {
       handleGithubLogin(code);
     }
