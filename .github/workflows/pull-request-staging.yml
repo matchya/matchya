@@ -57,7 +57,7 @@ jobs:
       - name: Upload Terraform Plan
         uses: actions/upload-artifact@v2
         with:
-          name: terraform-plan
+          name: terraform-shared-plan
           path: terraform/shared/shared.tfplan
 
       - name: Comment PR
@@ -122,7 +122,7 @@ jobs:
       - name: Upload Terraform Plan
         uses: actions/upload-artifact@v2
         with:
-          name: terraform-plan
+          name: terraform-environment-plan
           path: terraform/shared/environment.tfplan
 
       - name: Comment PR
