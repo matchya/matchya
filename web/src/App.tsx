@@ -9,6 +9,7 @@ import DashboardPage from '@/screens/DashboardPage';
 import GithubAuthCallbackPage from '@/screens/GithubAuthCallbackPage';
 import GoogleAuthCallbackPage from '@/screens/GoogleAuthCallbackPage';
 import HomePage from '@/screens/HomePage';
+import PositionSetupPage from '@/screens/PositionSetupPage';
 // import SettingsPage from '@/screens/SettingsPage';
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
         <Routes>
           <Route element={<AuthenticatedLayout />}>
             <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/position-setup" element={<PositionSetupPage />} />
             {/* <Route path="/settings" element={<SettingsPage />} /> */}
           </Route>
           <Route element={<UnAuthenticatedLayout />}>

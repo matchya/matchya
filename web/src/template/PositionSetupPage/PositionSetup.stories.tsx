@@ -13,13 +13,13 @@ export default meta;
 
 type Story = StoryObj<typeof Component>;
 
-export const DashboardPage: Story = {
+export const PositionSetupPage: Story = {
   render: () => (
     <>
       <Header authenticated={true} />
       <Component
-        type="default"
-        level="default"
+        selectedType="frontend"
+        selectedLevel="mid"
         handleSelectType={() => {}}
         handleSelectLevel={() => {}}
         handleSubmit={() => {}}
