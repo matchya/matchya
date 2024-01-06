@@ -11,6 +11,7 @@ interface PositionSetupPageProps {
   handleSelectType: (type: string) => void;
   handleSelectLevel: (level: string) => void;
   handleNext: () => void;
+  handlePrev: () => void;
   handleUnselect: (framework: string) => void;
   handleKeyDown: (e: React.KeyboardEvent<HTMLDivElement>) => void;
   handleAddItem: (item: string) => void;
@@ -25,6 +26,7 @@ const PositionSetupPageTemplate = ({
   handleSelectType,
   handleSelectLevel,
   handleNext,
+  handlePrev,
   handleUnselect,
   handleKeyDown,
   handleAddItem,
@@ -63,10 +65,10 @@ const PositionSetupPageTemplate = ({
   };
 
   return (
-    <div className="bg-gray-200 h-[calc(100vh-64px)] overflow-hidden">
+    <div className="bg-gray-200 h-[calc(100vh-64px)] overflow-scroll">
       <div className="w-full h-full mx-auto flex justify-center items-center">
         <div className="h-3/4 w-2/3 mx-auto rounded-2xl flex flex-col items-center">
-          <h3 className="text-2xl font-bold mt-16 mb-24">
+          <h3 className="text-2xl font-bold mt-16 mb-10 md:mb-24">
             {phase === 1 && 'What type of engineers are you hiring?'}
             {phase === 2 && 'What level of engineers are you hiring?'}
             {phase === 3 && 'Integrate with GitHub for better experience'}
@@ -136,7 +138,10 @@ const PositionSetupPageTemplate = ({
               />
             )}
           </div>
-          <div className="w-full flex justify-end items-center mt-24">
+          <div className="w-full flex justify-between items-center my-5 md:my-24">
+            <Button onClick={handlePrev} disabled={phase === 1}>
+              Back
+            </Button>
             <Button onClick={handleNext}>
               {phase === 1 && 'Next'}
               {phase === 2 && 'Next'}

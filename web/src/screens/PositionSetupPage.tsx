@@ -93,6 +93,7 @@ const PositionSetupPage = () => {
       handleSelectType={handleSelectType}
       handleSelectLevel={handleSelectLevel}
       handleNext={handleNext}
+      handlePrev={() => setPhase(phase - 1)}
       handleUnselect={handleUnselect}
       handleKeyDown={handleKeyDown}
       handleAddItem={handleAddItem}
