@@ -9,7 +9,6 @@ const DashboardPage = () => {
     usePositionStore();
 
   const { id, me } = useCompanyStore();
-  const [shouldShowQuestions] = useState(false);
   const [type, setType] = useState('default');
   const [level, setLevel] = useState('default');
 
@@ -69,7 +68,6 @@ const DashboardPage = () => {
 
   return (
     <DashboardPageTemplate
-      shouldShowQuestions={shouldShowQuestions}
       positions={positions}
       selectedPosition={selectedPosition}
       selectedCandidate={selectedCandidate}
