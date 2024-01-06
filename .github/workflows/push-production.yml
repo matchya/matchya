@@ -7,7 +7,7 @@ on:
 
 jobs:
   cleanup:
-    name: Clean up deployment history
+    name: Clean Deployment History
     runs-on: ubuntu-latest
     permissions: write-all
     steps:
@@ -21,7 +21,6 @@ jobs:
   deploy-website:
     name: Deployment
     needs: [cleanup]
-    if: needs.check-for-web-folder-changes.outputs.package_changed == 'true'
     uses: ./.github/workflows/job-deploy-website.yml
     with:
       environment: production

@@ -7,7 +7,7 @@ on:
 
 jobs:
   cleanup:
-    name: Clean up deployment history
+    name: Clean Deployment History
     runs-on: ubuntu-latest
     environment: staging
     env:
