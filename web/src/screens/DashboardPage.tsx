@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import PositionSetupPage from './PositionSetupPage';
 
@@ -14,6 +14,7 @@ const DashboardPage = () => {
     selectCandidate,
     setupRequired,
   } = usePositionStore();
+  const [shouldShowQuestions] = useState(false);
 
   useEffect(() => {
     if (

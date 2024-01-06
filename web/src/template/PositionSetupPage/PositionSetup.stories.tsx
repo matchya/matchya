@@ -18,11 +18,19 @@ export const PositionSetupPage: Story = {
     <>
       <Header authenticated={true} />
       <Component
+        inputRef={{} as React.RefObject<HTMLInputElement>}
+        phase={1}
+        selectedRepositories={[]}
+        integrateGitHub={() => {}}
+        handleNext={() => {}}
+        handlePrev={() => {}}
+        handleUnselect={() => {}}
+        handleKeyDown={() => {}}
+        handleAddItem={() => {}}
         selectedType="frontend"
         selectedLevel="mid"
         handleSelectType={() => {}}
         handleSelectLevel={() => {}}
-        handleSubmit={() => {}}
       />
     </>
   ),
