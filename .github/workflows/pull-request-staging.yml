@@ -3,7 +3,7 @@ name: PR Pipeline (Staging)
 on:
   pull_request:
     branches:
-      - develop
+      - staging
     types:
       - opened
       - reopened
