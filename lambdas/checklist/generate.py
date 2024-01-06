@@ -294,6 +294,8 @@ def save_repository_names_to_db(checklist_id: str, repository_names: list):
     :param repository_names: A list of repository full names.
     """
     logger.info("Saving repository names to db...")
+    if len(repository_names) == 0:
+        return
     sql = "INSERT INTO checklist_repository (id, checklist_id, repository_name) VALUES"
     for repository_name in repository_names:
         sql += f" ('{str(uuid.uuid4())}', '{checklist_id}', '{repository_name}'),"
@@ -338,6 +340,43 @@ def update_generation_status(position_id: str, checklist_status='failed'):
         raise RuntimeError("Error updating generation status in postgres")
 
 
+def get_position_type(position_id: str) -> str:
+    """
+    Gets the position type from the position id.
+
+    :param position_id: Unique identifier for the position.
+    :return: The position type.
+    """
+    logger.info("Getting the position type from position id...")
+    sql = f"SELECT type FROM position WHERE id = '{position_id}';"
+    try:
+        db_cursor.execute(sql)
+        result = db_cursor.fetchone()
+        if result and result[0]:
+            return result[0]
+        else:
+            return None
+    except Exception as e:
+        logger.error(f"Error getting position type from postgres: {e}")
+        raise RuntimeError(f"Error getting position type from postgres: {e}")
+
+
+def get_default_criteria(position_id: str) -> list:
+    """
+    Gets the default criteria for the position.
+
+    :param position_id: Unique identifier for the position.
+    :return: A list of criteria keywords.
+    """
+    logger.info("Getting the default criteria...")
+    try:
+        position_type = get_position_type(position_id)
+        return Config.DEFAULT_CRITERIA[position_type]
+    except Exception as e:
+        logger.error(f"Error getting default criteria from postgres: {e}")
+        raise RuntimeError(f"Error getting default criteria from postgres: {e}")
+
+
 def handler(event, context):
     """
     Lambda handler.
@@ -355,28 +394,30 @@ def handler(event, context):
         body = json.loads(messages[0]['body'])
         position_id = body.get('position_id')
         repository_names = body.get('repository_names')
-        github_username = body.get('github_username')
-        github_access_token = get_github_access_token_from_position_id(position_id)
 
-        github_client = GithubClient(github_username, github_access_token)
-        repositories_data = retrieve_repositories_data(github_client, repository_names)
-        logger.info(f'Repositories data retrieved successfully for position: {repositories_data}')
+        if len(repository_names) == 0:
+            criteria = get_default_criteria(position_id)
+            logger.info('Successfully retrieved default criteria')
 
-        system_message, user_message = get_system_and_user_message(repositories_data)
-        criteria = get_criteria_from_gpt(system_message, user_message,)
-        logger.info(f'Checklist and Criteria generated successfully for position: {position_id}')
+        else:
+            github_username = body.get('github_username')
+            github_access_token = get_github_access_token_from_position_id(position_id)
+
+            github_client = GithubClient(github_username, github_access_token)
+            repositories_data = retrieve_repositories_data(github_client, repository_names)
+            logger.info(f'Repositories data retrieved successfully for position: {repositories_data}')
+
+            system_message, user_message = get_system_and_user_message(repositories_data)
+            criteria = get_criteria_from_gpt(system_message, user_message,)
+            logger.info(f'Checklist and Criteria generated successfully for position: {position_id}')
 
         checklist_id = save_checklist_to_db(position_id)
         save_criteria_to_dynamodb(criteria, checklist_id)
         save_repository_names_to_db(checklist_id, repository_names)
 
-        criteria_messages = [criterion['message'] for criterion in criteria]
-        body = {
-            "checklist_id": checklist_id,
-            "criteria": criteria_messages
-        }
         checklist_status = 'succeeded'
         logger.info('Criteria saved successfully')
+
     except (ValueError, RuntimeError) as e:
         status_code = 400
         logger.error(f'Criteria generation failed (status {str(status_code)}): {e}')
