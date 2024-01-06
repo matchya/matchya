@@ -24,7 +24,7 @@ on:
 
 jobs:
   run:
-    name: ${{inputs.label}} Infrastructure
+    name: Infrastructure (${{inputs.label}})
     runs-on: ubuntu-latest
     permissions: write-all
     environment: ${{inputs.environment}}
