@@ -31,7 +31,7 @@ db_cursor = None
 
 # SQS
 sqs = boto3.client('sqs')
-queue_url = Config.EVALUATION_PROCESSOR_QUEUE_URL
+queue_url = Config.CHECKLIST_EVALUATION_PROCESSOR_QUEUE_URL
 
 
 def connect_to_db():
