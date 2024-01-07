@@ -35,6 +35,9 @@ db_cursor = None
 # OpenAI
 chat_client = OpenAI()
 
+# SQS
+sqs = boto3.client('sqs')
+
 
 def connect_to_db():
     """
@@ -379,6 +382,27 @@ def get_default_criteria(position_id: str) -> list:
         raise RuntimeError(f"Error getting default criteria: {e}")
 
 
+def send_message_to_question_sqs(position_id: str):
+    """
+    Sends a message to the SQS queue.
+
+    :param body: The body of the message to send.
+    :return: The response from the SQS queue.
+    """
+    logger.info("Sending the message to sqs...")
+    try:
+        body = {'position_id': position_id}
+        response = sqs.send_message(
+            QueueUrl=Config.QUESTION_GENERATION_PROCESSOR_QUEUE_URL,
+            MessageBody=json.dumps(body)
+        )
+        if response.get('MessageId') is None:
+            raise RuntimeError("Send message failed")
+    except Exception as e:
+        logger.exception("Send message failed")
+        raise e
+
+
 def handler(event, context):
     """
     Lambda handler.
@@ -418,6 +442,7 @@ def handler(event, context):
         save_repository_names_to_db(checklist_id, repository_names)
 
         checklist_status = 'succeeded'
+        send_message_to_question_sqs(position_id)
         logger.info('Criteria saved successfully')
 
     except (ValueError, RuntimeError) as e:

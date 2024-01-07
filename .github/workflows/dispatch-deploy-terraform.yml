@@ -1,0 +1,29 @@
+name: Manually Deploy Infrastructure
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment to deploy to"
+        required: true
+        default: "staging"
+
+jobs:
+  shared:
+    name: Deployment
+    uses: ./.github/workflows/job-deploy-terraform.yml
+    with:
+      environment: ${{inputs.environment}}
+      component: shared
+      label: Shared
+    secrets: inherit
+
+  environment:
+    name: Deployment
+    needs: [shared]
+    uses: ./.github/workflows/job-deploy-terraform.yml
+    with:
+      environment: ${{inputs.environment}}
+      component: environment
+      label: Environment
+    secrets: inherit

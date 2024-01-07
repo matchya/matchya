@@ -2,7 +2,11 @@ name: PR Pipeline
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, edited]
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - edited
 
 jobs:
   validate:
@@ -13,7 +17,7 @@ jobs:
         run: |
           PR_TITLE="${{ github.event.pull_request.title }}"
           PATTERN="^(feat|fix)(\(web\)|\(authentication\)|\(authorizer\)|\(checklist\)|\(company\)|\(position\)|\(question\)|\(ci\)|\(terraform\)|\(db\)): .+"
-          EXCEPTIONS="^(Merge to Production|Merge to Staging|chore|chore\(.*\))$"
+          EXCEPTIONS="^(Merge to Production|Merge to Staging|chore|chore\(.*\)|fix)$"
 
           if [[ $PR_TITLE =~ $EXCEPTIONS ]]; then
               echo "PR title is an allowed exception."
