@@ -3,15 +3,6 @@ name: Manually Deploy Infrastructure
 on:
   workflow_dispatch:
     inputs:
-      label:
-        description: "Label for the deployment"
-        required: true
-        default: "Shared"
-      component:
-        description: "Component to deploy"
-        required: true
-        type: string
-        default: "shared"
       environment:
         description: "Environment to deploy to"
         required: true
@@ -23,8 +14,8 @@ jobs:
     uses: ./.github/workflows/job-deploy-terraform.yml
     with:
       environment: ${{inputs.environment}}
-      component: ${{inputs.component}}
-      label: ${{inputs.label}}
+      component: shared
+      label: Shared
     secrets: inherit
 
   environment:
@@ -33,6 +24,6 @@ jobs:
     uses: ./.github/workflows/job-deploy-terraform.yml
     with:
       environment: ${{inputs.environment}}
-      component: ${{inputs.component}}
-      label: ${{inputs.label}}
+      component: environment
+      label: Environment
     secrets: inherit
