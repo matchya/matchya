@@ -40,3 +40,6 @@ functions:
     events:
       - sqs: ${ssm:/terraform/${self:provider.stage}/sqs/question_generation_processor_queue_arn}
     timeout: 300
+
+plugins:
+  - serverless-deployment-bucket
