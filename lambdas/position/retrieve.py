@@ -77,6 +77,8 @@ def get_position_details_by_id(position_id):
         SELECT
             p.id AS position_id, p.name AS position_name, p.checklist_generation_status AS checklist_status,
             c.id AS checklist_id,
+            que.id AS question_id, que.text AS question_text, que.topic AS question_topic, que.difficulty AS question_difficulty,
+            met.id AS metric_id, met.name AS metric_name,
             cr.repository_name,
             can.id AS candidate_id, can.first_name, can.last_name, can.email, can.github_username, 
             can_res.total_score, can_res.summary, can_res.status AS candidate_result_status, can_res.created_at,
@@ -85,6 +87,9 @@ def get_position_details_by_id(position_id):
             position p
         LEFT JOIN checklist c ON p.id = c.position_id
         LEFT JOIN checklist_repository cr ON c.id = cr.checklist_id
+        LEFT JOIN position_question pos_que ON p.id = pos_que.position_id
+        LEFT JOIN question que ON que.id = pos_que.question_id
+        LEFT JOIN metric met ON met.question_id = que.id
         LEFT JOIN candidate_result can_res ON c.id = can_res.checklist_id
         LEFT JOIN candidate can ON can_res.candidate_id = can.id
         LEFT JOIN assessment_criteria ass_crit ON can_res.id = ass_crit.candidate_result_id
@@ -114,15 +119,28 @@ def process_position_from_sql_results(sql_results):
     logger.info("Processing position from sql results...")
     # if no checklist, return empty checklist
     if sql_results[0][3] is None:
-        return {"name": sql_results[0][1], "checklist_status": sql_results[0][2], "checklists": [], "candidates": []}
+        return {
+            "name": sql_results[0][1],
+            "checklist_status": sql_results[0][2],
+            "checklists": [],
+            "questions": [],
+            "candidates": []
+        }
 
     position_data = {}
     for row in sql_results:
-        (position_id, position_name, checklist_status, checklist_id, repo_name, candidate_id, first_name, last_name, email,
+        (position_id, position_name, checklist_status, checklist_id, question_id, question_text, question_topic,
+         question_difficulty, metric_id, metric_name, repo_name, candidate_id, first_name, last_name, email,
          github_username, total_score, summary, candidate_result_status, created_at, criterion_id, score, reason) = row
 
         if position_id not in position_data:
-            position_data[position_id] = {'name': position_name, 'checklist_status': checklist_status, 'checklists': {}, 'candidates': {}}
+            position_data[position_id] = {
+                'name': position_name,
+                'checklist_status': checklist_status,
+                'checklists': {},
+                'questions': {},
+                'candidates': {}
+            }
 
         if checklist_id not in position_data[position_id]['checklists']:
             criteria = get_criteria_by_checklist_id(checklist_id)
@@ -132,7 +150,23 @@ def process_position_from_sql_results(sql_results):
                 'criteria': criteria
             }
 
-        position_data[position_id]['checklists'][checklist_id]['repository_names'].add(repo_name)
+        if repo_name:
+            position_data[position_id]['checklists'][checklist_id]['repository_names'].add(repo_name)
+
+        if question_id and question_id not in position_data[position_id]['questions']:
+            position_data[position_id]['questions'][question_id] = {
+                'id': question_id,
+                'text': question_text,
+                'topic': question_topic,
+                'difficulty': question_difficulty,
+                'metrics': {}
+            }
+
+        if metric_id and metric_id not in position_data[position_id]['questions'][question_id]['metrics']:
+            position_data[position_id]['questions'][question_id]['metrics'][metric_id] = {
+                'id': metric_id,
+                'name': metric_name
+            }
 
         candidates = position_data[position_id]['candidates']
         if email and email not in candidates:
@@ -166,6 +200,11 @@ def process_position_from_sql_results(sql_results):
             chk_info['repository_names'] = list(chk_info['repository_names'])
             final_checklists.append(chk_info)
 
+        final_questions = []
+        for que_id, que_info in pos_info['questions'].items():
+            que_info['metrics'] = list(que_info['metrics'].values())
+            final_questions.append(que_info)
+
         final_candidates = []
         for can_email, can_info in pos_info['candidates'].items():
             can_info['assessments'] = list(can_info['assessments'].values())
@@ -174,6 +213,7 @@ def process_position_from_sql_results(sql_results):
             'name': pos_info['name'],
             'checklist_status': pos_info['checklist_status'],
             'checklist': final_checklists[0],  # Single checklist for now
+            'questions': final_questions,
             'candidates': final_candidates
         })
 
