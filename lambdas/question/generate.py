@@ -66,7 +66,7 @@ def get_checklist_id_from_position_id(position_id):
 
 
 # set the number of questions to 3 for now (development purposes)
-def get_keywords_from_checklist(checklist_id, n_questions=3) -> list:
+def get_keywords_from_checklist(checklist_id, n_questions=6) -> list:
     """
     Retrieves the keywords from the checklist from dynamodb.
 
@@ -296,8 +296,10 @@ def save_data_to_question_table(position_id: str, questions: list) -> str:
     try:
         for question in questions:
             id = str(uuid.uuid4())
+            text = question['text'].replace("'", "''")
+            topic = question['topic'].replace("'", "''")
             question['id'] = id
-            sql += f" ('{id}', '{question['text']}', '{question['difficulty']}', '{question['topic']}'),"
+            sql += f" ('{id}', '{text}', '{question['difficulty']}', '{topic}'),"
         sql = sql[:-1] + ';'
         db_cursor.execute(sql)
 
@@ -340,7 +342,9 @@ def save_data_to_metric_table(questions: list) -> str:
         for question in questions:
             for metric in question['metrics']:
                 metric_id = str(uuid.uuid4())
-                sql += f" ('{metric_id}', '{question['id']}', '{metric['name']}', '{metric['scoring'][0: 1023]}', {metric['weight']}),"
+                name = metric['name'].replace("'", "''")
+                scoring = metric['scoring'].replace("'", "''")
+                sql += f" ('{metric_id}', '{question['id']}', '{name}', '{scoring[0: 1023]}', {metric['weight']}),"
         sql = sql[:-1] + ';'
         db_cursor.execute(sql)
     except Exception as e:
@@ -419,7 +423,7 @@ def handler(event, context):
         body = json.loads(messages[0]['body'])
         position_id = body.get('position_id')
 
-        n_questions = 3
+        n_questions = 6
         checklist_id = get_checklist_id_from_position_id(body['position_id'])
         keywords = get_keywords_from_checklist(checklist_id, n_questions)
 
