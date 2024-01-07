@@ -28,12 +28,7 @@ provider:
     POSTGRES_DB: ${ssm:/terraform/${self:provider.stage}/rds/db_name}
     POSTGRES_USER: ${ssm:/terraform/${self:provider.stage}/rds/db_username}
     POSTGRES_PASSWORD: ${ssm:/terraform/${self:provider.stage}/rds/db_password}
-
-frameworkVersion: '3'
-
-provider:
-  name: aws
-  runtime: python3.9
+    QUESTION_GENERATION_PROCESSOR_QUEUE_URL: ${ssm:/terraform/${self:provider.stage}/sqs/question_generation_processor_queue_url}
 
 functions:
   generate:
@@ -41,10 +36,7 @@ functions:
     image:
       name: default
       command:
-        - evaluate.handler
+        - generate.handler
     events:
-      - sqs: ${ssm:/terraform/${self:provider.stage}/sqs/checklist_evaluation_processor_queue_arn}
+      - sqs: ${ssm:/terraform/${self:provider.stage}/sqs/question_generation_processor_queue_arn}
     timeout: 300
-
-
-QUESTION_GENERATION_PROCESSOR_QUEUE_URL

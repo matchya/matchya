@@ -9,7 +9,7 @@ from openai import OpenAI
 from config import Config
 
 # Logger
-logger = logging.getLogger('publish_questionsgeneration')
+logger = logging.getLogger('publish_question_generation')
 logger.setLevel(logging.INFO)
 
 formatter = logging.Formatter('[%(levelname)s]:%(funcName)s:%(lineno)d:%(message)s')
