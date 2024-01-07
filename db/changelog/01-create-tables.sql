@@ -90,3 +90,39 @@ CREATE TABLE IF NOT EXISTS checklist_repository (
 	foreign key (checklist_id) references checklist(id)
 );
 --rollback DROP TABLE IF EXISTS checklist_repository;
+
+--changeset author:9
+ALTER TABLE position ADD COLUMN IF NOT EXISTS question_generation_status varchar(30) DEFAULT 'scheduled';
+--rollback ALTER TABLE position DROP COLUMN IF EXISTS question_generation_status;
+
+--changeset author:10
+CREATE TABLE IF NOT EXISTS question (
+	id varchar(255) not null primary key,
+	text varchar(1023),
+	difficulty varchar(30),
+	topic varchar(30),
+	created_at timestamp default CURRENT_TIMESTAMP
+);
+--rollback DROP TABLE IF EXISTS question;
+
+--changeset author:11
+CREATE TABLE IF NOT EXISTS position_question (
+	id varchar(255) not null primary key,
+	position_id varchar(255),
+	question_id varchar(255),
+	foreign key (position_id) references position(id),
+	foreign key (question_id) references question(id)
+);
+--rollback DROP TABLE IF EXISTS position_question;
+
+--changeset author:12
+CREATE TABLE IF NOT EXISTS metric (
+	id varchar(255) not null primary key,
+	question_id varchar(255),
+	name varchar(255),
+	scoring varchar(1023),
+	weight float,
+	created_at timestamp default CURRENT_TIMESTAMP,
+	foreign key (question_id) references question(id)
+);
+--rollback DROP TABLE IF EXISTS metric;
