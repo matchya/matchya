@@ -92,7 +92,7 @@ CREATE TABLE IF NOT EXISTS checklist_repository (
 --rollback DROP TABLE IF EXISTS checklist_repository;
 
 --changeset author:9
-ALTER TABLE position ADD COLUMN IF NOT EXISTS question_generation_status varchar(30) DEFAULT 'unscheduled';
+ALTER TABLE position ADD COLUMN IF NOT EXISTS question_generation_status varchar(30) DEFAULT 'scheduled';
 --rollback ALTER TABLE position DROP COLUMN IF EXISTS question_generation_status;
 
 --changeset author:10

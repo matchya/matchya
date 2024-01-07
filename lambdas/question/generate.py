@@ -256,7 +256,7 @@ def get_questions_from_gpt(system_message: str, user_message: str) -> list:
 
     :return: A list of questions.
     """
-    logger.info("Getting the criteria from GPT...")
+    logger.info("Getting the questions from GPT...")
     try:
         completion = chat_client.chat.completions.create(
             model="gpt-3.5-turbo-1106",
@@ -284,8 +284,8 @@ def save_questions_to_db(position_id: str, questions: list) -> str:
 
     """
     logger.info("Saving questions to the database...")
-    save_data_to_position_question_table(position_id, questions)
     save_data_to_question_table(position_id, questions)
+    save_data_to_position_question_table(position_id, questions)
     save_data_to_metric_table(questions)
     logger.info("Questions saved successfully")
 
@@ -411,7 +411,7 @@ def handler(event, context):
     """
     logger.info(event)
     try:
-        logger.info('Received generate criteria request')
+        logger.info('Received generate questions request')
         connect_to_db()
         question_status = 'failed'
 
