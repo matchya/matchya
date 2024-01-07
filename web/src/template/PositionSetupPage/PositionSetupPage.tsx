@@ -1,9 +1,10 @@
 import { useState } from 'react';
 
-import { Button, MultiSelect } from '@/components';
+import { Button, Icons, MultiSelect } from '@/components';
 import { useCompanyStore } from '@/store/store';
 interface PositionSetupPageProps {
   inputRef: React.RefObject<HTMLInputElement>;
+  isLoading: boolean;
   phase: number;
   selectedRepositories: string[];
   selectedType: string;
@@ -20,6 +21,7 @@ interface PositionSetupPageProps {
 
 const PositionSetupPageTemplate = ({
   inputRef,
+  isLoading,
   phase,
   selectedRepositories,
   selectedType,
@@ -62,7 +64,7 @@ const PositionSetupPageTemplate = ({
       case 'Senior-level':
         return 'senior';
       default:
-        return 'default';
+        return 'software';
     }
   };
 
@@ -81,8 +83,10 @@ const PositionSetupPageTemplate = ({
           <div className="flex flex-wrap justify-center">
             {phase == 0 && (
               <div>
-                <Button className="rounded-full mx-8 mb-5 w-60 bg-white border border-black text-black hover:bg-gray-200"
-                onClick={integrateGitHub}>
+                <Button
+                  className="rounded-full mx-8 mb-5 w-60 bg-white border border-black text-black hover:bg-gray-200"
+                  onClick={integrateGitHub}
+                >
                   Integrate with GitHub
                 </Button>
               </div>
@@ -145,16 +149,22 @@ const PositionSetupPageTemplate = ({
           <div className="w-full flex justify-between items-center my-5 md:my-24">
             <Button
               onClick={handlePrev}
-              disabled={phase === 0 || (phase === 1 && github_username !== '')}
+              disabled={
+                phase === 0 || (phase === 1 && github_username !== null)
+              }
             >
               Back
             </Button>
             <Button onClick={handleNext}>
-              {phase === 0 && 'Continue without GitHub'}
-              {phase === 1 && 'Next'}
-              {phase === 2 && 'Next'}
-              {phase === 3 && 'Next'}
-              {phase === 4 && 'Finish'}
+              {!isLoading && phase === 0 && 'Continue without GitHub'}
+              {!isLoading && phase === 1 && 'Next'}
+              {!isLoading && phase === 2 && github_username !== null && 'Next'}
+              {!isLoading && phase === 2 && !github_username && 'Finish'}
+              {!isLoading && phase === 3 && 'Next'}
+              {!isLoading && phase === 4 && 'Finish'}
+              {isLoading && (
+                <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+              )}
             </Button>
           </div>
         </div>

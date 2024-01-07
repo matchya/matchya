@@ -371,6 +371,8 @@ def get_default_criteria(position_id: str) -> list:
     logger.info("Getting the default criteria...")
     try:
         position_type = get_position_type(position_id)
+        if position_type != 'frontend' and position_type != 'backend' and position_type != 'devops':
+            position_type = 'fullstack'
         return Config.DEFAULT_CRITERIA[position_type]
     except Exception as e:
         logger.error(f"Error getting default criteria: {e}")
