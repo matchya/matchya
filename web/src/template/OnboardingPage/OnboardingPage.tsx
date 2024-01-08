@@ -1,3 +1,4 @@
+import icon from '@/assets/matchya-icon-new.png';
 import matchya1 from '@/assets/matchya1.png';
 import matchya2 from '@/assets/matchya2.png';
 import Button from '@/components/Button/Button';
@@ -18,34 +19,40 @@ const OnboardingPageTemplate = ({
 }: OnboardingPageTemplateProps) => {
   return (
     <div className="w-full h-screen mt-0 bg-lime-100 overflow-y-screen">
-      <div className="bg-lime-100 lg:flex w-full lg:h-full pt-10 lg:pt-20">
-        <div className="w-full lg:w-1/2 p-10 xl:p-20">
-          <h1 className="text-6xl md:text-7xl font-bold text-black pb-5 lg:p-10">
-            Match ya company with amazing talent
-          </h1>
-          <h2 className="text-3xl text-black lg:px-10 pb-5">
-            AI-powered powerful technical interviews that are easy to set up and
-            easy to understand.
-          </h2>
-          <div className="w-full block lg:hidden">
-            <img
-              src={matchya1}
-              alt="matchya1"
-              className="w-full sm:w-2/3 md:w-1/2 md:p-10"
-            />
-          </div>
-          <div className="flex w-full ml-10 mt-6">
-            <Button
-              variant={'outline'}
-              className="px-16 py-6 bg-lime-600 rounded text-white font-bold text-lg hover:bg-lime-700 hover:text-white"
-              onClick={scrollDown}
-            >
-              Try for free
-            </Button>
-          </div>
+      <div className="bg-lime-100 w-full lg:h-full pt-10 lg:pt-10">
+        <div className="bg-lime-100 w-full flex items-center h-20 pl-16 cursor-pointer">
+          <img src={icon} alt="matchya3" className="w-16 h-16" />
+          <h1 className="text-3xl font-bold text-black pl-5">Matchya</h1>
         </div>
-        <div className="w-1/2 hidden lg:block">
-          <img src={matchya1} alt="matchya1" className="w-full p-20" />
+        <div className='lg:flex w-full lg:h-full'>
+          <div className="w-full lg:w-1/2 p-10 xl:p-20">
+            <h1 className="text-6xl md:text-7xl font-bold text-black pb-5 lg:p-10">
+              Match ya company with amazing talent
+            </h1>
+            <h2 className="text-3xl text-black lg:px-10 pb-5">
+              AI-powered powerful technical interviews that are easy to set up
+              and easy to understand.
+            </h2>
+            <div className="w-full block lg:hidden">
+              <img
+                src={matchya1}
+                alt="matchya1"
+                className="w-full sm:w-2/3 md:w-1/2 md:p-10"
+              />
+            </div>
+            <div className="flex w-full ml-10 mt-6">
+              <Button
+                variant={'outline'}
+                className="px-16 py-6 bg-lime-600 rounded text-white font-bold text-lg hover:bg-lime-700 hover:text-white"
+                onClick={scrollDown}
+              >
+                Try for free
+              </Button>
+            </div>
+          </div>
+          <div className="w-1/2 hidden lg:block">
+            <img src={matchya1} alt="matchya1" className="w-full p-20" />
+          </div>
         </div>
       </div>
 
