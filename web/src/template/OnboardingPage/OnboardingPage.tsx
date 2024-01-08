@@ -28,7 +28,11 @@ const OnboardingPageTemplate = ({
             easy to understand.
           </h2>
           <div className="w-full block lg:hidden">
-            <img src={matchya1} alt="matchya1" className="w-full sm:w-2/3 md:w-1/2 md:p-10" />
+            <img
+              src={matchya1}
+              alt="matchya1"
+              className="w-full sm:w-2/3 md:w-1/2 md:p-10"
+            />
           </div>
           <div className="flex w-full ml-10 mt-6">
             <Button
@@ -90,7 +94,7 @@ const OnboardingPageTemplate = ({
 
       <div className="bg-lime-800 pt-16 w-full pb-16 px-10">
         <h2 className="text-4xl md:text-5xl w-full text-center font-bold text-white">
-          The smoothest recruitment ever.
+          Tired of recruiting? Try some matchya.
         </h2>
         <div className="w-full">
           <div className="relative w-4/5 sm:w-2/3 md:w-1/2 xl:w-1/3 h-14 mt-12 mx-auto">
