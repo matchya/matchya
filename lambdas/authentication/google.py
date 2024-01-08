@@ -46,6 +46,50 @@ def connect_to_db():
     db_cursor = db_conn.cursor()
 
 
+def validate_request_body(body):
+    """
+    Validates the necessary fields in the company data.
+
+    :param body: The request body containing company data.
+    """
+    logger.info("Validating the company data...")
+    required_fields = ['token']
+    if not all(body.get(field) for field in required_fields):
+        raise ValueError('Missing required fields.')
+
+
+def get_user_details(access_token):
+    """
+    Gets the GitHub username and email address of the user.
+
+    :param gh_access_token: The GitHub access token.
+    :return: The GitHub username and email address of the user.
+    """
+    try:
+        logger.info("Getting the Google username and email address...")
+        res = requests.get("https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=" + access_token)
+        data = json.loads(res.content)
+        return data['name'], data['email']
+    except Exception as e:
+        raise RuntimeError(f"Error getting GitHub user details: {e}")
+
+
+def company_already_exists(email):
+    """
+    Checks if the company already exists in the database.
+
+    :param email: The email address of the user.
+    :return: True if the user already exists, False otherwise.
+    """
+    logger.info(f"Checking if the user already exists... {email}")
+    sql = "SELECT id FROM company WHERE email = %s;"
+    try:
+        db_cursor.execute(sql, (email,))
+        return db_cursor.fetchone() is not None
+    except Exception as e:
+        raise RuntimeError(f"Error checking if user already exists: {e}")
+
+
 def get_company_id(email):
     """
     Retrieves the company id from the database based on the provided email.
@@ -65,18 +109,6 @@ def get_company_id(email):
     return result[0][0]
 
 
-def validate_request_body(body):
-    """
-    Validates the necessary fields in the company data.
-
-    :param body: The request body containing company data.
-    """
-    logger.info("Validating the company data...")
-    required_fields = ['token']
-    if not all(body.get(field) for field in required_fields):
-        raise ValueError('Missing required fields.')
-
-
 def create_company_record(company_id: str, body: dict):
     """
     Creates a new company record in the database.
@@ -92,6 +124,26 @@ def create_company_record(company_id: str, body: dict):
         raise RuntimeError(f"Email address is already used: {body['email']}")
     except Exception as e:
         raise RuntimeError(f"Error saving to company table: {e}")
+
+
+def create_default_position(company_id) -> str:
+    """
+    Creates a new position record in the database.
+
+    :param body: The request body containing the position data.
+    :return: The id of the newly created position record.
+    """
+    logger.info("Creating a position record...")
+    name = 'Software Engineer'
+    level = 'mid'
+    type = 'fullstack'
+    sql = "INSERT INTO position (id, company_id, name, type, level) VALUES (%s, %s, %s, %s, %s);"
+    try:
+        position_id = str(uuid.uuid4())
+        db_cursor.execute(sql, (position_id, company_id, name, type, level))
+        return position_id
+    except Exception as e:
+        raise RuntimeError(f"Error saving to position table: {e}")
 
 
 def create_access_token_record(company_id, access_token):
@@ -110,38 +162,6 @@ def create_access_token_record(company_id, access_token):
         access_token_table.put_item(Item=access_token_info)
     except Exception as e:
         raise RuntimeError(f"Error saving to access token table: {e}")
-
-
-def company_already_exists(email):
-    """
-    Checks if the company already exists in the database.
-
-    :param email: The email address of the user.
-    :return: True if the user already exists, False otherwise.
-    """
-    logger.info(f"Checking if the user already exists... {email}")
-    sql = "SELECT id FROM company WHERE email = %s;"
-    try:
-        db_cursor.execute(sql, (email,))
-        return db_cursor.fetchone() is not None
-    except Exception as e:
-        raise RuntimeError(f"Error checking if user already exists: {e}")
-
-
-def get_user_details(access_token):
-    """
-    Gets the GitHub username and email address of the user.
-
-    :param gh_access_token: The GitHub access token.
-    :return: The GitHub username and email address of the user.
-    """
-    try:
-        logger.info("Getting the Google username and email address...")
-        res = requests.get("https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=" + access_token)
-        data = json.loads(res.content)
-        return data['name'], data['email']
-    except Exception as e:
-        raise RuntimeError(f"Error getting GitHub user details: {e}")
 
 
 def handler(event, context):
@@ -171,6 +191,8 @@ def handler(event, context):
 
         company_id = str(uuid.uuid4())
         create_company_record(company_id, data)
+
+        create_default_position(company_id)
 
         access_token = generate_access_token(company_id)
         create_access_token_record(company_id, access_token)

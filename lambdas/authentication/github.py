@@ -50,6 +50,94 @@ def connect_to_db():
     db_cursor = db_conn.cursor()
 
 
+def validate_company_data(body):
+    """
+    Validates the necessary fields in the company data.
+
+    :param body: The request body containing company data.
+    """
+    logger.info("Validating the company data...")
+    required_fields = ['code']
+    if not all(body.get(field) for field in required_fields):
+        raise ValueError('Missing required fields.')
+
+
+def get_github_access_token(code: str):
+    """
+    Gets the GitHub access token using the authorization code.
+
+    :param code: The authorization code.
+    :return: The GitHub access token.
+    """
+    logger.info("Getting the GitHub access token...")
+    try:
+        response = requests.post(
+            'https://github.com/login/oauth/access_token',
+            headers={
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            json={
+                'client_id': CLIENT_ID,
+                'client_secret': CLIENT_SECRET,
+                'code': code
+            }
+        )
+        content = json.loads(response.content)
+        access_token = content.get('access_token')
+        return access_token
+    except Exception as e:
+        raise RuntimeError(f"Error getting GitHub access token: {e}")
+
+
+def get_user_details(gh_access_token):
+    """
+    Gets the GitHub username and email address of the user.
+
+    :param gh_access_token: The GitHub access token.
+    :return: The GitHub username and email address of the user.
+    """
+    try:
+        logger.info("Getting the GitHub username and email address...")
+        user_response = requests.get(
+            'https://api.github.com/user',
+            headers={'Authorization': f'Bearer {gh_access_token}'}
+        )
+        user_details = json.loads(user_response.content)
+
+        username = user_details.get('login', None)
+        if not username:
+            raise RuntimeError(f"Error getting username from GitHub: {user_details}")
+
+        emails_response = requests.get(
+            'https://api.github.com/user/emails',
+            headers={'Authorization': f'Bearer {gh_access_token}'}
+        )
+        emails = json.loads(emails_response.content)
+
+        email = next((item['email'] for item in emails if item['primary'] and item['verified']), None)
+
+        return username, email
+    except Exception as e:
+        raise RuntimeError(f"Error getting GitHub user details: {e}")
+
+
+def company_already_exists(email):
+    """
+    Checks if the company already exists in the database.
+
+    :param email: The email address of the user.
+    :return: True if the user already exists, False otherwise.
+    """
+    logger.info(f"Checking if the user already exists... {email}")
+    sql = "SELECT id FROM company WHERE email = %s;"
+    try:
+        db_cursor.execute(sql, (email,))
+        return db_cursor.fetchone() is not None
+    except Exception as e:
+        raise RuntimeError(f"Error checking if user already exists: {e}")
+
+
 def get_company_id(email):
     """
     Retrieves the company id from the database based on the provided email.
@@ -67,18 +155,6 @@ def get_company_id(email):
         raise ValueError('Company not found. Please try again.')
 
     return result[0][0]
-
-
-def validate_company_data(body):
-    """
-    Validates the necessary fields in the company data.
-
-    :param body: The request body containing company data.
-    """
-    logger.info("Validating the company data...")
-    required_fields = ['code']
-    if not all(body.get(field) for field in required_fields):
-        raise ValueError('Missing required fields.')
 
 
 def create_company_record(company_id: str, body: dict):
@@ -137,6 +213,26 @@ def get_company_repository_names(github_username: str, github_access_token: str)
     return repo_names
 
 
+def create_default_position(company_id) -> str:
+    """
+    Creates a new position record in the database.
+
+    :param body: The request body containing the position data.
+    :return: The id of the newly created position record.
+    """
+    logger.info("Creating a position record...")
+    name = 'Software Engineer'
+    level = 'mid'
+    type = 'fullstack'
+    sql = "INSERT INTO position (id, company_id, name, type, level) VALUES (%s, %s, %s, %s, %s);"
+    try:
+        position_id = str(uuid.uuid4())
+        db_cursor.execute(sql, (position_id, company_id, name, type, level))
+        return position_id
+    except Exception as e:
+        raise RuntimeError(f"Error saving to position table: {e}")
+
+
 def create_access_token_record(company_id, access_token):
     """
     Creates a new access token record in the database.
@@ -153,82 +249,6 @@ def create_access_token_record(company_id, access_token):
         access_token_table.put_item(Item=access_token_info)
     except Exception as e:
         raise RuntimeError(f"Error saving to access token table: {e}")
-
-
-def company_already_exists(email):
-    """
-    Checks if the company already exists in the database.
-
-    :param email: The email address of the user.
-    :return: True if the user already exists, False otherwise.
-    """
-    logger.info(f"Checking if the user already exists... {email}")
-    sql = "SELECT id FROM company WHERE email = %s;"
-    try:
-        db_cursor.execute(sql, (email,))
-        return db_cursor.fetchone() is not None
-    except Exception as e:
-        raise RuntimeError(f"Error checking if user already exists: {e}")
-
-
-def get_user_details(gh_access_token):
-    """
-    Gets the GitHub username and email address of the user.
-
-    :param gh_access_token: The GitHub access token.
-    :return: The GitHub username and email address of the user.
-    """
-    try:
-        logger.info("Getting the GitHub username and email address...")
-        user_response = requests.get(
-            'https://api.github.com/user',
-            headers={'Authorization': f'Bearer {gh_access_token}'}
-        )
-        user_details = json.loads(user_response.content)
-
-        username = user_details.get('login', None)
-        if not username:
-            raise RuntimeError(f"Error getting username from GitHub: {user_details}")
-
-        emails_response = requests.get(
-            'https://api.github.com/user/emails',
-            headers={'Authorization': f'Bearer {gh_access_token}'}
-        )
-        emails = json.loads(emails_response.content)
-
-        email = next((item['email'] for item in emails if item['primary'] and item['verified']), None)
-
-        return username, email
-    except Exception as e:
-        raise RuntimeError(f"Error getting GitHub user details: {e}")
-
-
-def get_github_access_token(code: str):
-    """
-    Gets the GitHub access token using the authorization code.
-
-    :param code: The authorization code.
-    :return: The GitHub access token.
-    """
-    logger.info("Getting the GitHub access token...")
-    try:
-        response = requests.post(
-            'https://github.com/login/oauth/access_token',
-            headers={
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            json={
-                'client_id': CLIENT_ID,
-                'client_secret': CLIENT_SECRET,
-                'code': code
-            }
-        )
-        content = json.loads(response.content)
-        access_token = content.get('access_token')
-        return access_token
-    except Exception as e:
-        raise RuntimeError(f"Error getting GitHub access token: {e}")
 
 
 def handler(event, context):
@@ -263,6 +283,8 @@ def handler(event, context):
         create_company_record(company_id, data)
 
         save_company_repositories(company_id, username, github_access_token)
+
+        create_default_position(company_id)
 
         access_token = generate_access_token(company_id)
         create_access_token_record(company_id, access_token)
