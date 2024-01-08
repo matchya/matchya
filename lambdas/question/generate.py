@@ -46,48 +46,26 @@ def connect_to_db():
     db_cursor = db_conn.cursor()
 
 
-def get_checklist_id_from_position_id(position_id):
+def get_keywords_from_position_type_and_level(position_type: str, position_level: str, n_questions: int) -> list:
     """
-    Retrieves the checklist id from the database.
+    Gets the keywords from the position type and level.
 
-    :param position_id: Unique identifier for the position.
-    :return: The checklist id.
+    :param position_type: The position type.
+    :param position_level: The position level.
+    :param n_questions: The number of questions to generate.
+    :return: A list of keywords.
     """
-    logger.info("Getting checklist_id from position id...")
-    sql = "SELECT id FROM checklist WHERE position_id = '%s';"
-    try:
-        db_cursor.execute(sql % (position_id))
-        result = db_cursor.fetchone()
-        if result is None:
-            raise RuntimeError(f"Checklist for position {position_id} does not exist")
-        return result[0]
-    except Exception as e:
-        raise RuntimeError(f"Error getting checklist from position: {e}")
-
-
-# set the number of questions to 3 for now (development purposes)
-def get_keywords_from_checklist(checklist_id, n_questions=6) -> list:
-    """
-    Retrieves the keywords from the checklist from dynamodb.
-
-    :param checklist_id: Unique identifier for the checklist.
-    :return: The keywords.
-    """
-    logger.info("Getting keywords from checklist...")
-    try:
-        response = criterion_table.query(
-            IndexName='ChecklistIdIndex',
-            KeyConditionExpression=boto3.dynamodb.conditions.Key('checklist_id').eq(checklist_id),
-            ProjectionExpression='keywords'
-        )
-        keywords = []
-        for item in response.get('Items', []):
-            keywords.append(item.get('keywords')[0])
-        if not keywords:
-            raise ValueError(f"Keywords not found for checklist_id: {checklist_id}")
-        return keywords[0: n_questions]
-    except Exception as e:
-        raise RuntimeError(f"Error getting keywords from dynamodb: {e}")
+    logger.info("Getting the keywords from the position type and level...")
+    # Mocked keywords
+    keywords = [
+        {'topic': 'React', 'difficulty': 'easy'},
+        {'topic': 'Docker', 'difficulty': 'medium'},
+        {'topic': 'Microservices Architecture', 'difficulty': 'hard'},
+        {'topic': 'AWS', 'difficulty': 'medium'},
+        {'topic': 'SQL', 'difficulty': 'easy'},
+        {'topic': 'Python', 'difficulty': 'medium'}
+    ]
+    return keywords
 
 
 def get_system_and_user_message(keywords: list, position_type: str, position_level: str):
@@ -118,17 +96,6 @@ def get_system_and_user_message(keywords: list, position_type: str, position_lev
     Each question has 10 points. Each metric has a weight that determines how much of the total score the metric is worth.
     For example, if a question has 2 metrics, each with a weight of 0.5, then each metric is worth 5 points.
     So, the total of weights for all metrics in a question must be exactly 1.0.
-    
-    5. **Difficulty Level**:
-    You are responsible for determining the difficulty level of each question.
-    Depending on the topic of the question, the difficulty level can be easy, medium or hard.
-    For example, a question about a basic concept of a programming language is easy, while a question about a complex concept such as distributed systems can be hard.
-    You are also given the level of the position for which you are creating the questions. (entry, mid, senior, software)
-    For entry level: 70 percent easy, 20 percent medium, 10 percent hard
-    For mid and software level: 50 percent easy, 30 percent medium, 20 percent hard
-    For senior level: 30 percent easy, 40 percent medium, 30 percent hard
-    However, this is just a guideline. You can change the difficulty level of the questions as you see fit.
-    Also, the order of the questions does not matter at all. hard questions can be at the beginning, easy questions can be at the end. 
 
     Your response must be in the following JSON format like this (here is examples you can refer to, you cannot make any changes in the format, but of course you can (must) change the content):
     {
@@ -239,10 +206,9 @@ def get_system_and_user_message(keywords: list, position_type: str, position_lev
         ]
     """ % ((position_level + 'level'), position_type)
 
-    user_message = "Here are the topics for the questions, create %d questions from the keywords\n" % len(keywords)
+    user_message = "Here are the topics and difficulties for the questions, create %d questions from the keywords\n" % len(keywords)
     for keyword in keywords:
-        user_message += f" {keyword},"
-    user_message = user_message[:-1] + '.'
+        user_message += "Topic: %s, Difficulty: %s\n" % (keyword['topic'], keyword['difficulty'])
 
     return system_message, user_message
 
@@ -424,10 +390,9 @@ def handler(event, context):
         position_id = body.get('position_id')
 
         n_questions = 6
-        checklist_id = get_checklist_id_from_position_id(body['position_id'])
-        keywords = get_keywords_from_checklist(checklist_id, n_questions)
 
         position_type, position_level = get_position_type_and_level(position_id)
+        keywords: list = get_keywords_from_position_type_and_level(position_type, position_level, n_questions)
         system_message, user_message = get_system_and_user_message(keywords, position_type, position_level)
         questions = get_questions_from_gpt(system_message, user_message)
 
