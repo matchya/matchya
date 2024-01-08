@@ -12,5 +12,12 @@ export default meta;
 type Story = StoryObj<typeof Component>;
 
 export const OnboardingPage: Story = {
-  render: () => <Component />,
+  render: () => (
+    <Component
+      email={''}
+      setEmail={() => {}}
+      onSubmit={() => {}}
+      scrollDown={() => {}}
+    />
+  ),
 };
