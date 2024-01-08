@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 
-import { Header } from '@/components';
 import { useCompanyStore } from '@/store/store';
 
 const Layout = () => {
@@ -21,15 +20,6 @@ const Layout = () => {
       console.error(error);
     }
   };
-
-  if (location.pathname === '/') {
-    return (
-      <>
-        <Header authenticated={false} />
-        <Outlet />
-      </>
-    );
-  }
 
   return (
     <>
