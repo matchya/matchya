@@ -59,7 +59,7 @@ functions:
         - github.handler
     events:
       - http:
-          path: /github
+          path: /login/github
           method: POST
           cors:
             origins:
@@ -76,7 +76,7 @@ functions:
         - google.handler
     events:
       - http:
-          path: /google
+          path: /login/google
           method: POST
           cors:
             origins:
