@@ -51,7 +51,7 @@ def get_questions_by_position_id(position_id):
         FROM question q
         INNER JOIN position_question pq ON pq.question_id = q.id
         INNER JOIN metric m ON m.question_id = q.id
-        WHERE pq.position_id = %s
+        WHERE pq.position_id = '%s'
     """ % position_id
     try:
         db_cursor.execute(sql)
