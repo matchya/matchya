@@ -392,7 +392,9 @@ def handler(event, context):
         n_questions = 6
 
         position_type, position_level = get_position_type_and_level(position_id)
+        # If GitHub is linked, get keywords from GitHub repo
         keywords: list = get_keywords_from_position_type_and_level(position_type, position_level, n_questions)
+
         system_message, user_message = get_system_and_user_message(keywords, position_type, position_level)
         questions = get_questions_from_gpt(system_message, user_message)
 
