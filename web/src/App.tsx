@@ -8,7 +8,8 @@ import AuthenticationPage from '@/screens/AuthenticationPage';
 import DashboardPage from '@/screens/DashboardPage';
 import GithubAuthCallbackPage from '@/screens/GithubAuthCallbackPage';
 import GoogleAuthCallbackPage from '@/screens/GoogleAuthCallbackPage';
-import HomePage from '@/screens/HomePage';
+// import HomePage from '@/screens/HomePage';
+import OnboardingPage from '@/screens/OnboardingPage';
 import PositionSetupPage from '@/screens/PositionSetupPage';
 // import SettingsPage from '@/screens/SettingsPage';
 
@@ -23,7 +24,8 @@ function App() {
             {/* <Route path="/settings" element={<SettingsPage />} /> */}
           </Route>
           <Route element={<UnAuthenticatedLayout />}>
-            <Route path="/" element={<HomePage />} />
+            {/* <Route path="/" element={<HomePage />} /> */}
+            <Route path="/" element={<OnboardingPage />} />
             <Route path="/auth" element={<AuthenticationPage />} />
             <Route
               path="/auth/github/callback"
