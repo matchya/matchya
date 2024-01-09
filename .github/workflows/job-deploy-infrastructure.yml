@@ -14,22 +14,16 @@ on:
         type: string
         required: true
         default: "staging"
-    secrets:
-      AWS_ACCESS_KEY_ID:
-        description: "AWS Access Key ID"
-        required: true
-      AWS_SECRET_ACCESS_KEY:
-        description: "AWS Secret Access Key"
-        required: true
 
 jobs:
   run:
-    name: Infrastructure (${{inputs.label}})
+    name: ${{inputs.label}}
     runs-on: ubuntu-latest
     permissions: write-all
     environment: ${{inputs.environment}}
     steps:
-      - uses: actions/checkout@v3
+      - name: Fetch Repository
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
@@ -50,8 +44,8 @@ jobs:
         run: terraform init
         working-directory: terraform/${{inputs.component}}
 
-      - name: Select Terraform Workspace
-        if: ${{inputs.component == 'environment'}}
+      - name: Select Terraform Workspace (Environment)
+        if: inputs.component == 'environment'
         run: terraform workspace select ${{inputs.environment}}
         working-directory: terraform/${{inputs.component}}
 

@@ -28,7 +28,10 @@ jobs:
             "question",
           ]
     steps:
-      - uses: actions/checkout@v3
+      - name: Fetch Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Check Files Changed
         uses: dorny/paths-filter@v2
@@ -65,7 +68,10 @@ jobs:
             "question",
           ]
     steps:
-      - uses: actions/checkout@v3
+      - name: Fetch Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Check Web Files Changed
         uses: dorny/paths-filter@v2

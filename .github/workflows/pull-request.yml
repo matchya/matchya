@@ -26,12 +26,14 @@ jobs:
               exit 1
           fi
 
-  check-web-build:
-    name: Check Web Build
+  check-build-web:
+    name: Check Build (Web)
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Fetch Repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Check Web Files Changed
         uses: dorny/paths-filter@v2
