@@ -114,11 +114,13 @@ CREATE TABLE IF NOT EXISTS candidate_result (
 CREATE TABLE IF NOT EXISTS answer (
 	id varchar(255) not null primary key,
 	candidate_result_id varchar(255),
+	question_id varchar(255),
 	audio_url varchar(1023),
 	score float,
 	feedback varchar(1023),
 	created_at timestamp default CURRENT_TIMESTAMP,
-	foreign key (candidate_result_id) references candidate_result(id)
+	foreign key (candidate_result_id) references candidate_result(id),
+	foreign key (question_id) references question(id)
 );
 --rollback DROP TABLE IF EXISTS answer;
 
@@ -126,8 +128,8 @@ CREATE TABLE IF NOT EXISTS answer (
 --changeset author:11
 CREATE TABLE IF NOT EXISTS metric_score (
 	id varchar(255) not null primary key,
-	question_id varchar(255),
+	answer_id varchar(255),
 	score float,
-	foreign key (question_id) references question(id)
+	foreign key (answer_id) references answer(id)
 );
-
+--rollback DROP TABLE IF EXISTS metric_score;
