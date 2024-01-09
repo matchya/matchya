@@ -54,10 +54,6 @@ functions:
             resultTtlInSeconds: 300
             name: ${self:provider.stage}-candidate-add-authorizer
             arn: arn:aws:lambda:${aws:region}:${aws:accountId}:function:${self:provider.stage}-authorizer
-          request:
-            parameters:
-              paths:
-                id: true
     timeout: 30
 
 plugins:

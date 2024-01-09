@@ -44,7 +44,7 @@ def validate_request_body(body):
     :param body: The request body containing company data.
     """
     logger.info("Validating the company data...")
-    required_fields = ['email', 'position_id']
+    required_fields = ['email', 'first_name', 'last_name', 'position_id']
     if not all(body.get(field) for field in required_fields):
         raise ValueError('Missing required fields.')
 
@@ -57,7 +57,7 @@ def candidate_exists(email):
     :return: True if the candidate exists, False otherwise.
     """
     logger.info("Checking if candidate exists...")
-    sql = "SELECT FROM candidate WHERE email = %s);"
+    sql = "SELECT id FROM candidate WHERE email = %s;"
     db_cursor.execute(sql, (email,))
     result = db_cursor.fetchone()
     return result is not None
@@ -74,10 +74,8 @@ def create_candidate_record(body) -> str:
     sql = "INSERT INTO candidate (id, first_name, last_name, email, github_username) VALUES (%s, %s, %s, %s, %s);"
     try:
         candidate_id = str(uuid.uuid4())
-        first_name = body.get('first_name', '')
-        last_name = body.get('last_name', '')
         github_username = body.get('github_username', '')
-        db_cursor.execute(sql, (candidate_id, first_name, last_name, body['email'], github_username))
+        db_cursor.execute(sql, (candidate_id, body['first_name'], body['last_name'], body['email'], github_username))
         return candidate_id
     except Exception as e:
         raise RuntimeError(f"Error saving to candidate table: {e}")
