@@ -99,7 +99,7 @@ def process_position_from_sql_results(sql_results):
                 'last_name': last_name,
                 'email': email,
                 'github_username': github_username,
-                'evaluation': {
+                'result': {
                     'id': candidate_result_id,
                     'total_score': score,
                     'summary': summary
