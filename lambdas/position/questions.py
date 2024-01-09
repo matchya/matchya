@@ -7,7 +7,7 @@ from utils.request import parse_header, parse_request_parameter
 from utils.response import generate_success_response, generate_error_response
 
 # Logger
-logger = logging.getLogger('retrieve questions from position')
+logger = logging.getLogger('retrieve questions of position')
 logger.setLevel(logging.INFO)
 
 formatter = logging.Formatter('[%(levelname)s]:%(funcName)s:%(lineno)d:%(message)s')

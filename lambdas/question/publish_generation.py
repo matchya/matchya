@@ -78,25 +78,6 @@ def send_message_to_sqs(body):
         raise e
 
 
-def update_generation_status(position_id):
-    """
-    Updates the generation status of the position to 'scheduled'.
-
-    :param position_id: Unique identifier for the position.
-    """
-    logger.info("Updating the generation status...")
-    sql = """
-            UPDATE position
-            SET question_generation_status = 'scheduled'
-            WHERE id = %s;
-        """
-    try:
-        db_cursor.execute(sql, (position_id,))
-        db_conn.commit()
-    except Exception as e:
-        raise RuntimeError(f"Error updating generation status in postgres: {e}")
-
-
 def handler(event, context):
     """
     Main entry point for the Lambda function.
@@ -118,8 +99,6 @@ def handler(event, context):
 
         send_message_to_sqs(body)
         logger.info(f"Successfully sent message to SQS {body}")
-
-        update_generation_status(body['position_id'])
         return generate_success_response(origin_domain=origin)
     except RuntimeError as e:
         logger.error(e)
