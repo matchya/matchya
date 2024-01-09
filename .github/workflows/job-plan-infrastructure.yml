@@ -30,7 +30,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Setup SSH Key
+      - name: Setup SSH Key (Shared)
         if: inputs.component == 'shared'
         run: |
           mkdir -p ~/.ssh
@@ -44,7 +44,7 @@ jobs:
         run: terraform init
         working-directory: terraform/${{ inputs.component }}
 
-      - name: Select Workspace
+      - name: Select Workspace (Environment)
         if: inputs.component == 'environment'
         run: |
           set +e
@@ -52,7 +52,7 @@ jobs:
           set -e
         working-directory: terraform/${{inputs.component}}
 
-      - name: Set Terraform Variables
+      - name: Set Terraform Variables (Environment)
         if: inputs.component == 'environment'
         run: |
           echo 'namespace = "${{ secrets.TF_NAMESPACE}}"' >> terraform.tfvars
@@ -61,7 +61,7 @@ jobs:
           echo 'client_origin = "${{ secrets.TF_CLIENT_ORIGIN }}"' >> terraform.tfvars
         working-directory: terraform/${{inputs.component}}
 
-      - name: Set Terraform Variables
+      - name: Set Terraform Variables (Shared)
         if: inputs.component == 'shared'
         run: |
           echo 'domain_name = {' > terraform.tfvars

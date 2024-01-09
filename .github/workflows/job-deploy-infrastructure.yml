@@ -43,7 +43,7 @@ jobs:
         run: terraform init
         working-directory: terraform/${{inputs.component}}
 
-      - name: Select Terraform Workspace
+      - name: Select Terraform Workspace (Environment)
         if: inputs.component == 'environment'
         run: terraform workspace select ${{inputs.environment}}
         working-directory: terraform/${{inputs.component}}
