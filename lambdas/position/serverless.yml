@@ -122,6 +122,8 @@ functions:
             origins:
               - https://www.matchyaa.com
               - https://matchyaa.com
+              - https://www.staging.matchyaa.com
+              - https://staging.matchyaa.com
               - http://127.0.0.1:5173
             allowCredentials: true
           authorizer:
