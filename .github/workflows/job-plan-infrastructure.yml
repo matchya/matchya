@@ -47,9 +47,7 @@ jobs:
       - name: Select Workspace (Environment)
         if: inputs.component == 'environment'
         run: |
-          set +e
-          terraform workspace select ${{inputs.environment}} || terraform workspace new ${{inputs.environment}}
-          set -e
+          terraform workspace select ${{inputs.environment}}
         working-directory: terraform/${{inputs.component}}
 
       - name: Set Terraform Variables (Environment)
@@ -73,9 +71,7 @@ jobs:
       - name: Terraform Plan
         id: plan
         run: |
-          set +e
           terraform plan -out=${{inputs.component}}.tfplan -no-color | tee plan_output.txt
-          set -e
         working-directory: terraform/${{inputs.component}}
 
       - name: Upload Terraform Plan to S3
