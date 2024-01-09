@@ -53,7 +53,7 @@ def get_candidates_by_position_id(position_id):
     sql = """
         SELECT
             can.id AS candidate_id, can.first_name, can.last_name, can.email, can.github_username, 
-            cr.score, cr.summary
+            cr.id AS candidate_result_id, cr.score, cr.summary
         FROM
             position p
         LEFT JOIN candidate_position cp ON p.id = cp.position_id
@@ -90,7 +90,7 @@ def process_position_from_sql_results(sql_results):
     candidate_data = {}
     for row in sql_results:
         (candidate_id, first_name, last_name, email, github_username,
-         score, summary) = row
+         candidate_result_id, score, summary) = row
 
         if candidate_id and candidate_id not in candidate_data:
             candidate_data[candidate_id] = {
@@ -100,7 +100,8 @@ def process_position_from_sql_results(sql_results):
                 'email': email,
                 'github_username': github_username,
                 'evaluation': {
-                    'score': score,
+                    'id': candidate_result_id,
+                    'total_score': score,
                     'summary': summary
                 }
             }
