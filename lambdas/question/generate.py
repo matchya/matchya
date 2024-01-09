@@ -283,11 +283,10 @@ def save_data_to_position_question_table(position_id: str, questions: list) -> s
     """
 
     logger.info("Saving questions to the position_question table...")
-    sql = "INSERT INTO position_question (id, position_id, question_id) VALUES "
+    sql = "INSERT INTO position_question (position_id, question_id) VALUES "
     try:
         for question in questions:
-            id = str(uuid.uuid4())
-            sql += f" ('{id}', '{position_id}', '{question['id']}'),"
+            sql += f" ('{position_id}', '{question['id']}'),"
         sql = sql[:-1] + ';'
         db_cursor.execute(sql)
     except Exception as e:
@@ -316,39 +315,6 @@ def save_data_to_metric_table(questions: list) -> str:
     except Exception as e:
         logger.error(f"Error saving questions to metric table: {e}")
         raise RuntimeError("Error saving questions to metric table")
-
-
-def update_generation_status(position_id: str, question_status='failed'):
-    """
-    Updates the generation status of the position.
-
-    :param position_id: Unique identifier for the position.
-    :param question_status: The status of the question.
-    """
-    logger.info("Updating the generation status...")
-    sql = f"SELECT question_generation_status FROM position WHERE id = '{position_id}';"
-    try:
-        db_cursor.execute(sql)
-        result = db_cursor.fetchone()
-        if result and result[0]:
-            current_status = result[0]
-        else:
-            current_status = None
-    except Exception as e:
-        logger.error(f"Error getting generation status from postgres: {e}")
-        raise RuntimeError("Error getting generation status from postgres")
-
-    if current_status is None or current_status != 'scheduled':
-        logger.info(f"Generation status is not scheduled, nothing to update. status: {current_status}")
-        return
-
-    sql = f"UPDATE position SET question_generation_status = '{question_status}' WHERE id = '{position_id}';"
-    try:
-        db_cursor.execute(sql)
-        db_conn.commit()
-    except Exception as e:
-        logger.error(f"Error updating generation status in postgres: {e}")
-        raise RuntimeError("Error updating generation status in postgres")
 
 
 def get_position_type_and_level(position_id: str) -> tuple:
@@ -383,7 +349,6 @@ def handler(event, context):
     try:
         logger.info('Received generate questions request')
         connect_to_db()
-        question_status = 'failed'
 
         messages = event['Records']
         body = json.loads(messages[0]['body'])
@@ -399,10 +364,7 @@ def handler(event, context):
         questions = get_questions_from_gpt(system_message, user_message)
 
         save_questions_to_db(position_id, questions)
-
-        question_status = 'succeeded'
         logger.info('Questions saved successfully')
-
     except (ValueError, RuntimeError) as e:
         status_code = 400
         logger.error(f'Questions generation failed (status {str(status_code)}): {e}')
@@ -410,7 +372,6 @@ def handler(event, context):
         status_code = 500
         logger.error(f'Questions generation failed (status {str(status_code)}): {e}')
     finally:
-        update_generation_status(position_id, question_status)
         if db_cursor:
             db_cursor.close()
         if db_conn:
