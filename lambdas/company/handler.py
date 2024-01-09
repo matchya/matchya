@@ -4,7 +4,7 @@ import psycopg2
 
 from config import Config
 
-from utils.request import parse_header, parse_request_parameter
+from utils.request import parse_header, parse_body
 from utils.response import generate_success_response, generate_error_response
 
 # Logger
@@ -103,9 +103,10 @@ def retrieve(event, context):
     logger.info(event)
     try:
         connect_to_db()
-        company_id = event.get('requestContext').get('authorizer').get('company_id')
-        origin = event.get('headers').get('origin', '')
-        
+        body = parse_body
+        company_id = body.get('company_id')
+        origin = parse_header(event)
+
         company = get_company_by_id(company_id)
         repositories = get_repositories_by_company_id(company_id)
         positions = get_positions_by_company_id(company_id)

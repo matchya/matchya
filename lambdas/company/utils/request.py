@@ -33,3 +33,13 @@ def parse_header(event):
         return origin
     except json.JSONDecodeError as e:
         raise ValueError(f"Invalid JSON in request body: {e}")
+
+
+def parse_body(event):
+    try:
+        body = event.get('requestContext').get('authorizer')
+        if not body:
+            raise ValueError('Missing required body')
+        return body
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Invalid JSON in request body: {e}")
