@@ -12,20 +12,31 @@ CREATE TABLE IF NOT EXISTS company (
 );
 --rollback DROP TABLE IF EXISTS company;
 
+
 --changeset author:2
+CREATE TABLE IF NOT EXISTS company_repository (
+	company_id varchar(255),
+	repository_name varchar(255),
+	primary key (company_id, repository_name),
+	foreign key (company_id) references company(id)
+);
+--rollback DROP TABLE IF EXISTS company_repository;
+
+
+--changeset author:3
 CREATE TABLE IF NOT EXISTS position (
 	id varchar(255) not null primary key,
 	company_id varchar(255),
 	name varchar(255),
 	type varchar(30),
 	level varchar(30),
-	checklist_generation_status varchar(30) DEFAULT 'unscheduled',
 	created_at timestamp default current_timestamp,
 	foreign key (company_id) references company(id)
 );
 --rollback DROP TABLE IF EXISTS position;
 
---changeset author:3
+
+--changeset author:4
 CREATE TABLE IF NOT EXISTS candidate (
 	id varchar(255) not null primary key,
 	first_name varchar(255),
@@ -36,66 +47,20 @@ CREATE TABLE IF NOT EXISTS candidate (
 );
 --rollback DROP TABLE IF EXISTS candidate;
 
---changeset author:4
-CREATE TABLE IF NOT EXISTS checklist (
-	id varchar(255) not null primary key,
-	position_id varchar(255),
-	name varchar(255),
-	status varchar(30) DEFAULT 'scheduled',
-	created_at timestamp default CURRENT_TIMESTAMP,
-	foreign key (position_id) references position(id)
-);
---rollback DROP TABLE IF EXISTS checklist;
 
 --changeset author:5
-CREATE TABLE IF NOT EXISTS candidate_result (
-	id varchar(255) not null primary key,
+CREATE TABLE IF NOT EXISTS candidate_position (
 	candidate_id varchar(255),
-	checklist_id varchar(255),
-	total_score float,
-	summary varchar(1023),
-	status varchar(30) DEFAULT 'scheduled',
+	position_id varchar(255),
 	created_at timestamp default CURRENT_TIMESTAMP,
+	primary key (candidate_id, position_id),
 	foreign key (candidate_id) references candidate(id),
-	foreign key (checklist_id) references checklist(id)
+	foreign key (position_id) references position(id)
 );
---rollback DROP TABLE IF EXISTS candidate_result;
+--rollback DROP TABLE IF EXISTS candidate_position;
+
 
 --changeset author:6
-CREATE TABLE IF NOT EXISTS assessment_criteria (
-	id varchar(255) not null primary key,
-	candidate_result_id varchar(255),
-	criterion_id varchar(255),
-	score int,
-	reason varchar(1023),
-	foreign key (candidate_result_id) references candidate_result(id)
-);
---rollback DROP TABLE IF EXISTS assessment_criteria;
-
---changeset author:7
-CREATE TABLE IF NOT EXISTS company_repository (
-	id varchar(255) not null primary key,
-	company_id varchar(255),
-	repository_name varchar(255),
-	foreign key (company_id) references company(id)
-);
---rollback DROP TABLE IF EXISTS company_repository;
-
-
---changeset author:8
-CREATE TABLE IF NOT EXISTS checklist_repository (
-	id varchar(255) not null primary key,
-	checklist_id varchar(255),
-	repository_name varchar(255),
-	foreign key (checklist_id) references checklist(id)
-);
---rollback DROP TABLE IF EXISTS checklist_repository;
-
---changeset author:9
-ALTER TABLE position ADD COLUMN IF NOT EXISTS question_generation_status varchar(30) DEFAULT 'unscheduled';
---rollback ALTER TABLE position DROP COLUMN IF EXISTS question_generation_status;
-
---changeset author:10
 CREATE TABLE IF NOT EXISTS question (
 	id varchar(255) not null primary key,
 	text varchar(1023),
@@ -105,17 +70,19 @@ CREATE TABLE IF NOT EXISTS question (
 );
 --rollback DROP TABLE IF EXISTS question;
 
---changeset author:11
+
+--changeset author:7
 CREATE TABLE IF NOT EXISTS position_question (
-	id varchar(255) not null primary key,
 	position_id varchar(255),
 	question_id varchar(255),
+	primary key (position_id, question_id),
 	foreign key (position_id) references position(id),
 	foreign key (question_id) references question(id)
 );
 --rollback DROP TABLE IF EXISTS position_question;
 
---changeset author:12
+
+--changeset author:8
 CREATE TABLE IF NOT EXISTS metric (
 	id varchar(255) not null primary key,
 	question_id varchar(255),
@@ -127,13 +94,40 @@ CREATE TABLE IF NOT EXISTS metric (
 );
 --rollback DROP TABLE IF EXISTS metric;
 
---changeset author:13
-CREATE TABLE IF NOT EXISTS candidate_position (
+
+--changeset author:9
+CREATE TABLE IF NOT EXISTS candidate_result (
+	id varchar(255) not null primary key,
 	candidate_id varchar(255),
 	position_id varchar(255),
+	total_score float,
+	summary varchar(1023),
+	status varchar(30) DEFAULT 'scheduled',
 	created_at timestamp default CURRENT_TIMESTAMP,
-	primary key (candidate_id, position_id),
 	foreign key (candidate_id) references candidate(id),
 	foreign key (position_id) references position(id)
 );
---rollback DROP TABLE IF EXISTS candidate_position;
+--rollback DROP TABLE IF EXISTS candidate_result;
+
+
+--changeset author:10
+CREATE TABLE IF NOT EXISTS answer (
+	id varchar(255) not null primary key,
+	candidate_result_id varchar(255),
+	audio_url varchar(1023),
+	score float,
+	feedback varchar(1023),
+	created_at timestamp default CURRENT_TIMESTAMP,
+	foreign key (candidate_result_id) references candidate_result(id)
+);
+--rollback DROP TABLE IF EXISTS answer;
+
+
+--changeset author:11
+CREATE TABLE IF NOT EXISTS metric_score (
+	id varchar(255) not null primary key,
+	question_id varchar(255),
+	score float,
+	foreign key (question_id) references question(id)
+);
+
