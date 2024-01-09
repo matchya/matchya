@@ -126,3 +126,14 @@ CREATE TABLE IF NOT EXISTS metric (
 	foreign key (question_id) references question(id)
 );
 --rollback DROP TABLE IF EXISTS metric;
+
+--changeset author:13
+CREATE TABLE IF NOT EXISTS candidate_position (
+	candidate_id varchar(255),
+	position_id varchar(255),
+	created_at timestamp default CURRENT_TIMESTAMP,
+	primary key (candidate_id, position_id),
+	foreign key (candidate_id) references candidate(id),
+	foreign key (position_id) references position(id)
+);
+--rollback DROP TABLE IF EXISTS candidate_position;
