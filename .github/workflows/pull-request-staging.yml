@@ -140,6 +140,7 @@ jobs:
           echo 'namespace = "${{ secrets.TF_NAMESPACE}}"' >> terraform.tfvars
           echo 'db_username = "${{ secrets.TF_DB_USERNAME }}"' >> terraform.tfvars
           echo 'db_password = "${{ secrets.TF_DB_PASSWORD}}"' >> terraform.tfvars
+          echo 'client_origin = "${{ secrets.TF_CLIENT_ORIGIN }}"' >> terraform.tfvars
         working-directory: terraform/environment
 
       - name: Terraform Plan
