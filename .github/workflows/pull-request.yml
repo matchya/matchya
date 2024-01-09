@@ -26,8 +26,8 @@ jobs:
               exit 1
           fi
 
-  check-web-build:
-    name: Check Web Build
+  check-files-changed-web:
+    name: Check Files Changed (Web)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
