@@ -60,10 +60,10 @@ def validate_request_body(body):
 
 def get_user_details(access_token):
     """
-    Gets the GitHub username and email address of the user.
+    Gets the Google username and email address of the user.
 
-    :param gh_access_token: The GitHub access token.
-    :return: The GitHub username and email address of the user.
+    :param gh_access_token: The Google access token.
+    :return: The Google username and email address of the user.
     """
     try:
         logger.info("Getting the Google username and email address...")
@@ -71,7 +71,7 @@ def get_user_details(access_token):
         data = json.loads(res.content)
         return data['name'], data['email']
     except Exception as e:
-        raise RuntimeError(f"Error getting GitHub user details: {e}")
+        raise RuntimeError(f"Error getting Google user details: {e}")
 
 
 def company_already_exists(email):
