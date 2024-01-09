@@ -183,9 +183,9 @@ def save_company_repositories(company_id: str, github_username: str, github_acce
     """
     logger.info("Saving the company repositories...")
     repositories = get_company_repository_names(github_username, github_access_token)
-    sql = "INSERT INTO company_repository (id, company_id, repository_name) VALUES"
+    sql = "INSERT INTO company_repository (company_id, repository_name) VALUES"
     for repository in repositories:
-        sql += f" ('{str(uuid.uuid4())}', '{company_id}', '{repository}'),"
+        sql += f" ('{company_id}', '{repository}'),"
     sql = sql[:-1] + ';'
     try:
         db_cursor.execute(sql)
