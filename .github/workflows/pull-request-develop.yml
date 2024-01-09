@@ -21,9 +21,11 @@ jobs:
             "web",
             "authentication",
             "authorizer",
+            "candidate",
             "checklist",
             "company",
             "position",
+            "question",
           ]
     steps:
       - uses: actions/checkout@v3
@@ -56,9 +58,11 @@ jobs:
             "web",
             "authentication",
             "authorizer",
+            "candidate",
             "checklist",
             "company",
             "position",
+            "question",
           ]
     steps:
       - uses: actions/checkout@v3
