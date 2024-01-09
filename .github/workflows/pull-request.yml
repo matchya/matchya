@@ -30,7 +30,7 @@ jobs:
     name: Check Files Changed (Web)
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Fetch Repository
         uses: actions/checkout@v3
 
       - name: Check Web Files Changed

@@ -39,7 +39,8 @@ jobs:
         component:
           ["authentication", "authorizer", "checklist", "company", "position"]
     steps:
-      - uses: actions/checkout@v3
+      - name: Fetch Repository
+        uses: actions/checkout@v3
 
       - name: Check Web Files Changed
         uses: dorny/paths-filter@v2

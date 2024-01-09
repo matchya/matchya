@@ -14,42 +14,43 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     steps:
-    - uses: actions/checkout@v3
+      - name: Fetch Repository
+        uses: actions/checkout@v3
 
-    - name: Update local branch
-      run: |
-        git fetch
-        git merge origin/staging
+      - name: Update local branch
+        run: |
+          git fetch
+          git merge origin/staging
 
-    - uses: actions/setup-node@v3
-      with:
-        cache: npm
-        node-version: 18
+      - uses: actions/setup-node@v3
+        with:
+          cache: npm
+          node-version: 18
 
-    - name: Install dependencies
-      run: |
-        cd ${{inputs.component}}
-        npm install
-      if: inputs.component == 'web'
+      - name: Install dependencies
+        run: |
+          cd ${{inputs.component}}
+          npm install
+        if: inputs.component == 'web'
 
-    - name: Install dependencies
-      run: |
-        npm install
-      if: inputs.component != 'web'
-      working-directory: lambdas/${{inputs.component}}
+      - name: Install dependencies
+        run: |
+          npm install
+        if: inputs.component != 'web'
+        working-directory: lambdas/${{inputs.component}}
 
-    - name: Release
-      run: |
-        npm run release
-      env:
-        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-      if: inputs.component == 'web'
-      working-directory: ${{inputs.component}}
+      - name: Release
+        run: |
+          npm run release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        if: inputs.component == 'web'
+        working-directory: ${{inputs.component}}
 
-    - name: Release
-      run: |
-        npm run release
-      env:
-        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-      if: inputs.component != 'web'
-      working-directory: lambdas/${{inputs.component}}
+      - name: Release
+        run: |
+          npm run release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        if: inputs.component != 'web'
+        working-directory: lambdas/${{inputs.component}}
