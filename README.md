@@ -31,16 +31,17 @@ Once the SSH tunnel is established, you can access the database in two ways:
 1. **Using the Terminal:**
    Open a new terminal window, ensuring the SSH tunnel remains active in the original terminal. Execute the following command to access the secure database:
 
-```sh
-make access-secure-db environment=staging
-```
+   ```sh
+   make access-secure-db environment=staging
+   ```
 
 2. **Using a Database Client:**
    You can also use your preferred database client (such as DBeaver, Visual Studio Code Plugin, etc.) to access the database. Ensure the SSH tunnel remains active during this process. Configure your client with the following settings:
+
    ```
     Host: localhost
-    Username: Retrieve from SSM Param (/terraform/staging/rds/db_username)
-    Password: Retrieve from SSM Param (/terraform/staging/rds/db_password)
+    Username: Retrieve manually from SSM (/terraform/staging/rds/db_username)
+    Password: Retrieve manually from SSM (/terraform/staging/rds/db_password)
     Port: 5433
     Remember to terminate the SSH tunnel once you're finished by pressing Ctrl+C in the terminal where the SSH tunnel is running.
    ```
