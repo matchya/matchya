@@ -35,6 +35,9 @@ db_cursor = None
 # OpenAI
 chat_client = OpenAI()
 
+# SQS
+sqs = boto3.client('sqs')
+
 
 def connect_to_db():
     """

@@ -8,7 +8,7 @@ from utils.response import generate_success_response, generate_error_response
 from utils.request import parse_header, parse_request_body
 
 # Logger
-logger = logging.getLogger('google authentication')
+logger = logging.getLogger('create_position')
 logger.setLevel(logging.INFO)
 
 formatter = logging.Formatter('[%(levelname)s]:%(funcName)s:%(lineno)d:%(message)s')

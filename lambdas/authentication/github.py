@@ -50,25 +50,6 @@ def connect_to_db():
     db_cursor = db_conn.cursor()
 
 
-def get_company_id(email):
-    """
-    Retrieves the company id from the database based on the provided email.
-
-    :param email: The email address used to query the company id.
-    :return: The first item from the database query result.
-    """
-    logger.info("Getting company id...")
-    try:
-        db_cursor.execute('SELECT id FROM company WHERE email = %s', (email,))
-        result = db_cursor.fetchall()
-    except Exception as e:
-        raise RuntimeError(f"Error retrieving company id: {e}")
-    if not result:
-        raise ValueError('Company not found. Please try again.')
-
-    return result[0][0]
-
-
 def validate_company_data(body):
     """
     Validates the necessary fields in the company data.
@@ -81,94 +62,32 @@ def validate_company_data(body):
         raise ValueError('Missing required fields.')
 
 
-def create_company_record(company_id: str, body: dict):
+def get_github_access_token(code: str):
     """
-    Creates a new company record in the database.
+    Gets the GitHub access token using the authorization code.
 
-    :param company_id: Unique identifier for the company.
-    :param body: The request body containing company data.
+    :param code: The authorization code.
+    :return: The GitHub access token.
     """
-    logger.info("Creating the company record...")
-    sql = "INSERT INTO company (id, name, email, github_username, github_access_token) VALUES (%s, %s, %s, %s, %s);"
+    logger.info("Getting the GitHub access token...")
     try:
-        db_cursor.execute(sql, (company_id, body['name'], body['email'], body['github_username'], encrypt_github_access_token(body['github_access_token'])))
-    except psycopg2.IntegrityError:
-        raise RuntimeError(f"Email address is already used: {body['email']}")
+        response = requests.post(
+            'https://github.com/login/oauth/access_token',
+            headers={
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            json={
+                'client_id': CLIENT_ID,
+                'client_secret': CLIENT_SECRET,
+                'code': code
+            }
+        )
+        content = json.loads(response.content)
+        access_token = content.get('access_token')
+        return access_token
     except Exception as e:
-        raise RuntimeError(f"Error saving to company table: {e}")
-
-
-def save_company_repositories(company_id: str, github_username: str, github_access_token: str):
-    """
-    Saves the repositories of the company to the database.
-
-    :param company_id: Unique identifier for the company.
-    :param github_username: The GitHub username of the company.
-    """
-    logger.info("Saving the company repositories...")
-    repositories = get_company_repository_names(github_username, github_access_token)
-    sql = "INSERT INTO company_repository (id, company_id, repository_name) VALUES"
-    for repository in repositories:
-        sql += f" ('{str(uuid.uuid4())}', '{company_id}', '{repository}'),"
-    sql = sql[:-1] + ';'
-    try:
-        db_cursor.execute(sql)
-    except Exception as e:
-        raise RuntimeError(f"Error saving to repository table: {e}")
-
-
-def get_company_repository_names(github_username: str, github_access_token: str):
-    """
-    Gets the repositories of a company from GitHub.
-
-    :param github_username: The GitHub username of the company.
-    :param github_access_token: The GitHub access token of the company.
-    :return: A list of repositories of the company.
-    """
-    logger.info("Getting the company repository names...")
-    url = "https://api.github.com/user/repos"
-    response = requests.get(url, headers={'Authorization': f'Bearer {github_access_token}'})
-    if response.status_code == 404:
-        raise RuntimeError(f"Repository not found for the User: {github_username}")
-    if response.status_code != 200:
-        raise RuntimeError(f"Error getting repositories from GitHub: {response.content}")
-    repositories = response.json()
-    repo_names = [repository['full_name'] for repository in repositories]
-    return repo_names
-
-
-def create_access_token_record(company_id, access_token):
-    """
-    Creates a new access token record in the database.
-
-    :param company_id: Unique identifier for the company associated with the token.
-    :param access_token: The access token to be saved.
-    """
-    logger.info("Creating an access token record...")
-    access_token_info = {
-        'token_id': access_token,
-        'company_id': company_id
-    }
-    try:
-        access_token_table.put_item(Item=access_token_info)
-    except Exception as e:
-        raise RuntimeError(f"Error saving to access token table: {e}")
-
-
-def company_already_exists(email):
-    """
-    Checks if the company already exists in the database.
-
-    :param email: The email address of the user.
-    :return: True if the user already exists, False otherwise.
-    """
-    logger.info(f"Checking if the user already exists... {email}")
-    sql = "SELECT id FROM company WHERE email = %s;"
-    try:
-        db_cursor.execute(sql, (email,))
-        return db_cursor.fetchone() is not None
-    except Exception as e:
-        raise RuntimeError(f"Error checking if user already exists: {e}")
+        raise RuntimeError(f"Error getting GitHub access token: {e}")
 
 
 def get_user_details(gh_access_token):
@@ -203,32 +122,133 @@ def get_user_details(gh_access_token):
         raise RuntimeError(f"Error getting GitHub user details: {e}")
 
 
-def get_github_access_token(code: str):
+def company_already_exists(email):
     """
-    Gets the GitHub access token using the authorization code.
+    Checks if the company already exists in the database.
 
-    :param code: The authorization code.
-    :return: The GitHub access token.
+    :param email: The email address of the user.
+    :return: True if the user already exists, False otherwise.
     """
-    logger.info("Getting the GitHub access token...")
+    logger.info(f"Checking if the user already exists... {email}")
+    sql = "SELECT id FROM company WHERE email = %s;"
     try:
-        response = requests.post(
-            'https://github.com/login/oauth/access_token',
-            headers={
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            json={
-                'client_id': CLIENT_ID,
-                'client_secret': CLIENT_SECRET,
-                'code': code
-            }
-        )
-        content = json.loads(response.content)
-        access_token = content.get('access_token')
-        return access_token
+        db_cursor.execute(sql, (email,))
+        return db_cursor.fetchone() is not None
     except Exception as e:
-        raise RuntimeError(f"Error getting GitHub access token: {e}")
+        raise RuntimeError(f"Error checking if user already exists: {e}")
+
+
+def get_company_id(email):
+    """
+    Retrieves the company id from the database based on the provided email.
+
+    :param email: The email address used to query the company id.
+    :return: The first item from the database query result.
+    """
+    logger.info("Getting company id...")
+    try:
+        db_cursor.execute('SELECT id FROM company WHERE email = %s', (email,))
+        result = db_cursor.fetchall()
+    except Exception as e:
+        raise RuntimeError(f"Error retrieving company id: {e}")
+    if not result:
+        raise ValueError('Company not found. Please try again.')
+
+    return result[0][0]
+
+
+def create_company_record(company_id: str, body: dict):
+    """
+    Creates a new company record in the database.
+
+    :param company_id: Unique identifier for the company.
+    :param body: The request body containing company data.
+    """
+    logger.info("Creating the company record...")
+    sql = "INSERT INTO company (id, name, email, github_username, github_access_token) VALUES (%s, %s, %s, %s, %s);"
+    try:
+        db_cursor.execute(sql, (company_id, body['name'], body['email'], body['github_username'], encrypt_github_access_token(body['github_access_token'])))
+    except psycopg2.IntegrityError:
+        raise RuntimeError(f"Email address is already used: {body['email']}")
+    except Exception as e:
+        raise RuntimeError(f"Error saving to company table: {e}")
+
+
+def save_company_repositories(company_id: str, github_username: str, github_access_token: str):
+    """
+    Saves the repositories of the company to the database.
+
+    :param company_id: Unique identifier for the company.
+    :param github_username: The GitHub username of the company.
+    """
+    logger.info("Saving the company repositories...")
+    repositories = get_company_repository_names(github_username, github_access_token)
+    sql = "INSERT INTO company_repository (company_id, repository_name) VALUES"
+    for repository in repositories:
+        sql += f" ('{company_id}', '{repository}'),"
+    sql = sql[:-1] + ';'
+    try:
+        db_cursor.execute(sql)
+    except Exception as e:
+        raise RuntimeError(f"Error saving to repository table: {e}")
+
+
+def get_company_repository_names(github_username: str, github_access_token: str):
+    """
+    Gets the repositories of a company from GitHub.
+
+    :param github_username: The GitHub username of the company.
+    :param github_access_token: The GitHub access token of the company.
+    :return: A list of repositories of the company.
+    """
+    logger.info("Getting the company repository names...")
+    url = "https://api.github.com/user/repos"
+    response = requests.get(url, headers={'Authorization': f'Bearer {github_access_token}'})
+    if response.status_code == 404:
+        raise RuntimeError(f"Repository not found for the User: {github_username}")
+    if response.status_code != 200:
+        raise RuntimeError(f"Error getting repositories from GitHub: {response.content}")
+    repositories = response.json()
+    repo_names = [repository['full_name'] for repository in repositories]
+    return repo_names
+
+
+def create_default_position(company_id) -> str:
+    """
+    Creates a new position record in the database.
+
+    :param body: The request body containing the position data.
+    :return: The id of the newly created position record.
+    """
+    logger.info("Creating a position record...")
+    name = 'Software Engineer'
+    level = 'mid'
+    type = 'fullstack'
+    sql = "INSERT INTO position (id, company_id, name, type, level) VALUES (%s, %s, %s, %s, %s);"
+    try:
+        position_id = str(uuid.uuid4())
+        db_cursor.execute(sql, (position_id, company_id, name, type, level))
+        return position_id
+    except Exception as e:
+        raise RuntimeError(f"Error saving to position table: {e}")
+
+
+def create_access_token_record(company_id, access_token):
+    """
+    Creates a new access token record in the database.
+
+    :param company_id: Unique identifier for the company associated with the token.
+    :param access_token: The access token to be saved.
+    """
+    logger.info("Creating an access token record...")
+    access_token_info = {
+        'token_id': access_token,
+        'company_id': company_id
+    }
+    try:
+        access_token_table.put_item(Item=access_token_info)
+    except Exception as e:
+        raise RuntimeError(f"Error saving to access token table: {e}")
 
 
 def handler(event, context):
@@ -263,6 +283,8 @@ def handler(event, context):
         create_company_record(company_id, data)
 
         save_company_repositories(company_id, username, github_access_token)
+
+        create_default_position(company_id)
 
         access_token = generate_access_token(company_id)
         create_access_token_record(company_id, access_token)

@@ -1,0 +1,60 @@
+service: candidate
+
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: python3.9
+  architecture: arm64
+  stage: dev
+  region: us-east-1
+  deploymentBucket:
+    name: ${self:provider.stage}-sls-candidate
+  iam:
+    role: ${ssm:/terraform/shared/iam/lambda_role_arn}
+  apiGateway:
+    restApiId: ${ssm:/terraform/${self:provider.stage}/api_gateway/id}
+    restApiRootResourceId: ${ssm:/terraform/${self:provider.stage}/api_gateway/root_resource_id}
+  ecr:
+    images:
+      default:
+        path: ./
+        file: Dockerfile
+        buildArgs:
+  environment:
+    ENVIRONMENT: ${self:provider.stage}
+    POSTGRES_HOST: ${ssm:/terraform/${self:provider.stage}/rds/endpoint}
+    POSTGRES_PORT: ${ssm:/terraform/${self:provider.stage}/rds/port}
+    POSTGRES_DB: ${ssm:/terraform/${self:provider.stage}/rds/db_name}
+    POSTGRES_USER: ${ssm:/terraform/${self:provider.stage}/rds/db_username}
+    POSTGRES_PASSWORD: ${ssm:/terraform/${self:provider.stage}/rds/db_password}
+
+functions:
+  add:
+    name: ${self:provider.stage}-candidate-add
+    image:
+      name: default
+      command:
+        - add.handler
+    events:
+      - http:
+          path: /candidates
+          method: POST
+          cors:
+            origins:
+              - https://www.matchyaa.com
+              - https://matchyaa.com
+              - https://www.staging.matchyaa.com
+              - https://staging.matchyaa.com
+              - http://127.0.0.1:5173
+            allowCredentials: true
+          authorizer:
+            type: request
+            identitySource: method.request.header.Cookie
+            resultTtlInSeconds: 300
+            name: ${self:provider.stage}-candidate-add-authorizer
+            arn: arn:aws:lambda:${aws:region}:${aws:accountId}:function:${self:provider.stage}-authorizer
+    timeout: 30
+
+plugins:
+  - serverless-deployment-bucket

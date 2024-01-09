@@ -7,7 +7,7 @@ from utils.request import parse_header, parse_request_parameter
 from utils.response import generate_success_response, generate_error_response
 
 # Logger
-logger = logging.getLogger('candidates_status')
+logger = logging.getLogger('retrieve questions of position')
 logger.setLevel(logging.INFO)
 
 formatter = logging.Formatter('[%(levelname)s]:%(funcName)s:%(lineno)d:%(message)s')
@@ -36,29 +36,44 @@ def connect_to_db():
     db_cursor = db_conn.cursor()
 
 
-def get_inprogress_candidates(position_id):
+def get_questions_by_position_id(position_id):
     """
-    Retrieves the in progress candidates for a given position.
-    
+    Retrieves the questions for the position.
+
     :param position_id: The position id.
-    :return A list of candidate emails.
+    :return: The questions for the position.
     """
-    logger.info(f"Retrieving checklist status for position: {position_id}")
-    inprogress_status = 'scheduled'
+    logger.info(f"Retrieving questions for position id: {position_id}...")
     sql = """
-        SELECT candidate.email
-        FROM position
-        JOIN checklist ON position.id = checklist.position_id
-        JOIN candidate_result ON checklist.id = candidate_result.checklist_id
-        JOIN candidate ON candidate_result.candidate_id = candidate.id
-        WHERE position.id = %s
-        AND candidate_result.status = %s
-    """
-    db_cursor.execute(sql, (position_id, inprogress_status))
-    result = db_cursor.fetchall()
-    if not result:
-        return []
-    return [row[0] for row in result]
+        SELECT 
+            q.id, q.text, q.topic, q.difficulty,
+            m.id, m.name
+        FROM question q
+        INNER JOIN position_question pq ON pq.question_id = q.id
+        INNER JOIN metric m ON m.question_id = q.id
+        WHERE pq.position_id = '%s'
+    """ % position_id
+    try:
+        db_cursor.execute(sql)
+        result = db_cursor.fetchall()
+        questions = {}
+        for row in result:
+            if row[0] not in questions:
+                questions[row[0]] = {
+                    'id': row[0],
+                    'text': row[1],
+                    'topic': row[2],
+                    'difficulty': row[3],
+                    'metrics': []
+                }
+            questions[row[0]]['metrics'].append({
+                'id': row[4],
+                'name': row[5]
+            })
+
+        return list(questions.values())
+    except Exception as e:
+        raise RuntimeError(f"Error retrieving questions: {e}")
 
 
 def handler(event, context):
@@ -67,18 +82,18 @@ def handler(event, context):
         connect_to_db()
         position_id = parse_request_parameter(event, 'id')
         origin = parse_header(event)
-        in_progress_candidates = get_inprogress_candidates(position_id)
+        questions = get_questions_by_position_id(position_id)
         body = {
-            'in_progress_candidates': in_progress_candidates
+            'questions': questions
         }
         return generate_success_response(origin, body)
     except (ValueError, RuntimeError) as e:
         status_code = 400
-        logger.error(f"Failed to retrieve position (status {str(status_code)}): {e}")
+        logger.error(f"Failed to retrieve questions (status {str(status_code)}): {e}")
         return generate_error_response(origin, status_code, str(e))
     except Exception as e:
         status_code = 500
-        logger.error(f"Failed to retrieve position (status {str(status_code)}): {e}")
+        logger.error(f"Failed to retrieve questions (status {str(status_code)}): {e}")
         return generate_error_response(origin, status_code, str(e))
     finally:
         if db_conn:
