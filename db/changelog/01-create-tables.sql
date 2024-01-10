@@ -4,10 +4,8 @@
 CREATE TABLE IF NOT EXISTS company (
 	id varchar(255) NOT NULL PRIMARY KEY,
 	name varchar(255) NOT NULL,
-	email varchar(255) NOT NULL unique,
-	github_username varchar(255),
+	email varchar(255) NOT NULL UNIQUE,
 	github_access_token bytea,
-	password bytea,
 	created_at timestamp DEFAULT CURRENT_TIMESTAMP
 );
 --rollback DROP TABLE IF EXISTS company;
@@ -24,45 +22,44 @@ CREATE TABLE IF NOT EXISTS company_repository (
 
 
 --changeset author:3
-CREATE TABLE IF NOT EXISTS position (
-	id varchar(255) not null primary key,
-	company_id varchar(255),
-	name varchar(255),
-	type varchar(30),
-	level varchar(30),
-	created_at timestamp default current_timestamp,
-	foreign key (company_id) references company(id)
-);
---rollback DROP TABLE IF EXISTS position;
-
-
---changeset author:4
 CREATE TABLE IF NOT EXISTS candidate (
 	id varchar(255) not null primary key,
+	email varchar(255) unique,
 	first_name varchar(255),
 	last_name varchar(255),
 	github_username varchar(255),
-	email varchar(255) unique,
 	created_at timestamp default current_timestamp
 );
 --rollback DROP TABLE IF EXISTS candidate;
 
 
---changeset author:5
-CREATE TABLE IF NOT EXISTS candidate_position (
+--changeset author:4
+CREATE TABLE IF NOT EXISTS company_candidate (
+	company_id varchar(255),
 	candidate_id varchar(255),
-	position_id varchar(255),
-	created_at timestamp default CURRENT_TIMESTAMP,
-	primary key (candidate_id, position_id),
-	foreign key (candidate_id) references candidate(id),
-	foreign key (position_id) references position(id)
+	primary key (company_id, candidate_id),
+	foreign key (company_id) references company(id),
+	foreign key (candidate_id) references candidate(id)
 );
---rollback DROP TABLE IF EXISTS candidate_position;
+--rollback DROP TABLE IF EXISTS company_candidate;
+
+
+--changeset author:5
+CREATE TABLE IF NOT EXISTS test (
+	id varchar(255) PRIMARY KEY,
+	company_id varchar(255),
+	name varchar(30),
+	position_type varchar(30),
+	position_level varchar(30),
+	created_at timestamp default CURRENT_TIMESTAMP,
+	foreign key (company_id) references company(id)
+);
+--rollback DROP TABLE IF EXISTS test;
 
 
 --changeset author:6
 CREATE TABLE IF NOT EXISTS question (
-	id varchar(255) not null primary key,
+	id varchar(255) not null PRIMARY KEY,
 	text varchar(1023),
 	difficulty varchar(30),
 	topic varchar(30),
@@ -72,14 +69,14 @@ CREATE TABLE IF NOT EXISTS question (
 
 
 --changeset author:7
-CREATE TABLE IF NOT EXISTS position_question (
-	position_id varchar(255),
+CREATE TABLE IF NOT EXISTS test_question (
+	test_id varchar(255),
 	question_id varchar(255),
-	primary key (position_id, question_id),
-	foreign key (position_id) references position(id),
+	primary key (test_id, question_id),
+	foreign key (test_id) references test(id),
 	foreign key (question_id) references question(id)
 );
---rollback DROP TABLE IF EXISTS position_question;
+--rollback DROP TABLE IF EXISTS test_question;
 
 
 --changeset author:8
@@ -89,7 +86,6 @@ CREATE TABLE IF NOT EXISTS metric (
 	name varchar(255),
 	scoring varchar(1023),
 	weight float,
-	created_at timestamp default CURRENT_TIMESTAMP,
 	foreign key (question_id) references question(id)
 );
 --rollback DROP TABLE IF EXISTS metric;
@@ -99,13 +95,12 @@ CREATE TABLE IF NOT EXISTS metric (
 CREATE TABLE IF NOT EXISTS candidate_result (
 	id varchar(255) not null primary key,
 	candidate_id varchar(255),
-	position_id varchar(255),
+	test_id varchar(255),
 	total_score float,
 	summary varchar(1023),
-	status varchar(30) DEFAULT 'scheduled',
 	created_at timestamp default CURRENT_TIMESTAMP,
 	foreign key (candidate_id) references candidate(id),
-	foreign key (position_id) references position(id)
+	foreign key (test_id) references test(id)
 );
 --rollback DROP TABLE IF EXISTS candidate_result;
 
@@ -123,13 +118,3 @@ CREATE TABLE IF NOT EXISTS answer (
 	foreign key (question_id) references question(id)
 );
 --rollback DROP TABLE IF EXISTS answer;
-
-
---changeset author:11
-CREATE TABLE IF NOT EXISTS metric_score (
-	id varchar(255) not null primary key,
-	answer_id varchar(255),
-	score float,
-	foreign key (answer_id) references answer(id)
-);
---rollback DROP TABLE IF EXISTS metric_score;
