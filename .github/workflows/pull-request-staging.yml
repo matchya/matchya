@@ -28,7 +28,7 @@ jobs:
         with:
           filters: |
             package:
-              - 'infrastructure/**'
+              - 'terraform/**'
 
       - name: Set output
         id: check

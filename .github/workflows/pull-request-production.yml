@@ -1,0 +1,46 @@
+name: PR Pipeline (Production)
+
+on:
+  pull_request:
+    branches:
+      - production
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - edited
+
+jobs:
+  check-infrastructure-changes:
+    name: Check Infrastructure Changes
+    runs-on: ubuntu-latest
+    outputs:
+      infra-changed: ${{ steps.check.outputs.infra-changed }}
+    steps:
+      - name: Fetch Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Check Infrastructure Files Changed
+        uses: dorny/paths-filter@v2
+        id: changes-infrastructure
+        with:
+          filters: |
+            package:
+              - 'infrastructure/**'
+
+      - name: Set output
+        id: check
+        run: echo "::set-output name=infra-changed::${{ steps.changes-infrastructure.outputs.package }}"
+
+  plan-infrastructure-shared:
+    name: Plan
+    needs: [check-infrastructure-changes]
+    if: needs.check-infrastructure-changes.outputs.infra-changed == 'true'
+    uses: ./.github/workflows/job-plan-infrastructure.yml
+    with:
+      environment: production
+      component: shared
+      label: Shared Infrastructure
+    secrets: inherit
