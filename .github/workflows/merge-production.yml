@@ -21,6 +21,7 @@ jobs:
           onlyRemoveDeployments: true
 
   check-infrastructure-changes:
+    if: github.event.pull_request.merged == true && github.head_ref == 'staging'
     name: Check Infrastructure Changes
     runs-on: ubuntu-latest
     outputs:
@@ -44,7 +45,7 @@ jobs:
         run: echo "::set-output name=infra-changed::${{ steps.changes-infrastructure.outputs.package }}"
 
   deploy-terraform-shared:
-    if: needs.check-infrastructure-changes.outputs.infra-changed == 'true' && github.event.pull_request.merged == true && github.head_ref == 'staging'
+    if: needs.check-infrastructure-changes.outputs.infra-changed == 'true'
     name: Deployment
     permissions: write-all
     needs: [check-infrastructure-changes, cleanup]

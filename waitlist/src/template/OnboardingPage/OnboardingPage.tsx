@@ -1,7 +1,7 @@
 "use client";
 
-import Button from "../../components/Button/Button";
-import Input from "../../components/Input/Input";
+import { useEffect } from "react";
+import { Button } from "../../components";
 
 interface OnboardingPageTemplateProps {
   email: string;
@@ -16,6 +16,30 @@ const OnboardingPageTemplate = ({
   onSubmit,
   scrollDown,
 }: OnboardingPageTemplateProps) => {
+  useEffect(() => {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === "childList") {
+          const container = document.querySelector(
+            "#getWaitlistInnerContainer"
+          );
+          if (container) {
+            const thirdChild = container.children[2];
+            if (thirdChild) {
+              container.removeChild(thirdChild);
+            }
+          }
+        }
+      });
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
   return (
     <div className="w-full h-screen mt-0 bg-lime-100 overflow-y-screen">
       <div className="bg-lime-100 w-full lg:h-full pt-10 lg:pt-10">
@@ -102,26 +126,16 @@ const OnboardingPageTemplate = ({
         </div>
       </div>
 
-      <div className="bg-lime-800 pt-16 w-full pb-16 px-10">
+      <div className="bg-lime-800 pt-16 w-full pb-16 px-10 flex flex-col items-center space-y-3">
         <h2 className="text-4xl md:text-5xl w-full text-center font-bold text-white">
           Tired of recruiting? Try some matchya.
         </h2>
-        <div className="w-full">
-          <div className="relative w-4/5 sm:w-2/3 md:w-1/2 xl:w-1/3 h-14 mt-12 mx-auto">
-            <Input
-              className="w-full h-full rounded text-md"
-              placeholder="name@email.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <Button
-              className="absolute top-2 right-2 bg-black text-white z-10 rounded hover:bg-gray-700 hover:text-white"
-              variant="outline"
-              onClick={onSubmit}
-            >
-              Free demo
-            </Button>
-          </div>
+        <div className="mt-8 w-[450px]">
+          <div
+            id="getWaitlistContainer"
+            data-waitlist_id="12967"
+            data-widget_type="WIDGET_2"
+          ></div>
         </div>
       </div>
     </div>
