@@ -1,6 +1,5 @@
 import type { StorybookConfig } from "@storybook/nextjs";
 import TsconfigPathsPlugin from "tsconfig-paths-webpack-plugin";
-import CopyWebpackPlugin from "copy-webpack-plugin";
 
 const config: StorybookConfig = {
   stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
@@ -23,11 +22,6 @@ const config: StorybookConfig = {
     }
     config.resolve.plugins.push(new TsconfigPathsPlugin({}));
 
-    // config.plugins.push(
-    //   new CopyWebpackPlugin({
-    //     patterns: [{ from: "public", to: "public" }],
-    //   })
-    // );
     return config;
   },
   staticDirs: ["../public"],
