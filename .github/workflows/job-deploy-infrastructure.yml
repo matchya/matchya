@@ -35,7 +35,7 @@ jobs:
           aws-region: us-east-1
 
       - name: Download Terraform Plan from S3
-        run: aws s3 cp s3://github-actions-remote-artifacts/${{inputs.environment}}/plans/${{inputs.component}}.tfplan terraform/${{inputs.component}}/${{inputs.component}}.tfplan
+        run: aws s3 cp s3://matchya-terraform/github-actions-artifacts/${{inputs.environment}}/plans/${{inputs.component}}.tfplan terraform/${{inputs.component}}/${{inputs.component}}.tfplan
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
