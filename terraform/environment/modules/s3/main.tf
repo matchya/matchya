@@ -27,7 +27,7 @@ resource "aws_s3_bucket_public_access_block" "candidate_response" {
   restrict_public_buckets = false
 }
 
-resource "aws_s3_bucket_policy" "space_profile" {
+resource "aws_s3_bucket_policy" "candidate_response" {
   bucket = aws_s3_bucket.candidate_response.id
 
   depends_on = [aws_s3_bucket_public_access_block.candidate_response]
