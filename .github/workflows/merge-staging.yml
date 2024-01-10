@@ -44,7 +44,7 @@ jobs:
         run: echo "::set-output name=infra-changed::${{ steps.changes-infrastructure.outputs.package }}"
 
   deploy-terraform-shared:
-    if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop')
+    if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop') && needs.check-infrastructure-changes.outputs.infra-changed == 'true'
     name: Deployment
     permissions: write-all
     needs: [check-infrastructure-changes]
