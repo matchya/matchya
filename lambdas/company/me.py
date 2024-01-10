@@ -40,7 +40,7 @@ def connect_to_db():
 def get_company_by_id(company_id):
     """
     Retrieves the company for a given company_id from the database.
-    
+
     :param company_id: Unique identifier for the company.
     :return: Company object for the given company_id.
     """
@@ -63,7 +63,7 @@ def get_company_by_id(company_id):
 def get_repositories_by_company_id(company_id):
     """
     Retrieves the repositories for a given company_id from the database.
-    
+
     :param company_id: Unique identifier for the company.
     :return: List of repositories for the given company_id.
     """
@@ -83,9 +83,10 @@ def handler(event, context):
     logger.info(event)
     try:
         connect_to_db()
-        body = parse_cookie_body(event)
-        company_id = body.get('company_id')
+        logger.info(f"Receiving an event... {event}")
         origin = parse_header(event)
+        cookie_body = parse_cookie_body(event)
+        company_id = cookie_body.get('company_id')
 
         company = get_company_by_id(company_id)
         repositories = get_repositories_by_company_id(company_id)
