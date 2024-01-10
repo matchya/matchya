@@ -16,9 +16,9 @@ on:
 
 jobs:
   run:
-    name: ${{inputs.label}}
+    name: ${{ inputs.label }}
     runs-on: ubuntu-latest
-    environment: ${{inputs.environment}}
+    environment: ${{ inputs.environment }}
     steps:
       - name: Fetch Repository
         uses: actions/checkout@v3
@@ -36,7 +36,7 @@ jobs:
         if: inputs.component == 'shared'
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PUBLIC_KEY }}" > ~/.ssh/id_rsa_matchya.pub
+          echo "${{ vars.SSH_PUBLIC_KEY }}" > ~/.ssh/id_rsa_matchya.pub
           chmod 600 ~/.ssh/id_rsa_matchya.pub
 
       - name: Setup Terraform
@@ -49,8 +49,8 @@ jobs:
       - name: Select Workspace (Environment)
         if: inputs.component == 'environment'
         run: |
-          terraform workspace select ${{inputs.environment}}
-        working-directory: terraform/${{inputs.component}}
+          terraform workspace select ${{ inputs.environment }}
+        working-directory: terraform/${{ inputs.component }}
 
       - name: Set Terraform Variables (Environment)
         if: inputs.component == 'environment'
@@ -58,30 +58,30 @@ jobs:
           echo 'namespace = "${{ secrets.TF_NAMESPACE}}"' >> terraform.tfvars
           echo 'db_username = "${{ secrets.TF_DB_USERNAME }}"' >> terraform.tfvars
           echo 'db_password = "${{ secrets.TF_DB_PASSWORD}}"' >> terraform.tfvars
-          echo 'client_origin = "${{ secrets.TF_CLIENT_ORIGIN }}"' >> terraform.tfvars
-        working-directory: terraform/${{inputs.component}}
+          echo 'client_origin = "${{ vars.TF_CLIENT_ORIGIN }}"' >> terraform.tfvars
+        working-directory: terraform/${{ inputs.component }}
 
       - name: Set Terraform Variables (Shared)
         if: inputs.component == 'shared'
         run: |
           echo 'domain_name = {' > terraform.tfvars
-          echo '  "prod": "${{ secrets.TF_PRODUCTION_DOMAIN_NAME }}",' >> terraform.tfvars
-          echo '  "staging": "${{ secrets.TF_STAGING_DOMAIN_NAME }}"' >> terraform.tfvars
+          echo '  "prod": "${{ vars.TF_PRODUCTION_DOMAIN_NAME }}",' >> terraform.tfvars
+          echo '  "staging": "${{ vars.TF_STAGING_DOMAIN_NAME }}"' >> terraform.tfvars
           echo '}' >> terraform.tfvars
           echo 'vercel_records = {' >> terraform.tfvars
-          echo '  "a": "${{secrets.TF_A_VERCEL_RECORDS}}",' >> terraform.tfvars
-          echo '  "cname": "${{secrets.TF_CNAME_VERCEL_RECORDS}}"' >> terraform.tfvars
+          echo '  "a": "${{ vars.TF_A_VERCEL_RECORDS }}",' >> terraform.tfvars
+          echo '  "cname": "${{ vars.TF_CNAME_VERCEL_RECORDS }}"' >> terraform.tfvars
           echo '}' >> terraform.tfvars
-        working-directory: terraform/${{inputs.component}}
+        working-directory: terraform/${{ inputs.component }}
 
       - name: Terraform Plan
         id: plan
         run: |
-          terraform plan -out=${{inputs.component}}.tfplan -no-color | tee plan_output.txt
-        working-directory: terraform/${{inputs.component}}
+          terraform plan -out=${{ inputs.component }}.tfplan -no-color | tee plan_output.txt
+        working-directory: terraform/${{ inputs.component }}
 
       - name: Upload Terraform Plan to S3
-        run: aws s3 cp terraform/${{inputs.component}}/${{inputs.component}}.tfplan s3://matchya-terraform/github-actions-artifacts/${{inputs.environment}}/plans/${{inputs.component}}.tfplan
+        run: aws s3 cp terraform/${{ inputs.component }}/${{ inputs.component }}.tfplan s3://matchya-terraform/github-actions-artifacts/${{ inputs.environment }}/plans/${{ inputs.component }}.tfplan
 
       - name: Comment PR
         uses: actions/github-script@v6
@@ -90,7 +90,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const fs = require('fs');
-            const output = fs.readFileSync('terraform/${{inputs.component}}/plan_output.txt', 'utf8');
+            const output = fs.readFileSync('terraform/${{ inputs.component }}/plan_output.txt', 'utf8');
             github.rest.issues.createComment({
                 issue_number: context.issue.number,
                 owner: context.repo.owner,

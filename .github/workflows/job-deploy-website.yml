@@ -10,7 +10,7 @@ jobs:
     name: Web
     if: inputs.environment != 'production'
     runs-on: ubuntu-latest
-    environment: ${{inputs.environment}}
+    environment: ${{ inputs.environment }}
     steps:
       - name: Fetch Repository
         uses: actions/checkout@v3
@@ -31,22 +31,22 @@ jobs:
 
       - name: Fetch environment variables and create .env in web folder
         run: |
-          echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" >> web/.env
+          echo "VITE_API_URL=${{ vars.VITE_API_URL }}" >> web/.env
           echo "VITE_GITHUB_CLIENT_ID=${{ secrets.VITE_GITHUB_CLIENT_ID }}" >> web/.env
-          echo "VITE_CLIENT_URL=${{ secrets.VITE_CLIENT_URL }}" >> web/.env
+          echo "VITE_CLIENT_URL=${{ vars.VITE_CLIENT_URL }}" >> web/.env
 
       - name: Set execute permissions for deploy script
         run: chmod +x scripts/deploy_to_s3.sh
       - name: Deploy to S3
         shell: bash
         run: |
-          cd scripts && ./deploy_to_s3.sh --bucket-name ${{ secrets.WEBSITE_BUCKET_NAME }} --environment ${{ inputs.environment }}
+          cd scripts && ./deploy_to_s3.sh --bucket-name ${{ vars.S3_WEBSITE_BUCKET_NAME }} --environment ${{ inputs.environment }}
 
   waitlist:
     name: Waitlist Page
     if: inputs.environment == 'production'
     runs-on: ubuntu-latest
-    environment: ${{inputs.environment}}
+    environment: ${{ inputs.environment }}
     steps:
       - name: Fetch Repository
         uses: actions/checkout@v3
@@ -66,4 +66,4 @@ jobs:
           aws-region: us-east-1
 
       - name: Deploy to Vercel
-        run: curl -X POST ${{secrets.VERCEL_DEPLOY_HOOK_URL}}
+        run: curl -X POST ${{ vars.VERCEL_DEPLOY_HOOK_URL }}
