@@ -18,7 +18,7 @@ def parse_header(event):
         raise ValueError(f"Invalid JSON in request body: {e}")
 
 
-def parse_body(event):
+def parse_cookie_body(event):
     try:
         body = event.get('requestContext').get('authorizer')
         if not body:
