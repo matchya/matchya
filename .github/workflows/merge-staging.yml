@@ -11,15 +11,12 @@ jobs:
     if: github.event.pull_request.merged == true && github.head_ref == 'develop'
     name: Clean Deployment History
     runs-on: ubuntu-latest
-    environment: staging
-    env:
-      ENVIRONMENT: staging
     permissions: write-all
     steps:
       - name: 🗑 Delete deployment
         uses: strumwolf/delete-deployment-environment@v2
         with:
-          environment: ${{env.ENVIRONMENT}}
+          environment: staging
           token: ${{ secrets.GH_TOKEN }}
           onlyRemoveDeployments: true
 
