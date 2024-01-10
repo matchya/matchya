@@ -165,7 +165,7 @@ def create_company_record(company_id: str, body: dict):
     :param body: The request body containing company data.
     """
     logger.info("Creating the company record...")
-    sql = "INSERT INTO company (id, name, email, github_username, github_access_token) VALUES (%s, %s, %s, %s, %s);"
+    sql = "INSERT INTO company (id, name, email, github_access_token) VALUES (%s, %s, %s, %s, %s);"
     try:
         db_cursor.execute(sql, (company_id, body['name'], body['email'], body['github_username'], encrypt_github_access_token(body['github_access_token'])))
     except psycopg2.IntegrityError:
@@ -213,26 +213,6 @@ def get_company_repository_names(github_username: str, github_access_token: str)
     return repo_names
 
 
-def create_default_position(company_id) -> str:
-    """
-    Creates a new position record in the database.
-
-    :param body: The request body containing the position data.
-    :return: The id of the newly created position record.
-    """
-    logger.info("Creating a position record...")
-    name = 'Software Engineer'
-    level = 'mid'
-    type = 'fullstack'
-    sql = "INSERT INTO position (id, company_id, name, type, level) VALUES (%s, %s, %s, %s, %s);"
-    try:
-        position_id = str(uuid.uuid4())
-        db_cursor.execute(sql, (position_id, company_id, name, type, level))
-        return position_id
-    except Exception as e:
-        raise RuntimeError(f"Error saving to position table: {e}")
-
-
 def create_access_token_record(company_id, access_token):
     """
     Creates a new access token record in the database.
@@ -269,7 +249,6 @@ def handler(event, context):
         data = {
             "name": username,
             "email": email,
-            "github_username": username,
             "github_access_token": github_access_token
         }
 
@@ -283,8 +262,6 @@ def handler(event, context):
         create_company_record(company_id, data)
 
         save_company_repositories(company_id, username, github_access_token)
-
-        create_default_position(company_id)
 
         access_token = generate_access_token(company_id)
         create_access_token_record(company_id, access_token)
