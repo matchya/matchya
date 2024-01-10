@@ -21,7 +21,7 @@ while (( "$#" )); do
   esac
 done
 
-if [ "$environment" != "production" ] && [ "$environment" != "staging" ]; then
+if [ "$environment" != "Production" ] && [ "$environment" != "Staging" ]; then
     if [ -z "$AWS_PROFILE" ]; then
         echo "AWS_PROFILE is not set. Please set it before running this script."
         exit 1
