@@ -167,7 +167,7 @@ def create_company_record(company_id: str, body: dict):
     logger.info("Creating the company record...")
     sql = "INSERT INTO company (id, name, email, github_access_token) VALUES (%s, %s, %s, %s, %s);"
     try:
-        db_cursor.execute(sql, (company_id, body['name'], body['email'], body['github_username'], encrypt_github_access_token(body['github_access_token'])))
+        db_cursor.execute(sql, (company_id, body['name'], body['email'], encrypt_github_access_token(body['github_access_token'])))
     except psycopg2.IntegrityError:
         raise RuntimeError(f"Email address is already used: {body['email']}")
     except Exception as e:

@@ -22,7 +22,7 @@ def parse_cookie_body(event):
     try:
         body = event.get('requestContext').get('authorizer')
         if not body:
-            raise ValueError('Missing required body')
+            raise ValueError('Body not included in request')
         return body
     except json.JSONDecodeError as e:
         raise ValueError(f"Invalid JSON in request body: {e}")
