@@ -4,7 +4,7 @@ import psycopg2
 
 from config import Config
 
-from utils.request import parse_header, parse_body
+from utils.request import parse_header, parse_cookie_body
 from utils.response import generate_success_response, generate_error_response
 
 # Logger
@@ -83,7 +83,7 @@ def retrieve(event, context):
     logger.info(event)
     try:
         connect_to_db()
-        body = parse_body
+        body = parse_cookie_body(event)
         company_id = body.get('company_id')
         origin = parse_header(event)
 
