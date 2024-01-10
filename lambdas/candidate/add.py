@@ -5,7 +5,7 @@ import psycopg2
 
 from config import Config
 from utils.response import generate_success_response, generate_error_response
-from utils.request import parse_header, parse_request_body
+from utils.request import parse_header, parse_request_body, parse_cookie_body
 
 # Logger
 logger = logging.getLogger('add candidate')
@@ -44,7 +44,7 @@ def validate_request_body(body):
     :param body: The request body containing company data.
     """
     logger.info("Validating the company data...")
-    required_fields = ['email', 'first_name', 'last_name', 'position_id']
+    required_fields = ['email', 'first_name', 'last_name']
     if not all(body.get(field) for field in required_fields):
         raise ValueError('Missing required fields.')
 
@@ -95,19 +95,19 @@ def get_candidate_id(email):
     return result[0]
 
 
-def save_candidate_position(candidate_id, position_id):
+def save_company_candidate(company_id, candidate_id):
     """
-    Saves a candidate's position. If the candidate already has a position, nothing will be done.
-
+    Saves the candidate to company.
+    
+    :param company_id: The id of the company.
     :param candidate_id: The id of the candidate.
-    :param position_id: The id of the position.
     """
-    logger.info("Saving the candidate's position...")
-    sql = "INSERT INTO candidate_position (candidate_id, position_id) VALUES (%s, %s);"
+    logger.info("Saving the candidate to company...")
+    sql = "INSERT INTO company_candidate (company_id, candidate_id) VALUES (%s, %s);"
     try:
-        db_cursor.execute(sql, (candidate_id, position_id))
+        db_cursor.execute(sql, (company_id, candidate_id))
     except Exception as e:
-        raise RuntimeError(f"Error saving to candidate_position table: {e}")
+        raise RuntimeError(f"Error saving to company_candidate table: {e}")
 
 
 def handler(event, context):
@@ -117,6 +117,8 @@ def handler(event, context):
 
         logger.info("Parsing the request body...")
         body = parse_request_body(event)
+        logger.info("Parsing body from cookie...")
+        company_id = parse_cookie_body(event)['company_id']
         logger.info("Parsing the request header...")
         origin = parse_header(event)
         validate_request_body(body)
@@ -126,9 +128,7 @@ def handler(event, context):
         else:
             candidate_id = get_candidate_id(body['email'])
 
-        position_id = body['position_id']
-
-        save_candidate_position(candidate_id, position_id)
+        save_company_candidate(company_id, candidate_id)
 
         db_conn.commit()
         logger.info("Successfully add a candidate.")
