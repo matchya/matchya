@@ -50,10 +50,11 @@ def retrieve_candidates(company_id):
             can.id, can.email, can.first_name, can.last_name, can.github_username,
             can_res.id AS result_id, can_res.test_id, can_res.total_score, can_res.created_at, 
             test.id AS test_id, test.name AS test_name    
-        FROM candidate
+        FROM candidate AS can 
         LEFT JOIN candidate_result AS can_res ON can_res.candidate_id = can.id
         LEFT JOIN test ON test.id = can_res.test_id
-        WHERE can.company_id = '%s';
+        LEFT JOIN company_candidate AS com_can ON com_can.candidate_id = can.id
+        WHERE com_can.company_id = '%s';
         """ % company_id
     db_cursor.execute(sql, (company_id,))
     result = db_cursor.fetchall()
