@@ -43,7 +43,7 @@ jobs:
     name: Deploy
     if: inputs.environment != 'production'
     uses: ./.github/workflows/job-deploy-infrastructure.yml
-    needs: [plan-shared, plan-environment, deploy-shared]
+    needs: [plan-environment]
     with:
       environment: ${{inputs.environment}}
       component: environment
