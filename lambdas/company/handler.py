@@ -46,15 +46,14 @@ def get_company_by_id(company_id):
     """
     logger.info("Getting the company by id...")
     try:
-        db_cursor.execute(f"SELECT id, name, email, github_username FROM company WHERE id = '{company_id}'")
+        db_cursor.execute(f"SELECT id, name, email FROM company WHERE id = '{company_id}'")
         result = db_cursor.fetchone()
         if not result:
             raise ValueError(f"Company not found for id: {company_id}")
         company = {
             "id": result[0],
             "name": result[1],
-            "email": result[2],
-            "github_username": result[3],
+            "email": result[2]
         }
         return company
     except Exception as e:
@@ -80,25 +79,6 @@ def get_repositories_by_company_id(company_id):
         raise RuntimeError(f"Failed to retrieve repositories: {e}")
 
 
-def get_positions_by_company_id(company_id):
-    """
-    Retrieves the 'message' attribute of criteria for a given position_id from the database.
-
-    :param position_id: Unique identifier for the position.
-    :return: List of messages for the given position_id.
-    """
-    logger.info("Getting positions by company id...")
-    try:
-        db_cursor.execute(f"SELECT id, name FROM position WHERE company_id = '{company_id}'")
-        result = db_cursor.fetchall()
-        if not result:
-            return []
-        positions = [{"id": item[0], "name": item[1]} for item in result]
-        return positions
-    except Exception as e:
-        raise RuntimeError(f"Failed to retrieve positions: {e}")
-
-
 def retrieve(event, context):
     logger.info(event)
     try:
@@ -109,14 +89,11 @@ def retrieve(event, context):
 
         company = get_company_by_id(company_id)
         repositories = get_repositories_by_company_id(company_id)
-        positions = get_positions_by_company_id(company_id)
         body = {
             "id": company["id"],
             "name": company["name"],
             "email": company["email"],
-            "github_username": company["github_username"],
-            "repository_names": repositories,
-            "positions": positions
+            "repository_names": repositories
         }
         logger.info(f"Retrieved company successfully: {body}")
         return generate_success_response(origin, body)
