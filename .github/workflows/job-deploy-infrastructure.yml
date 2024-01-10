@@ -17,10 +17,10 @@ on:
 
 jobs:
   run:
-    name: ${{inputs.label}}
+    name: ${{ inputs.label }}
     runs-on: ubuntu-latest
     permissions: write-all
-    environment: ${{inputs.environment}}
+    environment: ${{ inputs.environment }}
     steps:
       - name: Fetch Repository
         uses: actions/checkout@v3
@@ -35,20 +35,20 @@ jobs:
           aws-region: us-east-1
 
       - name: Download Terraform Plan from S3
-        run: aws s3 cp s3://matchya-terraform/github-actions-artifacts/${{inputs.environment}}/plans/${{inputs.component}}.tfplan terraform/${{inputs.component}}/${{inputs.component}}.tfplan
+        run: aws s3 cp s3://matchya-terraform/github-actions-artifacts/${{ inputs.environment }}/plans/${{ inputs.component }}.tfplan terraform/${{ inputs.component }}/${{ inputs.component }}.tfplan
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
 
       - name: Terraform Init
         run: terraform init
-        working-directory: terraform/${{inputs.component}}
+        working-directory: terraform/${{ inputs.component }}
 
       - name: Select Terraform Workspace (Environment)
         if: inputs.component == 'environment'
-        run: terraform workspace select ${{inputs.environment}}
-        working-directory: terraform/${{inputs.component}}
+        run: terraform workspace select ${{ inputs.environment }}
+        working-directory: terraform/${{ inputs.component }}
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve ${{inputs.component}}.tfplan
-        working-directory: terraform/${{inputs.component}}
+        run: terraform apply -auto-approve ${{ inputs.component }}.tfplan
+        working-directory: terraform/${{ inputs.component }}

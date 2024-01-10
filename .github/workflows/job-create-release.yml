@@ -31,7 +31,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd ${{inputs.component}}
+          cd ${{ inputs.component }}
           npm install
         if: inputs.component == 'web'
 
@@ -39,7 +39,7 @@ jobs:
         run: |
           npm install
         if: inputs.component != 'web'
-        working-directory: lambdas/${{inputs.component}}
+        working-directory: lambdas/${{ inputs.component }}
 
       - name: Release
         run: |
@@ -47,7 +47,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         if: inputs.component == 'web'
-        working-directory: ${{inputs.component}}
+        working-directory: ${{ inputs.component }}
 
       - name: Release
         run: |
@@ -55,4 +55,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         if: inputs.component != 'web'
-        working-directory: lambdas/${{inputs.component}}
+        working-directory: lambdas/${{ inputs.component }}

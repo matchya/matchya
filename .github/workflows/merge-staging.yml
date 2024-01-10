@@ -1,29 +1,26 @@
 name: Merge Pipeline (Staging)
 
 on:
-  pull_request:
+  push:
     branches:
       - staging
-    types: [closed]
 
 jobs:
   cleanup:
-    if: github.event.pull_request.merged == true && github.head_ref == 'develop'
+    if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop')
     name: Clean Deployment History
     runs-on: ubuntu-latest
-    environment: staging
-    env:
-      ENVIRONMENT: staging
     permissions: write-all
     steps:
       - name: 🗑 Delete deployment
         uses: strumwolf/delete-deployment-environment@v2
         with:
-          environment: ${{env.ENVIRONMENT}}
+          environment: Staging
           token: ${{ secrets.GH_TOKEN }}
           onlyRemoveDeployments: true
 
   check-infrastructure-changes:
+    if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop')
     name: Check Infrastructure Changes
     runs-on: ubuntu-latest
     outputs:
@@ -47,19 +44,19 @@ jobs:
         run: echo "::set-output name=infra-changed::${{ steps.changes-infrastructure.outputs.package }}"
 
   deploy-terraform-shared:
-    if: needs.check-infrastructure-changes.outputs.infra-changed == 'true' && github.event.pull_request.merged == true && github.head_ref == 'develop'
+    if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop') && needs.check-infrastructure-changes.outputs.infra-changed == 'true'
     name: Deployment
     permissions: write-all
-    needs: [check-infrastructure-changes, cleanup]
+    needs: [check-infrastructure-changes]
     uses: ./.github/workflows/job-deploy-infrastructure.yml
     with:
       label: Shared Infrastructure
       component: shared
-      environment: staging
+      environment: Staging
     secrets: inherit
 
   deploy-terraform-environment:
-    if: github.event.pull_request.merged == true && github.head_ref == 'develop'
+    if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop')
     name: Deployment
     permissions: write-all
     needs: [deploy-terraform-shared]
@@ -67,16 +64,16 @@ jobs:
     with:
       label: Environment Infrastructure
       component: environment
-      environment: staging
+      environment: Staging
     secrets: inherit
 
   deploy-website:
-    if: github.event.pull_request.merged == true && github.head_ref == 'develop'
+    if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop')
     name: Deployment
     needs: [cleanup]
     uses: ./.github/workflows/job-deploy-website.yml
     with:
-      environment: staging
+      environment: Staging
     secrets: inherit
 
   # create-release-web:
@@ -84,50 +81,5 @@ jobs:
   #   uses: ./.github/workflows/job-create-release.yml
   #   with:
   #     component: web
-  #     environment: staging
-  #   secrets: inherit
-
-  # create-release-authentication:
-  #   name: Create Release (authentication)
-  #   needs: create-release-web
-  #   uses: ./.github/workflows/job-create-release.yml
-  #   with:
-  #     component: authentication
-  #     environment: staging
-  #   secrets: inherit
-
-  # create-release-authorizer:
-  #   name: Create Release (authorizer)
-  #   needs: create-release-authentication
-  #   uses: ./.github/workflows/job-create-release.yml
-  #   with:
-  #     component: authorizer
-  #     environment: staging
-  #   secrets: inherit
-
-  # create-release-checklist:
-  #   name: Create Release (checklist)
-  #   needs: create-release-authorizer
-  #   uses: ./.github/workflows/job-create-release.yml
-  #   with:
-  #     component: checklist
-  #     environment: staging
-  #   secrets: inherit
-
-  # create-release-company:
-  #   name: Create Release (company)
-  #   needs: create-release-checklist
-  #   uses: ./.github/workflows/job-create-release.yml
-  #   with:
-  #     component: company
-  #     environment: staging
-  #   secrets: inherit
-
-  # create-release-position:
-  #   name: Create Release (position)
-  #   needs: create-release-company
-  #   uses: ./.github/workflows/job-create-release.yml
-  #   with:
-  #     component: position
-  #     environment: staging
+  #     environment: Staging
   #   secrets: inherit

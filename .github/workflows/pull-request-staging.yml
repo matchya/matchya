@@ -40,7 +40,7 @@ jobs:
     if: needs.check-infrastructure-changes.outputs.infra-changed == 'true'
     uses: ./.github/workflows/job-plan-infrastructure.yml
     with:
-      environment: staging
+      environment: Staging
       component: shared
       label: Shared Infrastructure
     secrets: inherit
@@ -50,7 +50,7 @@ jobs:
     needs: [plan-infrastructure-shared]
     uses: ./.github/workflows/job-plan-infrastructure.yml
     with:
-      environment: staging
+      environment: Staging
       component: environment
       label: Environment Infrastructure
     secrets: inherit

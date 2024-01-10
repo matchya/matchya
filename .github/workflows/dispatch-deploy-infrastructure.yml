@@ -13,7 +13,7 @@ jobs:
     name: Plan
     uses: ./.github/workflows/job-plan-infrastructure.yml
     with:
-      environment: ${{inputs.environment}}
+      environment: ${{ inputs.environment }}
       component: shared
       label: Shared Infrastructure
     secrets: inherit
@@ -24,7 +24,7 @@ jobs:
     uses: ./.github/workflows/job-plan-infrastructure.yml
     needs: [plan-shared]
     with:
-      environment: ${{inputs.environment}}
+      environment: ${{ inputs.environment }}
       component: environment
       label: Environment Infrastructure
     secrets: inherit
@@ -34,7 +34,7 @@ jobs:
     uses: ./.github/workflows/job-deploy-infrastructure.yml
     needs: [plan-shared]
     with:
-      environment: ${{inputs.environment}}
+      environment: ${{ inputs.environment }}
       component: shared
       label: Shared Infrastructure
     secrets: inherit
@@ -45,7 +45,7 @@ jobs:
     uses: ./.github/workflows/job-deploy-infrastructure.yml
     needs: [plan-environment]
     with:
-      environment: ${{inputs.environment}}
+      environment: ${{ inputs.environment }}
       component: environment
       label: Environment Infrastructure
     secrets: inherit
