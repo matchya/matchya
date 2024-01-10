@@ -68,11 +68,6 @@ jobs:
           echo '  "prod": "${{ secrets.TF_PRODUCTION_DOMAIN_NAME }}",' >> terraform.tfvars
           echo '  "staging": "${{ secrets.TF_STAGING_DOMAIN_NAME }}"' >> terraform.tfvars
           echo '}' >> terraform.tfvars
-        working-directory: terraform/${{inputs.component}}
-
-      - name: Set Terraform Variables (Production)
-        if: inputs.component == 'shared' && inputs.environment == 'production'
-        run: |
           echo 'vercel_records = {' >> terraform.tfvars
           echo '  "a": "${{secrets.TF_A_VERCEL_RECORDS}}",' >> terraform.tfvars
           echo '  "cname": "${{secrets.TF_CNAME_VERCEL_RECORDS}}"' >> terraform.tfvars
