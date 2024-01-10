@@ -39,6 +39,7 @@ export interface Position {
   checklist_status: string;
   checklist: Checklist;
   candidates: Candidate[];
+  questions: Question[];
 }
 
 export interface Checklist {
@@ -60,11 +61,18 @@ export interface Evaluation {
   reason: string;
 }
 
+export interface Question {
+  question: string;
+  metrics: string[];
+  keyword: string;
+  difficulty: string;
+}
+
 export interface CustomError {
   response: {
     status: number;
     data: {
-      status: string
+      status: string;
       message: string;
     };
   };

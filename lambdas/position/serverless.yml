@@ -30,60 +30,30 @@ provider:
     POSTGRES_PASSWORD: ${ssm:/terraform/${self:provider.stage}/rds/db_password}
 
 functions:
-  retrieve:
-    name: ${self:provider.stage}-position-retrieve
+  create:
+    name: ${self:provider.stage}-position-create
     image:
       name: default
       command:
-        - retrieve.handler
+        - create.handler
     events:
       - http:
-          path: /positions/{id}
-          method: GET
+          path: /positions
+          method: POST
           cors:
             origins:
               - https://www.matchyaa.com
               - https://matchyaa.com
+              - https://www.staging.matchyaa.com
+              - https://staging.matchyaa.com
               - http://127.0.0.1:5173
             allowCredentials: true
           authorizer:
             type: request
             identitySource: method.request.header.Cookie
             resultTtlInSeconds: 300
-            name: ${self:provider.stage}-position-retrieve-authorizer
+            name: ${self:provider.stage}-position-create-authorizer
             arn: arn:aws:lambda:${aws:region}:${aws:accountId}:function:${self:provider.stage}-authorizer
-          request:
-            parameters:
-              paths:
-                id: true
-    timeout: 30
-
-  checklist-status:
-    name: ${self:provider.stage}-position-checklist-status
-    image:
-      name: default
-      command:
-        - checklist_status.handler
-    events:
-      - http:
-          path: /positions/status/checklist/{id}
-          method: GET
-          cors:
-            origins:
-              - https://www.matchyaa.com
-              - https://matchyaa.com
-              - http://127.0.0.1:5173
-            allowCredentials: true
-          authorizer:
-            type: request
-            identitySource: method.request.header.Cookie
-            resultTtlInSeconds: 300
-            name: ${self:provider.stage}-position-checklist-status-authorizer
-            arn: arn:aws:lambda:${aws:region}:${aws:accountId}:function:${self:provider.stage}-authorizer
-          request:
-            parameters:
-              paths:
-                id: true
 
   retrieve-candidates:
     name: ${self:provider.stage}-position-retreive-candidates
@@ -99,6 +69,8 @@ functions:
             origins:
               - https://www.matchyaa.com
               - https://matchyaa.com
+              - https://www.staging.matchyaa.com
+              - https://staging.matchyaa.com
               - http://127.0.0.1:5173
             allowCredentials: true
           authorizer:
@@ -106,6 +78,35 @@ functions:
             identitySource: method.request.header.Cookie
             resultTtlInSeconds: 300
             name: ${self:provider.stage}-position-candidates-status-authorizer
+            arn: arn:aws:lambda:${aws:region}:${aws:accountId}:function:${self:provider.stage}-authorizer
+          request:
+            parameters:
+              paths:
+                id: true
+
+  retrieve-questions:
+    name: ${self:provider.stage}-position-retrieve-questions
+    image:
+      name: default
+      command:
+        - questions.handler
+    events:
+      - http:
+          path: /positions/questions/{id}
+          method: GET
+          cors:
+            origins:
+              - https://www.matchyaa.com
+              - https://matchyaa.com
+              - https://www.staging.matchyaa.com
+              - https://staging.matchyaa.com
+              - http://127.0.0.1:5173
+            allowCredentials: true
+          authorizer:
+            type: request
+            identitySource: method.request.header.Cookie
+            resultTtlInSeconds: 300
+            name: ${self:provider.stage}-position-retrieve-questions-authorizer
             arn: arn:aws:lambda:${aws:region}:${aws:accountId}:function:${self:provider.stage}-authorizer
           request:
             parameters:

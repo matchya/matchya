@@ -1,4 +1,8 @@
 resource "aws_acm_certificate" "cert" {
+  depends_on = [
+    aws_s3_bucket.main,
+    aws_s3_bucket.www
+  ]
   domain_name               = var.domain_name
   validation_method         = "DNS"
   subject_alternative_names = ["www.${var.domain_name}"]
@@ -21,7 +25,7 @@ resource "aws_route53_record" "cert_validation" {
 
   name    = each.value.name
   type    = each.value.type
-  zone_id = aws_route53_zone.main.zone_id
+  zone_id = var.hosted_zone.zone_id
   records = [each.value.record]
   ttl     = 60
 

@@ -53,18 +53,16 @@ def get_candidates_by_position_id(position_id):
     sql = """
         SELECT
             can.id AS candidate_id, can.first_name, can.last_name, can.email, can.github_username, 
-            can_res.total_score, can_res.summary, can_res.status AS candidate_result_status, can_res.created_at,
-            ass_crit.criterion_id, ass_crit.score, ass_crit.reason
+            cr.id AS candidate_result_id, cr.score, cr.summary
         FROM
             position p
-        LEFT JOIN checklist c ON p.id = c.position_id
-        LEFT JOIN candidate_result can_res ON c.id = can_res.checklist_id
-        LEFT JOIN candidate can ON can_res.candidate_id = can.id
-        LEFT JOIN assessment_criteria ass_crit ON can_res.id = ass_crit.candidate_result_id
+        LEFT JOIN candidate_position cp ON p.id = cp.position_id
+        LEFT JOIN candidate_result cr ON cp.candidate_id = cr.candidate_id
+        LEFT JOIN candidate can ON cp.candidate_id = can.id
         WHERE
             p.id = '%s'
         ORDER BY
-            c.created_at DESC, can_res.id;
+            can.created_at DESC
     """ % position_id
     try:
         db_cursor.execute(sql)
@@ -92,36 +90,22 @@ def process_position_from_sql_results(sql_results):
     candidate_data = {}
     for row in sql_results:
         (candidate_id, first_name, last_name, email, github_username,
-         total_score, summary, candidate_result_status, created_at, criterion_id, score, reason) = row
+         candidate_result_id, score, summary) = row
 
-        if candidate_id not in candidate_data:
+        if candidate_id and candidate_id not in candidate_data:
             candidate_data[candidate_id] = {
                 'id': candidate_id,
                 'first_name': first_name,
                 'last_name': last_name,
                 'email': email,
                 'github_username': github_username,
-                'total_score': total_score,
-                'summary': summary,
-                'status': candidate_result_status,
-                'created_at': str(created_at),
-                'assessments': []
+                'result': {
+                    'id': candidate_result_id,
+                    'total_score': score,
+                    'summary': summary
+                }
             }
-
-        if email and candidate_result_status == 'succeeded':
-            candidate_data[candidate_id]['assessments'].append({
-                'criterion': {
-                    'id': criterion_id
-                },
-                'score': score,
-                'reason': reason
-            })
-
-    final_data = []
-    for can_id, can_info in candidate_data.items():
-        final_data.append(can_info)
-
-    return final_data
+    return list(candidate_data.values())
 
 
 def handler(event, context):

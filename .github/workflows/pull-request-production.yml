@@ -1,45 +1,46 @@
-name: Pull Request Pipeline (Production)
+name: PR Pipeline (Production)
 
 on:
   pull_request:
     branches:
-      - 'main'
+      - production
     types:
       - opened
       - reopened
       - synchronize
+      - edited
 
 jobs:
-  cleanup-artifacts:
-    name: Clean artifacts
+  check-infrastructure-changes:
+    name: Check Infrastructure Changes
     runs-on: ubuntu-latest
+    outputs:
+      infra-changed: ${{ steps.check.outputs.infra-changed }}
     steps:
-      - name: Remove previous artifacts
-        uses: actions/github-script@v5
+      - name: Fetch Repository
+        uses: actions/checkout@v3
         with:
-          script: |
-            const repoOwner = context.repo.owner
-            const repoName = context.repo.repo
-            const runId = context.runId
-            const artifactResponse = await github.rest.actions.listWorkflowRunArtifacts({
-              owner: repoOwner,
-              repo: repoName,
-              run_id: runId
-            });
-            const artifacts = artifactResponse.data.artifacts;
-            console.log(`Found ${artifacts.length} artifacts.`);
-            for (const artifact of artifacts) {
-              await github.rest.actions.deleteArtifact({
-                owner: repoOwner,
-                repo: repoName,
-                artifact_id: artifact.id
-              });
-              console.log(`Deleted artifact: ${artifact.name} (${artifact.id})`);
-            }
+          fetch-depth: 0
 
-  analyze-commits:
-    name: Analyze
-    uses: ./.github/workflows/job-analyze-commits.yml
+      - name: Check Infrastructure Files Changed
+        uses: dorny/paths-filter@v2
+        id: changes-infrastructure
+        with:
+          filters: |
+            package:
+              - 'infrastructure/**'
+
+      - name: Set output
+        id: check
+        run: echo "::set-output name=infra-changed::${{ steps.changes-infrastructure.outputs.package }}"
+
+  plan-infrastructure-shared:
+    name: Plan
+    needs: [check-infrastructure-changes]
+    if: needs.check-infrastructure-changes.outputs.infra-changed == 'true'
+    uses: ./.github/workflows/job-plan-infrastructure.yml
     with:
-      pull_request_number: ${{ github.event.pull_request.number }}
+      environment: production
+      component: shared
+      label: Shared Infrastructure
     secrets: inherit

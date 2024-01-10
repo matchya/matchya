@@ -31,7 +31,6 @@ db_cursor = None
 
 # SQS
 sqs = boto3.client('sqs')
-queue_url = Config.EVALUATION_PROCESSOR_QUEUE_URL
 
 
 def connect_to_db():
@@ -69,7 +68,7 @@ def send_message_to_sqs(body):
     logger.info("Sending message to sqs...")
     try:
         response = sqs.send_message(
-            QueueUrl=queue_url,
+            QueueUrl=Config.CHECKLIST_EVALUATION_PROCESSOR_QUEUE_URL,
             MessageBody=json.dumps(body)
         )
         if response.get('MessageId') is None:
@@ -144,7 +143,7 @@ def create_candidate_result_to_db(checklist_id, candidate_id) -> (str, str):
             logger.info(f"Updating the candidate result status to scheduled, id: {result[0]}")
             sql = f"UPDATE candidate_result SET status = '{new_status}' WHERE id = '{result[0]}'"
             db_cursor.execute(sql)
-            return result[0], result[1]
+            return result[0], str(result[1])
 
         id = str(uuid.uuid4())
         created_at = str(datetime.datetime.now())
@@ -190,7 +189,7 @@ def handler(event, context):
         body['candidate_result_id'] = candidate_result_id
         send_message_to_sqs(body)
         logger.info(f"Successfully sent message to SQS {body}")
-        
+
         data = {
             "candidate_id": candidate_id,
             "created_at": created_at,

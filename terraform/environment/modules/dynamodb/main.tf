@@ -27,8 +27,11 @@ resource "aws_dynamodb_table" "company" {
 
 resource "aws_dynamodb_table" "access_token" {
   name           = "${terraform.workspace}-AccessToken"
-  billing_mode   = "PAY_PER_REQUEST"
+  billing_mode   = "PROVISIONED"
   hash_key       = "token_id"
+
+  read_capacity = 1
+  write_capacity = 1
 
   attribute {
     name = "token_id"
@@ -38,8 +41,11 @@ resource "aws_dynamodb_table" "access_token" {
 
 resource "aws_dynamodb_table" "criterion" {
   name           = "${terraform.workspace}-Criterion"
-  billing_mode   = "PAY_PER_REQUEST"
+  billing_mode   = "PROVISIONED"
   hash_key       = "id"
+
+  read_capacity = 1
+  write_capacity = 1
 
   attribute {
     name = "id"

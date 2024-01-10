@@ -22,6 +22,7 @@ const MainNav = ({
   const [shouldOpen, setShouldOpen] = useState({
     generateCriteria: false,
     addCandidate: false,
+    checklistSheet: false,
   });
   const {
     selectedPosition,
@@ -53,9 +54,10 @@ const MainNav = ({
           `/positions/status/checklist/${selectedPosition.id}`
         );
         if (response.data.payload.checklist_status === 'succeeded') {
-          setPositionDetail(selectedPosition.id);
+          await setPositionDetail(selectedPosition.id);
           selectedPosition.checklist_status = 'succeeded';
           clearInterval(interval);
+          setShouldOpen({ ...shouldOpen, checklistSheet: true });
         }
         if (response.data.payload.checklist_status === 'failed') {
           selectPosition({ ...selectedPosition, checklist_status: 'failed' });
@@ -103,6 +105,7 @@ const MainNav = ({
 
     if (
       selectedPosition &&
+      selectedPosition.candidates &&
       selectedPosition.candidates.filter(
         candidate => candidate.status === 'scheduled'
       ).length > 0
@@ -173,7 +176,15 @@ const MainNav = ({
   };
 
   return (
-    <Sheet>
+    <Sheet
+      open={shouldOpen.checklistSheet}
+      onOpenChange={() => {
+        setShouldOpen({
+          ...shouldOpen,
+          checklistSheet: !shouldOpen.checklistSheet,
+        });
+      }}
+    >
       <nav
         className={cn('flex items-center space-x-4 lg:space-x-6', className)}
         {...props}
@@ -202,7 +213,14 @@ const MainNav = ({
         {selectedPosition?.checklist_status === 'succeeded' ? (
           <>
             <SheetTrigger asChild>
-              <Button variant="outline">See Checklist</Button>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShouldOpen({ ...shouldOpen, checklistSheet: true });
+                }}
+              >
+                See Checklist
+              </Button>
             </SheetTrigger>
             <ChecklistSheet selectedPosition={selectedPosition} />
           </>

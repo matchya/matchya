@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { axiosInstance } from '@/lib/client';
-import { GithubAuthCallbackPageTemplate } from '@/template';
+import { OAuthCallbackPageTemplate } from '@/template';
 
 const GithubAuthCallback = () => {
   const location = useLocation();
@@ -11,6 +11,11 @@ const GithubAuthCallback = () => {
 
   useEffect(() => {
     const code = new URLSearchParams(location.search).get('code');
+    const error = new URLSearchParams(location.search).get('error');
+    if (error) {
+      setLoginFailed(true);
+      navigate('/auth');
+    }
     if (code) {
       handleGithubLogin(code);
     }
@@ -18,7 +23,7 @@ const GithubAuthCallback = () => {
 
   const handleGithubLogin = async (code: string) => {
     try {
-      const response = await axiosInstance.post('/github', { code });
+      const response = await axiosInstance.post('/login/github', { code });
 
       if (response.data.status === 'success') {
         navigate('/dashboard');
@@ -35,9 +40,10 @@ const GithubAuthCallback = () => {
   const handleRetryLogin = () => navigate('/auth');
 
   return (
-    <GithubAuthCallbackPageTemplate
+    <OAuthCallbackPageTemplate
       isLoginFailed={loginFailed}
       onRetryLogin={handleRetryLogin}
+      authType="GitHub"
     />
   );
 };

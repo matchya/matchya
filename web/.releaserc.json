@@ -1,4 +1,5 @@
 {
+  "extends": "semantic-release-monorepo",
   "plugins": [
     [
       "@semantic-release/commit-analyzer",
@@ -6,7 +7,10 @@
         "releaseRules": [
           { "type": "feat", "scope": "web", "release": "minor" },
           { "type": "fix", "scope": "web", "release": "patch" },
-          { "type": "chore", "scope": "web", "release": "patch" }
+          { "type": "chore", "scope": "web", "release": "patch" },
+          { "type": "feat", "scope": "!web", "release": false },
+          { "type": "fix", "scope": "!web", "release": false },
+          { "type": "chore", "scope": "!web", "release": false }
         ]
       }
     ],
@@ -22,8 +26,7 @@
     "@semantic-release/github"
   ],
   "branches": [
-    "master",
-    "main",
-    "develop"
-  ]
+    "staging"
+  ],
+  "tagFormat": "web-v${version}"
 }

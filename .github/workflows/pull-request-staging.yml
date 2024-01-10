@@ -1,0 +1,97 @@
+name: PR Pipeline (Staging)
+
+on:
+  pull_request:
+    branches:
+      - staging
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - edited
+
+jobs:
+  check-infrastructure-changes:
+    name: Check Infrastructure Changes
+    runs-on: ubuntu-latest
+    outputs:
+      infra-changed: ${{ steps.check.outputs.infra-changed }}
+    steps:
+      - name: Fetch Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Check Infrastructure Files Changed
+        uses: dorny/paths-filter@v2
+        id: changes-infrastructure
+        with:
+          filters: |
+            package:
+              - 'terraform/**'
+
+      - name: Set output
+        id: check
+        run: echo "::set-output name=infra-changed::${{ steps.changes-infrastructure.outputs.package }}"
+
+  plan-infrastructure-shared:
+    name: Plan
+    needs: [check-infrastructure-changes]
+    if: needs.check-infrastructure-changes.outputs.infra-changed == 'true'
+    uses: ./.github/workflows/job-plan-infrastructure.yml
+    with:
+      environment: staging
+      component: shared
+      label: Shared Infrastructure
+    secrets: inherit
+
+  plan-terraform-environment:
+    name: Plan
+    needs: [plan-infrastructure-shared]
+    uses: ./.github/workflows/job-plan-infrastructure.yml
+    with:
+      environment: staging
+      component: environment
+      label: Environment Infrastructure
+    secrets: inherit
+
+  automated-tests:
+    name: Automated Tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        component:
+          ["authentication", "authorizer", "checklist", "company", "position"]
+    steps:
+      - name: Fetch Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Check Web Files Changed
+        uses: dorny/paths-filter@v2
+        if: matrix.component == 'web'
+        id: changes-web
+        with:
+          filters: |
+            package:
+              - '${{matrix.component}}/**'
+
+      - name: Check Files Changed (Lambdas)
+        uses: dorny/paths-filter@v2
+        if: matrix.component != 'web'
+        id: changes-lambda
+        with:
+          filters: |
+            package:
+              - 'lambdas/${{matrix.component}}/**'
+
+      - name: Run (${{matrix.component}})
+        if: matrix.component == 'web' && steps.changes-web.outputs.package == 'true'
+        run: echo "Running automated tests..."
+        working-directory: ${{matrix.component}}
+
+      - name: Run (${{matrix.component}})
+        if: matrix.component != 'web' && steps.changes-lambda.outputs.package == 'true'
+        run: echo "Running automated tests..."
+        working-directory: lambdas/${{matrix.component}}

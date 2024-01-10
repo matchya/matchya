@@ -1,4 +1,4 @@
-resource "aws_s3_bucket" "root" {
+resource "aws_s3_bucket" "main" {
   bucket = var.domain_name
 
   lifecycle {
@@ -9,8 +9,8 @@ resource "aws_s3_bucket" "root" {
   force_destroy = true
 }
 
-resource "aws_s3_bucket_public_access_block" "root" {
-  bucket = aws_s3_bucket.root.id
+resource "aws_s3_bucket_public_access_block" "main" {
+  bucket = aws_s3_bucket.main.id
 
   block_public_acls       = true
   block_public_policy     = true
@@ -18,8 +18,8 @@ resource "aws_s3_bucket_public_access_block" "root" {
   restrict_public_buckets = true
 }
 
-resource "aws_s3_bucket_website_configuration" "root" {
-  bucket = aws_s3_bucket.root.id
+resource "aws_s3_bucket_website_configuration" "main" {
+  bucket = aws_s3_bucket.main.id
 
   redirect_all_requests_to {
     protocol = "https"
@@ -27,14 +27,14 @@ resource "aws_s3_bucket_website_configuration" "root" {
   }
 }
 
-resource "aws_s3_bucket" "www_root" {
+resource "aws_s3_bucket" "www" {
   bucket = "www.${var.domain_name}"
 
   force_destroy = true
 }
 
-resource "aws_s3_bucket_public_access_block" "www_root" {
-  bucket = aws_s3_bucket.www_root.id
+resource "aws_s3_bucket_public_access_block" "www" {
+  bucket = aws_s3_bucket.www.id
 
   block_public_acls       = false
   block_public_policy     = false
@@ -42,9 +42,9 @@ resource "aws_s3_bucket_public_access_block" "www_root" {
   restrict_public_buckets = false
 }
 
-resource "aws_s3_bucket_policy" "www_root" {
-  depends_on = [aws_s3_bucket_public_access_block.www_root]
-  bucket = aws_s3_bucket.www_root.id
+resource "aws_s3_bucket_policy" "www" {
+  depends_on = [aws_s3_bucket_public_access_block.www]
+  bucket = aws_s3_bucket.www.id
 
   policy = jsonencode({
     Version = "2012-10-17",
@@ -59,8 +59,8 @@ resource "aws_s3_bucket_policy" "www_root" {
   })
 }
 
-resource "aws_s3_bucket_website_configuration" "www_root" {
-  bucket = aws_s3_bucket.www_root.id
+resource "aws_s3_bucket_website_configuration" "www" {
+  bucket = aws_s3_bucket.www.id
 
   index_document {
     suffix = "index.html"

@@ -1,11 +1,18 @@
 import { useEffect } from 'react';
 
+import PositionSetupPage from './PositionSetupPage';
+
 import { usePositionStore } from '@/store/store';
 import { DashboardPageTemplate } from '@/template';
 
 const DashboardPage = () => {
-  const { selectedPosition, positions, selectedCandidate, selectCandidate } =
-    usePositionStore();
+  const {
+    selectedPosition,
+    positions,
+    selectedCandidate,
+    selectCandidate,
+    setupRequired,
+  } = usePositionStore();
 
   useEffect(() => {
     if (
@@ -15,10 +22,16 @@ const DashboardPage = () => {
     ) {
       return;
     }
+
     if (selectedPosition?.checklist && selectedPosition.candidates) {
       selectCandidate(selectedPosition.candidates[0]);
     }
   }, [selectedPosition]);
+
+  if (setupRequired) {
+    window.location.href = '/position-setup';
+    return <PositionSetupPage />;
+  }
 
   if (!selectedPosition) {
     return <div>loading...</div>;

@@ -18,26 +18,6 @@ if not logger.handlers:
 logger.propagate = False
 
 
-def handler(event, context):
-    logger.info(event)
-    headers = event.get('headers', {})
-    cookie_header = headers.get('Cookie', '')
-    cookie = SimpleCookie(cookie_header)
-    jwt_token = cookie['t'].value if 't' in cookie else None
-
-    # TODO: implement logic to validate if jwt token is still valid
-
-    if jwt_token:
-        try:
-            decoded_payload = jwt.decode(jwt_token, Config.JWT_SECRET_KEY, algorithms=["HS256"])
-
-            return generate_policy('user', 'Allow', event['methodArn'], decoded_payload)
-        except jwt.ExpiredSignatureError:
-            return generate_policy('user', 'Deny', event['methodArn'], None)
-        except jwt.InvalidTokenError:
-            return generate_policy('user', 'Deny', event['methodArn'], None)
-
-
 def generate_policy(principal_id, effect, resource, context=None):
     logger.info(f"Generating {effect} policy...")
     auth_response = {
@@ -56,3 +36,23 @@ def generate_policy(principal_id, effect, resource, context=None):
         auth_response['context'] = context
 
     return auth_response
+
+
+def handler(event, context):
+    logger.info(event)
+    headers = event.get('headers', {})
+    cookie_header = headers.get('Cookie', '')
+    cookie = SimpleCookie(cookie_header)
+    jwt_token = cookie['t'].value if 't' in cookie else None
+
+    # TODO: implement logic to validate if jwt token is still valid
+
+    if jwt_token:
+        try:
+            decoded_payload = jwt.decode(jwt_token, Config.JWT_SECRET_KEY, algorithms=["HS256"])
+
+            return generate_policy('user', 'Allow', event['methodArn'], decoded_payload)
+        except jwt.ExpiredSignatureError:
+            return generate_policy('user', 'Deny', event['methodArn'], None)
+        except jwt.InvalidTokenError:
+            return generate_policy('user', 'Deny', event['methodArn'], None)

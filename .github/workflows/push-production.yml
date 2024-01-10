@@ -7,7 +7,7 @@ on:
 
 jobs:
   cleanup:
-    name: Clean up deployment history
+    name: Clean Deployment History
     runs-on: ubuntu-latest
     permissions: write-all
     steps:
@@ -18,112 +18,21 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
           onlyRemoveDeployments: true
 
-  check-for-web-folder-changes:
-    name: Check for changes in web
-    runs-on: ubuntu-latest
-    outputs:
-      package_changed: ${{ steps.changes.outputs.package }}
-    steps:
-      - uses: actions/checkout@v3
-
-      - uses: dorny/paths-filter@v2
-        id: changes
-        with:
-          filters: |
-            package:
-              - 'web/**'
-
-  deploy-to-s3:
-    name: Deploy to S3
-    needs: [cleanup, check-for-web-folder-changes]
-    if: needs.check-for-web-folder-changes.outputs.package_changed == 'true'
-    runs-on: ubuntu-latest
-    environment: production
-    timeout-minutes: 15
-    env:
-      ENVIRONMENT: production
-    steps:
-      - uses: actions/checkout@v3
-
-      - uses: actions/setup-node@v3
-        with:
-          cache: npm
-          node-version: 18
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-
-      - name: Fetch environment variables and create .env in web folder
-        run: |
-          echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" >> web/.env
-          echo "VITE_GITHUB_CLIENT_ID=${{ secrets.VITE_GITHUB_CLIENT_ID }}" >> web/.env
-          echo "VITE_CLIENT_URL=${{ secrets.VITE_CLIENT_URL }}" >> web/.env
-
-      - name: Set execute permissions for deploy script
-        run: chmod +x scripts/deploy_to_s3.sh
-      - name: Deploy to S3
-        shell: bash
-        run: |
-          cd scripts && ./deploy_to_s3.sh --bucket-name ${{ secrets.WEBSITE_BUCKET_NAME }} --environment ${{ env.ENVIRONMENT }}
-
-  determine-release-web:
-    runs-on: ubuntu-latest
-    outputs:
-      should_release_web: ${{steps.read_decision.outputs.should_release_web}}
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Download web release decision artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: web-release-decision
-          path: artifact
-
-      - name: Read release decision
-        id: read_decision
-        run: |
-          decision=$(cat artifact/web_release_decision.txt)
-          echo "Release decision: $decision"
-          echo "::set-output name=should_release_web::$decision"
-
-  determine-release-server:
-    runs-on: ubuntu-latest
-    outputs:
-      should_release_server: ${{steps.read_decision.outputs.should_release_server}}
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Download server release decision artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: server-release-decision
-          path: artifact
-
-      - name: Read release decision
-        id: read_decision
-        run: |
-          decision=$(cat artifact/server_release_decision.txt)
-          echo "Release decision: $decision"
-          echo "::set-output name=should_release_server::$decision"
-
-  create-release-web:
-    needs: determine-release-web
-    if: ${{ needs.determine-release-web.outputs.should_release_web == 'true' }}
-    name: Create Release (web)
-    uses: ./.github/workflows/job-create-release.yml
+  deploy-terraform-shared:
+    name: Deployment
+    permissions: write-all
+    needs: [cleanup]
+    uses: ./.github/workflows/job-deploy-infrastructure.yml
     with:
-      component: web
+      label: Shared Infrastructure
+      component: shared
       environment: production
+    secrets: inherit
 
-  create-release-server:
-    needs: determine-release-server
-    if: ${{ needs.determine-release-server.outputs.should_release_server == 'true' }}
-    name: Create Release (server)
-    uses: ./.github/workflows/job-create-release.yml
+  deploy-website:
+    name: Deployment
+    needs: [cleanup]
+    uses: ./.github/workflows/job-deploy-website.yml
     with:
-      component: server
       environment: production
+    secrets: inherit

@@ -1,0 +1,102 @@
+name: PR Pipeline (Develop)
+
+on:
+  pull_request:
+    branches:
+      - develop
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - edited
+
+jobs:
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        component:
+          [
+            "web",
+            "authentication",
+            "authorizer",
+            "candidate",
+            "checklist",
+            "company",
+            "position",
+            "question",
+          ]
+    steps:
+      - name: Fetch Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Check Files Changed
+        uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            package:
+              - '${{matrix.component}}/**'
+
+      - name: Run Tests (${{matrix.component}})
+        if: matrix.component == 'web' && steps.changes.outputs.package == 'true'
+        run: echo "Running unit tests..."
+        working-directory: ${{matrix.component}}
+
+      - name: Run Tests (${{matrix.component}})
+        if: matrix.component != 'web' && steps.changes.outputs.package == 'true'
+        run: echo "Running unit tests..."
+        working-directory: lambdas/${{matrix.component}}
+
+  api-tests:
+    name: Api Tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        component:
+          [
+            "web",
+            "authentication",
+            "authorizer",
+            "candidate",
+            "checklist",
+            "company",
+            "position",
+            "question",
+          ]
+    steps:
+      - name: Fetch Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Check Web Files Changed
+        uses: dorny/paths-filter@v2
+        if: matrix.component == 'web'
+        id: changes-web
+        with:
+          filters: |
+            package:
+              - '${{matrix.component}}/**'
+
+      - name: Check Files Changed
+        uses: dorny/paths-filter@v2
+        if: matrix.component != 'web'
+        id: changes-lambda
+        with:
+          filters: |
+            package:
+              - 'lambdas/${{matrix.component}}/**'
+
+      - name: Run (${{matrix.component}})
+        if: matrix.component == 'web' && steps.changes-web.outputs.package == 'true'
+        run: echo "Running api tests..."
+        working-directory: ${{matrix.component}}
+
+      - name: Run (${{matrix.component}})
+        if: matrix.component != 'web' && steps.changes-lambda.outputs.package == 'true'
+        run: echo "Running api tests..."
+        working-directory: lambdas/${{matrix.component}}

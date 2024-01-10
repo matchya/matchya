@@ -28,7 +28,6 @@ db_cursor = None
 
 # SQS
 sqs = boto3.client('sqs')
-queue_url = Config.GENERATION_PROCESSOR_QUEUE_URL
 
 
 def connect_to_db():
@@ -89,7 +88,7 @@ def send_message_to_sqs(body):
     logger.info("Sending the message to sqs...")
     try:
         response = sqs.send_message(
-            QueueUrl=queue_url,
+            QueueUrl=Config.CHECKLIST_GENERATION_PROCESSOR_QUEUE_URL,
             MessageBody=json.dumps(body)
         )
         if response.get('MessageId') is None:
@@ -131,7 +130,9 @@ def handler(event, context):
         connect_to_db()
         body = parse_request_body(event)
         origin = parse_header(event)
-        validate_request_body(body, ['position_id', 'repository_names'])
+        validate_request_body(body, ['position_id'])
+        if not body['repository_names']:
+            body['repository_names'] = []
 
         if checklist_already_exist(body['position_id']):
             logger.error(f"Checklist for position {body['position_id']} already exists")

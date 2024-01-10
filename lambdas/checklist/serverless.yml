@@ -31,8 +31,9 @@ provider:
     POSTGRES_DB: ${ssm:/terraform/${self:provider.stage}/rds/db_name}
     POSTGRES_USER: ${ssm:/terraform/${self:provider.stage}/rds/db_username}
     POSTGRES_PASSWORD: ${ssm:/terraform/${self:provider.stage}/rds/db_password}
-    EVALUATION_PROCESSOR_QUEUE_URL: ${ssm:/terraform/${self:provider.stage}/sqs/checklist_evaluation_processor_queue_url}
-    GENERATION_PROCESSOR_QUEUE_URL: ${ssm:/terraform/${self:provider.stage}/sqs/checklist_generation_processor_queue_url}
+    CHECKLIST_EVALUATION_PROCESSOR_QUEUE_URL: ${ssm:/terraform/${self:provider.stage}/sqs/checklist_evaluation_processor_queue_url}
+    CHECKLIST_GENERATION_PROCESSOR_QUEUE_URL: ${ssm:/terraform/${self:provider.stage}/sqs/checklist_generation_processor_queue_url}
+    QUESTION_GENERATION_PROCESSOR_QUEUE_URL: ${ssm:/terraform/${self:provider.stage}/sqs/question_generation_processor_queue_url}
 
 functions:
   evaluation-processor:
@@ -69,6 +70,8 @@ functions:
             origins:
               - https://www.matchyaa.com
               - https://matchyaa.com
+              - https://www.staging.matchyaa.com
+              - https://staging.matchyaa.com
               - http://127.0.0.1:5173
             allowCredentials: true
           authorizer:
@@ -96,6 +99,8 @@ functions:
             origins:
               - https://www.matchyaa.com
               - https://matchyaa.com
+              - https://www.staging.matchyaa.com
+              - https://staging.matchyaa.com
               - http://127.0.0.1:5173
             allowCredentials: true
           authorizer:
@@ -120,6 +125,8 @@ functions:
             origins:
               - https://www.matchyaa.com
               - https://matchyaa.com
+              - https://www.staging.matchyaa.com
+              - https://staging.matchyaa.com
               - http://127.0.0.1:5173
             allowCredentials: true
           authorizer:
