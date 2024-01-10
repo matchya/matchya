@@ -16,7 +16,7 @@ jobs:
       - name: Compare PR title with Regex
         run: |
           PR_TITLE="${{ github.event.pull_request.title }}"
-          PATTERN="^(feat|fix)(\(web\)|\(authentication\)|\(authorizer\)|\(checklist\)|\(company\)|\(position\)|\(question\)|\(ci\)|\(terraform\)|\(db\)|\(waitlist\)): .+"
+          PATTERN="^(feat|fix)(\(web\)|\(authentication\)|\(authorizer\)|\(candidate\)|\(checklist\)|\(company\)|\(position\)|\(question\)|\(ci\)|\(terraform\)|\(db\)|\(waitlist\)): .+"
           EXCEPTIONS="^(Merge to Production|Merge to Staging|chore|chore\(.*\)|fix)$"
 
           if [[ $PR_TITLE =~ $EXCEPTIONS ]]; then
