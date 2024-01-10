@@ -79,7 +79,7 @@ def get_repositories_by_company_id(company_id):
         raise RuntimeError(f"Failed to retrieve repositories: {e}")
 
 
-def retrieve(event, context):
+def handler(event, context):
     logger.info(event)
     try:
         connect_to_db()
