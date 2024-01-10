@@ -1,8 +1,9 @@
+import "../styles/globals.css";
+import "../styles/waitlist.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "../styles/globals.css";
 import { Analytics } from "@vercel/analytics/react";
-import "../styles/globals.css";
+import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,6 +23,7 @@ export default function RootLayout({
         {children}
         <Analytics />
       </body>
+      <Script src="https://prod-waitlist-widget.s3.us-east-2.amazonaws.com/getwaitlist.min.js"></Script>
     </html>
   );
 }
