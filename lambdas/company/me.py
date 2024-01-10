@@ -8,7 +8,7 @@ from utils.request import parse_header, parse_cookie_body
 from utils.response import generate_success_response, generate_error_response
 
 # Logger
-logger = logging.getLogger('publish_generation')
+logger = logging.getLogger('company me')
 logger.setLevel(logging.INFO)
 
 formatter = logging.Formatter('[%(levelname)s]:%(funcName)s:%(lineno)d:%(message)s')
@@ -39,10 +39,10 @@ def connect_to_db():
 
 def get_company_by_id(company_id):
     """
-    Retrieves the 'message' attribute of criteria for a given position_id from the database.
-
-    :param position_id: Unique identifier for the position.
-    :return: List of messages for the given position_id.
+    Retrieves the company for a given company_id from the database.
+    
+    :param company_id: Unique identifier for the company.
+    :return: Company object for the given company_id.
     """
     logger.info("Getting the company by id...")
     try:
@@ -62,10 +62,10 @@ def get_company_by_id(company_id):
 
 def get_repositories_by_company_id(company_id):
     """
-    Retrieves the 'message' attribute of criteria for a given position_id from the database.
-
-    :param position_id: Unique identifier for the position.
-    :return: List of messages for the given position_id.
+    Retrieves the repositories for a given company_id from the database.
+    
+    :param company_id: Unique identifier for the company.
+    :return: List of repositories for the given company_id.
     """
     logger.info("Getting the repositories by company id...")
     try:
