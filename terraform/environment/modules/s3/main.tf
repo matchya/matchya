@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "candidate_response" {
-  bucket = "${terraform.workspace}-candidate-response"
+  bucket = "${terraform.workspace}-data-candidate-response"
 
   lifecycle {
     create_before_destroy = true
