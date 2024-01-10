@@ -30,6 +30,12 @@ module "sqs" {
   source = "./modules/sqs"
 }
 
+module "s3" {
+  source = "./modules/s3"
+
+  client_origin = var.client_origin
+}
+
 module "vpc" {
   source = "../shared/modules/vpc"
 
