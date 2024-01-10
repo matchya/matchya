@@ -8,7 +8,7 @@ class Config:
     ENVIRONMENT = os.getenv('ENVIRONMENT', 'dev')
     JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
 
-    @staticmethod
+    @classmethod
     def validate(cls):
         """
         This method checks if all necessary configuration variables are set.
