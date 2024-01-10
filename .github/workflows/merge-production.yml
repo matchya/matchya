@@ -16,7 +16,7 @@ jobs:
       - name: 🗑 Delete deployment
         uses: strumwolf/delete-deployment-environment@v2
         with:
-          environment: production
+          environment: Production
           token: ${{ secrets.GH_TOKEN }}
           onlyRemoveDeployments: true
 
@@ -53,7 +53,7 @@ jobs:
     with:
       label: Shared Infrastructure
       component: shared
-      environment: production
+      environment: Production
     secrets: inherit
 
   deploy-website:
@@ -62,5 +62,5 @@ jobs:
     needs: [cleanup]
     uses: ./.github/workflows/job-deploy-website.yml
     with:
-      environment: production
+      environment: Production
     secrets: inherit

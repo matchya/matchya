@@ -15,7 +15,7 @@ jobs:
       - name: 🗑 Delete deployment
         uses: strumwolf/delete-deployment-environment@v2
         with:
-          environment: staging
+          environment: Staging
           token: ${{ secrets.GH_TOKEN }}
           onlyRemoveDeployments: true
 
@@ -52,7 +52,7 @@ jobs:
     with:
       label: Shared Infrastructure
       component: shared
-      environment: staging
+      environment: Staging
     secrets: inherit
 
   deploy-terraform-environment:
@@ -64,7 +64,7 @@ jobs:
     with:
       label: Environment Infrastructure
       component: environment
-      environment: staging
+      environment: Staging
     secrets: inherit
 
   deploy-website:
@@ -73,7 +73,7 @@ jobs:
     needs: [cleanup]
     uses: ./.github/workflows/job-deploy-website.yml
     with:
-      environment: staging
+      environment: Staging
     secrets: inherit
 
   # create-release-web:
@@ -81,5 +81,5 @@ jobs:
   #   uses: ./.github/workflows/job-create-release.yml
   #   with:
   #     component: web
-  #     environment: staging
+  #     environment: Staging
   #   secrets: inherit
