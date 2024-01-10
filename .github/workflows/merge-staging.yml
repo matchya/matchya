@@ -23,11 +23,34 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
           onlyRemoveDeployments: true
 
+  check-infrastructure-changes:
+    name: Check Infrastructure Changes
+    runs-on: ubuntu-latest
+    outputs:
+      infra-changed: ${{ steps.check.outputs.infra-changed }}
+    steps:
+      - name: Fetch Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Check Infrastructure Files Changed
+        uses: dorny/paths-filter@v2
+        id: changes-infrastructure
+        with:
+          filters: |
+            package:
+              - 'terraform/**'
+
+      - name: Set output
+        id: check
+        run: echo "::set-output name=infra-changed::${{ steps.changes-infrastructure.outputs.package }}"
+
   deploy-terraform-shared:
-    if: github.event.pull_request.merged == true && github.head_ref == 'develop'
+    if: needs.check-infrastructure-changes.outputs.infra-changed == 'true' && github.event.pull_request.merged == true && github.head_ref == 'develop'
     name: Deployment
     permissions: write-all
-    needs: [cleanup]
+    needs: [check-infrastructure-changes, cleanup]
     uses: ./.github/workflows/job-deploy-infrastructure.yml
     with:
       label: Shared Infrastructure
