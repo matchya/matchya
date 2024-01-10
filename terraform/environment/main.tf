@@ -1,12 +1,10 @@
 module "apigateway" {
-  count = terraform.workspace != "production" ? 1 : 0
   source = "./modules/apigateway"
 
   client_origin = var.client_origin
 }
 
 module "dynamodb" {
-  count = terraform.workspace != "production" ? 1 : 0
   source = "./modules/dynamodb"
 }
 
@@ -17,7 +15,6 @@ module "iam" {
 }
 
 module "rds" {
-  count = terraform.workspace != "production" ? 1 : 0
   source = "./modules/rds"
 
   db_username = var.db_username
@@ -30,7 +27,6 @@ module "rds" {
 }
 
 module "sqs" {
-  count = terraform.workspace != "production" ? 1 : 0
   source = "./modules/sqs"
 }
 

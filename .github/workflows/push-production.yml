@@ -29,17 +29,6 @@ jobs:
       environment: production
     secrets: inherit
 
-  deploy-terraform-environment:
-    name: Deployment
-    permissions: write-all
-    needs: [deploy-terraform-shared]
-    uses: ./.github/workflows/job-deploy-infrastructure.yml
-    with:
-      label: Environment Infrastructure
-      component: environment
-      environment: production
-    secrets: inherit
-
   deploy-website:
     name: Deployment
     needs: [cleanup]

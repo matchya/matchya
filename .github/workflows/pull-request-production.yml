@@ -44,13 +44,3 @@ jobs:
       component: shared
       label: Shared Infrastructure
     secrets: inherit
-
-  plan-terraform-environment:
-    name: Plan
-    needs: [plan-infrastructure-shared]
-    uses: ./.github/workflows/job-plan-infrastructure.yml
-    with:
-      environment: production
-      component: environment
-      label: Environment Infrastructure
-    secrets: inherit
