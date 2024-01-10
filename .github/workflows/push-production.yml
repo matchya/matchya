@@ -18,9 +18,32 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
           onlyRemoveDeployments: true
 
+  deploy-terraform-shared:
+    name: Deployment
+    permissions: write-all
+    needs: [cleanup]
+    uses: ./.github/workflows/job-deploy-infrastructure.yml
+    with:
+      label: Shared Infrastructure
+      component: shared
+      environment: production
+    secrets: inherit
+
+  deploy-terraform-environment:
+    name: Deployment
+    permissions: write-all
+    needs: [deploy-terraform-shared]
+    uses: ./.github/workflows/job-deploy-infrastructure.yml
+    with:
+      label: Environment Infrastructure
+      component: environment
+      environment: production
+    secrets: inherit
+
   deploy-website:
     name: Deployment
     needs: [cleanup]
     uses: ./.github/workflows/job-deploy-website.yml
     with:
       environment: production
+    secrets: inherit
