@@ -1,12 +1,14 @@
-name: Push Pipeline (Production)
+name: Merge Pipeline (Production)
 
 on:
-  push:
+  pull_request:
     branches:
       - main
+    types: [closed]
 
 jobs:
   cleanup:
+    if: github.event.pull_request.merged == true && github.head_ref == 'staging'
     name: Clean Deployment History
     runs-on: ubuntu-latest
     permissions: write-all
@@ -19,6 +21,7 @@ jobs:
           onlyRemoveDeployments: true
 
   deploy-terraform-shared:
+    if: github.event.pull_request.merged == true && github.head_ref == 'staging'
     name: Deployment
     permissions: write-all
     needs: [cleanup]
@@ -30,6 +33,7 @@ jobs:
     secrets: inherit
 
   deploy-website:
+    if: github.event.pull_request.merged == true && github.head_ref == 'staging'
     name: Deployment
     needs: [cleanup]
     uses: ./.github/workflows/job-deploy-website.yml
