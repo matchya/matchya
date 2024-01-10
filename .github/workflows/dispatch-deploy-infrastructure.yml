@@ -20,6 +20,7 @@ jobs:
 
   plan-environment:
     name: Plan
+    if: inputs.environment != 'production'
     uses: ./.github/workflows/job-plan-infrastructure.yml
     needs: [plan-shared]
     with:
@@ -40,6 +41,7 @@ jobs:
 
   deploy-environment:
     name: Deploy
+    if: inputs.environment != 'production'
     uses: ./.github/workflows/job-deploy-infrastructure.yml
     needs: [plan-shared, plan-environment, deploy-shared]
     with:
