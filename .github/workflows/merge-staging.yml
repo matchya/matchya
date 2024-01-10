@@ -1,14 +1,13 @@
 name: Merge Pipeline (Staging)
 
 on:
-  pull_request:
+  push:
     branches:
       - staging
-    types: [closed]
 
 jobs:
   cleanup:
-    if: github.event.pull_request.merged == true && github.head_ref == 'develop'
+    if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop')
     name: Clean Deployment History
     runs-on: ubuntu-latest
     permissions: write-all
@@ -21,7 +20,7 @@ jobs:
           onlyRemoveDeployments: true
 
   check-infrastructure-changes:
-    if: github.event.pull_request.merged == true && github.head_ref == 'develop'
+    if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop')
     name: Check Infrastructure Changes
     runs-on: ubuntu-latest
     outputs:
@@ -45,6 +44,7 @@ jobs:
         run: echo "::set-output name=infra-changed::${{ steps.changes-infrastructure.outputs.package }}"
 
   deploy-terraform-shared:
+    if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop')
     name: Deployment
     permissions: write-all
     needs: [check-infrastructure-changes]
@@ -56,7 +56,7 @@ jobs:
     secrets: inherit
 
   deploy-terraform-environment:
-    if: github.event.pull_request.merged == true && github.head_ref == 'develop'
+    if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop')
     name: Deployment
     permissions: write-all
     needs: [deploy-terraform-shared]
@@ -68,7 +68,7 @@ jobs:
     secrets: inherit
 
   deploy-website:
-    if: github.event.pull_request.merged == true && github.head_ref == 'develop'
+    if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop')
     name: Deployment
     needs: [cleanup]
     uses: ./.github/workflows/job-deploy-website.yml
@@ -81,50 +81,5 @@ jobs:
   #   uses: ./.github/workflows/job-create-release.yml
   #   with:
   #     component: web
-  #     environment: staging
-  #   secrets: inherit
-
-  # create-release-authentication:
-  #   name: Create Release (authentication)
-  #   needs: create-release-web
-  #   uses: ./.github/workflows/job-create-release.yml
-  #   with:
-  #     component: authentication
-  #     environment: staging
-  #   secrets: inherit
-
-  # create-release-authorizer:
-  #   name: Create Release (authorizer)
-  #   needs: create-release-authentication
-  #   uses: ./.github/workflows/job-create-release.yml
-  #   with:
-  #     component: authorizer
-  #     environment: staging
-  #   secrets: inherit
-
-  # create-release-checklist:
-  #   name: Create Release (checklist)
-  #   needs: create-release-authorizer
-  #   uses: ./.github/workflows/job-create-release.yml
-  #   with:
-  #     component: checklist
-  #     environment: staging
-  #   secrets: inherit
-
-  # create-release-company:
-  #   name: Create Release (company)
-  #   needs: create-release-checklist
-  #   uses: ./.github/workflows/job-create-release.yml
-  #   with:
-  #     component: company
-  #     environment: staging
-  #   secrets: inherit
-
-  # create-release-position:
-  #   name: Create Release (position)
-  #   needs: create-release-company
-  #   uses: ./.github/workflows/job-create-release.yml
-  #   with:
-  #     component: position
   #     environment: staging
   #   secrets: inherit
