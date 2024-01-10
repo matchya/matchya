@@ -40,7 +40,7 @@ jobs:
     if: needs.check-infrastructure-changes.outputs.infra-changed == 'true'
     uses: ./.github/workflows/job-plan-infrastructure.yml
     with:
-      environment: production
+      environment: Production
       component: shared
       label: Shared Infrastructure
     secrets: inherit
