@@ -3,7 +3,7 @@ name: PR Pipeline (Production)
 on:
   pull_request:
     branches:
-      - production
+      - main
     types:
       - opened
       - reopened
@@ -28,7 +28,7 @@ jobs:
         with:
           filters: |
             package:
-              - 'infrastructure/**'
+              - 'terraform/**'
 
       - name: Set output
         id: check
