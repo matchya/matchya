@@ -6,8 +6,9 @@ on:
         type: string
 
 jobs:
-  s3:
-    name: S3
+  web:
+    name: Web
+    if: inputs.environment != 'production'
     runs-on: ubuntu-latest
     environment: ${{inputs.environment}}
     steps:
@@ -40,3 +41,29 @@ jobs:
         shell: bash
         run: |
           cd scripts && ./deploy_to_s3.sh --bucket-name ${{ secrets.WEBSITE_BUCKET_NAME }} --environment ${{ inputs.environment }}
+
+  waitlist:
+    name: Waitlist Page
+    if: inputs.environment == 'production'
+    runs-on: ubuntu-latest
+    environment: ${{inputs.environment}}
+    steps:
+      - name: Fetch Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v3
+        with:
+          cache: npm
+          node-version: 18
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Deploy to Vercel
+        run: curl -X POST ${{secrets.VERCEL_DEPLOY_HOOK_URL}}

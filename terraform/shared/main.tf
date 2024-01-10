@@ -11,20 +11,23 @@ module "iam" {
   create_new = true
 }
 
+module "route53" {
+  source = "./modules/route53"
+
+  domain_name = var.domain_name
+  vercel_records = var.vercel_records
+}
+
 module "website_staging" {
   source = "./modules/website"
 
   domain_name = var.domain_name["staging"]
   region = data.aws_region.current.name
-  hosted_zone_id = aws_route53_zone.main.zone_id
+  hosted_zone = module.route53.main_route53_zone
 }
 
 module "vpc" {
   source = "./modules/vpc"
 
   create_new = true
-}
-
-resource "aws_route53_zone" "main" {
-  name         = var.domain_name["prod"]
 }
