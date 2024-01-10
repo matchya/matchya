@@ -32,7 +32,7 @@ jobs:
   deploy-shared:
     name: Deploy
     uses: ./.github/workflows/job-deploy-infrastructure.yml
-    needs: [plan-shared, plan-environment]
+    needs: [plan-shared]
     with:
       environment: ${{inputs.environment}}
       component: shared
