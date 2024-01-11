@@ -32,7 +32,7 @@ jobs:
 
       - name: Set output
         id: check
-        run: echo "::set-output name=infra-changed::${{ steps.changes-infrastructure.outputs.package }}"
+        run: echo "infra-changed=${{ steps.changes-infrastructure.outputs.package }}" >> $GITHUB_ENV
 
   plan-infrastructure-shared:
     name: Plan
