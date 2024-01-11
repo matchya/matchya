@@ -48,7 +48,7 @@ def retrieve_tests_from_db(company_id):
     """
     logger.info('Retrieving tests from db...')
     sql = """
-        SELECT id, name, position_type, position_level, created_at, updated_at
+        SELECT id, name, position_type, position_level, created_at
         FROM test
         WHERE company_id = '%s'
     """ % company_id
