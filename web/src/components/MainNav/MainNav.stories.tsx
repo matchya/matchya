@@ -12,5 +12,5 @@ export default meta;
 type Story = StoryObj<typeof Component>;
 
 export const MainNav: Story = {
-  render: () => <Component className="mx-6" />,
+  render: () => <Component />,
 };

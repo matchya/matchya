@@ -57,7 +57,7 @@ jobs:
       - name: Build
         if: steps.changes.outputs.package == 'true'
         id: build
-        run: npm run build || echo "status=failed" >> $GITHUB_ENV
+        run: npm run build || echo "status=failed" >> $GITHUB_OUTPUT
         working-directory: web
 
       - name: Check build
@@ -101,7 +101,7 @@ jobs:
       - name: Build
         if: steps.changes.outputs.package == 'true'
         id: build
-        run: npm run build || echo "status=failed" >> $GITHUB_ENV
+        run: npm run build || echo "status=failed" >> $GITHUB_OUTPUT
         working-directory: waitlist
 
       - name: Check build

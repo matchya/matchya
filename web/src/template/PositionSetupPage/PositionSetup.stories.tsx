@@ -16,7 +16,7 @@ type Story = StoryObj<typeof Component>;
 export const PositionSetupPage: Story = {
   render: () => (
     <>
-      <Header authenticated={true} />
+      <Header />
       <Component
         inputRef={{} as React.RefObject<HTMLInputElement>}
         isLoading={false}
