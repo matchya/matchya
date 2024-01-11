@@ -241,7 +241,7 @@ def get_questions_from_gpt(system_message: str, user_message: str) -> list:
         raise RuntimeError("Error generating criteria with OpenAI API")
 
 
-def save_questions_to_db(position_id: str, questions: list) -> str:
+def save_questions_to_db(test_id: str, questions: list) -> str:
     """
     Saves the questions to the database.
 
@@ -250,13 +250,13 @@ def save_questions_to_db(position_id: str, questions: list) -> str:
 
     """
     logger.info("Saving questions to the database...")
-    save_data_to_question_table(position_id, questions)
-    save_data_to_position_question_table(position_id, questions)
+    save_data_to_question_table(questions)
+    save_data_to_test_question_table(test_id, questions)
     save_data_to_metric_table(questions)
     logger.info("Questions saved successfully")
 
 
-def save_data_to_question_table(position_id: str, questions: list) -> str:
+def save_data_to_question_table(questions: list) -> str:
     logger.info("Saving questions to the question table...")
     sql = "INSERT INTO question (id, text, difficulty, topic) VALUES"
     try:
@@ -274,24 +274,24 @@ def save_data_to_question_table(position_id: str, questions: list) -> str:
         raise RuntimeError("Error saving questions to question table")
 
 
-def save_data_to_position_question_table(position_id: str, questions: list) -> str:
+def save_data_to_test_question_table(test_id: str, questions: list) -> str:
     """
-    Saves the questions to the position_question table.
-
-    :param position_id: Unique identifier for the position.
+    Saves the questions to the test_question table.
+    
+    :param test_id: Unique identifier for the test.
     :param questions: The questions to save.
     """
 
-    logger.info("Saving questions to the position_question table...")
-    sql = "INSERT INTO position_question (position_id, question_id) VALUES "
+    logger.info("Saving questions to the test_question table...")
+    sql = "INSERT INTO test_question (test_id, question_id) VALUES "
     try:
         for question in questions:
-            sql += f" ('{position_id}', '{question['id']}'),"
+            sql += f" ('{test_id}', '{question['id']}'),"
         sql = sql[:-1] + ';'
         db_cursor.execute(sql)
     except Exception as e:
-        logger.error(f"Error saving questions to position_question table: {e}")
-        raise RuntimeError("Error saving questions to position_question table")
+        logger.error(f"Error saving questions to test_question table: {e}")
+        raise RuntimeError("Error saving questions to test_question table")
 
 
 def save_data_to_metric_table(questions: list) -> str:
@@ -317,27 +317,6 @@ def save_data_to_metric_table(questions: list) -> str:
         raise RuntimeError("Error saving questions to metric table")
 
 
-def get_position_type_and_level(position_id: str) -> tuple:
-    """
-    Gets the position type from the position id.
-
-    :param position_id: Unique identifier for the position.
-    :return: The position type and level.
-    """
-    logger.info("Getting the position type from position id...")
-    sql = f"SELECT type, level FROM position WHERE id = '{position_id}';"
-    try:
-        db_cursor.execute(sql)
-        result = db_cursor.fetchone()
-        if result and result[0]:
-            return result[0], result[1]
-        else:
-            return None
-    except Exception as e:
-        logger.error(f"Error getting position type from postgres: {e}")
-        raise RuntimeError(f"Error getting position type from postgres: {e}")
-
-
 def handler(event, context):
     """
     Lambda handler.
@@ -352,18 +331,21 @@ def handler(event, context):
 
         messages = event['Records']
         body = json.loads(messages[0]['body'])
-        position_id = body.get('position_id')
+        test_id = body.get('test_id')
+        position_type = body.get('position_type')
+        position_level = body.get('position_level')
 
         n_questions = 6
 
-        position_type, position_level = get_position_type_and_level(position_id)
         # If GitHub is linked, get keywords from GitHub repo
         keywords: list = get_keywords_from_position_type_and_level(position_type, position_level, n_questions)
 
         system_message, user_message = get_system_and_user_message(keywords, position_type, position_level)
+        
+        # TODO: get pre-generated questions...
         questions = get_questions_from_gpt(system_message, user_message)
 
-        save_questions_to_db(position_id, questions)
+        save_questions_to_db(test_id, questions)
         logger.info('Questions saved successfully')
     except (ValueError, RuntimeError) as e:
         status_code = 400
