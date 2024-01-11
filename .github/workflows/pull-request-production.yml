@@ -32,7 +32,7 @@ jobs:
 
       - name: Set output
         id: check
-        run: echo "::set-output name=infra-changed::${{ steps.changes-infrastructure.outputs.package }}"
+        run: echo "infra-changed=${{ steps.changes-infrastructure.outputs.package }}" >> $GITHUB_OUTPUT
 
   plan-infrastructure-shared:
     name: Plan
@@ -40,7 +40,7 @@ jobs:
     if: needs.check-infrastructure-changes.outputs.infra-changed == 'true'
     uses: ./.github/workflows/job-plan-infrastructure.yml
     with:
-      environment: Production
+      environment: production
       component: shared
       label: Shared Infrastructure
     secrets: inherit

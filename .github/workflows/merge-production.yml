@@ -1,14 +1,13 @@
 name: Merge Pipeline (Production)
 
 on:
-  pull_request:
+  push:
     branches:
       - main
-    types: [closed]
 
 jobs:
   cleanup:
-    if: github.event.pull_request.merged == true && github.head_ref == 'staging'
+    if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'staging')
     name: Clean Deployment History
     runs-on: ubuntu-latest
     permissions: write-all
@@ -21,7 +20,7 @@ jobs:
           onlyRemoveDeployments: true
 
   check-infrastructure-changes:
-    if: github.event.pull_request.merged == true && github.head_ref == 'staging'
+    if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'staging')
     name: Check Infrastructure Changes
     runs-on: ubuntu-latest
     outputs:
@@ -42,10 +41,10 @@ jobs:
 
       - name: Set output
         id: check
-        run: echo "::set-output name=infra-changed::${{ steps.changes-infrastructure.outputs.package }}"
+        run: echo "infra-changed=${{ steps.changes-infrastructure.outputs.package }}" >> $GITHUB_OUTPUT
 
   deploy-terraform-shared:
-    if: needs.check-infrastructure-changes.outputs.infra-changed == 'true'
+    if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'staging') && needs.check-infrastructure-changes.outputs.infra-changed == 'true'
     name: Deployment
     permissions: write-all
     needs: [check-infrastructure-changes, cleanup]
@@ -57,7 +56,7 @@ jobs:
     secrets: inherit
 
   deploy-website:
-    if: github.event.pull_request.merged == true && github.head_ref == 'staging'
+    if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'staging')
     name: Deployment
     needs: [cleanup]
     uses: ./.github/workflows/job-deploy-website.yml

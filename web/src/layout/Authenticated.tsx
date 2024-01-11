@@ -28,7 +28,7 @@ const Layout = () => {
 
   return (
     <>
-      <Header authenticated={true} />
+      <Header />
       <Outlet />
     </>
   );

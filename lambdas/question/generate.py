@@ -85,14 +85,21 @@ def get_system_and_user_message(keywords: list, position_type: str, position_lev
     2. **Clear Questions**: 
     When creating a question, consider the evalution points indicated by the metrics and its scoring value. 
     Read the question and ask it clearly so that the respondent knows which points need to be answered in detail and to what extent.
+    
+    3. **The Number of Metrics**:
+    Each question has a list of metrics that are used to evaluate the candidate's response to the question.
+    The number of metrics for each question is at least 2 and at most 4.
+    It depends on the complexity of the question and the number of points that need to be answered.
+    If the question is simple, you can use 2 metrics, if the question is complex, you can use 3 or 4 metrics.
+    No matter how many metrics you use, the total weight of all metrics must be exactly 1.0.
 
-    3. **Detailed Scoring Metrics**: 
+    4. **Detailed Scoring Metrics**: 
     THIS IS A VERY IMPORTANT!!
     scoring metrics are used to evaluate the candidate's response to the question.
     As in the examples below, be as detailed as possible, use unambiguous in keywords and criteria when creating the scoring metrics.
     Using something like: "Candidate has good understanding of the topic" is not a good metric. Never use subjective terms like "good", "bad", "excellent", etc.
     
-    4. **Weighted Scoring**:
+    5. **Weighted Scoring**:
     Each question has 10 points. Each metric has a weight that determines how much of the total score the metric is worth.
     For example, if a question has 2 metrics, each with a weight of 0.5, then each metric is worth 5 points.
     So, the total of weights for all metrics in a question must be exactly 1.0.
@@ -204,7 +211,7 @@ def get_system_and_user_message(keywords: list, position_type: str, position_lev
             },
             // more questions...
         ]
-    """ % ((position_level + 'level'), position_type)
+    """ % ((position_level + ' level'), position_type)
 
     user_message = "Here are the topics and difficulties for the questions, create %d questions from the keywords\n" % len(keywords)
     for keyword in keywords:
@@ -241,7 +248,7 @@ def get_questions_from_gpt(system_message: str, user_message: str) -> list:
         raise RuntimeError("Error generating criteria with OpenAI API")
 
 
-def save_questions_to_db(position_id: str, questions: list) -> str:
+def save_questions_to_db(test_id: str, questions: list) -> str:
     """
     Saves the questions to the database.
 
@@ -250,13 +257,13 @@ def save_questions_to_db(position_id: str, questions: list) -> str:
 
     """
     logger.info("Saving questions to the database...")
-    save_data_to_question_table(position_id, questions)
-    save_data_to_position_question_table(position_id, questions)
+    save_data_to_question_table(questions)
+    save_data_to_test_question_table(test_id, questions)
     save_data_to_metric_table(questions)
     logger.info("Questions saved successfully")
 
 
-def save_data_to_question_table(position_id: str, questions: list) -> str:
+def save_data_to_question_table(questions: list) -> str:
     logger.info("Saving questions to the question table...")
     sql = "INSERT INTO question (id, text, difficulty, topic) VALUES"
     try:
@@ -274,24 +281,24 @@ def save_data_to_question_table(position_id: str, questions: list) -> str:
         raise RuntimeError("Error saving questions to question table")
 
 
-def save_data_to_position_question_table(position_id: str, questions: list) -> str:
+def save_data_to_test_question_table(test_id: str, questions: list) -> str:
     """
-    Saves the questions to the position_question table.
+    Saves the questions to the test_question table.
 
-    :param position_id: Unique identifier for the position.
+    :param test_id: Unique identifier for the test.
     :param questions: The questions to save.
     """
 
-    logger.info("Saving questions to the position_question table...")
-    sql = "INSERT INTO position_question (position_id, question_id) VALUES "
+    logger.info("Saving questions to the test_question table...")
+    sql = "INSERT INTO test_question (test_id, question_id) VALUES "
     try:
         for question in questions:
-            sql += f" ('{position_id}', '{question['id']}'),"
+            sql += f" ('{test_id}', '{question['id']}'),"
         sql = sql[:-1] + ';'
         db_cursor.execute(sql)
     except Exception as e:
-        logger.error(f"Error saving questions to position_question table: {e}")
-        raise RuntimeError("Error saving questions to position_question table")
+        logger.error(f"Error saving questions to test_question table: {e}")
+        raise RuntimeError("Error saving questions to test_question table")
 
 
 def save_data_to_metric_table(questions: list) -> str:
@@ -317,27 +324,6 @@ def save_data_to_metric_table(questions: list) -> str:
         raise RuntimeError("Error saving questions to metric table")
 
 
-def get_position_type_and_level(position_id: str) -> tuple:
-    """
-    Gets the position type from the position id.
-
-    :param position_id: Unique identifier for the position.
-    :return: The position type and level.
-    """
-    logger.info("Getting the position type from position id...")
-    sql = f"SELECT type, level FROM position WHERE id = '{position_id}';"
-    try:
-        db_cursor.execute(sql)
-        result = db_cursor.fetchone()
-        if result and result[0]:
-            return result[0], result[1]
-        else:
-            return None
-    except Exception as e:
-        logger.error(f"Error getting position type from postgres: {e}")
-        raise RuntimeError(f"Error getting position type from postgres: {e}")
-
-
 def handler(event, context):
     """
     Lambda handler.
@@ -352,18 +338,22 @@ def handler(event, context):
 
         messages = event['Records']
         body = json.loads(messages[0]['body'])
-        position_id = body.get('position_id')
+        test_id = body.get('test_id')
+        position_type = body.get('position_type')
+        position_level = body.get('position_level')
 
         n_questions = 6
 
-        position_type, position_level = get_position_type_and_level(position_id)
         # If GitHub is linked, get keywords from GitHub repo
         keywords: list = get_keywords_from_position_type_and_level(position_type, position_level, n_questions)
 
         system_message, user_message = get_system_and_user_message(keywords, position_type, position_level)
+
+        # TODO: get pre-generated questions...
         questions = get_questions_from_gpt(system_message, user_message)
 
-        save_questions_to_db(position_id, questions)
+        save_questions_to_db(test_id, questions)
+        db_conn.commit()
         logger.info('Questions saved successfully')
     except (ValueError, RuntimeError) as e:
         status_code = 400
