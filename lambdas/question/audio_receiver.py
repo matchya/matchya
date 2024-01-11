@@ -22,7 +22,7 @@ logger.propagate = False
 
 # S3
 s3 = boto3.client('s3')
-BUCKET_NAME = Config.ENVIRONMENT + '-data-candidate-response'
+BUCKET_NAME = f"{Config.ENVIRONMENT}-data-candidate-response"
 
 
 def validate_request_body(body):
