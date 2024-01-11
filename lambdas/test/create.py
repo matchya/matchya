@@ -44,12 +44,12 @@ def connect_to_db():
 
 def validate_request_body(body):
     """
-    Validates the necessary fields in the company data.
+    Validates the necessary fields in the test data.
 
-    :param body: The request body containing company data.
+    :param body: The request body containing test data.
     """
-    logger.info("Validating the company data...")
-    required_fields = ['name' 'position_type', 'position_level']
+    logger.info("Validating the test data...")
+    required_fields = ['name', 'position_type', 'position_level']
     if not all(body.get(field) for field in required_fields):
         raise ValueError('Missing required fields.')
 
@@ -128,4 +128,7 @@ def handler(event, context):
         logger.error(f'Creating a new position failed: {e}')
         return generate_error_response(origin, status_code, str(e))
     finally:
-        db_conn.close()
+        if db_cursor:
+            db_cursor.close()
+        if db_conn:
+            db_conn.close()
