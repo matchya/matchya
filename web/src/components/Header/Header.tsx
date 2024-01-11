@@ -6,20 +6,14 @@ import {
   DropdownMenu,
   DropdownMenuTrigger,
   MainNav,
-  PositionSwitcher,
   UserNavDropdownMenu,
 } from '@/components';
 import { axiosInstance } from '@/lib/client';
-import { useCompanyStore, usePositionStore } from '@/store/store';
+import { useCompanyStore } from '@/store/store';
 
-interface HeaderProps {
-  authenticated: boolean;
-}
-
-const Header = ({ authenticated }: HeaderProps) => {
+const Header = () => {
   const navigate = useNavigate();
   const { resetAll, name, email } = useCompanyStore();
-  const { positions, selectedPosition, selectPosition } = usePositionStore();
 
   const handleLogout = async () => {
     try {
@@ -40,31 +34,12 @@ const Header = ({ authenticated }: HeaderProps) => {
     }
   };
 
-  if (!authenticated && !name) {
-    return (
-      <div className="border-b">
-        <div className="flex h-16 items-center px-4">
-          <div className="ml-auto mr-6 flex items-center space-x-4">
-            <Button variant="ghost" onClick={() => navigate('/auth')}>
-              Login
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="border-b">
+    <div className="border-b bg-macha-500">
       <div className="flex h-16 items-center px-4">
-        {selectedPosition && authenticated && (
-          <PositionSwitcher
-            positions={positions}
-            selectedPosition={selectedPosition}
-            selectPosition={selectPosition}
-          />
-        )}
-        {authenticated && <MainNav className="mx-6" />}
+        <div className="pl-8">
+          <MainNav />
+        </div>
         <div className="ml-auto flex items-center space-x-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
