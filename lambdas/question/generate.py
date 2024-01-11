@@ -346,6 +346,7 @@ def handler(event, context):
         questions = get_questions_from_gpt(system_message, user_message)
 
         save_questions_to_db(test_id, questions)
+        db_conn.commit()
         logger.info('Questions saved successfully')
     except (ValueError, RuntimeError) as e:
         status_code = 400
