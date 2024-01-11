@@ -54,7 +54,17 @@ def retrieve_tests_from_db(company_id):
     """ % company_id
     try:
         db_cursor.execute(sql)
-        tests = db_cursor.fetchall()
+        result = db_cursor.fetchall()
+        tests = []
+        for row in result:
+            test = {
+                'id': row[0],
+                'name': row[1],
+                'position_type': row[2],
+                'position_level': row[3],
+                'created_at': str(row[4])
+            }
+            tests.append(test)
         return tests
     except Exception as e:
         logger.error(f'Failed to retrieve tests from db: {e}')
