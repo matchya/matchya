@@ -81,5 +81,34 @@ functions:
             name: ${self:provider.stage}-test-retrieve-authorizer
             arn: arn:aws:lambda:${aws:region}:${aws:accountId}:function:${self:provider.stage}-authorizer
 
+  retrieve-by-id:
+    name: ${self:provider.stage}-test-retrieve-by-id
+    image:
+      name: default
+      command:
+        - retrieve_by_id.handler
+    events:
+      - http:
+          path: /tests/{id}
+          method: GET
+          cors:
+            origins:
+              - https://www.matchyaa.com
+              - https://matchyaa.com
+              - https://www.staging.matchyaa.com
+              - https://staging.matchyaa.com
+              - http://127.0.0.1:5173
+            allowCredentials: true
+          authorizer:
+            type: request
+            identitySource: method.request.header.Cookie
+            resultTtlInSeconds: 300
+            name: ${self:provider.stage}-test-retrieve-by-id-authorizer
+            arn: arn:aws:lambda:${aws:region}:${aws:accountId}:function:${self:provider.stage}-authorizer
+          request:
+            parameters:
+              paths:
+                id: true
+
 plugins:
   - serverless-deployment-bucket
