@@ -210,7 +210,7 @@ def get_system_and_user_message(keywords: list, position_type: str, position_lev
             },
             // more questions...
         ]
-    """ % ((position_level + 'level'), position_type)
+    """ % ((position_level + ' level'), position_type)
 
     user_message = "Here are the topics and difficulties for the questions, create %d questions from the keywords\n" % len(keywords)
     for keyword in keywords:
