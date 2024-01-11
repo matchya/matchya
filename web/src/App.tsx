@@ -5,6 +5,7 @@ import { StoreProvider } from './store';
 import AuthenticatedLayout from '@/layout/Authenticated';
 import UnAuthenticatedLayout from '@/layout/UnAuthenticated';
 import AuthenticationPage from '@/screens/AuthenticationPage';
+import CandidatesPage from '@/screens/CandidatesPage';
 import DashboardPage from '@/screens/DashboardPage';
 import GithubAuthCallbackPage from '@/screens/GithubAuthCallbackPage';
 import GoogleAuthCallbackPage from '@/screens/GoogleAuthCallbackPage';
@@ -21,6 +22,7 @@ function App() {
           <Route element={<AuthenticatedLayout />}>
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/position-setup" element={<PositionSetupPage />} />
+            <Route path="/candidates" element={<CandidatesPage />} />
             {/* <Route path="/settings" element={<SettingsPage />} /> */}
           </Route>
           <Route element={<UnAuthenticatedLayout />}>
