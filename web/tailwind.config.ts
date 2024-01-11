@@ -14,6 +14,18 @@ const config: Config = {
     },
     extend: {
       colors: {
+        macha: {
+          50: '#f6faef',
+          100: '#e9f5de',
+          200: '#dff9b3',
+          300: '#bde19c',
+          400: '#a6d67b',
+          500: '#9CD675',
+          600: '#84b665',
+          700: '#6d9755',
+          800: '#557745',
+          900: '#3e5835',
+        },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
