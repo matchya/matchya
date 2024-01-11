@@ -1,11 +1,60 @@
 service: test
 
-frameworkVersion: '3'
+frameworkVersion: "3"
 
 provider:
   name: aws
   runtime: python3.9
+  architecture: arm64
+  stage: dev
+  region: us-east-1
+  deploymentBucket:
+    name: ${self:provider.stage}-sls-test
+  iam:
+    role: ${ssm:/terraform/shared/iam/lambda_role_arn}
+  apiGateway:
+    restApiId: ${ssm:/terraform/${self:provider.stage}/api_gateway/id}
+    restApiRootResourceId: ${ssm:/terraform/${self:provider.stage}/api_gateway/root_resource_id}
+  ecr:
+    images:
+      default:
+        path: ./
+        file: Dockerfile
+        buildArgs:
+  environment:
+    ENVIRONMENT: ${self:provider.stage}
+    POSTGRES_HOST: ${ssm:/terraform/${self:provider.stage}/rds/endpoint}
+    POSTGRES_PORT: ${ssm:/terraform/${self:provider.stage}/rds/port}
+    POSTGRES_DB: ${ssm:/terraform/${self:provider.stage}/rds/db_name}
+    POSTGRES_USER: ${ssm:/terraform/${self:provider.stage}/rds/db_username}
+    POSTGRES_PASSWORD: ${ssm:/terraform/${self:provider.stage}/rds/db_password}
+    QUESTION_GENERATION_PROCESSOR_QUEUE_URL: ${ssm:/terraform/${self:provider.stage}/sqs/question_generation_processor_queue_url}
 
 functions:
-  hello:
-    handler: handler.hello
+  create:
+    name: ${self:provider.stage}-test-create
+    image:
+      name: default
+      command:
+        - create.handler
+    events:
+      - http:
+          path: /tests
+          method: POST
+          cors:
+            origins:
+              - https://www.matchyaa.com
+              - https://matchyaa.com
+              - https://www.staging.matchyaa.com
+              - https://staging.matchyaa.com
+              - http://127.0.0.1:5173
+            allowCredentials: true
+          authorizer:
+            type: request
+            identitySource: method.request.header.Cookie
+            resultTtlInSeconds: 300
+            name: ${self:provider.stage}-test-create-authorizer
+            arn: arn:aws:lambda:${aws:region}:${aws:accountId}:function:${self:provider.stage}-authorizer
+
+plugins:
+  - serverless-deployment-bucket

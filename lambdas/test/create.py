@@ -7,7 +7,7 @@ import boto3
 
 from config import Config
 from utils.response import generate_success_response, generate_error_response
-from utils.request import parse_header, parse_request_body
+from utils.request import parse_header, parse_request_body, parse_cookie_body
 
 # Logger
 logger = logging.getLogger('create test')
@@ -49,7 +49,7 @@ def validate_request_body(body):
     :param body: The request body containing company data.
     """
     logger.info("Validating the company data...")
-    required_fields = ['company_id', 'type', 'level']
+    required_fields = ['name' 'position_type', 'position_level']
     if not all(body.get(field) for field in required_fields):
         raise ValueError('Missing required fields.')
 
@@ -102,7 +102,9 @@ def handler(event, context):
         origin = parse_header(event)
         validate_request_body(body)
 
-        test_id = create_test_record(body)
+        company_id = parse_cookie_body(event)['company_id']
+
+        test_id = create_test_record(company_id, body)
         send_message_to_sqs(test_id)
 
         db_conn.commit()
