@@ -105,7 +105,8 @@ def handler(event, context):
         company_id = parse_cookie_body(event)['company_id']
 
         test_id = create_test_record(company_id, body)
-        send_message_to_sqs(test_id)
+        sqs_body = {'test_id': test_id}
+        send_message_to_sqs(sqs_body)
 
         db_conn.commit()
         logger.info("Successfully created a new test.")
