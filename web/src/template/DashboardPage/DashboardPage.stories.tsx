@@ -21,7 +21,7 @@ type Story = StoryObj<typeof Component>;
 export const GithubAnalysis: Story = {
   render: () => (
     <>
-      <Header authenticated={true} />
+      <Header />
       <Component
         positions={mockPositions}
         selectedPosition={mockSelectedPosition}
@@ -34,7 +34,7 @@ export const GithubAnalysis: Story = {
 export const InterviewQuestions: Story = {
   render: () => (
     <>
-      <Header authenticated={true} />
+      <Header />
       <Component
         positions={mockPositions}
         selectedPosition={mockSelectedPosition}

@@ -12,5 +12,5 @@ export default meta;
 type Story = StoryObj<typeof Component>;
 
 export const Header: Story = {
-  render: () => <Component authenticated={true} />,
+  render: () => <Component />,
 };
