@@ -85,14 +85,20 @@ def get_system_and_user_message(keywords: list, position_type: str, position_lev
     2. **Clear Questions**: 
     When creating a question, consider the evalution points indicated by the metrics and its scoring value. 
     Read the question and ask it clearly so that the respondent knows which points need to be answered in detail and to what extent.
+    
+    3. **The Number of Metrics**:
+    Each question has a list of metrics that are used to evaluate the candidate's response to the question.
+    The number of metrics for each question is at least 2 and at most 4.
+    It depends on the complexity of the question and the number of points that need to be answered.
+    If the question is simple, you can use 2 metrics, if the question is complex, you can use 3 or 4 metrics.
 
-    3. **Detailed Scoring Metrics**: 
+    4. **Detailed Scoring Metrics**: 
     THIS IS A VERY IMPORTANT!!
     scoring metrics are used to evaluate the candidate's response to the question.
     As in the examples below, be as detailed as possible, use unambiguous in keywords and criteria when creating the scoring metrics.
     Using something like: "Candidate has good understanding of the topic" is not a good metric. Never use subjective terms like "good", "bad", "excellent", etc.
     
-    4. **Weighted Scoring**:
+    5. **Weighted Scoring**:
     Each question has 10 points. Each metric has a weight that determines how much of the total score the metric is worth.
     For example, if a question has 2 metrics, each with a weight of 0.5, then each metric is worth 5 points.
     So, the total of weights for all metrics in a question must be exactly 1.0.
@@ -277,7 +283,7 @@ def save_data_to_question_table(questions: list) -> str:
 def save_data_to_test_question_table(test_id: str, questions: list) -> str:
     """
     Saves the questions to the test_question table.
-    
+
     :param test_id: Unique identifier for the test.
     :param questions: The questions to save.
     """
@@ -341,7 +347,7 @@ def handler(event, context):
         keywords: list = get_keywords_from_position_type_and_level(position_type, position_level, n_questions)
 
         system_message, user_message = get_system_and_user_message(keywords, position_type, position_level)
-        
+
         # TODO: get pre-generated questions...
         questions = get_questions_from_gpt(system_message, user_message)
 
