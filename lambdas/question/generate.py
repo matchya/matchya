@@ -91,6 +91,7 @@ def get_system_and_user_message(keywords: list, position_type: str, position_lev
     The number of metrics for each question is at least 2 and at most 4.
     It depends on the complexity of the question and the number of points that need to be answered.
     If the question is simple, you can use 2 metrics, if the question is complex, you can use 3 or 4 metrics.
+    No matter how many metrics you use, the total weight of all metrics must be exactly 1.0.
 
     4. **Detailed Scoring Metrics**: 
     THIS IS A VERY IMPORTANT!!
