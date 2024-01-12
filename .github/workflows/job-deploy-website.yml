@@ -34,6 +34,7 @@ jobs:
           echo "VITE_API_URL=${{ vars.VITE_API_URL }}" >> web/.env
           echo "VITE_GITHUB_CLIENT_ID=${{ secrets.VITE_GITHUB_CLIENT_ID }}" >> web/.env
           echo "VITE_CLIENT_URL=${{ vars.VITE_CLIENT_URL }}" >> web/.env
+          echo "VITE_SENTRY_DSN=${{ vars.VITE_SENTRY_DSN }}" >> web/.env
 
       - name: Set execute permissions for deploy script
         run: chmod +x scripts/deploy_to_s3.sh
