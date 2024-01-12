@@ -12,5 +12,5 @@ export default meta;
 type Story = StoryObj<typeof Component>;
 
 export const HomePage: Story = {
-  render: () => <Component onNavigateToAuth={() => {}} />,
+  render: () => <Component />,
 };
