@@ -5,6 +5,11 @@ import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
+  define: {
+    'import.meta.env.PACKAGE_VERSION': JSON.stringify(
+      process.env.npm_package_version
+    ),
+  },
   plugins: [
     react(),
     sentryVitePlugin({
