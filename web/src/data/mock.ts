@@ -5,9 +5,31 @@ import {
   Company,
   Position,
   Question,
+  Test,
 } from '../types';
 
-export const mockQuestion: Question = {
+export const mockedTests: Test[] = [
+  {
+    id: '1',
+    name: 'Test 1',
+    positionType: 'Software Engineer',
+    positionLevel: 'Senior',
+    candidateCount: 5,
+    createdAt: '2022-01-01',
+    updatedAt: '2022-01-01',
+  },
+  {
+    id: '2',
+    name: 'Test 1',
+    positionType: 'Frontend Engineer',
+    positionLevel: 'Junior',
+    candidateCount: 5,
+    createdAt: '2022-01-01',
+    updatedAt: '2022-01-01',
+  },
+];
+
+export const mockedQuestion: Question = {
   question:
     'How would you optimize a Dockerfile for a web application to ensure efficient build times and image sizes? Describe the steps you would take and the rationale behind them.',
   metrics: [
@@ -20,7 +42,7 @@ export const mockQuestion: Question = {
   difficulty: 'medium',
 };
 
-export const mockSelectedCandidate: Candidate = {
+export const mockedSelectedCandidate: Candidate = {
   id: '1',
   first_name: 'John',
   last_name: 'Doe',
@@ -54,8 +76,8 @@ export const mockSelectedCandidate: Candidate = {
   ],
 };
 
-export const mockCandidates: Candidate[] = [
-  mockSelectedCandidate,
+export const mockedCandidates: Candidate[] = [
+  mockedSelectedCandidate,
   {
     id: '2',
     first_name: 'Jane',
@@ -91,7 +113,7 @@ export const mockCandidates: Candidate[] = [
   },
 ];
 
-export const mockSelectedPosition: Position = {
+export const mockedSelectedPosition: Position = {
   id: '1',
   name: 'Position 1',
   checklist: {
@@ -112,13 +134,13 @@ export const mockSelectedPosition: Position = {
       },
     ],
   },
-  candidates: mockCandidates,
+  candidates: mockedCandidates,
   checklist_status: 'active',
-  questions: [mockQuestion, mockQuestion, mockQuestion],
+  questions: [mockedQuestion, mockedQuestion, mockedQuestion],
 };
 
-export const mockPositions: Position[] = [
-  mockSelectedPosition,
+export const mockedPositions: Position[] = [
+  mockedSelectedPosition,
   {
     id: '2',
     name: 'Position 2',
@@ -129,11 +151,11 @@ export const mockPositions: Position[] = [
     },
     candidates: [],
     checklist_status: 'active',
-    questions: [mockQuestion],
+    questions: [mockedQuestion],
   },
 ];
 
-export const mockCompanyInfo: Company = {
+export const mockedCompanyInfo: Company = {
   id: '12398723948',
   name: 'Peter Parker',
   email: 'peterparker@gmail.com',
@@ -142,7 +164,7 @@ export const mockCompanyInfo: Company = {
   positions: [],
 };
 
-export const mockChecklist: Checklist = {
+export const mockedChecklist: Checklist = {
   id: '1',
   repository_names: ['Repo 1', 'Repo 2'],
   criteria: [
