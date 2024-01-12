@@ -6,7 +6,12 @@ import { defineConfig } from 'vite';
 
 const plugins = [react()];
 
-if (['tsc && vite build --mode staging', 'tsc && vite build --mode production'].includes(process.env.npm_lifecycle_script))) {
+if (
+  [
+    'tsc && vite build --mode staging',
+    'tsc && vite build --mode production',
+  ].includes(process.env.npm_lifecycle_script)
+) {
   plugins.push(
     sentryVitePlugin({
       org: process.env.SENTRY_ORG,
@@ -21,9 +26,7 @@ export default defineConfig({
     'import.meta.env.NPM_PACKAGE_VERSION': JSON.stringify(
       process.env.npm_package_version
     ),
-    'import.meta.env.SENTRY_DSN': JSON.stringify(
-      process.env.SENTRY_DSN
-    ),
+    'import.meta.env.SENTRY_DSN': JSON.stringify(process.env.SENTRY_DSN),
     'import.meta.env.SENTRY_ENVIRONMENT': JSON.stringify(
       process.env.SENTRY_ENVIRONMENT
     ),
