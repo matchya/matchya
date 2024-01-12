@@ -5,6 +5,10 @@ on:
         description: "Environment to deploy to"
         required: true
         type: string
+      environment-label:
+        description: "Label for the environment"
+        required: true
+        type: string
       component:
         description: "Component to deploy"
         required: true
@@ -18,7 +22,7 @@ jobs:
   run:
     name: ${{ inputs.label }}
     runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
+    environment: ${{ inputs.environment-label }}
     steps:
       - name: Fetch Repository
         uses: actions/checkout@v3

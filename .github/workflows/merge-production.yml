@@ -50,9 +50,10 @@ jobs:
     needs: [check-infrastructure-changes, cleanup]
     uses: ./.github/workflows/job-deploy-infrastructure.yml
     with:
-      label: Shared Infrastructure
+      environment: production
+      environment-label: Production
       component: shared
-      environment: Production
+      label: Shared Infrastructure
     secrets: inherit
 
   deploy-website:
@@ -61,6 +62,6 @@ jobs:
     needs: [cleanup]
     uses: ./.github/workflows/job-deploy-website.yml
     with:
+      environment: production
       environment-label: Production
-      node-environment: production
     secrets: inherit

@@ -1,17 +1,17 @@
 on:
   workflow_call:
     inputs:
-      environment-label:
+      environment:
         required: true
         type: string
-      node-environment:
+      environment-label:
         required: true
         type: string
 
 jobs:
   web:
     name: Web
-    if: inputs.node-environment != 'production'
+    if: inputs.environment != 'production'
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment-label }}
     steps:
@@ -45,7 +45,7 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          NODE_ENV: ${{ inputs.node-environment }}
+          NODE_ENV: ${{ inputs.environment }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           SENTRY_ENVIRONMENT: ${{ inputs.environment-label }}
