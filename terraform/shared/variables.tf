@@ -3,7 +3,7 @@ variable "domain_name" {
   type = map(string)
 }
 
-variable "vercel_records" {
-  description = "Map of vercel records for production"
-  type = map(string)
-}
+# variable "vercel_records" {
+#   description = "Map of vercel records for production"
+#   type = map(string)
+# }

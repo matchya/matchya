@@ -15,7 +15,7 @@ module "route53" {
   source = "./modules/route53"
 
   domain_name = var.domain_name
-  vercel_records = var.vercel_records
+  # vercel_records = var.vercel_records
 }
 
 module "website_staging" {
