@@ -17,8 +17,12 @@ const OnboardingPageTemplate = ({
       <div className="h-full">
         <div className="w-full bg-macha-200 shadow-lg">
           <div className="flex items-center h-20 cursor-pointer px-4 md:max-w-[1730px] mx-auto">
-            <img src={icon} alt="matchya3" className="w-12 h-12 relative bottom-1" />
-            <h1 className="text-sm font-bold text-black relative right-2">
+            <img
+              src={icon}
+              alt="matchya3"
+              className="w-12 h-12 md:w-16 md:h-16 relative bottom-1"
+            />
+            <h1 className="text-sm md:text-xl font-bold text-black relative right-3">
               Matchya
             </h1>
           </div>
