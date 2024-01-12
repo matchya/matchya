@@ -56,6 +56,3 @@ next-env.d.ts
 
 # local env files
 **/.env*
-
-# Sentry Config File
-.env.sentry-build-plugin

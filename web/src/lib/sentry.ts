@@ -8,7 +8,7 @@ import {
   Routes,
 } from 'react-router-dom';
 
-if (process.env.NODE_ENV !== 'development') {
+if (import.meta.env.PROD) {
   Sentry.init({
     integrations: [
       new Sentry.BrowserTracing({
@@ -31,7 +31,7 @@ if (process.env.NODE_ENV !== 'development') {
       }),
     ],
     debug: process.env.NODE_ENV === 'staging',
-    release: `web@${process.env.npm_package_version}`,
+    release: `web@${import.meta.env.PACKAGE_VERSION}`,
     // Performance Monitoring
     tracesSampleRate: 0.5, //  Capture 100% of the transactions
     // Session Replay
