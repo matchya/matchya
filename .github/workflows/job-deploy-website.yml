@@ -54,14 +54,14 @@ jobs:
       - name: Deploy to S3
         run: |
           echo "Starting deployment to S3..."
-          aws s3 sync dist/ s3://${{ vars.S3_WEBSITE_BUCKET_NAME }}
+          aws s3 sync dist/ s3://www.${{ vars.APP_DOMAIN_NAME }}
           echo "Deployment to S3 completed."
         working-directory: web
 
       - name: Get the distribution id for Cloudfront
         id: get_distribution_id
         run: |
-          distribution_id=$(aws ssm get-parameter --name "/terraform/shared/${{ vars.S3_WEBSITE_BUCKET_NAME }}/cloudfront_distribution_id" --query "Parameter.Value" --output text)
+          distribution_id=$(aws ssm get-parameter --name "/terraform/shared/www.${{ vars.APP_DOMAIN_NAME }}/cloudfront_distribution_id" --query "Parameter.Value" --output text)
           echo "distribution_id=$distribution_id" >> $GITHUB_OUTPUT
           echo "Distribution Id found: $distribution_id"
 

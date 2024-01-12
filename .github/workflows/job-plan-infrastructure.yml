@@ -62,14 +62,14 @@ jobs:
           echo 'namespace = "${{ secrets.TF_NAMESPACE}}"' > terraform.tfvars
           echo 'db_username = "${{ secrets.TF_DB_USERNAME }}"' >> terraform.tfvars
           echo 'db_password = "${{ secrets.TF_DB_PASSWORD}}"' >> terraform.tfvars
-          echo 'client_origin = "${{ vars.TF_CLIENT_ORIGIN }}"' >> terraform.tfvars
+          echo 'client_origin = "www.${{ vars.APP_DOMAIN_NAME }}"' >> terraform.tfvars
         working-directory: terraform/${{ inputs.component }}
 
       - name: Set Terraform Variables (Shared)
         if: inputs.component == 'shared'
         run: |
           echo 'hosted_zone = "${{ vars.TF_HOSTED_ZONE }}"' > terraform.tfvars
-          echo 'app_domain_name = "${{ vars.TF_APP_DOMAIN_NAME }}"' >> terraform.tfvars
+          echo 'app_domain_name = "${{ vars.APP_DOMAIN_NAME }}"' >> terraform.tfvars
         working-directory: terraform/${{ inputs.component }}
 
       - name: Terraform Plan
