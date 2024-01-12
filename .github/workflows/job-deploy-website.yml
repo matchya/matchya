@@ -55,6 +55,7 @@ jobs:
           echo "Starting deployment to S3..."
           aws s3 sync dist/ s3://${{ vars.S3_WEBSITE_BUCKET_NAME }}
           echo "Deployment to S3 completed."
+        working-directory: web
 
       - name: Get the distribution id for Cloudfront
         id: get_distribution_id
