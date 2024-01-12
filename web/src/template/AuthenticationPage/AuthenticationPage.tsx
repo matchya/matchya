@@ -1,4 +1,4 @@
-import logoImage from '@/assets/matchya-icon.png';
+import matchyaLogo from '@/assets/matchya-logo.png';
 import { Badge, Button, Icons } from '@/components';
 import { cn } from '@/lib/utils';
 
@@ -37,34 +37,15 @@ const AuthenticationPageTemplate = ({
       <div className="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
         <div className="absolute inset-0 bg-macha-500" />
         <div className="relative z-20 flex items-center text-lg font-medium">
-          {/* <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="mr-2 h-6 w-6"
-          >
-            <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
-          </svg> */}
           <img
-            src={logoImage}
+            src={matchyaLogo}
             alt="Logo"
-            className="h-10 w-auto mr-2 ml-4 rounded-full"
+            className="w-12 h-12 md:w-16 md:h-16 relative bottom-1"
           />
-          <p>Matchya</p>
+          <h1 className="text-sm md:text-xl font-bold text-black relative right-3">
+            Matchya
+          </h1>
         </div>
-        {/* <div className="relative z-20 mt-auto">
-          <blockquote className="space-y-2">
-            <p className="text-lg">
-              &ldquo;Matchya bridges the gap between technical expertise and
-              non-technical understanding, making GitHub accessible to
-              all.&rdquo;
-            </p>
-          </blockquote>
-        </div> */}
       </div>
       <div className="h-full bg-macha-200 flex items-center justify-center">
         <div className="lg:p-8">

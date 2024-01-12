@@ -2,6 +2,8 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import Component from './OnboardingPage';
 
+import { Header } from '@/components';
+
 const meta: Meta<typeof Component> = {
   title: 'Template',
   component: Component,
@@ -13,11 +15,9 @@ type Story = StoryObj<typeof Component>;
 
 export const OnboardingPage: Story = {
   render: () => (
-    <Component
-      email={''}
-      setEmail={() => {}}
-      onSubmit={() => {}}
-      scrollDown={() => {}}
-    />
+    <>
+      <Header />
+      <Component />
+    </>
   ),
 };
