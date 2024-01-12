@@ -1,16 +1,19 @@
 on:
   workflow_call:
     inputs:
-      environment:
+      environment-label:
+        required: true
+        type: string
+      node-environment:
         required: true
         type: string
 
 jobs:
   web:
     name: Web
-    if: inputs.environment != 'production'
+    if: inputs.node-environment != 'production'
     runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
+    environment: ${{ inputs.node-environment }}
     steps:
       - name: Fetch Repository
         uses: actions/checkout@v3
@@ -34,11 +37,37 @@ jobs:
           echo "VITE_API_URL=${{ vars.VITE_API_URL }}" >> web/.env
           echo "VITE_GITHUB_CLIENT_ID=${{ secrets.VITE_GITHUB_CLIENT_ID }}" >> web/.env
           echo "VITE_CLIENT_URL=${{ vars.VITE_CLIENT_URL }}" >> web/.env
-          echo "VITE_SENTRY_DSN=${{ vars.VITE_SENTRY_DSN }}" >> web/.env
 
-      - name: Set execute permissions for deploy script
-        run: chmod +x scripts/deploy_to_s3.sh
+      - name: Install dependencies
+        run: npm install
+        working-directory: web
+
+      - name: Build
+        run: npm run build
+        env:
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          SENTRY_ENVIRONMENT: ${{ inputs.environment-label }}
+          NODE_ENV: ${{ inputs.node-environment }}
+        working-directory: web
+
       - name: Deploy to S3
-        shell: bash
         run: |
-          cd scripts && ./deploy_to_s3.sh --bucket-name ${{ vars.S3_WEBSITE_BUCKET_NAME }} --environment ${{ inputs.environment }}
+          echo "Starting deployment to S3..."
+          aws s3 sync dist/ s3://${{ vars.S3_WEBSITE_BUCKET_NAME }}
+          echo "Deployment to S3 completed."
+
+      - name: Get the distribution id for Cloudfront
+        id: get_distribution_id
+        run: |
+          distribution_id=$(aws ssm get-parameter --name "/terraform/shared/${{ vars.S3_WEBSITE_BUCKET_NAME }}/cloudfront_distribution_id" --query "Parameter.Value" --output text)
+          echo "distribution_id=$distribution_id" >> $GITHUB_ENV
+          echo "Distribution Id found: $distribution_id"
+
+      - name: Invalidate Cloudfront cache
+        run: |
+          echo "Starting CloudFront cache invalidation..."
+          if ! aws cloudfront create-invalidation --distribution-id ${{ steps.get_distribution_id.outputs.distribution_id }} --paths "/*" > /dev/null 2>&1; then
+              echo "CloudFront cache invalidation failed."
+              exit 1
+          fi
+          echo "CloudFront cache invalidation was successful."
