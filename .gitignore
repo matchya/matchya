@@ -57,8 +57,5 @@ next-env.d.ts
 # local env files
 **/.env*
 
-# vercel
-.vercel
-
 # Sentry Config File
 .env.sentry-build-plugin

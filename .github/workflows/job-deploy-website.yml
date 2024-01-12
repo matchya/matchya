@@ -13,7 +13,7 @@ jobs:
     name: Web
     if: inputs.node-environment != 'production'
     runs-on: ubuntu-latest
-    environment: ${{ inputs.node-environment }}
+    environment: ${{ inputs.environment-label }}
     steps:
       - name: Fetch Repository
         uses: actions/checkout@v3
@@ -61,7 +61,7 @@ jobs:
         id: get_distribution_id
         run: |
           distribution_id=$(aws ssm get-parameter --name "/terraform/shared/${{ vars.S3_WEBSITE_BUCKET_NAME }}/cloudfront_distribution_id" --query "Parameter.Value" --output text)
-          echo "distribution_id=$distribution_id" >> $GITHUB_ENV
+          echo "distribution_id=$distribution_id" >> $GITHUB_OUTPUT
           echo "Distribution Id found: $distribution_id"
 
       - name: Invalidate Cloudfront cache

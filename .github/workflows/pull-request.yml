@@ -16,7 +16,7 @@ jobs:
       - name: Compare PR title with Regex
         run: |
           PR_TITLE="${{ github.event.pull_request.title }}"
-          PATTERN="^(feat|fix)(\(web\)|\(authentication\)|\(authorizer\)|\(candidate\)|\(checklist\)|\(company\)|\(position\)|\(question\)|\(ci\)|\(terraform\)|\(db\)|\(waitlist\)|\(test\)): .+"
+          PATTERN="^(feat|fix)(\(web\)|\(authentication\)|\(authorizer\)|\(candidate\)|\(checklist\)|\(company\)|\(position\)|\(question\)|\(ci\)|\(terraform\)|\(db\)|\(test\)): .+"
           EXCEPTIONS="^(Merge to Production|Merge to Staging|chore|chore\(.*\)|fix)$"
 
           if [[ $PR_TITLE =~ $EXCEPTIONS ]]; then
@@ -59,50 +59,6 @@ jobs:
         id: build
         run: npm run build || echo "status=failed" >> $GITHUB_OUTPUT
         working-directory: web
-
-      - name: Check build
-        if: steps.changes.outputs.package == 'true'
-        run: |
-          if [ "${{ steps.build.outputs.status }}" = "failed" ]; then
-            echo "The build failed. Please fix the errors and try again."
-            exit 1
-          else
-            echo "The build was successful; proceeding."
-          fi
-
-  check-build-waitlist:
-    name: Check Build (Waitlist)
-    runs-on: ubuntu-latest
-    steps:
-      - name: Fetch Repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: Check Waitlist Files Changed
-        uses: dorny/paths-filter@v2
-        id: changes
-        with:
-          filters: |
-            package:
-              - 'waitlist/**'
-
-      - uses: actions/setup-node@v3
-        if: steps.changes.outputs.package == 'true'
-        with:
-          cache: npm
-          node-version: 18
-
-      - name: Install dependencies
-        if: steps.changes.outputs.package == 'true'
-        run: npm install
-        working-directory: waitlist
-
-      - name: Build
-        if: steps.changes.outputs.package == 'true'
-        id: build
-        run: npm run build || echo "status=failed" >> $GITHUB_OUTPUT
-        working-directory: waitlist
 
       - name: Check build
         if: steps.changes.outputs.package == 'true'
