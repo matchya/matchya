@@ -30,3 +30,4 @@ export { default as ChecklistSheet } from './Sheet/ChecklistSheet/ChecklistSheet
 export { default as Switch } from './Switch/Switch';
 export { default as ChecklistTable } from './Table/ChecklistTable/ChecklistTable';
 export { default as EvaluationTable } from './Table/EvaluationTable/EvaluationTable';
+export { default as TestTable } from './Table/TestTable/TestTable';
