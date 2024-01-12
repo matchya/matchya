@@ -1,5 +1,6 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 
+import SentryRoutes from './lib/sentry';
 import { StoreProvider } from './store';
 
 import AuthenticatedLayout from '@/layout/Authenticated';
@@ -15,7 +16,7 @@ function App() {
   return (
     <StoreProvider>
       <Router>
-        <Routes>
+        <SentryRoutes>
           <Route element={<AuthenticatedLayout />}>
             <Route path="/onboarding" element={<OnboardingPage />} />
             <Route path="/candidates" element={<CandidatesPage />} />
@@ -32,7 +33,7 @@ function App() {
               element={<GoogleAuthCallbackPage />}
             />
           </Route>
-        </Routes>
+        </SentryRoutes>
       </Router>
     </StoreProvider>
   );
