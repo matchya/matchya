@@ -10,6 +10,8 @@ import {
 
 if (import.meta.env.MODE !== 'development') {
   Sentry.init({
+    dsn: import.meta.env.SENTRY_DSN,
+    environment: import.meta.env.SENTRY_ENVIRONMENT,
     integrations: [
       new Sentry.BrowserTracing({
         routingInstrumentation: Sentry.reactRouterV6Instrumentation(
@@ -31,7 +33,7 @@ if (import.meta.env.MODE !== 'development') {
       }),
     ],
     debug: import.meta.env.MODE === 'staging',
-    release: `web@${import.meta.env.PACKAGE_VERSION}`,
+    release: `web@${import.meta.env.NPM_PACKAGE_VERSION}`,
     // Performance Monitoring
     tracesSampleRate: 0.5, //  Capture 100% of the transactions
     // Session Replay
