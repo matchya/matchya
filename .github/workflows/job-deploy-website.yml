@@ -45,9 +45,10 @@ jobs:
       - name: Build
         run: npm run build
         env:
+          NODE_ENV: ${{ inputs.node-environment }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           SENTRY_ENVIRONMENT: ${{ inputs.environment-label }}
-          NODE_ENV: ${{ inputs.node-environment }}
         working-directory: web
 
       - name: Deploy to S3
