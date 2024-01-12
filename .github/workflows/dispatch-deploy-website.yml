@@ -19,3 +19,4 @@ jobs:
     with:
       environment: ${{ inputs.environment }}
       environment-label: ${{ inputs.environment-label }}
+    secrets: inherit
