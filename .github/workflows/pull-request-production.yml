@@ -41,6 +41,7 @@ jobs:
     uses: ./.github/workflows/job-plan-infrastructure.yml
     with:
       environment: production
+      environment-label: Production
       component: shared
       label: Shared Infrastructure
     secrets: inherit

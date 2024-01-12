@@ -7,12 +7,15 @@ on:
       environment:
         required: true
         type: string
+      environment-label:
+        required: true
+        type: string
 
 jobs:
   run:
     name: ${{ inputs.component }}
     runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
+    environment: ${{ inputs.environment-label }}
     steps:
       - name: Fetch Repository
         uses: actions/checkout@v3

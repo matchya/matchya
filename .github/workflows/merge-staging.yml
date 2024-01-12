@@ -50,9 +50,10 @@ jobs:
     needs: [check-infrastructure-changes]
     uses: ./.github/workflows/job-deploy-infrastructure.yml
     with:
-      label: Shared Infrastructure
       component: shared
-      environment: Staging
+      environment: staging
+      environment-label: Staging
+      label: Shared Infrastructure
     secrets: inherit
 
   deploy-terraform-environment:
@@ -62,9 +63,10 @@ jobs:
     needs: [deploy-terraform-shared]
     uses: ./.github/workflows/job-deploy-infrastructure.yml
     with:
-      label: Environment Infrastructure
       component: environment
-      environment: Staging
+      environment: staging
+      environment-label: Staging
+      label: Environment Infrastructure
     secrets: inherit
 
   deploy-website:
@@ -73,8 +75,8 @@ jobs:
     needs: [cleanup]
     uses: ./.github/workflows/job-deploy-website.yml
     with:
+      environment: staging
       environment-label: Staging
-      node-environment: staging
     secrets: inherit
 
   # create-release-web:

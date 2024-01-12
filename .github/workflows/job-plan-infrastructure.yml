@@ -5,6 +5,10 @@ on:
         description: "Environment to deploy to"
         required: true
         type: string
+      environment-label:
+        description: "Label for the environment"
+        required: true
+        type: string
       component:
         description: "Component to deploy"
         required: true
@@ -18,7 +22,7 @@ jobs:
   run:
     name: ${{ inputs.label }}
     runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
+    environment: ${{ inputs.environment-label }}
     steps:
       - name: Fetch Repository
         uses: actions/checkout@v3
@@ -55,19 +59,17 @@ jobs:
       - name: Set Terraform Variables (Environment)
         if: inputs.component == 'environment'
         run: |
-          echo 'namespace = "${{ secrets.TF_NAMESPACE}}"' >> terraform.tfvars
+          echo 'namespace = "${{ secrets.TF_NAMESPACE}}"' > terraform.tfvars
           echo 'db_username = "${{ secrets.TF_DB_USERNAME }}"' >> terraform.tfvars
           echo 'db_password = "${{ secrets.TF_DB_PASSWORD}}"' >> terraform.tfvars
-          echo 'client_origin = "${{ vars.TF_CLIENT_ORIGIN }}"' >> terraform.tfvars
+          echo 'client_origin = "www.${{ vars.APP_DOMAIN_NAME }}"' >> terraform.tfvars
         working-directory: terraform/${{ inputs.component }}
 
       - name: Set Terraform Variables (Shared)
         if: inputs.component == 'shared'
         run: |
-          echo 'domain_name = {' > terraform.tfvars
-          echo '  "prod": "${{ vars.TF_PRODUCTION_DOMAIN_NAME }}",' >> terraform.tfvars
-          echo '  "staging": "${{ vars.TF_STAGING_DOMAIN_NAME }}"' >> terraform.tfvars
-          echo '}' >> terraform.tfvars
+          echo 'hosted_zone = "${{ vars.TF_HOSTED_ZONE }}"' > terraform.tfvars
+          echo 'app_domain_name = "${{ vars.APP_DOMAIN_NAME }}"' >> terraform.tfvars
         working-directory: terraform/${{ inputs.component }}
 
       - name: Terraform Plan

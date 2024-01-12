@@ -10,17 +10,21 @@ on:
         type: string
         required: true
       environment:
-        description: "Environment to deploy"
+        description: "Environment to deploy. Lowercase."
         type: string
         required: true
         default: "staging"
+      environment-label:
+        description: "Name of the environment to deploy. Capitalized"
+        type: string
+        required: true
 
 jobs:
   run:
     name: ${{ inputs.label }}
     runs-on: ubuntu-latest
     permissions: write-all
-    environment: ${{ inputs.environment }}
+    environment: ${{ inputs.environment-label }}
     steps:
       - name: Fetch Repository
         uses: actions/checkout@v3
