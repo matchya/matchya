@@ -28,6 +28,9 @@ const OnboardingPageTemplate = () => {
                 <Button
                   variant="outline"
                   className="px-8 py-6 bg-macha-700 rounded border-macha-700 text-white text-md hover:bg-macha-800 hover:border-macha-800 hover:text-white"
+                  onClick={() => {
+                    throw new Error('Test Sentry Error');
+                  }}
                 >
                   Try for free
                 </Button>
