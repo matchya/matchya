@@ -8,7 +8,7 @@ export default defineConfig({
   plugins: [
     react(),
     sentryVitePlugin({
-      org: 'matchya',
+      org: 'matchya-ai',
       project: 'web',
       authToken: process.env.SENTRY_AUTH_TOKEN,
     }),

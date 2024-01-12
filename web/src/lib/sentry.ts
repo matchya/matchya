@@ -1,9 +1,24 @@
 import * as Sentry from '@sentry/react';
+import { useEffect } from 'react';
+import {
+  useLocation,
+  useNavigationType,
+  createRoutesFromChildren,
+  matchRoutes,
+  Routes,
+} from 'react-router-dom';
 
 if (process.env.NODE_ENV !== 'development') {
   Sentry.init({
     integrations: [
       new Sentry.BrowserTracing({
+        routingInstrumentation: Sentry.reactRouterV6Instrumentation(
+          useEffect,
+          useLocation,
+          useNavigationType,
+          createRoutesFromChildren,
+          matchRoutes
+        ),
         // Set 'tracePropagationTargets' to control for which URLs distributed tracing should be enabled
         tracePropagationTargets: [
           'localhost',
@@ -24,3 +39,5 @@ if (process.env.NODE_ENV !== 'development') {
     replaysOnErrorSampleRate: 1.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
   });
 }
+
+export default Sentry.withSentryReactRouterV6Routing(Routes);
