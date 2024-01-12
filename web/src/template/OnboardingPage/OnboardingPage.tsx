@@ -36,7 +36,7 @@ const OnboardingPageTemplate = ({
                 </h1>
                 <Button
                   variant="outline"
-                  className="px-8 py-6 bg-macha-700 rounded border-macha-700 text-white text-md hover:bg-macha-200 hover:border-macha-200"
+                  className="px-8 py-6 bg-macha-700 rounded border-macha-700 text-white text-md hover:bg-macha-800 hover:border-macha-800 hover:text-white"
                   onClick={scrollDown}
                 >
                   Try for free
