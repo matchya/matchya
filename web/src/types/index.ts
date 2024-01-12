@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 export interface Company {
   id: string;
   name: string;
@@ -25,6 +27,18 @@ export interface Assessment {
   score: number;
   reason: string;
 }
+
+export const testSchema = z.object({
+  id: z.string(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+  name: z.string(),
+  positionType: z.string(),
+  positionLevel: z.string(),
+  candidateCount: z.number(),
+});
+
+export type Test = z.infer<typeof testSchema>;
 
 export interface Criterion {
   id: string;

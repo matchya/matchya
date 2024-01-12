@@ -3,7 +3,7 @@ import { StoreApi, createStore } from 'zustand';
 
 import { StoreProviderProps } from './interface';
 
-import { mockPositions, mockSelectedPosition } from '@/data/mock';
+import { mockedPositions, mockedSelectedPosition } from '@/data/mock';
 import { axiosInstance } from '@/lib/client';
 import {
   Assessment,
@@ -39,9 +39,9 @@ export const StorybookPositionStoreProvider = ({
     createStore<PositionState>(() => ({
       setupRequired: false,
       setupPosition: () => alert('Setup position'),
-      positions: mockPositions,
+      positions: mockedPositions,
       setPositions: () => alert('Set positions'),
-      selectedPosition: mockSelectedPosition,
+      selectedPosition: mockedSelectedPosition,
       selectPosition: () => alert('Select position'),
       setPositionDetail: async () => alert('Set position detail'),
       selectedCandidate: null,

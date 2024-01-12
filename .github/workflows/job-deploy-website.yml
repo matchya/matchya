@@ -43,7 +43,7 @@ jobs:
         working-directory: web
 
       - name: Build
-        run: npm run build --mode ${{ inputs.environment }}
+        run: npm run build -- --mode ${{ inputs.environment }}
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
