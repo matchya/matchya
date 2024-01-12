@@ -14,14 +14,15 @@ module "iam" {
 module "route53" {
   source = "./modules/route53"
 
-  domain_name = var.domain_name
+  hosted_zone = var.hosted_zone
+  # marketing_page_records = var.marketing_page_records
   # vercel_records = var.vercel_records
 }
 
-module "website_staging" {
+module "app" {
   source = "./modules/website"
 
-  domain_name = var.domain_name["staging"]
+  domain_name = var.app_domain_name
   region = data.aws_region.current.name
   hosted_zone = module.route53.main_route53_zone
 }

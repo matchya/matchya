@@ -1,6 +1,6 @@
-variable "domain_name" {
-  description = "Map of domain names for different environments"
-  type = map(string)
+variable "hosted_zone" {
+  description = "The hosted zone for the domain"
+  type = string
 }
 
 # variable "vercel_records" {

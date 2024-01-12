@@ -1,5 +1,5 @@
 resource "aws_route53_zone" "main" {
-  name         = var.domain_name["prod"]
+  name         = var.hosted_zone
 }
 
 # resource "aws_route53_record" "vercel_a" {
