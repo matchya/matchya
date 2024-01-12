@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 
 import Component from '@/components/Table/ChecklistTable/ChecklistTable';
-import { mockChecklist } from '@/data/mock';
+import { mockedChecklist } from '@/data/mock';
 
 const meta: Meta<typeof Component> = {
   title: 'Component/Table',
@@ -13,5 +13,5 @@ export default meta;
 type Story = StoryObj<typeof Component>;
 
 export const Checklist: Story = {
-  render: () => <Component checklist={mockChecklist} />,
+  render: () => <Component checklist={mockedChecklist} />,
 };

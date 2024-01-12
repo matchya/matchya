@@ -5,7 +5,7 @@ import { StoreProviderProps } from './interface';
 import { PositionState } from './position';
 
 import { apiEndpoint } from '@/config/env';
-import { mockCompanyInfo } from '@/data/mock';
+import { mockedCompanyInfo } from '@/data/mock';
 import { axiosInstance } from '@/lib/client';
 import { usePositionStore } from '@/store/store';
 
@@ -30,7 +30,7 @@ export const StorybookCompanyStoreProvider = ({
 }: StoreProviderProps) => {
   const storeRef = useRef(
     createStore<CompanyState>(() => ({
-      ...mockCompanyInfo,
+      ...mockedCompanyInfo,
       me: async () => alert('Triggered me'),
       resetAll: () => alert('Triggered resetAll'),
     }))

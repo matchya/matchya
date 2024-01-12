@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import Component from './ChecklistSheet';
 
 import { Button, Sheet, SheetTrigger } from '@/components';
-import { mockSelectedPosition } from '@/data/mock';
+import { mockedSelectedPosition } from '@/data/mock';
 
 const meta: Meta<typeof Component> = {
   title: 'Component/Sheet',
@@ -20,7 +20,7 @@ export const Checklist: Story = {
       <SheetTrigger asChild>
         <Button variant="outline">Open</Button>
       </SheetTrigger>
-      <Component selectedPosition={mockSelectedPosition} />
+      <Component selectedPosition={mockedSelectedPosition} />
     </Sheet>
   ),
 };

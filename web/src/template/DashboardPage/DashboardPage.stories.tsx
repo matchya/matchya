@@ -4,9 +4,9 @@ import Component from './DashboardPage';
 
 import { Header } from '@/components';
 import {
-  mockPositions,
-  mockSelectedCandidate,
-  mockSelectedPosition,
+  mockedPositions,
+  mockedSelectedCandidate,
+  mockedSelectedPosition,
 } from '@/data/mock';
 
 const meta: Meta<typeof Component> = {
@@ -23,9 +23,9 @@ export const GithubAnalysis: Story = {
     <>
       <Header />
       <Component
-        positions={mockPositions}
-        selectedPosition={mockSelectedPosition}
-        selectedCandidate={mockSelectedCandidate}
+        positions={mockedPositions}
+        selectedPosition={mockedSelectedPosition}
+        selectedCandidate={mockedSelectedCandidate}
       />
     </>
   ),
@@ -36,9 +36,9 @@ export const InterviewQuestions: Story = {
     <>
       <Header />
       <Component
-        positions={mockPositions}
-        selectedPosition={mockSelectedPosition}
-        selectedCandidate={mockSelectedCandidate}
+        positions={mockedPositions}
+        selectedPosition={mockedSelectedPosition}
+        selectedCandidate={mockedSelectedCandidate}
       />
     </>
   ),

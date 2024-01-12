@@ -2,7 +2,7 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import Component from './AllCandidatesCard';
 
-import { mockCandidates } from '@/data/mock';
+import { mockedCandidates } from '@/data/mock';
 
 const meta: Meta<typeof Component> = {
   title: 'Component/Card',
@@ -19,7 +19,7 @@ export const AllCandidates: Story = {
       <Component
         shouldShowQuestions={true}
         onShouldShowQuestionsCheckedChanged={() => {}}
-        candidates={mockCandidates}
+        candidates={mockedCandidates}
       />
     );
   },
