@@ -6,13 +6,10 @@ import AuthenticatedLayout from '@/layout/Authenticated';
 import UnAuthenticatedLayout from '@/layout/UnAuthenticated';
 import AuthenticationPage from '@/screens/AuthenticationPage';
 import CandidatesPage from '@/screens/CandidatesPage';
-import DashboardPage from '@/screens/DashboardPage';
 import GithubAuthCallbackPage from '@/screens/GithubAuthCallbackPage';
 import GoogleAuthCallbackPage from '@/screens/GoogleAuthCallbackPage';
-// import HomePage from '@/screens/HomePage';
+import HomePage from '@/screens/HomePage';
 import OnboardingPage from '@/screens/OnboardingPage';
-import PositionSetupPage from '@/screens/PositionSetupPage';
-// import SettingsPage from '@/screens/SettingsPage';
 
 function App() {
   return (
@@ -20,14 +17,11 @@ function App() {
       <Router>
         <Routes>
           <Route element={<AuthenticatedLayout />}>
-            <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path="/position-setup" element={<PositionSetupPage />} />
+            <Route path="/onboarding" element={<OnboardingPage />} />
             <Route path="/candidates" element={<CandidatesPage />} />
-            {/* <Route path="/settings" element={<SettingsPage />} /> */}
           </Route>
           <Route element={<UnAuthenticatedLayout />}>
-            {/* <Route path="/" element={<HomePage />} /> */}
-            <Route path="/" element={<OnboardingPage />} />
+            <Route path="/" element={<HomePage />} />
             <Route path="/auth" element={<AuthenticationPage />} />
             <Route
               path="/auth/github/callback"

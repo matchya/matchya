@@ -20,6 +20,13 @@ const CandidatesPageTemplate = () => {
     <div className="bg-macha-200 h-full min-h-[calc(100vh-64px)] overflow-hidden">
       <div className="w-full h-full mx-auto">
         <div>
+          <button
+            onClick={() => {
+              throw new Error('Testing Sentry');
+            }}
+          >
+            Test Sentry
+          </button>
           <div className="w-full h-full mx-auto">
             <div className="justify-between items-center py-4">
               <div className="px-12 pt-8">
