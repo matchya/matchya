@@ -46,10 +46,10 @@ functions:
           method: POST
           cors:
             origins:
-              - https://www.matchyaa.com
-              - https://matchyaa.com
-              - https://www.staging.matchyaa.com
-              - https://staging.matchyaa.com
+              - https://www.app.staging.matchya.ai
+              - https://app.staging.matchya.ai
+              - https://www.app.matchya.ai
+              - https://app.matchya.ai
               - http://127.0.0.1:5173
             allowCredentials: true
 
@@ -65,10 +65,10 @@ functions:
           method: POST
           cors:
             origins:
-              - https://www.matchyaa.com
-              - https://matchyaa.com
-              - https://www.staging.matchyaa.com
-              - https://staging.matchyaa.com
+              - https://www.app.staging.matchya.ai
+              - https://app.staging.matchya.ai
+              - https://www.app.matchya.ai
+              - https://app.matchya.ai
               - http://127.0.0.1:5173
             allowCredentials: true
 
@@ -84,10 +84,10 @@ functions:
           method: POST
           cors:
             origins:
-              - https://www.matchyaa.com
-              - https://matchyaa.com
-              - https://www.staging.matchyaa.com
-              - https://staging.matchyaa.com
+              - https://www.app.staging.matchya.ai
+              - https://app.staging.matchya.ai
+              - https://www.app.matchya.ai
+              - https://app.matchya.ai
               - http://127.0.0.1:5173
             allowCredentials: true
 
