@@ -57,7 +57,6 @@ functions:
             arn: arn:aws:lambda:${aws:region}:${aws:accountId}:function:${self:provider.stage}-authorizer
     timeout: 30
 
-
   retrieve:
     name: ${self:provider.stage}-candidate-retrieve
     image:
@@ -82,6 +81,36 @@ functions:
             resultTtlInSeconds: 300
             name: ${self:provider.stage}-candidate-retrieve-authorizer
             arn: arn:aws:lambda:${aws:region}:${aws:accountId}:function:${self:provider.stage}-authorizer
+    timeout: 30
+
+  retrieve-result:
+    name: ${self:provider.stage}-candidate-retrieve-result
+    image:
+      name: default
+      command:
+        - retrieve_result.handler
+    events:
+      - http:
+          path: /candidates/result/{candidate_result_id}
+          method: GET
+          cors:
+            origins:
+              - https://www.matchyaa.com
+              - https://matchyaa.com
+              - https://www.staging.matchyaa.com
+              - https://staging.matchyaa.com
+              - http://127.0.0.1:5173
+            allowCredentials: true
+          authorizer:
+            type: request
+            identitySource: method.request.header.Cookie
+            resultTtlInSeconds: 300
+            name: ${self:provider.stage}-candidate-retrieve-result-authorizer
+            arn: arn:aws:lambda:${aws:region}:${aws:accountId}:function:${self:provider.stage}-authorizer
+          request:
+            parameters:
+              paths:
+                candidate_result_id: true
     timeout: 30
 
   evaluate:
