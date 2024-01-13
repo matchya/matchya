@@ -221,7 +221,10 @@ def handler(event, context):
         save_candidate_result(candidate_result_id, total_score, summary)
         db_conn.commit()
         logger.info("Successfully evaluated a candidate.")
-        return generate_success_response(origin)
+        body = {
+            'candidate_result_id': candidate_result_id
+        }
+        return generate_success_response(origin, body)
     except (ValueError, RuntimeError) as e:
         status_code = 400
         logger.error(f'Getting final evaluation of a candidate faild: {e}')
