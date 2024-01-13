@@ -79,7 +79,7 @@ functions:
           bucket: ${self:provider.stage}-data-candidate-response
           event: s3:ObjectCreated:*
           existing: true
-    timeout: 30
+    timeout: 300
 
 plugins:
   - serverless-deployment-bucket
