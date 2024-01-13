@@ -1,0 +1,59 @@
+# on:
+#   workflow_call:
+#     inputs:
+#       environment:
+#         required: true
+#         type: string
+#       environment-label:
+#         required: true
+#         type: string
+
+on:
+  pull_request:
+
+jobs:
+  lambdas:
+    name: Lambda Functions (${{matrix.label}})
+    strategy:
+      matrix:
+        include:
+          - package: "authentication"
+            label: Authentication
+          - package: "authorizer"
+            label: Authorizer
+          - package: "candidate"
+            label: Candidate
+          - package: "checklist"
+            label: Checklist
+          - package: "company"
+            label: Company
+          - package: "position"
+            label: Position
+          - package: "question"
+            label: Question
+          - package: "test"
+            label: Test
+    runs-on: ubuntu-latest
+    environment: Staging
+    steps:
+      - name: Fetch Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v3
+        with:
+          cache: npm
+          node-version: 18
+
+      - name: Install Dependencies
+        run: npm install
+        working-directory: lambdas/${{strategy.matrix.package}}
+
+      - name: Deploy
+        uses: serverless/github-action@v3.2
+        with:
+          args: deploy --stage staging
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
