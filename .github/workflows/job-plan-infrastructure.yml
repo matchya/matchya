@@ -79,11 +79,6 @@ jobs:
           echo '] }' >> terraform.tfvars
         working-directory: terraform/${{ inputs.component }}
 
-      - name: Check file
-        run: |
-          cat terraform.tfvars
-        working-directory: terraform/${{ inputs.component }}
-
       - name: Terraform Plan
         id: plan
         run: |
