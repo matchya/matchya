@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 import { TestTableColumnHeader } from './TestTableColumnHeader';
 
-import { mockedAssessments } from '@/data/mock';
+import { mockedTests } from '@/data/mock';
 import { Test, testSchema } from '@/types';
 
 export const columns: ColumnDef<Test>[] = [
@@ -71,7 +71,7 @@ export const columns: ColumnDef<Test>[] = [
   },
 ];
 
-export const getTransformedAssessments = async () => {
-  const assessments = mockedAssessments;
-  return z.array(testSchema).parse(assessments);
+export const getTransformedTests = async () => {
+  const tests = mockedTests;
+  return z.array(testSchema).parse(tests);
 };
