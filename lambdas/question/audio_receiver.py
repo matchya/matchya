@@ -1,5 +1,4 @@
 import logging
-import io
 
 import boto3
 
@@ -45,12 +44,13 @@ def save_audio_file_to_s3(body):
     """
     logger.info("Saving audio file to S3...")
     try:
-        audio_bytes: io.BytesIO = io.BytesIO(body['audio'])
+        logger.info(f"type of body audio  {type(body['audio'])}")
+        audio_bytes: bytes = body['audio']
 
         test_id = body['test_id']
         question_id = body['question_id']
         candidate_id = body['candidate_id']
-        audio_file_name = f'{test_id}/{question_id}/{candidate_id}.mp3'
+        audio_file_name = f'{test_id}/{question_id}/{candidate_id}.wav'
 
         s3.put_object(Bucket=BUCKET_NAME, Key=audio_file_name, Body=audio_bytes)
     except Exception as e:
