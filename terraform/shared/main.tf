@@ -15,8 +15,6 @@ module "route53" {
   source = "./modules/route53"
 
   hosted_zone = var.hosted_zone
-  # marketing_page_records = var.marketing_page_records
-  # vercel_records = var.vercel_records
   google_workspace_record_name = var.google_workspace_record_name
   google_workspace_records = var.google_workspace_records
 }
