@@ -12,6 +12,7 @@ class Config:
     POSTGRES_DB = os.getenv('POSTGRES_DB')
     POSTGRES_USER = os.getenv('POSTGRES_USER')
     POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
+    OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 
     QUESTION_GENERATION_PROCESSOR_QUEUE_URL = os.getenv('QUESTION_GENERATION_PROCESSOR_QUEUE_URL')
 
@@ -23,7 +24,8 @@ class Config:
         """
         required_variables = [
             'POSTGRES_HOST', 'POSTGRES_PORT', 'POSTGRES_DB', 'POSTGRES_USER',
-            'POSTGRES_PASSWORD', 'QUESTION_GENERATION_PROCESSOR_QUEUE_URL'
+            'POSTGRES_PASSWORD', 'OPENAI_API_KEY',
+            'QUESTION_GENERATION_PROCESSOR_QUEUE_URL'
         ]
         missing_variables = [variable for variable in required_variables if not getattr(cls, variable)]
 
