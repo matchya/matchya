@@ -72,6 +72,11 @@ jobs:
           echo 'app_domain_name = "${{ vars.APP_DOMAIN_NAME }}"' >> terraform.tfvars
         working-directory: terraform/${{ inputs.component }}
 
+      - name: Check file
+        run: |
+          cat terraform.tfvars
+        working-directory: terraform/${{ inputs.component }}
+
       - name: Terraform Plan
         id: plan
         run: |
