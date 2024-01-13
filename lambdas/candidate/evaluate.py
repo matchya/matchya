@@ -120,7 +120,8 @@ def calculate_total_score(answers):
     total_score = 0
     for answer in answers:
         total_score += answer['score']
-    return total_score / len(answers)
+    result = total_score / len(answers)
+    return round(result, 2)
 
 
 def get_system_and_user_message(answers):

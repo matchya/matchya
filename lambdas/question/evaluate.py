@@ -56,7 +56,7 @@ def get_bucket_name_and_key(event):
     return bucket, key
 
 
-def download_file_from_s3(bucket, key):
+def download_file_from_s3(bucket, key, file_name):
     """
     Downloads a file from S3.
 
@@ -64,7 +64,7 @@ def download_file_from_s3(bucket, key):
     :param key: The key.
     """
     logger.info(f'Downloading {key} from {bucket}...')
-    local_file_name = '/tmp/' + key
+    local_file_name = '/tmp/' + file_name
     s3.Bucket(bucket).download_file(key, local_file_name)
     return local_file_name
 
@@ -299,7 +299,8 @@ def handler(event, context):
         bucket, key = get_bucket_name_and_key(event)
         test_id, question_id, candidate_id = key.split('/')[0], key.split('/')[1], key.split('/')[2].split('.')[0]
 
-        local_file_name = download_file_from_s3(bucket, key)
+        file_name = test_id + '_' + question_id + '_' + candidate_id + '.m4a'
+        local_file_name = download_file_from_s3(bucket, key, file_name)
         transcript = transcript_from_audio(local_file_name)
 
         position_type, position_level = get_position_type_and_level(test_id)
