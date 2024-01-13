@@ -48,7 +48,7 @@ def download_file_from_s3(bucket, key):
     """
     logger.info(f'Downloading {key} from {bucket}...')
     local_file_name = '/tmp/' + key
-    s3.download_file(bucket, key, local_file_name)
+    s3.Bucket(bucket).download_file(key, local_file_name)
     return local_file_name
 
 
