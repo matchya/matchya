@@ -6,7 +6,7 @@ provider:
   name: aws
   runtime: python3.9
   architecture: arm64
-  stage: dev
+  stage: ${opt:stage, 'dev'}
   region: us-east-1
   deploymentBucket:
     name: ${self:provider.stage}-sls-test
