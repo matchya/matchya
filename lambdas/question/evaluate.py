@@ -286,10 +286,8 @@ def store_answer_evaluation_to_db(candidate_result_id, question_id, score, feedb
 
 def handler(event, context):
     """
-    Lambda handler.
-
-    :param event: The event data.
-    :param context: The context data.
+    Frontend uploads the audio file to S3.
+    S3 triggers this lambda function.
     """
     logger.info(event)
     try:
@@ -314,7 +312,7 @@ def handler(event, context):
         store_answer_evaluation_to_db(candidate_result_id, question_id, score, feedback, audio_url)
 
         db_conn.commit()
-        return
+        logger.info('Evaluating an answer successful')
     except (ValueError, RuntimeError) as e:
         status_code = 400
         logger.error(f'Evaluating an answer failed (status {str(status_code)}): {e}')
