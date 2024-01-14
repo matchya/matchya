@@ -4,7 +4,7 @@ import logging
 from utils.request import parse_header
 
 # Logger
-logger = logging.getLogger('login')
+logger = logging.getLogger('logout')
 logger.setLevel(logging.INFO)
 
 formatter = logging.Formatter('[%(levelname)s]:%(funcName)s:%(lineno)d:%(message)s')
