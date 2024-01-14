@@ -181,7 +181,7 @@ def get_random_topics(topics, level_probabilities, num_topics):
         random_topic = random.choice(topics[category])
         topic_and_level = {
             'topic': random_topic,
-            'level': random.choices(LEVELS, weights=level_probabilities)
+            'difficulty': random.choices(LEVELS, weights=level_probabilities)
         }
         result.append(topic_and_level)
         counter += 1
@@ -221,7 +221,7 @@ def get_random_topics_from_all(level_probabilities, num_topics):
         random_topic = random.choice(topics[category])
         topic_and_level = {
             'topic': random_topic,
-            'level': random.choices(LEVELS, weights=level_probabilities)
+            'difficulty': random.choices(LEVELS, weights=level_probabilities)
         }
         result.append(topic_and_level)
         counter += 1
