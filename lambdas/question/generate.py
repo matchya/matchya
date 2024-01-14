@@ -2,7 +2,6 @@ import json
 import uuid
 import logging
 
-import boto3
 import psycopg2
 from openai import OpenAI
 
@@ -10,7 +9,7 @@ from config import Config
 from utils.topics import get_random_topics_by_position_type_and_level
 
 # Logger
-logger = logging.getLogger('publish_question_generation')
+logger = logging.getLogger('generate questions')
 logger.setLevel(logging.INFO)
 
 formatter = logging.Formatter('[%(levelname)s]:%(funcName)s:%(lineno)d:%(message)s')
@@ -21,11 +20,6 @@ if not logger.handlers:
     logger.addHandler(ch)
 
 logger.propagate = False
-
-# DynamoDB
-dynamodb = boto3.resource('dynamodb')
-dynamodb_client = boto3.client('dynamodb')
-criterion_table = dynamodb.Table(f'{Config.ENVIRONMENT}-Criterion')
 
 # Postgres
 db_conn = None
@@ -306,10 +300,7 @@ def save_data_to_metric_table(questions: list) -> str:
 
 def handler(event, context):
     """
-    Lambda handler.
-
-    :param event: The event data.
-    :param context: The context data.
+    Creating a new test sends a message to the queue to generate questions.
     """
     logger.info(event)
     try:
