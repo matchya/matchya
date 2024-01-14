@@ -193,6 +193,7 @@ def get_system_and_user_message(keywords: list, position_type: str, position_lev
     """ % ((position_level + ' level'), position_type)
 
     user_message = "Here are the topics and difficulties for the questions, create %d questions from the keywords\n" % len(keywords)
+    user_message = "Use the same topic name for json response.\n"
     for keyword in keywords:
         user_message += "Topic: %s, Difficulty: %s\n" % (keyword['topic'], keyword['difficulty'])
 
@@ -321,9 +322,9 @@ def handler(event, context):
         position_type = body.get('position_type')
         position_level = body.get('position_level')
 
-        n_questions = 6
+        NUM_QUESTIONS = 8
         logger.info("Getting the keywords from the position type and level...")
-        keywords: list = get_random_topics_by_position_type_and_level(position_type, position_level, n_questions)
+        keywords: list = get_random_topics_by_position_type_and_level(position_type, position_level, NUM_QUESTIONS)
 
         system_message, user_message = get_system_and_user_message(keywords, position_type, position_level)
 
