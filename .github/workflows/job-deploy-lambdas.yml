@@ -19,20 +19,20 @@ jobs:
         include:
           - package: authentication
             label: Authentication
-          - package: authorizer
-            label: Authorizer
-          - package: candidate
-            label: Candidate
-          - package: checklist
-            label: Checklist
-          - package: company
-            label: Company
-          - package: position
-            label: Position
-          - package: question
-            label: Question
-          - package: test
-            label: Test
+          # - package: authorizer
+          #   label: Authorizer
+          # - package: candidate
+          #   label: Candidate
+          # - package: checklist
+          #   label: Checklist
+          # - package: company
+          #   label: Company
+          # - package: position
+          #   label: Position
+          # - package: question
+          #   label: Question
+          # - package: test
+          #   label: Test
     runs-on: ubuntu-latest
     environment: Staging
     steps:
