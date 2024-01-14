@@ -1,7 +1,6 @@
 import logging
 
 import psycopg2
-import boto3
 
 from config import Config
 from utils.response import generate_success_response, generate_error_response
@@ -23,9 +22,6 @@ logger.propagate = False
 # Postgres
 db_conn = None
 db_cursor = None
-
-# SQS
-sqs = boto3.client('sqs')
 
 
 def connect_to_db():
@@ -97,7 +93,6 @@ def handler(event, context):
             'tests': tests
         }
         return generate_success_response(origin, data)
-
     except (ValueError, RuntimeError) as e:
         status_code = 400
         logger.error(f'Retrieving tests failed: {e}')

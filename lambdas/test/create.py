@@ -7,7 +7,7 @@ import boto3
 
 from config import Config
 from utils.response import generate_success_response, generate_error_response
-from utils.request import parse_header, parse_request_body, parse_cookie_body
+from utils.request import parse_header, parse_request_body, parse_cookie_body, validate_request_body
 
 # Logger
 logger = logging.getLogger('create test')
@@ -42,18 +42,6 @@ def connect_to_db():
     db_cursor = db_conn.cursor()
 
 
-def validate_request_body(body):
-    """
-    Validates the necessary fields in the test data.
-
-    :param body: The request body containing test data.
-    """
-    logger.info("Validating the test data...")
-    required_fields = ['name', 'position_type', 'position_level']
-    if not all(body.get(field) for field in required_fields):
-        raise ValueError('Missing required fields.')
-
-
 def create_test_record(company_id, body):
     """
     Creates a new test record.
@@ -73,7 +61,7 @@ def create_test_record(company_id, body):
 
 def send_message_to_sqs(body):
     """
-    Sends a message to the SQS queue.
+    Sends a message to the SQS queue to generate questions.
 
     :param body: The body of the message to send.
     :return: The response from the SQS queue.
@@ -100,7 +88,8 @@ def handler(event, context):
         body = parse_request_body(event)
         logger.info("Parsing the request header...")
         origin = parse_header(event)
-        validate_request_body(body)
+        logger.info("Validating the test data...")
+        validate_request_body(body, ['name', 'position_type', 'position_level'])
 
         company_id = parse_cookie_body(event)['company_id']
 
@@ -112,13 +101,12 @@ def handler(event, context):
         }
         send_message_to_sqs(sqs_body)
 
-        db_conn.commit()
-        logger.info("Successfully created a new test.")
         data = {
             'test_id': test_id
         }
+        db_conn.commit()
+        logger.info("Successfully created a new test.")
         return generate_success_response(origin, data)
-
     except (ValueError, RuntimeError) as e:
         status_code = 400
         logger.error(f'Creating a new position failed: {e}')
