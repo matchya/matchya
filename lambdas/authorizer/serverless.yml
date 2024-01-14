@@ -6,12 +6,12 @@ provider:
   name: aws
   runtime: python3.9
   architecture: arm64
-  stage: dev
+  stage: ${opt:stage, 'dev'}
   region: us-east-1
-  iam:
-    role: ${ssm:/terraform/shared/iam/lambda_role_arn}
   deploymentBucket:
     name: ${self:provider.stage}-sls-authorizer
+  iam:
+    role: ${ssm:/terraform/shared/iam/lambda_role_arn}
   ecr:
     images:
       default:
@@ -20,12 +20,12 @@ provider:
         buildArgs:
   environment:
     ENVIRONMENT: ${self:provider.stage}
+    JWT_SECRET_KEY: ${ssm:/secrets/${self:provider.stage}/jwt_secret_key}
     POSTGRES_HOST: ${ssm:/terraform/${self:provider.stage}/rds/endpoint}
     POSTGRES_PORT: ${ssm:/terraform/${self:provider.stage}/rds/port}
     POSTGRES_DB: ${ssm:/terraform/${self:provider.stage}/rds/db_name}
     POSTGRES_USER: ${ssm:/terraform/${self:provider.stage}/rds/db_username}
     POSTGRES_PASSWORD: ${ssm:/terraform/${self:provider.stage}/rds/db_password}
-    JWT_SECRET_KEY: ${ssm:/secrets/${self:provider.stage}/jwt_secret_key}
 
 functions:
   authorizer:

@@ -4,6 +4,7 @@
   "description": "",
   "scripts": {
     "deploy": "sls deploy",
+    "remove": "sls remove",
     "release": "semantic-release"
   },
   "keywords": [],

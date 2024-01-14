@@ -48,9 +48,17 @@ def retrieve_tests_from_db(company_id):
     """
     logger.info('Retrieving tests from db...')
     sql = """
-        SELECT id, name, position_type, position_level, created_at
-        FROM test
-        WHERE company_id = '%s'
+        SELECT 
+            t.id, t.name, t.position_type, t.position_level, t.updated_at,
+            COUNT(cr.candidate_id) AS num_candidates
+        FROM 
+            test t
+        LEFT JOIN 
+            candidate_result cr ON t.id = cr.test_id
+        WHERE 
+            t.company_id = '%s'
+        GROUP BY 
+            t.id, t.name, t.position_type, t.position_level, t.updated_at;
     """ % company_id
     try:
         db_cursor.execute(sql)
@@ -62,7 +70,8 @@ def retrieve_tests_from_db(company_id):
                 'name': row[1],
                 'position_type': row[2],
                 'position_level': row[3],
-                'created_at': str(row[4])
+                'updated_at': str(row[4]),
+                'num_candidates': row[5]
             }
             tests.append(test)
         return tests

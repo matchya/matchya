@@ -4,6 +4,7 @@
     "description": "",
     "scripts": {
       "deploy": "sls deploy",
+      "remove": "sls remove",
       "release": "semantic-release"
     },
     "author": "",
@@ -25,4 +26,3 @@
       "semantic-release-monorepo": "^7.0.5"
     }
   }
-  
