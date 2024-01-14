@@ -107,5 +107,7 @@ def handler(event, context):
         logger.error(f"Failed to retrieve company ({str(status_code)}): {e}")
         return generate_error_response(origin, status_code, str(e))
     finally:
+        if db_cursor:
+            db_cursor.close()
         if db_conn:
             db_conn.close()
