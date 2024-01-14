@@ -88,7 +88,7 @@ def process_sql_result(result):
     questions = {}
     for row in result:
         (question_id, question_text, question_topic, question_difficulty, metric_id, metric_name) = row[5:]
-        if question_id not in questions:
+        if question_id and question_id not in questions:
             question = {
                 'id': question_id,
                 'text': question_text,
