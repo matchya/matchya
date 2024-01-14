@@ -159,7 +159,6 @@ def handler(event, context):
             'candidate': candidate
         }
         return generate_success_response(origin, data)
-
     except (ValueError, RuntimeError) as e:
         status_code = 400
         logger.error(f'Retrieving candidates failed: {e}')
@@ -169,4 +168,7 @@ def handler(event, context):
         logger.error(f'Retrieving candidates failed: {e}')
         return generate_error_response(origin, status_code, str(e))
     finally:
-        db_conn.close()
+        if db_cursor:
+            db_cursor.close()
+        if db_conn:
+            db_conn.close()

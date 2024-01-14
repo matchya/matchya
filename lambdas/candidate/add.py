@@ -5,7 +5,7 @@ import psycopg2
 
 from config import Config
 from utils.response import generate_success_response, generate_error_response
-from utils.request import parse_header, parse_request_body, parse_cookie_body
+from utils.request import parse_header, parse_request_body, parse_cookie_body, validate_request_body
 
 # Logger
 logger = logging.getLogger('add candidate')
@@ -35,18 +35,6 @@ def connect_to_db():
     if not db_conn or db_conn.closed:
         db_conn = psycopg2.connect(host=Config.POSTGRES_HOST, database=Config.POSTGRES_DB, user=Config.POSTGRES_USER, password=Config.POSTGRES_PASSWORD)
     db_cursor = db_conn.cursor()
-
-
-def validate_request_body(body):
-    """
-    Validates the necessary fields in the company data.
-
-    :param body: The request body containing company data.
-    """
-    logger.info("Validating the company data...")
-    required_fields = ['email', 'first_name', 'last_name']
-    if not all(body.get(field) for field in required_fields):
-        raise ValueError('Missing required fields.')
 
 
 def candidate_exists(email):
@@ -98,7 +86,7 @@ def get_candidate_id(email):
 def save_company_candidate(company_id, candidate_id):
     """
     Saves the candidate to company.
-    
+
     :param company_id: The id of the company.
     :param candidate_id: The id of the candidate.
     """
@@ -121,7 +109,8 @@ def handler(event, context):
         company_id = parse_cookie_body(event)['company_id']
         logger.info("Parsing the request header...")
         origin = parse_header(event)
-        validate_request_body(body)
+        logger.info("Validating the candidate data...")
+        validate_request_body(body, ['email', 'first_name', 'last_name'])
 
         if not candidate_exists(body['email']):
             candidate_id = create_candidate_record(body)
@@ -130,13 +119,12 @@ def handler(event, context):
 
         save_company_candidate(company_id, candidate_id)
 
-        db_conn.commit()
-        logger.info("Successfully add a candidate.")
         data = {
             'candidate_id': candidate_id
         }
+        db_conn.commit()
+        logger.info("Successfully add a candidate.")
         return generate_success_response(origin, data)
-
     except (ValueError, RuntimeError) as e:
         status_code = 400
         logger.error(f'Adding a new candidate failed: {e}')
@@ -146,4 +134,7 @@ def handler(event, context):
         logger.error(f'Adding a new candidate failed: {e}')
         return generate_error_response(origin, status_code, str(e))
     finally:
-        db_conn.close()
+        if db_cursor:
+            db_cursor.close()
+        if db_conn:
+            db_conn.close()

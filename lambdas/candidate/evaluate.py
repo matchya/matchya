@@ -6,7 +6,7 @@ from openai import OpenAI
 
 from config import Config
 from utils.response import generate_success_response, generate_error_response
-from utils.request import parse_header, parse_request_body
+from utils.request import parse_header, parse_request_body, validate_request_body
 
 
 # Logger
@@ -40,18 +40,6 @@ def connect_to_db():
     if not db_conn or db_conn.closed:
         db_conn = psycopg2.connect(host=Config.POSTGRES_HOST, database=Config.POSTGRES_DB, user=Config.POSTGRES_USER, password=Config.POSTGRES_PASSWORD)
     db_cursor = db_conn.cursor()
-
-
-def validate_request_body(body):
-    """
-    Validates the necessary fields in the company data.
-
-    :param body: The request body containing company data.
-    """
-    logger.info("Validating the company data...")
-    required_fields = ['test_id', 'candidate_id']
-    if not all(body.get(field) for field in required_fields):
-        raise ValueError('Missing required fields.')
 
 
 def get_candidate_result_id(test_id, candidate_id):
@@ -157,7 +145,6 @@ def get_summary_from_gpt(system_message, user_message):
 
     :param answers: The candidate answers.
     """
-
     logger.info('Generating summary from GPT...')
     try:
         completion = chat_client.chat.completions.create(
@@ -185,7 +172,6 @@ def save_candidate_result(candidate_result_id, total_score, summary):
     :param total_score: The total score.
     :param summary: The summary.
     """
-
     logger.info('Saving candidate result to db...')
     summary = summary.replace("'", "''")
     sql = """
@@ -209,7 +195,8 @@ def handler(event, context):
         body = parse_request_body(event)
         logger.info("Parsing the request header...")
         origin = parse_header(event)
-        validate_request_body(body)
+        logger.info("Validating the body data...")
+        validate_request_body(body, ['test_id', 'candidate_id'])
 
         candidate_result_id = get_candidate_result_id(body['test_id'], body['candidate_id'])
         answers = get_candidate_answers(body['test_id'], candidate_result_id)
@@ -219,11 +206,12 @@ def handler(event, context):
         summary = get_summary_from_gpt(system_message, user_message)
 
         save_candidate_result(candidate_result_id, total_score, summary)
-        db_conn.commit()
-        logger.info("Successfully evaluated a candidate.")
+
         body = {
             'candidate_result_id': candidate_result_id
         }
+        db_conn.commit()
+        logger.info("Successfully evaluated a candidate.")
         return generate_success_response(origin, body)
     except (ValueError, RuntimeError) as e:
         status_code = 400
@@ -234,4 +222,7 @@ def handler(event, context):
         logger.error(f'Getting final evaluation of a candidate faild: {e}')
         return generate_error_response(origin, status_code, str(e))
     finally:
-        db_conn.close()
+        if db_cursor:
+            db_cursor.close()
+        if db_conn:
+            db_conn.close()
