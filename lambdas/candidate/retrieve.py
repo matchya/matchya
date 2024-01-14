@@ -43,7 +43,7 @@ def retrieve_candidates(company_id):
     :param company_id: The id of the company.
     :return: The candidate.
     """
-    logger.info("Retrieving a candidate...")
+    logger.info("Retrieving a candidates...")
     sql = "SELECT id, email, first_name, last_name FROM candidate WHERE company_id = %s;"
     sql = """
         SELECT 
@@ -74,24 +74,23 @@ def process_sql_result(result):
     for row in result:
         (candidate_id, email, first_name, last_name, github_username,
          result_id, test_id, total_score, created_at, test_id, test_name) = row
-        if candidate_id not in candidates:
+        if candidate_id and candidate_id not in candidates:
             candidates[candidate_id] = {
                 'id': candidate_id,
                 'email': email,
                 'first_name': first_name,
                 'last_name': last_name,
                 'github_username': github_username,
-                'results': []
+                'result': None
             }
         if result_id:
-            result = {
+            candidates[candidate_id]['result'] = {
                 'id': result_id,
                 'test_id': test_id,
                 'test_name': test_name,
                 'total_score': total_score,
-                'created_at': created_at
+                'created_at': str(created_at)
             }
-            candidates[candidate_id]['result'].append(result)
     candidates = list(candidates.values())
     return candidates
 

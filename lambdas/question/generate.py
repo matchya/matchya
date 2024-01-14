@@ -7,6 +7,7 @@ import psycopg2
 from openai import OpenAI
 
 from config import Config
+from utils.topics import get_random_topics_by_position_type_and_level
 
 # Logger
 logger = logging.getLogger('publish_question_generation')
@@ -44,28 +45,6 @@ def connect_to_db():
     if not db_conn or db_conn.closed:
         db_conn = psycopg2.connect(host=Config.POSTGRES_HOST, database=Config.POSTGRES_DB, user=Config.POSTGRES_USER, password=Config.POSTGRES_PASSWORD)
     db_cursor = db_conn.cursor()
-
-
-def get_keywords_from_position_type_and_level(position_type: str, position_level: str, n_questions: int) -> list:
-    """
-    Gets the keywords from the position type and level.
-
-    :param position_type: The position type.
-    :param position_level: The position level.
-    :param n_questions: The number of questions to generate.
-    :return: A list of keywords.
-    """
-    logger.info("Getting the keywords from the position type and level...")
-    # Mocked keywords
-    keywords = [
-        {'topic': 'React', 'difficulty': 'easy'},
-        {'topic': 'Docker', 'difficulty': 'medium'},
-        {'topic': 'Microservices Architecture', 'difficulty': 'hard'},
-        {'topic': 'AWS', 'difficulty': 'medium'},
-        {'topic': 'SQL', 'difficulty': 'easy'},
-        {'topic': 'Python', 'difficulty': 'medium'}
-    ]
-    return keywords
 
 
 def get_system_and_user_message(keywords: list, position_type: str, position_level: str):
@@ -214,6 +193,7 @@ def get_system_and_user_message(keywords: list, position_type: str, position_lev
     """ % ((position_level + ' level'), position_type)
 
     user_message = "Here are the topics and difficulties for the questions, create %d questions from the keywords\n" % len(keywords)
+    user_message = "Use the same topic name for json response.\n"
     for keyword in keywords:
         user_message += "Topic: %s, Difficulty: %s\n" % (keyword['topic'], keyword['difficulty'])
 
@@ -342,10 +322,9 @@ def handler(event, context):
         position_type = body.get('position_type')
         position_level = body.get('position_level')
 
-        n_questions = 6
-
-        # If GitHub is linked, get keywords from GitHub repo
-        keywords: list = get_keywords_from_position_type_and_level(position_type, position_level, n_questions)
+        NUM_QUESTIONS = 8
+        logger.info("Getting the keywords from the position type and level...")
+        keywords: list = get_random_topics_by_position_type_and_level(position_type, position_level, NUM_QUESTIONS)
 
         system_message, user_message = get_system_and_user_message(keywords, position_type, position_level)
 
