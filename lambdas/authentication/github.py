@@ -8,8 +8,9 @@ import psycopg2
 
 from config import Config
 from utils.response import generate_success_response, generate_error_response
-from utils.request import parse_header, parse_request_body
-from utils.token import generate_access_token, encrypt_github_access_token
+from utils.request import parse_header, parse_request_body, validate_request_body
+from utils.token import generate_access_token, create_access_token_record
+from utils.company import company_already_exists, get_company_id, create_company_record
 
 # Logger
 logger = logging.getLogger('github authentication')
@@ -50,18 +51,6 @@ def connect_to_db():
     db_cursor = db_conn.cursor()
 
 
-def validate_company_data(body):
-    """
-    Validates the necessary fields in the company data.
-
-    :param body: The request body containing company data.
-    """
-    logger.info("Validating the company data...")
-    required_fields = ['code']
-    if not all(body.get(field) for field in required_fields):
-        raise ValueError('Missing required fields.')
-
-
 def get_github_access_token(code: str):
     """
     Gets the GitHub access token using the authorization code.
@@ -80,7 +69,8 @@ def get_github_access_token(code: str):
             json={
                 'client_id': CLIENT_ID,
                 'client_secret': CLIENT_SECRET,
-                'code': code
+                'code': code,
+                'accept': 'json'
             }
         )
         content = json.loads(response.content)
@@ -122,58 +112,6 @@ def get_user_details(gh_access_token):
         raise RuntimeError(f"Error getting GitHub user details: {e}")
 
 
-def company_already_exists(email):
-    """
-    Checks if the company already exists in the database.
-
-    :param email: The email address of the user.
-    :return: True if the user already exists, False otherwise.
-    """
-    logger.info(f"Checking if the user already exists... {email}")
-    sql = "SELECT id FROM company WHERE email = %s;"
-    try:
-        db_cursor.execute(sql, (email,))
-        return db_cursor.fetchone() is not None
-    except Exception as e:
-        raise RuntimeError(f"Error checking if user already exists: {e}")
-
-
-def get_company_id(email):
-    """
-    Retrieves the company id from the database based on the provided email.
-
-    :param email: The email address used to query the company id.
-    :return: The first item from the database query result.
-    """
-    logger.info("Getting company id...")
-    try:
-        db_cursor.execute('SELECT id FROM company WHERE email = %s', (email,))
-        result = db_cursor.fetchall()
-    except Exception as e:
-        raise RuntimeError(f"Error retrieving company id: {e}")
-    if not result:
-        raise ValueError('Company not found. Please try again.')
-
-    return result[0][0]
-
-
-def create_company_record(company_id: str, body: dict):
-    """
-    Creates a new company record in the database.
-
-    :param company_id: Unique identifier for the company.
-    :param body: The request body containing company data.
-    """
-    logger.info("Creating the company record...")
-    sql = "INSERT INTO company (id, name, email, github_access_token) VALUES (%s, %s, %s, %s, %s);"
-    try:
-        db_cursor.execute(sql, (company_id, body['name'], body['email'], encrypt_github_access_token(body['github_access_token'])))
-    except psycopg2.IntegrityError:
-        raise RuntimeError(f"Email address is already used: {body['email']}")
-    except Exception as e:
-        raise RuntimeError(f"Error saving to company table: {e}")
-
-
 def save_company_repositories(company_id: str, github_username: str, github_access_token: str):
     """
     Saves the repositories of the company to the database.
@@ -190,7 +128,7 @@ def save_company_repositories(company_id: str, github_username: str, github_acce
     try:
         db_cursor.execute(sql)
     except Exception as e:
-        raise RuntimeError(f"Error saving to repository table: {e}")
+        raise RuntimeError(f"Error saving company repository names: {e}")
 
 
 def get_company_repository_names(github_username: str, github_access_token: str):
@@ -213,24 +151,6 @@ def get_company_repository_names(github_username: str, github_access_token: str)
     return repo_names
 
 
-def create_access_token_record(company_id, access_token):
-    """
-    Creates a new access token record in the database.
-
-    :param company_id: Unique identifier for the company associated with the token.
-    :param access_token: The access token to be saved.
-    """
-    logger.info("Creating an access token record...")
-    access_token_info = {
-        'token_id': access_token,
-        'company_id': company_id
-    }
-    try:
-        access_token_table.put_item(Item=access_token_info)
-    except Exception as e:
-        raise RuntimeError(f"Error saving to access token table: {e}")
-
-
 def handler(event, context):
     try:
         logger.info('Github Authentication started...')
@@ -240,7 +160,7 @@ def handler(event, context):
         body = parse_request_body(event)
         logger.info("Parsing the request header...")
         origin, host = parse_header(event)
-        validate_company_data(body)
+        validate_request_body(body, ['code'])
 
         code = body.get('code')
         github_access_token = get_github_access_token(code)
@@ -252,24 +172,25 @@ def handler(event, context):
             "github_access_token": github_access_token
         }
 
-        if company_already_exists(email):
-            company_id = get_company_id(email)
+        logger.info("Checking if company already exists...")
+        if company_already_exists(email, db_cursor):
+            company_id = get_company_id(email, db_cursor)
             access_token = generate_access_token(company_id)
             logger.info('Github Login successful: %s', email)
             return generate_success_response(origin, host, access_token)
 
         company_id = str(uuid.uuid4())
-        create_company_record(company_id, data)
+        create_company_record(company_id, data, db_cursor)
 
         save_company_repositories(company_id, username, github_access_token)
 
+        logger.info("Saving the access token...")
         access_token = generate_access_token(company_id)
         create_access_token_record(company_id, access_token)
 
         db_conn.commit()
         logger.info('Github Registration successful: %s', email)
         return generate_success_response(origin, host, access_token)
-
     except (ValueError, RuntimeError) as e:
         status_code = 400
         logger.error(f'Login failed (status {str(status_code)}): {e}')
@@ -279,4 +200,7 @@ def handler(event, context):
         logger.error(f'Login failed (status {str(status_code)}): {e}')
         return generate_error_response(origin, status_code, str(e))
     finally:
-        db_conn.close()
+        if db_cursor:
+            db_cursor.close()
+        if db_conn:
+            db_conn.close()
