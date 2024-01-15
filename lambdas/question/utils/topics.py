@@ -155,20 +155,20 @@ def get_random_topics_by_position_type_and_level(type, level, num_topics=8):
         level_probabilities = [0.2, 0.4, 0.4]
 
     if type == "Frontend Engineer":
-        return get_random_topics(FRONTEND_TOPICS, level_probabilities, num_topics)
+        return _get_random_topics(FRONTEND_TOPICS, level_probabilities, num_topics)
     elif type == "Backend Engineer":
-        return get_random_topics(BACKEND_TOPICS, level_probabilities, num_topics)
+        return _get_random_topics(BACKEND_TOPICS, level_probabilities, num_topics)
     elif type == "DevOps Engineer":
-        return get_random_topics(DEVOPS_TOPICS, level_probabilities, num_topics)
+        return _get_random_topics(DEVOPS_TOPICS, level_probabilities, num_topics)
     elif type == "Mobile Engineer":
-        return get_random_topics(MOBILE_TOPICS, level_probabilities, num_topics)
+        return _get_random_topics(MOBILE_TOPICS, level_probabilities, num_topics)
     elif type == "Software Engineer":
-        return get_topic_for_software_engineer(level_probabilities, num_topics)
+        return _get_topic_for_software_engineer(level_probabilities, num_topics)
 
-    return get_random_topics_from_all(level_probabilities, num_topics)
+    return _get_random_topics_from_all(level_probabilities, num_topics)
 
 
-def get_random_topics(topics, level_probabilities, num_topics):
+def _get_random_topics(topics, level_probabilities, num_topics):
     """
     Returns a list of random topics from the given topics.
     """
@@ -188,17 +188,17 @@ def get_random_topics(topics, level_probabilities, num_topics):
     return result
 
 
-def get_topic_for_software_engineer(level_probabilities, num_topics):
+def _get_topic_for_software_engineer(level_probabilities, num_topics):
     """
     Returns a list of random topics from the given topics.
     """
     half_num_topics = int(num_topics / 2)
-    result = get_random_topics(SOFTWARE_ENGINEERING_TOPICS, level_probabilities, half_num_topics)
-    result += get_random_topics_from_all(level_probabilities, (num_topics - half_num_topics))
+    result = _get_random_topics(SOFTWARE_ENGINEERING_TOPICS, level_probabilities, half_num_topics)
+    result += _get_random_topics_from_all(level_probabilities, (num_topics - half_num_topics))
     return result
 
 
-def get_random_topics_from_all(level_probabilities, num_topics):
+def _get_random_topics_from_all(level_probabilities, num_topics):
     """
     Returns a list of random topics from all topics
     """
