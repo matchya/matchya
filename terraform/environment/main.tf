@@ -1,5 +1,5 @@
 locals {
-  app_domain_name = "app.${terraform.workspace}.${data.aws_ssm_parameter.route53_hosted_zone.value}"
+  app_domain_name = terraform.workspace == "production" ? "app.${data.aws_ssm_parameter.route53_hosted_zone.value}" : "app.${terraform.workspace}.${data.aws_ssm_parameter.route53_hosted_zone.value}"
 }
 
 module "app" {
