@@ -65,3 +65,13 @@ def parse_cookie_body(event):
         return body
     except json.JSONDecodeError as e:
         raise ValueError(f"Invalid JSON in request body: {e}")
+
+
+def validate_request_body(body, required_fields):
+    """
+    Validates the necessary fields
+
+    :param body: The request body containing the data.
+    """
+    if not all(body.get(field) for field in required_fields):
+        raise ValueError('Missing required fields.')

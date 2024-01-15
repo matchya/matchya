@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "main" {
-  bucket = var.domain_name
+  bucket = var.app_domain_name
 
   lifecycle {
     create_before_destroy = true
@@ -23,12 +23,12 @@ resource "aws_s3_bucket_website_configuration" "main" {
 
   redirect_all_requests_to {
     protocol = "https"
-    host_name = "www.${var.domain_name}"
+    host_name = "www.${var.app_domain_name}"
   }
 }
 
 resource "aws_s3_bucket" "www" {
-  bucket = "www.${var.domain_name}"
+  bucket = "www.${var.app_domain_name}"
 
   force_destroy = true
 }
@@ -52,7 +52,7 @@ resource "aws_s3_bucket_policy" "www" {
       {
         Action    = ["s3:GetObject"],
         Effect    = "Allow",
-        Resource  = ["arn:aws:s3:::${"www.${var.domain_name}"}/*"],
+        Resource  = ["arn:aws:s3:::${"www.${var.app_domain_name}"}/*"],
         Principal = "*"
       },
     ],

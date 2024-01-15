@@ -15,16 +15,7 @@ module "route53" {
   source = "./modules/route53"
 
   hosted_zone = var.hosted_zone
-  google_workspace_record_name = var.google_workspace_record_name
   google_workspace_records = var.google_workspace_records
-}
-
-module "app" {
-  source = "./modules/website"
-
-  domain_name = var.app_domain_name
-  region = data.aws_region.current.name
-  hosted_zone = module.route53.main_route53_zone
 }
 
 module "vpc" {

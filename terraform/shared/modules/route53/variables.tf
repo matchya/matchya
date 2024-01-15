@@ -3,13 +3,13 @@ variable "hosted_zone" {
   type = string
 }
 
-
-variable "google_workspace_record_name" {
-  description = "The name of the google workspace record"
-  type = string
-}
-
 variable "google_workspace_records" {
   description = "Map of google workspace records"
   type = map(list(string))
+}
+
+variable "create_new" {
+  description = "Whether to create a new hosted zone"
+  type = bool
+  default = false
 }

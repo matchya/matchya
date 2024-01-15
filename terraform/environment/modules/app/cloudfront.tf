@@ -16,7 +16,7 @@ resource "aws_cloudfront_distribution" "www" {
   is_ipv6_enabled     = true
   default_root_object = "index.html"
 
-  aliases = [ "www.${var.domain_name}" ]
+  aliases = [ "www.${var.app_domain_name}" ]
 
   custom_error_response {
     error_code            = 403
@@ -89,7 +89,7 @@ resource "aws_cloudfront_distribution" "main" {
 
   origin {
     origin_id                = "S3-${aws_s3_bucket.main.bucket}"
-    domain_name              = "${var.domain_name}.s3-website-${var.region}.amazonaws.com"
+    domain_name              = "${var.app_domain_name}.s3-website-${var.region}.amazonaws.com"
     custom_origin_config {
       http_port              = 80
       https_port             = 443
@@ -117,7 +117,7 @@ resource "aws_cloudfront_distribution" "main" {
     max_ttl                = 0
   }
 
-  aliases = [ var.domain_name ]
+  aliases = [ var.app_domain_name ]
 
   restrictions {
     geo_restriction {
