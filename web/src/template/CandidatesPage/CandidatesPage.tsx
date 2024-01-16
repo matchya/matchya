@@ -11,10 +11,7 @@ const CandidatesPageTemplate = () => {
               <div className="px-12">
                 <div className="mb-8 flex justify-between items-center">
                   <div className="space-y-4">
-                    <h3 className="text-4xl font-bold">
-                      Your Matchya Candidates
-                    </h3>
-                    <p className="">See all your Matchya candidates here</p>
+                    <h3 className="text-4xl font-bold">Candidates</h3>
                   </div>
                 </div>
                 <CandidatesTable candidates={mockedCandidates} />
