@@ -129,10 +129,10 @@ jobs:
     secrets: inherit
 
   deploy-terraform-environment:
-    if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop')
+    if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop') && needs.check-infrastructure-changes.outputs.infra-changed == 'true'
     name: Deployment
     permissions: write-all
-    needs: [deploy-terraform-shared]
+    needs: [cleanup, deploy-terraform-shared, check-infrastructure-changes]
     uses: ./.github/workflows/job-deploy-infrastructure.yml
     with:
       component: environment
@@ -152,7 +152,7 @@ jobs:
     secrets: inherit
 
   deploy-lambdas:
-    if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop')
+    if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop') && needs.check-lambda-changes.outputs.lambdas-changed == 'true'
     name: Deployment
     needs: [cleanup, check-lambda-changes]
     uses: ./.github/workflows/job-deploy-lambdas.yml
