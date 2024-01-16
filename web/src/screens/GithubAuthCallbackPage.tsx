@@ -26,7 +26,7 @@ const GithubAuthCallback = () => {
       const response = await axiosInstance.post('/login/github', { code });
 
       if (response.data.status === 'success') {
-        navigate('/dashboard');
+        navigate('/onboarding');
       }
     } catch (error) {
       setLoginFailed(true);

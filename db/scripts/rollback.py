@@ -72,16 +72,16 @@ if __name__ == "__main__":
     - Runs the Liquibase changelog with the retrieved database details.
     """
     parser = argparse.ArgumentParser(description="Rollback database changes by a specified count using Liquibase.")
-    parser.add_argument("count", type=int, help="Number of changesets to roll back")
+    parser.add_argument("stage", type=str, help="Stage of the deployment", default='dev')
+    parser.add_argument("count", type=int, help="Number of changesets to roll back", default=1)
     args = parser.parse_args()
 
     kwargs = {}
-    kwargs['rds_endpoint'] = get_ssm_parameter('/terraform/dev/rds/endpoint')
-    kwargs['rds_port'] = get_ssm_parameter('/terraform/dev/rds/port')
+    kwargs['rds_endpoint'] = get_ssm_parameter(f'/terraform/{args.stage}/rds/endpoint') if args.stage == 'dev' else 'host.docker.internal'
+    kwargs['rds_port'] = get_ssm_parameter(f'/terraform/{args.stage}/rds/port') if args.stage == 'dev' else 5433
     kwargs['db_username'] = get_ssm_parameter('/terraform/dev/rds/db_username')
     kwargs['db_password'] = get_ssm_parameter('/terraform/dev/rds/db_password')
-    kwargs['db_name'] = get_ssm_parameter('/terraform/dev/rds/db_name')
-
+    kwargs['db_name'] = args.stage
     logger.info(f'Retrieving SSM params: {kwargs}')
 
     build_docker_image()

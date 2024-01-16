@@ -5,13 +5,7 @@ import { StoreProviderProps } from './interface';
 
 import { mockedPositions, mockedSelectedPosition } from '@/data/mock';
 import { axiosInstance } from '@/lib/client';
-import {
-  Assessment,
-  Candidate,
-  Criterion,
-  CustomError,
-  Position,
-} from '@/types';
+import { Candidate, CustomError, Position } from '@/types';
 
 export interface PositionState {
   setupRequired: boolean;
@@ -89,12 +83,6 @@ export const PositionStoreProvider = ({ children }: StoreProviderProps) => {
                 ...selectedPosition,
                 checklist_status: res.data.payload.checklist_status,
                 checklist: res.data.payload.checklist,
-                candidates: assignCriteriaValueForCandidates(
-                  res.data.payload.candidates,
-                  res.data.payload.checklist
-                    ? res.data.payload.checklist.criteria
-                    : []
-                ),
               },
             });
           } else {
@@ -120,10 +108,6 @@ export const PositionStoreProvider = ({ children }: StoreProviderProps) => {
         set({
           selectedPosition: {
             ...selectedPosition,
-            candidates: assignCriteriaValueForCandidates(
-              candidates,
-              selectedPosition.checklist.criteria
-            ),
           },
         });
 
@@ -147,23 +131,4 @@ export const PositionStoreProvider = ({ children }: StoreProviderProps) => {
       {children}
     </PositionStoreContext.Provider>
   );
-};
-
-const assignCriteriaValueForCandidates = (
-  candidates: Candidate[],
-  criteria: Criterion[]
-): Candidate[] => {
-  const criteriaMap: { [key: string]: Criterion } = {};
-  criteria.forEach((criterion: Criterion) => {
-    criteriaMap[criterion.id] = criterion;
-  });
-
-  candidates.forEach(candidate => {
-    if (candidate.status === 'succeeded') {
-      candidate.assessments.forEach((assessment: Assessment) => {
-        assessment.criterion = criteriaMap[assessment.criterion.id];
-      });
-    }
-  });
-  return candidates;
 };
