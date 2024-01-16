@@ -52,17 +52,25 @@ jobs:
           SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
         working-directory: web
 
+      - name: Fetch App Domain Name
+        id: fetch_app_domain_name
+        run: |
+          echo "Starting fetching App Domain Name..."
+          app_domain_name=$(aws ssm get-parameter --name "/terraform/${{ inputs.environment }}/domain_name" --query "Parameter.Value" --output text)
+          echo "app_domain_name=$app_domain_name" >> $GITHUB_OUTPUT
+          echo "App Domain Name found: $app_domain_name"
+
       - name: Deploy to S3
         run: |
           echo "Starting deployment to S3..."
-          aws s3 sync dist/ s3://www.${{ vars.APP_DOMAIN_NAME }}
+          aws s3 sync dist/ s3://www.${{ steps.fetch_app_domain_name.app_domain_name }}
           echo "Deployment to S3 completed."
         working-directory: web
 
       - name: Get the distribution id for Cloudfront
         id: get_distribution_id
         run: |
-          distribution_id=$(aws ssm get-parameter --name "/terraform/shared/www.${{ vars.APP_DOMAIN_NAME }}/cloudfront_distribution_id" --query "Parameter.Value" --output text)
+          distribution_id=$(aws ssm get-parameter --name "/terraform/${{ inputs.environment }}/www.${{ steps.fetch_app_domain_name.app_domain_name }}/cloudfront_distribution_id" --query "Parameter.Value" --output text)
           echo "distribution_id=$distribution_id" >> $GITHUB_OUTPUT
           echo "Distribution Id found: $distribution_id"
 
