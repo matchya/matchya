@@ -67,6 +67,30 @@ jobs:
         id: check
         run: echo "web-changed=${{ steps.changes-web.outputs.package }}" >> $GITHUB_OUTPUT
 
+  check-lambda-changes:
+    if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop')
+    name: Check Lambda Changes
+    runs-on: ubuntu-latest
+    outputs:
+      lambdas-changed: ${{ steps.check.outputs.lambdas-changed }}
+    steps:
+      - name: Fetch Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Check Lambda Files Changed
+        uses: dorny/paths-filter@v2
+        id: changes-lambda
+        with:
+          filters: |
+            package:
+              - 'lambdas/**'
+
+      - name: Set output
+        id: check
+        run: echo "lambdas-changed=${{ steps.changes-lambda.outputs.package }}" >> $GITHUB_OUTPUT
+
   check-db-changes:
     if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop')
     name: Check DB Changes
@@ -130,7 +154,7 @@ jobs:
   deploy-lambdas:
     if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop')
     name: Deployment
-    needs: [cleanup]
+    needs: [cleanup, check-lambda-changes]
     uses: ./.github/workflows/job-deploy-lambdas.yml
     with:
       environment: staging

@@ -17,6 +17,12 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
+      - name: Setup SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ vars.SSH_PUBLIC_KEY }}" > ~/.ssh/id_rsa_matchya.pub
+          chmod 600 ~/.ssh/id_rsa_matchya.pub
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
