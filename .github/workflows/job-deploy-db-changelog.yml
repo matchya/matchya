@@ -35,21 +35,13 @@ jobs:
         with:
           python-version: 3.8
 
-      - name: Set up SSH tunnel
-        run: |
-          make create-ssh-tunnel environment=${{ inputs.environment }}
-
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
         working-directory: db
 
-      - name: Run Update Changelog
+      - name: Update Changelog
         run: |
-          python ./update.py staging
-        working-directory: db/scripts
-
-      - name: Close SSH tunnel
-        if: always()
-        run: |
+          make create-ssh-tunnel environment=${{ inputs.environment }}
+          python scripts/update.py staging
           make close-ssh-tunnel environment=${{ inputs.environment }}
