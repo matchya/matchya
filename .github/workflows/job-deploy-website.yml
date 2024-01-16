@@ -63,7 +63,7 @@ jobs:
       - name: Deploy to S3
         run: |
           echo "Starting deployment to S3..."
-          aws s3 sync dist/ s3://www.${{ steps.fetch_app_domain_name.app_domain_name }}
+          aws s3 sync dist/ s3://www.${{ steps.fetch_app_domain_name.outputs.app_domain_name }}
           echo "Deployment to S3 completed."
         working-directory: web
 
