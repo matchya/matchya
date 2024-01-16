@@ -4,3 +4,4 @@ export { default as OAuthCallbackPageTemplate } from './OAuthCallbackPage/OAuthC
 export { default as HomePageTemplate } from './HomePage/HomePage';
 export { default as SettingsPageTemplate } from './SettingsPage/SettingsPage';
 export { default as OnboardingPageTemplate } from './OnboardingPage/OnboardingPage';
+export { default as InterviewsPageTemplate } from './InterviewsPage/InterviewsPage';
