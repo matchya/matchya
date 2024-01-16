@@ -1,5 +1,6 @@
 import subprocess
 import logging
+import argparse
 
 import boto3
 
@@ -71,13 +72,17 @@ if __name__ == "__main__":
     - Builds the Docker image.
     - Runs the Liquibase changelog with the retrieved database details.
     """
-    kwargs = {}
-    kwargs['rds_endpoint'] = get_ssm_parameter('/terraform/dev/rds/endpoint')
-    kwargs['rds_port'] = get_ssm_parameter('/terraform/dev/rds/port')
-    kwargs['db_username'] = get_ssm_parameter('/terraform/dev/rds/db_username')
-    kwargs['db_password'] = get_ssm_parameter('/terraform/dev/rds/db_password')
-    kwargs['db_name'] = get_ssm_parameter('/terraform/dev/rds/db_name')
+    parser = argparse.ArgumentParser(description="Run Liquibase changelog on a database")
+    parser.add_argument("stage", type=str, help="Stage of the deployment", default='dev')
+    args = parser.parse_args()
 
+    kwargs = {}
+
+    kwargs['rds_endpoint'] = get_ssm_parameter(f'/terraform/{args.stage}/rds/endpoint') if args.stage == 'dev' else 'host.docker.internal'
+    kwargs['rds_port'] = get_ssm_parameter(f'/terraform/{args.stage}/rds/port') if args.stage == 'dev' else 5433
+    kwargs['db_username'] = get_ssm_parameter(f'/terraform/{args.stage}/rds/db_username')
+    kwargs['db_password'] = get_ssm_parameter(f'/terraform/{args.stage}/rds/db_password')
+    kwargs['db_name'] = args.stage
     logger.info(f'Retrieving SSM params: {kwargs}')
 
     build_docker_image()

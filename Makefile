@@ -4,6 +4,10 @@ environment ?= staging
 create-ssh-tunnel:
 	./scripts/create_ssh_tunnel.sh --environment $(environment)
 
+.PHONY: close-ssh-tunnel
+close-ssh-tunnel:
+	./scripts/close_ssh_tunnel.sh --environment $(environment)
+
 .PHONY: access-secure-db
 access-secure-db:
 	./scripts/access_secure_db.sh --environment $(environment)

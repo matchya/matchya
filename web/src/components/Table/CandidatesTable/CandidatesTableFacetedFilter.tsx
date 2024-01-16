@@ -19,7 +19,7 @@ import {
 } from '@/components';
 import { cn } from '@/lib/utils';
 
-interface CandidateTableFacetedFilterProps<TData, TValue> {
+interface CandidatesTableFacetedFilterProps<TData, TValue> {
   column?: Column<TData, TValue>;
   title?: string;
   options: {
@@ -29,11 +29,11 @@ interface CandidateTableFacetedFilterProps<TData, TValue> {
   }[];
 }
 
-export function CandidateTableFacetedFilter<TData, TValue>({
+export function CandidatesTableFacetedFilter<TData, TValue>({
   column,
   title,
   options,
-}: CandidateTableFacetedFilterProps<TData, TValue>) {
+}: CandidatesTableFacetedFilterProps<TData, TValue>) {
   const facets = column?.getFacetedUniqueValues();
   const selectedValues = new Set(column?.getFilterValue() as string[]);
 

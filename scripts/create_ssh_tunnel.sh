@@ -17,10 +17,12 @@ while (( "$#" )); do
   esac
 done
 
-# Check if the AWS profile is set
-if [ -z "$AWS_PROFILE" ]; then
-    echo "AWS_PROFILE is not set. Please set it before running this script."
-    exit 1
+# Check if the AWS profile is set, unless the environment is 'staging' or 'production'
+if [[ "$environment" != "staging" && "$environment" != "production" ]]; then
+    if [ -z "$AWS_PROFILE" ]; then
+        echo "AWS_PROFILE is not set. Please set it before running this script."
+        exit 1
+    fi
 fi
 
 echo "Fetching bastion host public ip"
@@ -37,4 +39,4 @@ local_port=5433
 remote_port=5432
 
 echo "Connecting to $bastion_public_ip..."
-ssh -N -L $local_port:$rds_endpoint:$remote_port -i ~/.ssh/id_rsa_matchya ubuntu@$bastion_public_ip
+ssh -N -L $local_port:$rds_endpoint:$remote_port -i ~/.ssh/id_rsa_matchya ubuntu@$bastion_public_ip &

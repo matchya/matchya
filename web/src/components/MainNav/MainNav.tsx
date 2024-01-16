@@ -15,6 +15,12 @@ const MainNav = () => {
       >
         Tests
       </Link>
+      <Link
+        to="/interviews"
+        className="text-sm font-bold text-black hover:text-gray-200"
+      >
+        Interviews
+      </Link>
     </div>
   );
 };

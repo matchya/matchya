@@ -10,6 +10,7 @@ import CandidatesPage from '@/screens/CandidatesPage';
 import GithubAuthCallbackPage from '@/screens/GithubAuthCallbackPage';
 import GoogleAuthCallbackPage from '@/screens/GoogleAuthCallbackPage';
 import HomePage from '@/screens/HomePage';
+import InterviewsPage from '@/screens/InterviewsPage';
 import OnboardingPage from '@/screens/OnboardingPage';
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
           <Route element={<AuthenticatedLayout />}>
             <Route path="/onboarding" element={<OnboardingPage />} />
             <Route path="/candidates" element={<CandidatesPage />} />
+            <Route path="/interviews" element={<InterviewsPage />} />
           </Route>
           <Route element={<UnAuthenticatedLayout />}>
             <Route path="/" element={<HomePage />} />

@@ -1,7 +1,7 @@
-import { CandidatesTable } from '@/components';
-import { mockedCandidates } from '@/data/mock';
+import { InterviewsTable } from '@/components';
+import { mockedInterviews } from '@/data/mock';
 
-const CandidatesPageTemplate = () => {
+const InterviewsPageTemplate = () => {
   return (
     <div className="h-full min-h-[calc(100vh-64px)] overflow-hidden">
       <div className="w-full h-full mx-auto">
@@ -11,10 +11,10 @@ const CandidatesPageTemplate = () => {
               <div className="px-12">
                 <div className="mb-8 flex justify-between items-center">
                   <div className="space-y-4">
-                    <h3 className="text-4xl font-bold">Candidates</h3>
+                    <h3 className="text-4xl font-bold">Interviews</h3>
                   </div>
                 </div>
-                <CandidatesTable candidates={mockedCandidates} />
+                <InterviewsTable interviews={mockedInterviews} />
               </div>
             </div>
           </div>
@@ -24,4 +24,4 @@ const CandidatesPageTemplate = () => {
   );
 };
 
-export default CandidatesPageTemplate;
+export default InterviewsPageTemplate;

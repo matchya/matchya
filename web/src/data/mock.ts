@@ -3,10 +3,26 @@ import {
   Candidate,
   Checklist,
   Company,
+  Interview,
   Position,
   Question,
   Test,
 } from '../types';
+
+export const mockedInterviews: Interview[] = [
+  {
+    createdAt: '2022-01-01',
+    candidateName: 'John Doe',
+    testName: 'Test 1',
+    totalScore: 90,
+  },
+  {
+    createdAt: '2022-01-01',
+    candidateName: 'John Doe',
+    testName: 'Test 1',
+    totalScore: 90,
+  },
+];
 
 export const mockedTests: Test[] = [
   {

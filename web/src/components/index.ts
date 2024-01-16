@@ -29,4 +29,5 @@ export { default as Switch } from './Switch/Switch';
 export { default as ChecklistTable } from './Table/ChecklistTable/ChecklistTable';
 export { default as EvaluationTable } from './Table/EvaluationTable/EvaluationTable';
 export { default as TestTable } from './Table/TestTable/TestTable';
-export { default as CandidateTable } from './Table/CandidateTable/CandidateTable';
+export { default as CandidatesTable } from './Table/CandidatesTable/CandidatesTable';
+export { default as InterviewsTable } from './Table/InterviewsTable/InterviewsTable';

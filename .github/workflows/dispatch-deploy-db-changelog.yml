@@ -1,4 +1,4 @@
-name: Manually Deploy Website
+name: Manually Deploy DB Changelog
 
 on:
   workflow_dispatch:
@@ -13,9 +13,9 @@ on:
         default: "Staging"
 
 jobs:
-  deploy-website:
+  deploy-db-changelog:
     name: Deployment
-    uses: ./.github/workflows/job-deploy-website.yml
+    uses: ./.github/workflows/job-deploy-db-changelog.yml
     with:
       environment: ${{ inputs.environment }}
       environment-label: ${{ inputs.environment-label }}

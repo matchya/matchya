@@ -1,7 +1,7 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { z } from 'zod';
 
-import { CandidateTableColumnHeader } from './CandidateTableColumnHeader';
+import { CandidatesTableColumnHeader } from './CandidatesTableColumnHeader';
 
 import { mockedCandidates } from '@/data/mock';
 import { Candidate, candidateSchema } from '@/types';
@@ -10,7 +10,7 @@ export const columns: ColumnDef<Candidate>[] = [
   {
     accessorKey: 'result',
     header: ({ column }) => (
-      <CandidateTableColumnHeader column={column} title="Assessment Date" />
+      <CandidatesTableColumnHeader column={column} title="Assessment Date" />
     ),
     cell: ({ row }) => (
       <div className="min-w-[80px] max-w-[100px]">
@@ -23,7 +23,7 @@ export const columns: ColumnDef<Candidate>[] = [
   {
     accessorKey: 'firstName',
     header: ({ column }) => (
-      <CandidateTableColumnHeader column={column} title="Name" />
+      <CandidatesTableColumnHeader column={column} title="Name" />
     ),
     cell: ({ row }) => (
       <div className="min-w-[100px] max-w-[500px]">
@@ -36,7 +36,7 @@ export const columns: ColumnDef<Candidate>[] = [
   {
     accessorKey: 'testName',
     header: ({ column }) => (
-      <CandidateTableColumnHeader column={column} title="Test Name" />
+      <CandidatesTableColumnHeader column={column} title="Test Name" />
     ),
     cell: ({ row }) => (
       <div className="min-w-[150px] max-w-[200px]">
@@ -50,7 +50,7 @@ export const columns: ColumnDef<Candidate>[] = [
   {
     accessorKey: 'totalScore',
     header: ({ column }) => (
-      <CandidateTableColumnHeader column={column} title="Total Score" />
+      <CandidatesTableColumnHeader column={column} title="Total Score" />
     ),
     cell: ({ row }) => (
       <div className="w-[80px]">{row.original.result.totalScore}</div>
