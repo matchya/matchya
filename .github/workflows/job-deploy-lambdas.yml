@@ -117,8 +117,8 @@ jobs:
             label: Position
           - package: question
             label: Question
-          - package: test
-            label: Test
+          - package: assessment
+            label: Assessment
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment-label }}
     steps:

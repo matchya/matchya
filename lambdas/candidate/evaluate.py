@@ -42,33 +42,33 @@ def connect_to_db():
     db_cursor = db_conn.cursor()
 
 
-def get_candidate_result_id(test_id, candidate_id):
+def get_candidate_result_id(assessment_id, candidate_id):
     """
     Retrieves the candidate result ID from the database.
 
-    :param test_id: The test ID.
+    :param assessment_id: The assessment ID.
     :param candidate_id: The candidate ID.
     """
     logger.info('Retrieving candidate result ID from db...')
     sql = """
         SELECT id
         FROM candidate_result
-        WHERE test_id = '%s' AND candidate_id = '%s'
-    """ % (test_id, candidate_id)
+        WHERE assessment_id = '%s' AND candidate_id = '%s'
+    """ % (assessment_id, candidate_id)
     try:
         db_cursor.execute(sql)
         result = db_cursor.fetchone()
         return result[0]
     except Exception as e:
         logger.error(f'Failed to retrieve candidate result ID from db: {e}')
-        raise RuntimeError('Failed to retrieve candidate result ID from db, candidate might not have started the test.')
+        raise RuntimeError('Failed to retrieve candidate result ID from db, candidate might not have started the assessment.')
 
 
-def get_candidate_answers(test_id, candidate_result_id):
+def get_candidate_answers(assessment_id, candidate_result_id):
     """
     Retrieves the candidate answers from the database.
 
-    :param test_id: The test ID.
+    :param assessment_id: The assessment ID.
     :param candidate_id: The candidate ID.
     """
     logger.info('Retrieving candidate answers from db...')
@@ -78,8 +78,8 @@ def get_candidate_answers(test_id, candidate_result_id):
     FROM answer
     LEFT JOIN candidate_result ON answer.candidate_result_id = candidate_result.id
     LEFT JOIN question ON answer.question_id = question.id
-    WHERE candidate_result.test_id = '%s' AND candidate_result.id = '%s'
-    """ % (test_id, candidate_result_id)
+    WHERE candidate_result.assessment_id = '%s' AND candidate_result.id = '%s'
+    """ % (assessment_id, candidate_result_id)
     try:
         db_cursor.execute(sql)
         result = db_cursor.fetchall()
@@ -196,10 +196,10 @@ def handler(event, context):
         logger.info("Parsing the request header...")
         origin = parse_header(event)
         logger.info("Validating the body data...")
-        validate_request_body(body, ['test_id', 'candidate_id'])
+        validate_request_body(body, ['assessment_id', 'candidate_id'])
 
-        candidate_result_id = get_candidate_result_id(body['test_id'], body['candidate_id'])
-        answers = get_candidate_answers(body['test_id'], candidate_result_id)
+        candidate_result_id = get_candidate_result_id(body['assessment_id'], body['candidate_id'])
+        answers = get_candidate_answers(body['assessment_id'], candidate_result_id)
 
         total_score = calculate_total_score(answers)
         system_message, user_message = get_system_and_user_message(answers)
