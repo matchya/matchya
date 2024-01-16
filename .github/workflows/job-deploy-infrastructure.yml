@@ -10,12 +10,12 @@ on:
         type: string
         required: true
       environment:
-        description: "Environment to deploy. Lowercase."
+        description: Environment to deploy to in lowercase.
         type: string
         required: true
         default: "staging"
       environment-label:
-        description: "Name of the environment to deploy. Capitalized"
+        description: Environment to deploy to in capitalized.
         type: string
         required: true
 

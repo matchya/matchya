@@ -10,7 +10,7 @@ on:
       environment-label:
         description: "Environment to deploy to in capitalized."
         required: true
-        default: "staging"
+        default: "Staging"
 
 jobs:
   plan-shared:
