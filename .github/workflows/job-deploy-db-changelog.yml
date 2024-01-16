@@ -43,5 +43,5 @@ jobs:
       - name: Update Changelog
         run: |
           make create-ssh-tunnel environment=${{ inputs.environment }}
-          python scripts/update.py staging
+          python db/scripts/update.py staging
           make close-ssh-tunnel environment=${{ inputs.environment }}
