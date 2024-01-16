@@ -32,6 +32,15 @@ export interface Assessment {
   reason: string;
 }
 
+export const interviewSchema = z.object({
+  createdAt: z.string(),
+  candidateName: z.string(),
+  testName: z.string(),
+  totalScore: z.number(),
+});
+
+export type Interview = z.infer<typeof interviewSchema>;
+
 export const testSchema = z.object({
   id: z.string(),
   createdAt: z.string(),
