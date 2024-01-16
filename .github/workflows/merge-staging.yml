@@ -140,7 +140,7 @@ jobs:
   deploy-db-changelog:
     if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop') && needs.check-db-changes.outputs.db-changed == 'true'
     name: Deployment
-    needs: [cleanup]
+    needs: [cleanup, check-db-changes]
     uses: ./.github/workflows/job-deploy-db-changelog.yml
     with:
       environment: staging

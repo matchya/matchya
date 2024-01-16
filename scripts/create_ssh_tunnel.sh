@@ -17,10 +17,12 @@ while (( "$#" )); do
   esac
 done
 
-# Check if the AWS profile is set
-if [ -z "$AWS_PROFILE" ]; then
-    echo "AWS_PROFILE is not set. Please set it before running this script."
-    exit 1
+# Check if the AWS profile is set, unless the environment is 'staging' or 'production'
+if [[ "$environment" != "staging" && "$environment" != "production" ]]; then
+    if [ -z "$AWS_PROFILE" ]; then
+        echo "AWS_PROFILE is not set. Please set it before running this script."
+        exit 1
+    fi
 fi
 
 echo "Fetching bastion host public ip"
