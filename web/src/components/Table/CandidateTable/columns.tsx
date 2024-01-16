@@ -8,24 +8,26 @@ import { Candidate, candidateSchema } from '@/types';
 
 export const columns: ColumnDef<Candidate>[] = [
   {
-    accessorKey: 'createdAt',
+    accessorKey: 'result',
     header: ({ column }) => (
       <CandidateTableColumnHeader column={column} title="Assessment Date" />
     ),
     cell: ({ row }) => (
-      <div className="min-w-[80px] max-w-[100px]">{row.getValue('result')}</div>
+      <div className="min-w-[80px] max-w-[100px]">
+        {row.original.result.createdAt}
+      </div>
     ),
     enableSorting: false,
     enableHiding: false,
   },
   {
-    accessorKey: 'candidateName',
+    accessorKey: 'firstName',
     header: ({ column }) => (
       <CandidateTableColumnHeader column={column} title="Name" />
     ),
     cell: ({ row }) => (
       <div className="min-w-[100px] max-w-[500px]">
-        {row.getValue('firstName')} {row.getValue('lastName')}
+        {`${row.original.firstName} ${row.original.lastName}`}
       </div>
     ),
     enableSorting: false,
@@ -38,7 +40,7 @@ export const columns: ColumnDef<Candidate>[] = [
     ),
     cell: ({ row }) => (
       <div className="min-w-[150px] max-w-[200px]">
-        {JSON.stringify(row.getValue('result'))}
+        {row.original.result.testName}
       </div>
     ),
     filterFn: (row, id, value) => {
@@ -51,7 +53,7 @@ export const columns: ColumnDef<Candidate>[] = [
       <CandidateTableColumnHeader column={column} title="Total Score" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue('result.totalScore')}</div>
+      <div className="w-[80px]">{row.original.result.totalScore}</div>
     ),
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
