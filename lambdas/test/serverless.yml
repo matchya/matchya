@@ -30,6 +30,14 @@ provider:
     POSTGRES_PASSWORD: ${ssm:/terraform/${self:provider.stage}/rds/db_password}
     QUESTION_GENERATION_PROCESSOR_QUEUE_URL: ${ssm:/terraform/${self:provider.stage}/sqs/question_generation_processor_queue_url}
 
+custom:
+  origins:
+    staging:
+      - "https://${ssm:/terraform/staging/domain_name}"
+      - "https://www.${ssm:/terraform/staging/domain_name}"
+    dev:
+      - "http://127.0.0.1:5173"
+
 functions:
   create:
     name: ${self:provider.stage}-test-create
@@ -42,17 +50,11 @@ functions:
           path: /tests
           method: POST
           cors:
-            origins:
-              - "https://${ssm:/terraform/${self:provider.stage}/domain_name}"
-              - "https://www.${ssm:/terraform/${self:provider.stage}/domain_name}"
-              - "http://127.0.0.1:5173"
+            origins: ${self:custom.origins.${self:provider.stage}}
             allowCredentials: true
           authorizer:
-            type: request
-            identitySource: method.request.header.Cookie
-            resultTtlInSeconds: 300
-            name: ${self:provider.stage}-test-create-authorizer
-            arn: arn:aws:lambda:${aws:region}:${aws:accountId}:function:${self:provider.stage}-authorizer
+            authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
+            type: REQUEST
 
   retrieve:
     name: ${self:provider.stage}-test-retrieve
@@ -65,17 +67,11 @@ functions:
           path: /tests
           method: GET
           cors:
-            origins:
-              - "https://${ssm:/terraform/${self:provider.stage}/domain_name}"
-              - "https://www.${ssm:/terraform/${self:provider.stage}/domain_name}"
-              - "http://127.0.0.1:5173"
+            origins: ${self:custom.origins.${self:provider.stage}}
             allowCredentials: true
           authorizer:
-            type: request
-            identitySource: method.request.header.Cookie
-            resultTtlInSeconds: 300
-            name: ${self:provider.stage}-test-retrieve-authorizer
-            arn: arn:aws:lambda:${aws:region}:${aws:accountId}:function:${self:provider.stage}-authorizer
+            authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
+            type: REQUEST
 
   retrieve-by-id:
     name: ${self:provider.stage}-test-retrieve-by-id
@@ -88,17 +84,11 @@ functions:
           path: /tests/{id}
           method: GET
           cors:
-            origins:
-              - "https://${ssm:/terraform/${self:provider.stage}/domain_name}"
-              - "https://www.${ssm:/terraform/${self:provider.stage}/domain_name}"
-              - "http://127.0.0.1:5173"
+            origins: ${self:custom.origins.${self:provider.stage}}
             allowCredentials: true
           authorizer:
-            type: request
-            identitySource: method.request.header.Cookie
-            resultTtlInSeconds: 300
-            name: ${self:provider.stage}-test-retrieve-by-id-authorizer
-            arn: arn:aws:lambda:${aws:region}:${aws:accountId}:function:${self:provider.stage}-authorizer
+            authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
+            type: REQUEST
           request:
             parameters:
               paths:
