@@ -2,11 +2,11 @@ on:
   workflow_call:
     inputs:
       environment:
-        description: "Environment to deploy to"
+        description: Environment to deploy to in lowercase.
         required: true
         type: string
       environment-label:
-        description: "Label for the environment"
+        description: Environment to deploy to in capitalized.
         required: true
         type: string
       component:

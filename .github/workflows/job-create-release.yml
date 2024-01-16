@@ -2,12 +2,15 @@ on:
   workflow_call:
     inputs:
       component:
+        description: Component to deploy.
         required: true
         type: string
       environment:
+        description: Environment to deploy to in lowercase.
         required: true
         type: string
       environment-label:
+        description: Environment to deploy to in capitalized.
         required: true
         type: string
 

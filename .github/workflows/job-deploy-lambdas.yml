@@ -19,7 +19,16 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Check Files Changed
+        uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            package:
+              - 'lambdas/authentication/**'
+
       - name: Configure AWS Credentials
+        if: steps.changes.outputs.package == 'true'
         uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -27,18 +36,22 @@ jobs:
           aws-region: us-east-1
 
       - uses: actions/setup-node@v3
+        if: steps.changes.outputs.package == 'true'
         with:
           cache: npm
           node-version: 18
 
       - name: Install Serverless
+        if: steps.changes.outputs.package == 'true'
         run: npm install -g serverless
 
       - name: Install Dependencies
+        if: steps.changes.outputs.package == 'true'
         run: npm install
         working-directory: lambdas/authentication
 
       - name: Deploy
+        if: steps.changes.outputs.package == 'true'
         run: sls deploy --stage ${{ inputs.environment }}
         working-directory: lambdas/authentication
 
@@ -52,7 +65,16 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Check Files Changed
+        uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            package:
+              - 'lambdas/authorizer/**'
+
       - name: Configure AWS Credentials
+        if: steps.changes.outputs.package == 'true'
         uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -60,18 +82,22 @@ jobs:
           aws-region: us-east-1
 
       - uses: actions/setup-node@v3
+        if: steps.changes.outputs.package == 'true'
         with:
           cache: npm
           node-version: 18
 
       - name: Install Serverless
+        if: steps.changes.outputs.package == 'true'
         run: npm install -g serverless
 
       - name: Install Dependencies
+        if: steps.changes.outputs.package == 'true'
         run: npm install
         working-directory: lambdas/authorizer
 
       - name: Deploy
+        if: steps.changes.outputs.package == 'true'
         run: sls deploy --stage ${{ inputs.environment }}
         working-directory: lambdas/authorizer
 
@@ -101,7 +127,16 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Check Files Changed
+        uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            package:
+              - 'lambdas/${{ matrix.package }}/**'
+
       - name: Configure AWS Credentials
+        if: steps.changes.outputs.package == 'true'
         uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -109,17 +144,21 @@ jobs:
           aws-region: us-east-1
 
       - uses: actions/setup-node@v3
+        if: steps.changes.outputs.package == 'true'
         with:
           cache: npm
           node-version: 18
 
       - name: Install Serverless
+        if: steps.changes.outputs.package == 'true'
         run: npm install -g serverless
 
       - name: Install Dependencies
+        if: steps.changes.outputs.package == 'true'
         run: npm install
         working-directory: lambdas/${{ matrix.package }}
 
       - name: Deploy
+        if: steps.changes.outputs.package == 'true'
         run: sls deploy --stage ${{ inputs.environment }}
         working-directory: lambdas/${{ matrix.package }}

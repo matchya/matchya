@@ -4,11 +4,11 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: "Node environment to deploy to. Lowercase."
+        description: "Environment to deploy to in lowercase."
         required: true
         default: "staging"
       environment-label:
-        description: "Label for the environment you are deploying to. Capitalized."
+        description: "Environment to deploy to in capitalized."
         required: true
         default: "Staging"
 
