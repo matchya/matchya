@@ -29,7 +29,6 @@ def run_changelog(**kwargs):
     - Executes Liquibase 'update' command for the specified changelog file.
     """
     request = build_request(**kwargs)
-    request.insert(2, "--network=host")
     request.append("update")
     subprocess.run(request, check=True)
 
@@ -63,9 +62,8 @@ def build_docker_image():
 def build_request(rds_endpoint, rds_port, db_name, db_username, db_password):
     changelog_file_name = 'master-changelog.xml'
     return [
-        "docker", "run", "--rm",
+        "docker", "run", "--network=host", "--rm",
         "liquibase",
-        "--network=host",
         "--defaultsFile=/liquibase/config/liquibase.properties",
         f"--changeLogFile={changelog_file_name}",
         "--url", f"jdbc:postgresql://{rds_endpoint}:{rds_port}/{db_name}",
