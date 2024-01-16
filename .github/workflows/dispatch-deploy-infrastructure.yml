@@ -36,7 +36,7 @@ jobs:
     secrets: inherit
 
   deploy-shared:
-    name: Deploy
+    name: Deployment
     uses: ./.github/workflows/job-deploy-infrastructure.yml
     needs: [plan-shared]
     with:
@@ -47,7 +47,7 @@ jobs:
     secrets: inherit
 
   deploy-environment:
-    name: Deploy
+    name: Deployment
     if: inputs.environment != 'production'
     uses: ./.github/workflows/job-deploy-infrastructure.yml
     needs: [deploy-shared, plan-environment]

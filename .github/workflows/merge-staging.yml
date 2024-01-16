@@ -43,11 +43,59 @@ jobs:
         id: check
         run: echo "infra-changed=${{ steps.changes-infrastructure.outputs.package }}" >> $GITHUB_OUTPUT
 
+  check-web-changes:
+    if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop')
+    name: Check Web Changes
+    runs-on: ubuntu-latest
+    outputs:
+      web-changed: ${{ steps.check.outputs.web-changed }}
+    steps:
+      - name: Fetch Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Check Web Files Changed
+        uses: dorny/paths-filter@v2
+        id: changes-web
+        with:
+          filters: |
+            package:
+              - 'web/**'
+
+      - name: Set output
+        id: check
+        run: echo "web-changed=${{ steps.changes-web.outputs.package }}" >> $GITHUB_OUTPUT
+
+  check-db-changes:
+    if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop')
+    name: Check DB Changes
+    runs-on: ubuntu-latest
+    outputs:
+      db-changed: ${{ steps.check.outputs.db-changed }}
+    steps:
+      - name: Fetch Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Check DB Files Changed
+        uses: dorny/paths-filter@v2
+        id: changes-db
+        with:
+          filters: |
+            package:
+              - 'db/**'
+
+      - name: Set output
+        id: check
+        run: echo "db-changed=${{ steps.changes-db.outputs.package }}" >> $GITHUB_OUTPUT
+
   deploy-terraform-shared:
     if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop') && needs.check-infrastructure-changes.outputs.infra-changed == 'true'
     name: Deployment
     permissions: write-all
-    needs: [check-infrastructure-changes]
+    needs: [cleanup, check-infrastructure-changes]
     uses: ./.github/workflows/job-deploy-infrastructure.yml
     with:
       component: shared
@@ -70,9 +118,9 @@ jobs:
     secrets: inherit
 
   deploy-website:
-    if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop')
+    if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop') && needs.check-web-changes.outputs.web-changed == 'true'
     name: Deployment
-    needs: [cleanup]
+    needs: [cleanup, check-web-changes]
     uses: ./.github/workflows/job-deploy-website.yml
     with:
       environment: staging
@@ -90,7 +138,7 @@ jobs:
     secrets: inherit
 
   deploy-db-changelog:
-    if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop')
+    if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop') && needs.check-db-changes.outputs.db-changed == 'true'
     name: Deployment
     needs: [cleanup]
     uses: ./.github/workflows/job-deploy-db-changelog.yml
