@@ -30,3 +30,4 @@ export { default as ChecklistTable } from './Table/ChecklistTable/ChecklistTable
 export { default as EvaluationTable } from './Table/EvaluationTable/EvaluationTable';
 export { default as TestTable } from './Table/TestTable/TestTable';
 export { default as CandidatesTable } from './Table/CandidatesTable/CandidatesTable';
+export { default as InterviewsTable } from './Table/InterviewsTable/InterviewsTable';
