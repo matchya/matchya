@@ -1,7 +1,7 @@
 import { Button, TestTable } from '@/components';
 import { mockedTests } from '@/data/mock';
 
-const TestPageTemplate = () => (
+const AssessmentsPageTemplate = () => (
   <div className="h-full min-h-[calc(100vh-64px)] overflow-hidden">
     <div className="w-full h-full mx-auto">
       <div>
@@ -10,10 +10,9 @@ const TestPageTemplate = () => (
             <div className="px-12">
               <div className="mb-8 flex justify-between items-center">
                 <div className="space-y-4">
-                  <h3 className="text-4xl font-bold">Your Matchya Tests</h3>
-                  <p className="">Create and manage your Matchya tests here.</p>
+                  <h3 className="text-4xl font-bold">Assessments</h3>
                 </div>
-                <Button>Create a test</Button>
+                <Button>Create an Assessment</Button>
               </div>
               <TestTable tests={mockedTests} />
             </div>
@@ -24,4 +23,4 @@ const TestPageTemplate = () => (
   </div>
 );
 
-export default TestPageTemplate;
+export default AssessmentsPageTemplate;

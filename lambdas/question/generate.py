@@ -222,7 +222,7 @@ def get_questions_from_gpt(system_message: str, user_message: str) -> list:
         raise RuntimeError("Error generating criteria with OpenAI API")
 
 
-def save_questions_to_db(test_id: str, questions: list) -> str:
+def save_questions_to_db(assessment_id: str, questions: list) -> str:
     """
     Saves the questions to the database.
 
@@ -232,7 +232,7 @@ def save_questions_to_db(test_id: str, questions: list) -> str:
     """
     logger.info("Saving questions to the database...")
     save_data_to_question_table(questions)
-    save_data_to_test_question_table(test_id, questions)
+    save_data_to_assessment_question_table(assessment_id, questions)
     save_data_to_metric_table(questions)
     logger.info("Questions saved successfully")
 
@@ -255,24 +255,24 @@ def save_data_to_question_table(questions: list) -> str:
         raise RuntimeError("Error saving questions to question table")
 
 
-def save_data_to_test_question_table(test_id: str, questions: list) -> str:
+def save_data_to_assessment_question_table(assessment_id: str, questions: list) -> str:
     """
-    Saves the questions to the test_question table.
+    Saves the questions to the assessment_question table.
 
-    :param test_id: Unique identifier for the test.
+    :param assessment_id: Unique identifier for the assessment.
     :param questions: The questions to save.
     """
 
-    logger.info("Saving questions to the test_question table...")
-    sql = "INSERT INTO test_question (test_id, question_id) VALUES "
+    logger.info("Saving questions to the assessment_question table...")
+    sql = "INSERT INTO assessment_question (assessment_id, question_id) VALUES "
     try:
         for question in questions:
-            sql += f" ('{test_id}', '{question['id']}'),"
+            sql += f" ('{assessment_id}', '{question['id']}'),"
         sql = sql[:-1] + ';'
         db_cursor.execute(sql)
     except Exception as e:
-        logger.error(f"Error saving questions to test_question table: {e}")
-        raise RuntimeError("Error saving questions to test_question table")
+        logger.error(f"Error saving questions to assessment_question table: {e}")
+        raise RuntimeError("Error saving questions to assessment_question table")
 
 
 def save_data_to_metric_table(questions: list) -> str:
@@ -300,7 +300,7 @@ def save_data_to_metric_table(questions: list) -> str:
 
 def handler(event, context):
     """
-    Creating a new test sends a message to the queue to generate questions.
+    Creating a new assessment sends a message to the queue to generate questions.
     """
     logger.info(event)
     try:
@@ -309,7 +309,7 @@ def handler(event, context):
 
         messages = event['Records']
         body = json.loads(messages[0]['body'])
-        test_id = body.get('test_id')
+        assessment_id = body.get('assessment_id')
         position_type = body.get('position_type')
         position_level = body.get('position_level')
 
@@ -322,7 +322,7 @@ def handler(event, context):
         # TODO: get pre-generated questions...
         questions = get_questions_from_gpt(system_message, user_message)
 
-        save_questions_to_db(test_id, questions)
+        save_questions_to_db(assessment_id, questions)
         db_conn.commit()
         logger.info('Questions saved successfully')
     except (ValueError, RuntimeError) as e:
