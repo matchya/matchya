@@ -2,7 +2,13 @@ import matchyaLogo from '@/assets/matchya-logo.png';
 import banner from '@/assets/matchya1.png';
 import Button from '@/components/Button/Button';
 
-const OnboardingPageTemplate = () => {
+interface HomePageTemplateProps {
+  onNavigateToAuthentication: () => void;
+}
+
+const HomePageTemplate = ({
+  onNavigateToAuthentication,
+}: HomePageTemplateProps) => {
   return (
     <div className="w-full min-h-screen h-[1px] bg-macha-200">
       <div className="h-full">
@@ -28,9 +34,7 @@ const OnboardingPageTemplate = () => {
                 <Button
                   variant="outline"
                   className="px-8 py-6 bg-macha-700 rounded border-macha-700 text-white text-md hover:bg-macha-800 hover:border-macha-800 hover:text-white"
-                  onClick={() => {
-                    throw new Error('Test Sentry Error');
-                  }}
+                  onClick={onNavigateToAuthentication}
                 >
                   Try for free
                 </Button>
@@ -50,4 +54,4 @@ const OnboardingPageTemplate = () => {
   );
 };
 
-export default OnboardingPageTemplate;
+export default HomePageTemplate;

@@ -1,7 +1,13 @@
+import { useNavigate } from 'react-router-dom';
+
 import Template from '../template/HomePage/HomePage';
 
 function HomePage() {
-  return <Template />;
+  const navigate = useNavigate();
+  const handleNavigateToAuthentication = () => navigate('/auth');
+  return (
+    <Template onNavigateToAuthentication={handleNavigateToAuthentication} />
+  );
 }
 
 export default HomePage;
