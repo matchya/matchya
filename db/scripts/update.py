@@ -63,6 +63,7 @@ def build_request(rds_endpoint, rds_port, db_name, db_username, db_password):
     changelog_file_name = 'master-changelog.xml'
     return [
         "docker", "run", "--rm",
+        "--add-host=host.docker.internal:host-gateway",
         "liquibase",
         "--defaultsFile=/liquibase/config/liquibase.properties",
         f"--changeLogFile={changelog_file_name}",
