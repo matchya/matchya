@@ -59,17 +59,20 @@ jobs:
       - name: Set Terraform Variables (Environment)
         if: inputs.component == 'environment'
         run: |
-          echo 'namespace = "${{ secrets.TF_NAMESPACE}}"' > terraform.tfvars
           echo 'db_username = "${{ secrets.TF_DB_USERNAME }}"' >> terraform.tfvars
           echo 'db_password = "${{ secrets.TF_DB_PASSWORD}}"' >> terraform.tfvars
-          echo 'client_origin = "www.${{ vars.APP_DOMAIN_NAME }}"' >> terraform.tfvars
         working-directory: terraform/${{ inputs.component }}
 
       - name: Set Terraform Variables (Shared)
         if: inputs.component == 'shared'
         run: |
+          IFS=',' read -ra records <<< "${{ vars.GOOGLE_WORKSPACE_RECORDS }}"
           echo 'hosted_zone = "${{ vars.TF_HOSTED_ZONE }}"' > terraform.tfvars
-          echo 'app_domain_name = "${{ vars.APP_DOMAIN_NAME }}"' >> terraform.tfvars
+          echo 'google_workspace_records = { "mx" = [' >> terraform.tfvars
+          for record in "${records[@]}"; do
+            echo "\"$record\"," >> terraform.tfvars
+          done
+          echo '] }' >> terraform.tfvars
         working-directory: terraform/${{ inputs.component }}
 
       - name: Terraform Plan

@@ -7,7 +7,7 @@ from utils.response import generate_success_response, generate_error_response
 from utils.request import parse_header, parse_cookie_body
 
 # Logger
-logger = logging.getLogger('retrieve candidate')
+logger = logging.getLogger('retrieve candidates')
 logger.setLevel(logging.INFO)
 
 formatter = logging.Formatter('[%(levelname)s]:%(funcName)s:%(lineno)d:%(message)s')
@@ -38,12 +38,12 @@ def connect_to_db():
 
 def retrieve_candidates(company_id):
     """
-    Retrieves a candidate from the database.
+    Retrieves candidates from the database.
 
     :param company_id: The id of the company.
     :return: The candidate.
     """
-    logger.info("Retrieving a candidate...")
+    logger.info("Retrieving a candidates...")
     sql = "SELECT id, email, first_name, last_name FROM candidate WHERE company_id = %s;"
     sql = """
         SELECT 
@@ -74,31 +74,30 @@ def process_sql_result(result):
     for row in result:
         (candidate_id, email, first_name, last_name, github_username,
          result_id, test_id, total_score, created_at, test_id, test_name) = row
-        if candidate_id not in candidates:
+        if candidate_id and candidate_id not in candidates:
             candidates[candidate_id] = {
                 'id': candidate_id,
                 'email': email,
                 'first_name': first_name,
                 'last_name': last_name,
                 'github_username': github_username,
-                'results': []
+                'result': None
             }
         if result_id:
-            result = {
+            candidates[candidate_id]['result'] = {
                 'id': result_id,
                 'test_id': test_id,
                 'test_name': test_name,
                 'total_score': total_score,
-                'created_at': created_at
+                'created_at': str(created_at)
             }
-            candidates[candidate_id]['result'].append(result)
     candidates = list(candidates.values())
     return candidates
 
 
 def handler(event, context):
     try:
-        logger.info('Retrieving a candidate...')
+        logger.info('Retrieving candidates...')
         connect_to_db()
 
         logger.info("Parsing body from cookie...")
@@ -108,12 +107,11 @@ def handler(event, context):
 
         candidates = retrieve_candidates(company_id)
 
-        logger.info("Successfully retrieved a candidate.")
         data = {
             'candidates': candidates
         }
+        logger.info("Successfully retrieved candidates.")
         return generate_success_response(origin, data)
-
     except (ValueError, RuntimeError) as e:
         status_code = 400
         logger.error(f'Retrieving candidates failed: {e}')
@@ -123,4 +121,7 @@ def handler(event, context):
         logger.error(f'Retrieving candidates failed: {e}')
         return generate_error_response(origin, status_code, str(e))
     finally:
-        db_conn.close()
+        if db_cursor:
+            db_cursor.close()
+        if db_conn:
+            db_conn.close()

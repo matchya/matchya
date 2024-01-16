@@ -3,9 +3,9 @@ resource "aws_acm_certificate" "cert" {
     aws_s3_bucket.main,
     aws_s3_bucket.www
   ]
-  domain_name               = var.domain_name
+  domain_name               = var.app_domain_name
   validation_method         = "DNS"
-  subject_alternative_names = ["www.${var.domain_name}"]
+  subject_alternative_names = ["www.${var.app_domain_name}"]
 
   lifecycle {
     create_before_destroy = true
@@ -25,7 +25,7 @@ resource "aws_route53_record" "cert_validation" {
 
   name    = each.value.name
   type    = each.value.type
-  zone_id = var.hosted_zone.zone_id
+  zone_id = var.hosted_zone_id
   records = [each.value.record]
   ttl     = 60
 

@@ -118,3 +118,8 @@ CREATE TABLE IF NOT EXISTS answer (
 	foreign key (question_id) references question(id)
 );
 --rollback DROP TABLE IF EXISTS answer;
+
+
+--changeset author:11
+ALTER TABLE test ADD COLUMN updated_at timestamp default CURRENT_TIMESTAMP;
+--rollback ALTER TABLE test DROP COLUMN updated_at;

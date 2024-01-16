@@ -6,7 +6,7 @@ provider:
   name: aws
   runtime: python3.9
   architecture: arm64
-  stage: dev
+  stage: ${opt:stage, 'dev'}
   region: us-east-1
   deploymentBucket:
     name: ${self:provider.stage}-sls-candidate
@@ -23,11 +23,20 @@ provider:
         buildArgs:
   environment:
     ENVIRONMENT: ${self:provider.stage}
+    OPENAI_API_KEY: ${ssm:/secrets/${self:provider.stage}/openai_api_key}
     POSTGRES_HOST: ${ssm:/terraform/${self:provider.stage}/rds/endpoint}
     POSTGRES_PORT: ${ssm:/terraform/${self:provider.stage}/rds/port}
     POSTGRES_DB: ${ssm:/terraform/${self:provider.stage}/rds/db_name}
     POSTGRES_USER: ${ssm:/terraform/${self:provider.stage}/rds/db_username}
     POSTGRES_PASSWORD: ${ssm:/terraform/${self:provider.stage}/rds/db_password}
+
+custom:
+  origins:
+    staging:
+      - "https://${ssm:/terraform/staging/domain_name}"
+      - "https://www.${ssm:/terraform/staging/domain_name}"
+    dev:
+      - "http://127.0.0.1:5173"
 
 functions:
   add:
@@ -41,21 +50,12 @@ functions:
           path: /candidates
           method: POST
           cors:
-            origins:
-              - https://www.matchyaa.com
-              - https://matchyaa.com
-              - https://www.staging.matchyaa.com
-              - https://staging.matchyaa.com
-              - http://127.0.0.1:5173
+            origins: ${self:custom.origins.${self:provider.stage}}
             allowCredentials: true
           authorizer:
-            type: request
-            identitySource: method.request.header.Cookie
-            resultTtlInSeconds: 300
-            name: ${self:provider.stage}-candidate-add-authorizer
-            arn: arn:aws:lambda:${aws:region}:${aws:accountId}:function:${self:provider.stage}-authorizer
+            authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
+            type: REQUEST
     timeout: 30
-
 
   retrieve:
     name: ${self:provider.stage}-candidate-retrieve
@@ -68,19 +68,51 @@ functions:
           path: /candidates
           method: GET
           cors:
-            origins:
-              - https://www.matchyaa.com
-              - https://matchyaa.com
-              - https://www.staging.matchyaa.com
-              - https://staging.matchyaa.com
-              - http://127.0.0.1:5173
+            origins: ${self:custom.origins.${self:provider.stage}}
             allowCredentials: true
           authorizer:
-            type: request
-            identitySource: method.request.header.Cookie
-            resultTtlInSeconds: 300
-            name: ${self:provider.stage}-candidate-retrieve-authorizer
-            arn: arn:aws:lambda:${aws:region}:${aws:accountId}:function:${self:provider.stage}-authorizer
+            authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
+            type: REQUEST
+    timeout: 30
+
+  retrieve-result:
+    name: ${self:provider.stage}-candidate-retrieve-result
+    image:
+      name: default
+      command:
+        - retrieve_result.handler
+    events:
+      - http:
+          path: /candidates/result/{candidate_result_id}
+          method: GET
+          cors:
+            origins: ${self:custom.origins.${self:provider.stage}}
+            allowCredentials: true
+          authorizer:
+            authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
+            type: REQUEST
+          request:
+            parameters:
+              paths:
+                candidate_result_id: true
+    timeout: 30
+
+  evaluate:
+    name: ${self:provider.stage}-candidate-evaluate
+    image:
+      name: default
+      command:
+        - evaluate.handler
+    events:
+      - http:
+          path: /candidates/evaluate
+          method: POST
+          cors:
+            origins: ${self:custom.origins.${self:provider.stage}}
+            allowCredentials: true
+          authorizer:
+            authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
+            type: REQUEST
     timeout: 30
 
 plugins:

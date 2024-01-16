@@ -6,7 +6,7 @@ provider:
   name: aws
   runtime: python3.9
   architecture: arm64
-  stage: dev
+  stage: ${opt:stage, 'dev'}
   region: us-east-1
   deploymentBucket:
     name: ${self:provider.stage}-sls-company
@@ -29,6 +29,14 @@ provider:
     POSTGRES_USER: ${ssm:/terraform/${self:provider.stage}/rds/db_username}
     POSTGRES_PASSWORD: ${ssm:/terraform/${self:provider.stage}/rds/db_password}
 
+custom:
+  origins:
+    staging:
+      - "https://${ssm:/terraform/staging/domain_name}"
+      - "https://www.${ssm:/terraform/staging/domain_name}"
+    dev:
+      - "http://127.0.0.1:5173"
+
 functions:
   me:
     name: ${self:provider.stage}-company-me
@@ -41,19 +49,11 @@ functions:
           path: /companies/me
           method: GET
           cors:
-            origins:
-              - https://www.matchyaa.com
-              - https://matchyaa.com
-              - https://www.staging.matchyaa.com
-              - https://staging.matchyaa.com
-              - http://127.0.0.1:5173
+            origins: ${self:custom.origins.${self:provider.stage}}
             allowCredentials: true
           authorizer:
-            type: request
-            identitySource: method.request.header.Cookie
-            resultTtlInSeconds: 300
-            name: ${self:provider.stage}-company-me-authorizer
-            arn: arn:aws:lambda:${aws:region}:${aws:accountId}:function:${self:provider.stage}-authorizer
+            authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
+            type: REQUEST
 
 plugins:
   - serverless-deployment-bucket

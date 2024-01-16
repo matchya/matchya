@@ -1,6 +1,6 @@
 resource "aws_route53_record" "www" {
-  zone_id = var.hosted_zone.zone_id
-  name    = "www.${var.domain_name}"
+  zone_id = var.hosted_zone_id
+  name    = "www.${var.app_domain_name}"
   type    = "A"
   alias {
     name                   = aws_cloudfront_distribution.www.domain_name
@@ -11,8 +11,8 @@ resource "aws_route53_record" "www" {
 }
 
 resource "aws_route53_record" "main" {
-  zone_id = var.hosted_zone.zone_id
-  name    = "${var.domain_name}"
+  zone_id = var.hosted_zone_id
+  name    = "${var.app_domain_name}"
   type    = "A"
   alias {
     name                   = aws_cloudfront_distribution.main.domain_name

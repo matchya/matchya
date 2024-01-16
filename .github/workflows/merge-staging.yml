@@ -79,6 +79,16 @@ jobs:
       environment-label: Staging
     secrets: inherit
 
+  deploy-lambdas:
+    if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop')
+    name: Deployment
+    needs: [cleanup]
+    uses: ./.github/workflows/job-deploy-lambdas.yml
+    with:
+      environment: staging
+      environment-label: Staging
+    secrets: inherit
+
   # create-release-web:
   #   name: Create Release (web)
   #   uses: ./.github/workflows/job-create-release.yml

@@ -35,3 +35,13 @@ def parse_request_body(event):
         return json.loads(body)
     except json.JSONDecodeError as e:
         raise ValueError(f"Invalid JSON in request body: {e}")
+
+
+def validate_request_body(body, required_fields):
+    """
+    Validates the necessary fields in the request body.
+
+    :param body: The request body containing required fields.
+    """
+    if not all(body.get(field) for field in required_fields):
+        raise ValueError('Missing required fields.')

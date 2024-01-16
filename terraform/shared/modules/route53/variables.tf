@@ -3,7 +3,13 @@ variable "hosted_zone" {
   type = string
 }
 
-# variable "vercel_records" {
-#   description = "Map of vercel records for production"
-#   type = map(string)
-# }
+variable "google_workspace_records" {
+  description = "Map of google workspace records"
+  type = map(list(string))
+}
+
+variable "create_new" {
+  description = "Whether to create a new hosted zone"
+  type = bool
+  default = false
+}

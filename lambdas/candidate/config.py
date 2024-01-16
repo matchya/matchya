@@ -12,6 +12,8 @@ class Config:
     POSTGRES_DB = os.getenv('POSTGRES_DB')
     POSTGRES_USER = os.getenv('POSTGRES_USER')
     POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
+    
+    OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 
     @classmethod
     def validate(cls):
@@ -21,7 +23,7 @@ class Config:
         """
         required_variables = [
             'POSTGRES_HOST', 'POSTGRES_PORT', 'POSTGRES_DB',
-            'POSTGRES_USER', 'POSTGRES_PASSWORD'
+            'POSTGRES_USER', 'POSTGRES_PASSWORD', 'OPENAI_API_KEY'
         ]
         missing_variables = [variable for variable in required_variables if not getattr(cls, variable)]
 

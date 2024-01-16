@@ -1,0 +1,125 @@
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      environment-label:
+        required: true
+        type: string
+
+jobs:
+  lambda-authentication:
+    name: Lambda Functions (Authentication)
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment-label }}
+    steps:
+      - name: Fetch Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - uses: actions/setup-node@v3
+        with:
+          cache: npm
+          node-version: 18
+
+      - name: Install Serverless
+        run: npm install -g serverless
+
+      - name: Install Dependencies
+        run: npm install
+        working-directory: lambdas/authentication
+
+      - name: Deploy
+        run: sls deploy --stage ${{ inputs.environment }}
+        working-directory: lambdas/authentication
+
+  lambda-authorizer:
+    name: Lambda Functions (Authorizer)
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment-label }}
+    steps:
+      - name: Fetch Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - uses: actions/setup-node@v3
+        with:
+          cache: npm
+          node-version: 18
+
+      - name: Install Serverless
+        run: npm install -g serverless
+
+      - name: Install Dependencies
+        run: npm install
+        working-directory: lambdas/authorizer
+
+      - name: Deploy
+        run: sls deploy --stage ${{ inputs.environment }}
+        working-directory: lambdas/authorizer
+
+  lambdas:
+    name: Lambda Functions (${{ matrix.label }})
+    needs: [lambda-authorizer]
+    strategy:
+      matrix:
+        include:
+          - package: candidate
+            label: Candidate
+          - package: checklist
+            label: Checklist
+          - package: company
+            label: Company
+          - package: position
+            label: Position
+          - package: question
+            label: Question
+          - package: test
+            label: Test
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment-label }}
+    steps:
+      - name: Fetch Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - uses: actions/setup-node@v3
+        with:
+          cache: npm
+          node-version: 18
+
+      - name: Install Serverless
+        run: npm install -g serverless
+
+      - name: Install Dependencies
+        run: npm install
+        working-directory: lambdas/${{ matrix.package }}
+
+      - name: Deploy
+        run: sls deploy --stage ${{ inputs.environment }}
+        working-directory: lambdas/${{ matrix.package }}

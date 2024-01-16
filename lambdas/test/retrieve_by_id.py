@@ -1,7 +1,6 @@
 import logging
 
 import psycopg2
-import boto3
 
 from config import Config
 from utils.response import generate_success_response, generate_error_response
@@ -23,9 +22,6 @@ logger.propagate = False
 # Postgres
 db_conn = None
 db_cursor = None
-
-# SQS
-sqs = boto3.client('sqs')
 
 
 def connect_to_db():
@@ -88,7 +84,7 @@ def process_sql_result(result):
     questions = {}
     for row in result:
         (question_id, question_text, question_topic, question_difficulty, metric_id, metric_name) = row[5:]
-        if question_id not in questions:
+        if question_id and question_id not in questions:
             question = {
                 'id': question_id,
                 'text': question_text,
@@ -128,7 +124,6 @@ def handler(event, context):
             'test': test
         }
         return generate_success_response(origin, data)
-
     except (ValueError, RuntimeError) as e:
         status_code = 400
         logger.error(f'Retrieving a test failed: {e}')
