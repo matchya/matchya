@@ -1,6 +1,8 @@
+import os
 import subprocess
 import logging
 import argparse
+import sys
 
 import boto3
 
@@ -61,7 +63,12 @@ def build_docker_image():
     - The image is tagged as 'liquibase'.
     - Assumes that a Dockerfile is present in the current directory.
     """
-    subprocess.run(["docker", "build", "-t", "liquibase", ".."], check=True)
+    # Get the root directory of your project
+    root_dir = os.path.dirname(os.path.dirname(os.path.abspath(sys.argv[0])))
+
+    # Construct the absolute path to the 'db' directory
+    db_dir = os.path.join(root_dir)
+    subprocess.run(["docker", "build", "-t", "liquibase", db_dir], check=True)
 
 
 if __name__ == "__main__":
