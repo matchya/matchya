@@ -19,11 +19,12 @@ jobs:
 
       - name: Setup SSH Key
         run: |
-          mkdir -p $HOME/.ssh
-          echo "${{ vars.SSH_PUBLIC_KEY }}" > $HOME/.ssh/id_rsa_matchya.pub
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > $HOME/.ssh/id_rsa_matchya
-          chmod 600 $HOME/.ssh/id_rsa_matchya
-          chmod 600 $HOME/.ssh/id_rsa_matchya.pub
+          mkdir -p ~/.ssh/
+          echo "${{ vars.SSH_PUBLIC_KEY }}" > ~/.ssh/id_rsa_matchya.pub
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa_matchya
+          chmod 600 ~/.ssh/id_rsa_matchya
+          chmod 600 ~/.ssh/id_rsa_matchya.pub
+          ssh-keyscan -H ${{ secrets.SSH_HOST_IP }} >> ~/.ssh/known_hosts
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2

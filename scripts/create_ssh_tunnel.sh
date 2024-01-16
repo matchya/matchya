@@ -31,12 +31,6 @@ bastion_public_ip=$(aws ssm get-parameter --name "/terraform/shared/ec2/elastic_
 echo "Bastion host public ip: $bastion_public_ip"
 
 echo "Adding bastion host to known hosts"
-echo "$(ssh-keyscan -t rsa $bastion_public_ip)"
-# Create known_hosts file if it doesn't exist
-if [ ! -f $HOME/.ssh/known_hosts ]; then
-    touch $HOME/.ssh/known_hosts
-fi
-echo "$(ssh-keyscan -t rsa $bastion_public_ip)" >> $HOME/.ssh/known_hosts
 
 echo "Fetching rds endpoint"
 # Fetch the rds endpoint via ssm param
@@ -47,4 +41,4 @@ local_port=5433
 remote_port=5432
 
 echo "Connecting to $bastion_public_ip..."
-ssh -v -N -L $local_port:$rds_endpoint:$remote_port -i $HOME/.ssh/id_rsa_matchya ubuntu@$bastion_public_ip &
+ssh -N -L $local_port:$rds_endpoint:$remote_port -i $HOME/.ssh/id_rsa_matchya ubuntu@$bastion_public_ip &
