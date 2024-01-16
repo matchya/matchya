@@ -12,5 +12,11 @@ export default meta;
 type Story = StoryObj<typeof Component>;
 
 export const HomePage: Story = {
-  render: () => <Component />,
+  render: () => (
+    <Component
+      onNavigateToAuthentication={() =>
+        alert('navigate to authentication page')
+      }
+    />
+  ),
 };
