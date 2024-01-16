@@ -10,7 +10,7 @@ on:
       environment-label:
         description: "Environment to deploy to in capitalized."
         required: true
-        default: "staging"
+        default: "Staging"
 
 jobs:
   plan-shared:
@@ -50,7 +50,7 @@ jobs:
     name: Deploy
     if: inputs.environment != 'production'
     uses: ./.github/workflows/job-deploy-infrastructure.yml
-    needs: [plan-environment]
+    needs: [deploy-shared, plan-environment]
     with:
       environment: ${{ inputs.environment }}
       environment-label: ${{ inputs.environment-label }}
