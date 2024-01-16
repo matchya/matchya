@@ -43,4 +43,4 @@ local_port=5433
 remote_port=5432
 
 echo "Connecting to $bastion_public_ip..."
-ssh -N -L $local_port:$rds_endpoint:$remote_port -i ~/.ssh/id_rsa_matchya ubuntu@$bastion_public_ip &
+ssh -v -N -L $local_port:$rds_endpoint:$remote_port -i ~/.ssh/id_rsa_matchya ubuntu@$bastion_public_ip &

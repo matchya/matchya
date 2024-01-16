@@ -20,8 +20,10 @@ jobs:
       - name: Setup SSH Key
         run: |
           mkdir -p ~/.ssh
+          echo "${{ vars.SSH_PUBLIC_KEY }}" > ~/.ssh/id_rsa_matchya.pub
           echo "${{ secrets.SSH_SECRET_KEY }}" > ~/.ssh/id_rsa_matchya
           chmod 600 ~/.ssh/id_rsa_matchya
+          chmod 600 ~/.ssh/id_rsa_matchya.pub
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
