@@ -7,7 +7,7 @@ from utils.response import generate_success_response, generate_error_response
 from utils.request import parse_header, parse_cookie_body
 
 # Logger
-logger = logging.getLogger('retrieve tests')
+logger = logging.getLogger('retrieve assessments')
 logger.setLevel(logging.INFO)
 
 formatter = logging.Formatter('[%(levelname)s]:%(funcName)s:%(lineno)d:%(message)s')
@@ -36,21 +36,21 @@ def connect_to_db():
     db_cursor = db_conn.cursor()
 
 
-def retrieve_tests_from_db(company_id):
+def retrieve_assessments_from_db(company_id):
     """
-    Retrieves tests from the database.
+    Retrieves assessments from the database.
 
     :param company_id: The company ID.
     """
-    logger.info('Retrieving tests from db...')
+    logger.info('Retrieving assessments from db...')
     sql = """
         SELECT 
             t.id, t.name, t.position_type, t.position_level, t.updated_at,
             COUNT(cr.candidate_id) AS num_candidates
         FROM 
-            test t
+            assessment t
         LEFT JOIN 
-            candidate_result cr ON t.id = cr.test_id
+            candidate_result cr ON t.id = cr.assessment_id
         WHERE 
             t.company_id = '%s'
         GROUP BY 
@@ -59,9 +59,9 @@ def retrieve_tests_from_db(company_id):
     try:
         db_cursor.execute(sql)
         result = db_cursor.fetchall()
-        tests = []
+        assessments = []
         for row in result:
-            test = {
+            assessment = {
                 'id': row[0],
                 'name': row[1],
                 'position_type': row[2],
@@ -69,16 +69,16 @@ def retrieve_tests_from_db(company_id):
                 'updated_at': str(row[4]),
                 'num_candidates': row[5]
             }
-            tests.append(test)
-        return tests
+            assessments.append(assessment)
+        return assessments
     except Exception as e:
-        logger.error(f'Failed to retrieve tests from db: {e}')
-        raise RuntimeError('Failed to retrieve tests from db.')
+        logger.error(f'Failed to retrieve assessments from db: {e}')
+        raise RuntimeError('Failed to retrieve assessments from db.')
 
 
 def handler(event, context):
     try:
-        logger.info('Retrieving tests...')
+        logger.info('Retrieving assessments...')
         connect_to_db()
 
         logger.info("Parsing the request header...")
@@ -86,20 +86,20 @@ def handler(event, context):
 
         company_id = parse_cookie_body(event)['company_id']
 
-        tests = retrieve_tests_from_db(company_id)
+        assessments = retrieve_assessments_from_db(company_id)
 
-        logger.info("Successfully retrieved tests from a company.")
+        logger.info("Successfully retrieved assessments from a company.")
         data = {
-            'tests': tests
+            'assessments': assessments
         }
         return generate_success_response(origin, data)
     except (ValueError, RuntimeError) as e:
         status_code = 400
-        logger.error(f'Retrieving tests failed: {e}')
+        logger.error(f'Retrieving assessments failed: {e}')
         return generate_error_response(origin, status_code, str(e))
     except Exception as e:
         status_code = 500
-        logger.error(f'Retrieving tests failed: {e}')
+        logger.error(f'Retrieving assessments failed: {e}')
         return generate_error_response(origin, status_code, str(e))
     finally:
         if db_cursor:

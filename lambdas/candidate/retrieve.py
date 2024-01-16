@@ -48,11 +48,11 @@ def retrieve_candidates(company_id):
     sql = """
         SELECT 
             can.id, can.email, can.first_name, can.last_name, can.github_username,
-            can_res.id AS result_id, can_res.test_id, can_res.total_score, can_res.created_at, 
-            test.id AS test_id, test.name AS test_name    
+            can_res.id AS result_id, can_res.assessment_id, can_res.total_score, can_res.created_at, 
+            assessment.id AS assessment_id, assessment.name AS assessment_name    
         FROM candidate AS can 
         LEFT JOIN candidate_result AS can_res ON can_res.candidate_id = can.id
-        LEFT JOIN test ON test.id = can_res.test_id
+        LEFT JOIN assessment ON assessment.id = can_res.assessment_id
         LEFT JOIN company_candidate AS com_can ON com_can.candidate_id = can.id
         WHERE com_can.company_id = '%s';
         """ % company_id
@@ -73,7 +73,7 @@ def process_sql_result(result):
     candidates = {}
     for row in result:
         (candidate_id, email, first_name, last_name, github_username,
-         result_id, test_id, total_score, created_at, test_id, test_name) = row
+         result_id, assessment_id, total_score, created_at, assessment_id, assessment_name) = row
         if candidate_id and candidate_id not in candidates:
             candidates[candidate_id] = {
                 'id': candidate_id,
@@ -86,8 +86,8 @@ def process_sql_result(result):
         if result_id:
             candidates[candidate_id]['result'] = {
                 'id': result_id,
-                'test_id': test_id,
-                'test_name': test_name,
+                'assessment_id': assessment_id,
+                'assessment_name': assessment_name,
                 'total_score': total_score,
                 'created_at': str(created_at)
             }

@@ -1,4 +1,4 @@
-service: test
+service: assessment
 
 frameworkVersion: "3"
 
@@ -9,7 +9,7 @@ provider:
   stage: ${opt:stage, 'dev'}
   region: us-east-1
   deploymentBucket:
-    name: ${self:provider.stage}-sls-test
+    name: ${self:provider.stage}-sls-assessment
   iam:
     role: ${ssm:/terraform/shared/iam/lambda_role_arn}
   apiGateway:
@@ -40,14 +40,14 @@ custom:
 
 functions:
   create:
-    name: ${self:provider.stage}-test-create
+    name: ${self:provider.stage}-assessment-create
     image:
       name: default
       command:
         - create.handler
     events:
       - http:
-          path: /tests
+          path: /assessments
           method: POST
           cors:
             origins: ${self:custom.origins.${self:provider.stage}}
@@ -57,14 +57,14 @@ functions:
             type: REQUEST
 
   retrieve:
-    name: ${self:provider.stage}-test-retrieve
+    name: ${self:provider.stage}-assessment-retrieve
     image:
       name: default
       command:
         - retrieve.handler
     events:
       - http:
-          path: /tests
+          path: /assessments
           method: GET
           cors:
             origins: ${self:custom.origins.${self:provider.stage}}
@@ -74,14 +74,14 @@ functions:
             type: REQUEST
 
   retrieve-by-id:
-    name: ${self:provider.stage}-test-retrieve-by-id
+    name: ${self:provider.stage}-assessment-retrieve-by-id
     image:
       name: default
       command:
         - retrieve_by_id.handler
     events:
       - http:
-          path: /tests/{id}
+          path: /assessments/{id}
           method: GET
           cors:
             origins: ${self:custom.origins.${self:provider.stage}}
