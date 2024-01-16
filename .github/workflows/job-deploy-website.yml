@@ -70,7 +70,7 @@ jobs:
       - name: Get the distribution id for Cloudfront
         id: get_distribution_id
         run: |
-          distribution_id=$(aws ssm get-parameter --name "/terraform/${{ inputs.environment }}/www.${{ steps.fetch_app_domain_name.app_domain_name }}/cloudfront_distribution_id" --query "Parameter.Value" --output text)
+          distribution_id=$(aws ssm get-parameter --name "/terraform/${{ inputs.environment }}/www.${{ steps.fetch_app_domain_name.outputs.app_domain_name }}/cloudfront_distribution_id" --query "Parameter.Value" --output text)
           echo "distribution_id=$distribution_id" >> $GITHUB_OUTPUT
           echo "Distribution Id found: $distribution_id"
 
