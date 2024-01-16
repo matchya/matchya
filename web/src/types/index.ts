@@ -9,18 +9,22 @@ export interface Company {
   positions: Position[];
 }
 
-export interface Candidate {
-  id: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  github_username: string;
-  total_score: number;
-  summary: string;
-  status: string;
-  created_at: string;
-  assessments: Assessment[];
-}
+export const candidateSchema = z.object({
+  id: z.string(),
+  firstName: z.string(),
+  lastName: z.string(),
+  email: z.string(),
+  githubUsername: z.string(),
+  result: z.object({
+    id: z.string(),
+    testId: z.string(),
+    testName: z.string(),
+    totalScore: z.number(),
+    createdAt: z.string(),
+  }),
+});
+
+export type Candidate = z.infer<typeof candidateSchema>;
 
 export interface Assessment {
   criterion: Criterion;
