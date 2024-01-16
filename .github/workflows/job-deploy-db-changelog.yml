@@ -1,0 +1,61 @@
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      environment-label:
+        required: true
+        type: string
+
+jobs:
+  ssh-tunnel:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Check Files Changed
+        uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            package:
+              - 'db/**'
+
+      - name: Configure AWS Credentials
+        if: steps.changes.outputs.package == 'true'
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Set up Python 3.8
+        if: steps.changes.outputs.package == 'true'
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Set up SSH tunnel
+        if: steps.changes.outputs.package == 'true'
+        run: |
+          make create-ssh-tunnel environment=${{ inputs.environment }}
+
+      - name: Install dependencies
+        if: steps.changes.outputs.package == 'true'
+        run: |
+          pip install -r requirements.txt
+        working-directory: db
+
+      - name: Run Update Changelog
+        if: steps.changes.outputs.package == 'true'
+        run: |
+          python ./update.py staging
+        working-directory: db/scripts
+
+      - name: Close SSH tunnel
+        if: always()
+        run: |
+          make close-ssh-tunnel environment=${{ inputs.environment }}
