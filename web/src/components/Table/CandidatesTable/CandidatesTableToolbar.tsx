@@ -1,19 +1,19 @@
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { Table } from '@tanstack/react-table';
 
-import { CandidateTableFacetedFilter } from './CandidateTableFacetedFilter';
-import { CandidateTableViewOptions } from './CandidateTableViewOptions';
+import { CandidatesTableFacetedFilter } from './CandidatesTableFacetedFilter';
+import { CandidatesTableViewOptions } from './CandidatesTableViewOptions';
 import { priorities, statuses } from './data';
 
 import { Button, Input } from '@/components';
 
-interface CandidateTableToolbarProps<TData> {
+interface CandidatesTableToolbarProps<TData> {
   table: Table<TData>;
 }
 
-export function CandidateTableToolbar<TData>({
+export function CandidatesTableToolbar<TData>({
   table,
-}: CandidateTableToolbarProps<TData>) {
+}: CandidatesTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
 
   return (
@@ -28,14 +28,14 @@ export function CandidateTableToolbar<TData>({
           className="h-8 w-[150px] lg:w-[250px]"
         />
         {table.getColumn('status') && (
-          <CandidateTableFacetedFilter
+          <CandidatesTableFacetedFilter
             column={table.getColumn('status')}
             title="Status"
             options={statuses}
           />
         )}
         {table.getColumn('priority') && (
-          <CandidateTableFacetedFilter
+          <CandidatesTableFacetedFilter
             column={table.getColumn('priority')}
             title="Priority"
             options={priorities}
@@ -52,7 +52,7 @@ export function CandidateTableToolbar<TData>({
           </Button>
         )}
       </div>
-      <CandidateTableViewOptions table={table} />
+      <CandidatesTableViewOptions table={table} />
     </div>
   );
 }

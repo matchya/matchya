@@ -26,11 +26,11 @@ import { columns } from './columns';
 
 import { Candidate } from '@/types';
 
-interface CandidateTableProps {
+interface CandidatesTableProps {
   candidates: Candidate[];
 }
 
-const CandidateTable = ({ candidates }: CandidateTableProps) => {
+const CandidatesTable = ({ candidates }: CandidatesTableProps) => {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -62,7 +62,7 @@ const CandidateTable = ({ candidates }: CandidateTableProps) => {
   });
   return (
     <div className="space-y-4 h-full overflow-y-scroll pb-40">
-      {/* <CandidateTableToolbar table={table} /> */}
+      {/* <CandidatesTableToolbar table={table} /> */}
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -117,9 +117,9 @@ const CandidateTable = ({ candidates }: CandidateTableProps) => {
           </TableBody>
         </Table>
       </div>
-      {/* <CandidateTablePagination table={table} /> */}
+      {/* <CandidatesTablePagination table={table} /> */}
     </div>
   );
 };
 
-export default CandidateTable;
+export default CandidatesTable;

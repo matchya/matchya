@@ -1,4 +1,4 @@
-import { CandidateTable } from '@/components';
+import { CandidatesTable } from '@/components';
 import { mockedCandidates } from '@/data/mock';
 
 const CandidatesPageTemplate = () => {
@@ -17,7 +17,7 @@ const CandidatesPageTemplate = () => {
                     <p className="">See all your Matchya candidates here</p>
                   </div>
                 </div>
-                <CandidateTable candidates={mockedCandidates} />
+                <CandidatesTable candidates={mockedCandidates} />
               </div>
             </div>
           </div>
