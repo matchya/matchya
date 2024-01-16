@@ -86,26 +86,26 @@ def transcript_from_audio(local_file_name):
     return transcript
 
 
-def get_position_type_and_level(test_id):
+def get_position_type_and_level(assessment_id):
     """
-    Gets the position type and level by test id from the database.
+    Gets the position type and level by assessment id from the database.
 
-    :param test_id: The test id.
+    :param assessment_id: The assessment id.
     """
-    logger.info('Getting the position type and level by test id from db...')
+    logger.info('Getting the position type and level by assessment id from db...')
     sql = """
         SELECT 
-            test.position_type, test.position_level
-        FROM test
-        WHERE test.id = '%s'
-    """ % test_id
+            assessment.position_type, assessment.position_level
+        FROM assessment
+        WHERE assessment.id = '%s'
+    """ % assessment_id
     try:
         db_cursor.execute(sql)
         result = db_cursor.fetchall()
         return result[0]
     except Exception as e:
-        logger.error(f'Failed to get the position type and level by test id from db: {e}')
-        raise RuntimeError('Failed to get the position type and level by test id from db.')
+        logger.error(f'Failed to get the position type and level by assessment id from db: {e}')
+        raise RuntimeError('Failed to get the position type and level by assessment id from db.')
 
 
 def get_question(question_id):
@@ -228,12 +228,12 @@ def get_evaluation_from_gpt(system_message, user_message):
         raise RuntimeError('Failed to get the evaluation from GPT.')
 
 
-def get_candidate_result_id(test_id, candidate_id):
+def get_candidate_result_id(assessment_id, candidate_id):
     """
     If the candidate result exists, returns the candidate result id.
     Otherwise, creates a new candidate result and returns the new candidate result id.
 
-    :param test_id: The test id.
+    :param assessment_id: The assessment id.
     :param candidate_id: The candidate id.
     """
     logger.info('Getting the candidate result id...')
@@ -241,8 +241,8 @@ def get_candidate_result_id(test_id, candidate_id):
         SELECT 
             candidate_result.id
         FROM candidate_result
-        WHERE candidate_result.test_id = '%s' AND candidate_result.candidate_id = '%s'
-    """ % (test_id, candidate_id)
+        WHERE candidate_result.assessment_id = '%s' AND candidate_result.candidate_id = '%s'
+    """ % (assessment_id, candidate_id)
     try:
         db_cursor.execute(sql)
         result = db_cursor.fetchall()
@@ -251,9 +251,9 @@ def get_candidate_result_id(test_id, candidate_id):
         else:
             id = str(uuid.uuid4())
             sql = """
-                INSERT INTO candidate_result (id, test_id, candidate_id)
+                INSERT INTO candidate_result (id, assessment_id, candidate_id)
                 VALUES ('%s', '%s', '%s');
-            """ % (id, test_id, candidate_id)
+            """ % (id, assessment_id, candidate_id)
             db_cursor.execute(sql)
             return id
     except Exception as e:
@@ -295,18 +295,18 @@ def handler(event, context):
         connect_to_db()
 
         bucket, key = get_bucket_name_and_key(event)
-        test_id, question_id, candidate_id = key.split('/')[0], key.split('/')[1], key.split('/')[2].split('.')[0]
+        assessment_id, question_id, candidate_id = key.split('/')[0], key.split('/')[1], key.split('/')[2].split('.')[0]
 
-        file_name = test_id + '_' + question_id + '_' + candidate_id + '.m4a'
+        file_name = assessment_id + '_' + question_id + '_' + candidate_id + '.m4a'
         local_file_name = download_file_from_s3(bucket, key, file_name)
         transcript = transcript_from_audio(local_file_name)
 
-        position_type, position_level = get_position_type_and_level(test_id)
+        position_type, position_level = get_position_type_and_level(assessment_id)
         question = get_question(question_id)
         system_message, user_message = get_system_and_user_messages(question, position_type, position_level, transcript)
         score, feedback = get_evaluation_from_gpt(system_message, user_message)
 
-        candidate_result_id = get_candidate_result_id(test_id, candidate_id)
+        candidate_result_id = get_candidate_result_id(assessment_id, candidate_id)
 
         audio_url = f'https://{bucket}.s3.amazonaws.com/{key}'
         store_answer_evaluation_to_db(candidate_result_id, question_id, score, feedback, audio_url)

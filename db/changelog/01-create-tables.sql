@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS company_candidate (
 
 
 --changeset author:5
-CREATE TABLE IF NOT EXISTS test (
+CREATE TABLE IF NOT EXISTS assessment (
 	id varchar(255) PRIMARY KEY,
 	company_id varchar(255),
 	name varchar(30),
@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS test (
 	created_at timestamp default CURRENT_TIMESTAMP,
 	foreign key (company_id) references company(id)
 );
---rollback DROP TABLE IF EXISTS test;
+--rollback DROP TABLE IF EXISTS assessment;
 
 
 --changeset author:6
@@ -69,14 +69,14 @@ CREATE TABLE IF NOT EXISTS question (
 
 
 --changeset author:7
-CREATE TABLE IF NOT EXISTS test_question (
-	test_id varchar(255),
+CREATE TABLE IF NOT EXISTS assessment_question (
+	assessment_id varchar(255),
 	question_id varchar(255),
-	primary key (test_id, question_id),
-	foreign key (test_id) references test(id),
+	primary key (assessment_id, question_id),
+	foreign key (assessment_id) references assessment(id),
 	foreign key (question_id) references question(id)
 );
---rollback DROP TABLE IF EXISTS test_question;
+--rollback DROP TABLE IF EXISTS assessment_question;
 
 
 --changeset author:8
@@ -95,12 +95,12 @@ CREATE TABLE IF NOT EXISTS metric (
 CREATE TABLE IF NOT EXISTS candidate_result (
 	id varchar(255) not null primary key,
 	candidate_id varchar(255),
-	test_id varchar(255),
+	assessment_id varchar(255),
 	total_score float,
 	summary varchar(1023),
 	created_at timestamp default CURRENT_TIMESTAMP,
 	foreign key (candidate_id) references candidate(id),
-	foreign key (test_id) references test(id)
+	foreign key (assessment_id) references assessment(id)
 );
 --rollback DROP TABLE IF EXISTS candidate_result;
 
@@ -121,5 +121,5 @@ CREATE TABLE IF NOT EXISTS answer (
 
 
 --changeset author:11
-ALTER TABLE test ADD COLUMN updated_at timestamp default CURRENT_TIMESTAMP;
---rollback ALTER TABLE test DROP COLUMN updated_at;
+ALTER TABLE assessment ADD COLUMN updated_at timestamp default CURRENT_TIMESTAMP;
+--rollback ALTER TABLE assessment DROP COLUMN updated_at;

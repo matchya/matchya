@@ -7,7 +7,7 @@ from utils.response import generate_success_response, generate_error_response
 from utils.request import parse_header, parse_cookie_body, parse_request_parameter
 
 # Logger
-logger = logging.getLogger('retrieve a test by test id')
+logger = logging.getLogger('retrieve a assessment by assessment id')
 logger.setLevel(logging.INFO)
 
 formatter = logging.Formatter('[%(levelname)s]:%(funcName)s:%(lineno)d:%(message)s')
@@ -36,33 +36,33 @@ def connect_to_db():
     db_cursor = db_conn.cursor()
 
 
-def retrieve_test_by_id_from_db(company_id, test_id):
+def retrieve_assessment_by_id_from_db(company_id, assessment_id):
     """
-    Retrieves a test by test id from the database.
+    Retrieves a assessment by assessment id from the database.
 
     :param company_id: The company ID.
-    :param test_id: The test ID.
+    :param assessment_id: The assessment ID.
     """
-    logger.info('Retrieving a test by test id from db...')
+    logger.info('Retrieving a assessment by assessment id from db...')
     sql = """
         SELECT 
-            test.id, test.name, test.position_type, test.position_level, test.created_at, 
+            assessment.id, assessment.name, assessment.position_type, assessment.position_level, assessment.created_at, 
             question.id, question.text, question.topic, question.difficulty,
             metric.id, metric.name
-        FROM test
-        LEFT JOIN test_question ON test.id = test_question.test_id
-        LEFT JOIN question ON test_question.question_id = question.id
+        FROM assessment
+        LEFT JOIN assessment_question ON assessment.id = assessment_question.assessment_id
+        LEFT JOIN question ON assessment_question.question_id = question.id
         LEFT JOIN metric ON question.id = metric.question_id
-        WHERE test.company_id = '%s' AND test.id = '%s'
-    """ % (company_id, test_id)
+        WHERE assessment.company_id = '%s' AND assessment.id = '%s'
+    """ % (company_id, assessment_id)
     try:
         db_cursor.execute(sql)
         result = db_cursor.fetchall()
-        test = process_sql_result(result)
-        return test
+        assessment = process_sql_result(result)
+        return assessment
     except Exception as e:
-        logger.error(f'Failed to retrieve a test by test id from db: {e}')
-        raise RuntimeError('Failed to retrieve a test by test id from db.')
+        logger.error(f'Failed to retrieve a assessment by assessment id from db: {e}')
+        raise RuntimeError('Failed to retrieve a assessment by assessment id from db.')
 
 
 def process_sql_result(result):
@@ -72,8 +72,8 @@ def process_sql_result(result):
     :param result: The SQL result.
     """
     if not result:
-        raise ValueError('Test not found.')
-    test = {
+        raise ValueError('assessment not found.')
+    assessment = {
         'id': result[0][0],
         'name': result[0][1],
         'position_type': result[0][2],
@@ -102,35 +102,35 @@ def process_sql_result(result):
             }
             questions[question_id]['metrics'].append(metric)
 
-    test['questions'] = list(questions.values())
-    return test
+    assessment['questions'] = list(questions.values())
+    return assessment
 
 
 def handler(event, context):
     try:
-        logger.info('Retrieving tests...')
+        logger.info('Retrieving assessments...')
         connect_to_db()
 
         logger.info("Parsing the request header...")
         origin = parse_header(event)
 
         company_id = parse_cookie_body(event)['company_id']
-        test_id = parse_request_parameter(event, 'id')
+        assessment_id = parse_request_parameter(event, 'id')
 
-        test = retrieve_test_by_id_from_db(company_id, test_id)
+        assessment = retrieve_assessment_by_id_from_db(company_id, assessment_id)
 
-        logger.info("Successfully retrieved tests from a company.")
+        logger.info("Successfully retrieved assessments from a company.")
         data = {
-            'test': test
+            'assessment': assessment
         }
         return generate_success_response(origin, data)
     except (ValueError, RuntimeError) as e:
         status_code = 400
-        logger.error(f'Retrieving a test failed: {e}')
+        logger.error(f'Retrieving a assessment failed: {e}')
         return generate_error_response(origin, status_code, str(e))
     except Exception as e:
         status_code = 500
-        logger.error(f'Retrieving a test failed: {e}')
+        logger.error(f'Retrieving a assessment failed: {e}')
         return generate_error_response(origin, status_code, str(e))
     finally:
         if db_cursor:
