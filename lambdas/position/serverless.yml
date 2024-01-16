@@ -29,6 +29,14 @@ provider:
     POSTGRES_USER: ${ssm:/terraform/${self:provider.stage}/rds/db_username}
     POSTGRES_PASSWORD: ${ssm:/terraform/${self:provider.stage}/rds/db_password}
 
+custom:
+  origins:
+    staging:
+      - "https://${ssm:/terraform/staging/domain_name}"
+      - "https://www.${ssm:/terraform/staging/domain_name}"
+    dev:
+      - "http://127.0.0.1:5173"
+
 functions:
   create:
     name: ${self:provider.stage}-position-create
@@ -41,17 +49,11 @@ functions:
           path: /positions
           method: POST
           cors:
-            origins:
-              - "https://${ssm:/terraform/${self:provider.stage}/domain_name}"
-              - "https://www.${ssm:/terraform/${self:provider.stage}/domain_name}"
-              - "http://127.0.0.1:5173"
+            origins: ${self:custom.origins.${self:provider.stage}}
             allowCredentials: true
           authorizer:
-            type: request
-            identitySource: method.request.header.Cookie
-            resultTtlInSeconds: 300
-            name: ${self:provider.stage}-position-create-authorizer
-            arn: arn:aws:lambda:${aws:region}:${aws:accountId}:function:${self:provider.stage}-authorizer
+            authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
+            type: REQUEST
 
   retrieve-candidates:
     name: ${self:provider.stage}-position-retreive-candidates
@@ -64,17 +66,11 @@ functions:
           path: /positions/candidates/{id}
           method: GET
           cors:
-            origins:
-              - "https://${ssm:/terraform/${self:provider.stage}/domain_name}"
-              - "https://www.${ssm:/terraform/${self:provider.stage}/domain_name}"
-              - "http://127.0.0.1:5173"
+            origins: ${self:custom.origins.${self:provider.stage}}
             allowCredentials: true
           authorizer:
-            type: request
-            identitySource: method.request.header.Cookie
-            resultTtlInSeconds: 300
-            name: ${self:provider.stage}-position-candidates-status-authorizer
-            arn: arn:aws:lambda:${aws:region}:${aws:accountId}:function:${self:provider.stage}-authorizer
+            authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
+            type: REQUEST
           request:
             parameters:
               paths:
@@ -91,17 +87,11 @@ functions:
           path: /positions/questions/{id}
           method: GET
           cors:
-            origins:
-              - "https://${ssm:/terraform/${self:provider.stage}/domain_name}"
-              - "https://www.${ssm:/terraform/${self:provider.stage}/domain_name}"
-              - "http://127.0.0.1:5173"
+            origins: ${self:custom.origins.${self:provider.stage}}
             allowCredentials: true
           authorizer:
-            type: request
-            identitySource: method.request.header.Cookie
-            resultTtlInSeconds: 300
-            name: ${self:provider.stage}-position-retrieve-questions-authorizer
-            arn: arn:aws:lambda:${aws:region}:${aws:accountId}:function:${self:provider.stage}-authorizer
+            authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
+            type: REQUEST
           request:
             parameters:
               paths:

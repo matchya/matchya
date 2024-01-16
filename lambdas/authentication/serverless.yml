@@ -33,6 +33,14 @@ provider:
     POSTGRES_USER: ${ssm:/terraform/${self:provider.stage}/rds/db_username}
     POSTGRES_PASSWORD: ${ssm:/terraform/${self:provider.stage}/rds/db_password}
 
+custom:
+  origins:
+    staging:
+      - "https://${ssm:/terraform/staging/domain_name}"
+      - "https://www.${ssm:/terraform/staging/domain_name}"
+    dev:
+      - "http://127.0.0.1:5173"
+
 functions:
   logout:
     name: ${self:provider.stage}-authentication-logout
@@ -45,10 +53,7 @@ functions:
           path: /logout
           method: POST
           cors:
-            origins:
-              - "https://${ssm:/terraform/${self:provider.stage}/domain_name}"
-              - "https://www.${ssm:/terraform/${self:provider.stage}/domain_name}"
-              - "http://127.0.0.1:5173"
+            origins: ${self:custom.origins.${self:provider.stage}}
             allowCredentials: true
 
   github:
@@ -62,10 +67,7 @@ functions:
           path: /login/github
           method: POST
           cors:
-            origins:
-              - "https://${ssm:/terraform/${self:provider.stage}/domain_name}"
-              - "https://www.${ssm:/terraform/${self:provider.stage}/domain_name}"
-              - "http://127.0.0.1:5173"
+            origins: ${self:custom.origins.${self:provider.stage}}
             allowCredentials: true
 
   google:
@@ -79,10 +81,7 @@ functions:
           path: /login/google
           method: POST
           cors:
-            origins:
-              - "https://${ssm:/terraform/${self:provider.stage}/domain_name}"
-              - "https://www.${ssm:/terraform/${self:provider.stage}/domain_name}"
-              - "http://127.0.0.1:5173"
+            origins: ${self:custom.origins.${self:provider.stage}}
             allowCredentials: true
 
 plugins:
