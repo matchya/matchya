@@ -46,10 +46,8 @@ functions:
           method: POST
           cors:
             origins:
-              - https://www.app.staging.matchya.ai
-              - https://app.staging.matchya.ai
-              - https://www.app.matchya.ai
-              - https://app.matchya.ai
+              - "https://${ssm:/terraform/${self:provider.stage}/domain_name}"
+              - "https://www.${ssm:/terraform/${self:provider.stage}/domain_name}"
               - http://127.0.0.1:5173
             allowCredentials: true
 
@@ -65,10 +63,8 @@ functions:
           method: POST
           cors:
             origins:
-              - https://www.app.staging.matchya.ai
-              - https://app.staging.matchya.ai
-              - https://www.app.matchya.ai
-              - https://app.matchya.ai
+              - "https://${ssm:/terraform/${self:provider.stage}/domain_name}"
+              - "https://www.${ssm:/terraform/${self:provider.stage}/domain_name}"
               - http://127.0.0.1:5173
             allowCredentials: true
 
@@ -84,10 +80,8 @@ functions:
           method: POST
           cors:
             origins:
-              - https://www.app.staging.matchya.ai
-              - https://app.staging.matchya.ai
-              - https://www.app.matchya.ai
-              - https://app.matchya.ai
+              - "https://${ssm:/terraform/${self:provider.stage}/domain_name}"
+              - "https://www.${ssm:/terraform/${self:provider.stage}/domain_name}"
               - http://127.0.0.1:5173
             allowCredentials: true
 

@@ -42,10 +42,8 @@ functions:
           method: GET
           cors:
             origins:
-              - https://www.matchyaa.com
-              - https://matchyaa.com
-              - https://www.staging.matchyaa.com
-              - https://staging.matchyaa.com
+              - "https://${ssm:/terraform/${self:provider.stage}/domain_name}"
+              - "https://www.${ssm:/terraform/${self:provider.stage}/domain_name}"
               - http://127.0.0.1:5173
             allowCredentials: true
           authorizer:
