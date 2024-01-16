@@ -63,7 +63,6 @@ def build_request(rds_endpoint, rds_port, db_name, db_username, db_password):
     changelog_file_name = 'master-changelog.xml'
     return [
         "docker", "run", "--rm",
-        "--add-host=host.docker.internal:host-gateway",
         "liquibase",
         "--defaultsFile=/liquibase/config/liquibase.properties",
         f"--changeLogFile={changelog_file_name}",
@@ -86,7 +85,7 @@ if __name__ == "__main__":
 
     kwargs = {}
 
-    kwargs['rds_endpoint'] = get_ssm_parameter(f'/terraform/{args.stage}/rds/endpoint') if args.stage == 'dev' else 'host.docker.internal'
+    kwargs['rds_endpoint'] = get_ssm_parameter(f'/terraform/{args.stage}/rds/endpoint') if args.stage == 'dev' else '172.17.0.1'
     kwargs['rds_port'] = get_ssm_parameter(f'/terraform/{args.stage}/rds/port') if args.stage == 'dev' else 5433
     kwargs['db_username'] = get_ssm_parameter(f'/terraform/{args.stage}/rds/db_username')
     kwargs['db_password'] = get_ssm_parameter(f'/terraform/{args.stage}/rds/db_password')
