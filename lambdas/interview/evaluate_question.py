@@ -10,7 +10,7 @@ from openai import OpenAI
 from config import Config
 
 # Logger
-logger = logging.getLogger('evaluate answer')
+logger = logging.getLogger('evaluate question')
 logger.setLevel(logging.INFO)
 
 formatter = logging.Formatter('[%(levelname)s]:%(funcName)s:%(lineno)d:%(message)s')
@@ -261,11 +261,11 @@ def get_interview_id(assessment_id, candidate_id):
         raise RuntimeError('Failed to get the interview id.')
 
 
-def store_answer_evaluation_to_db(candidate_result_id, question_id, score, feedback, audio_url):
+def store_answer_evaluation_to_db(interview_id, question_id, score, feedback, audio_url):
     """
     Stores the answer evaluation to the database.
 
-    :param candidate_result_id: The candidate result id.
+    :param interview_id: The interview id.
     :param question_id: The question id.
     :param score: The score.
     :param feedback: The feedback.
@@ -274,9 +274,9 @@ def store_answer_evaluation_to_db(candidate_result_id, question_id, score, feedb
     logger.info('Storing the answer evaluation to db...')
     feedback = feedback.replace("'", "''")
     sql = """
-        INSERT INTO answer (id, candidate_result_id, question_id, score, feedback, audio_url)
+        INSERT INTO answer (id, interview_id, question_id, score, feedback, audio_url)
         VALUES ('%s', '%s', '%s', '%s', '%s', '%s');
-    """ % (str(uuid.uuid4()), candidate_result_id, question_id, score, feedback, audio_url)
+    """ % (str(uuid.uuid4()), interview_id, question_id, score, feedback, audio_url)
     try:
         db_cursor.execute(sql)
     except Exception as e:

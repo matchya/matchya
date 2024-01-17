@@ -1,4 +1,4 @@
-service: question
+service: interview
 
 frameworkVersion: "3"
 
@@ -9,7 +9,7 @@ provider:
   stage: ${opt:stage, 'dev'}
   region: us-east-1
   deploymentBucket:
-    name: ${self:provider.stage}-sls-question
+    name: ${self:provider.stage}-sls-interview
   iam:
     role: ${ssm:/terraform/shared/iam/lambda_role_arn}
   apiGateway:
@@ -32,12 +32,12 @@ provider:
     QUESTION_GENERATION_PROCESSOR_QUEUE_URL: ${ssm:/terraform/${self:provider.stage}/sqs/question_generation_processor_queue_url}
 
 functions:
-  evaluate:
-    name: ${self:provider.stage}-question-evaluate
+  evaluate-question:
+    name: ${self:provider.stage}-interview-evaluate-question
     image:
       name: default
       command:
-        - evaluate.handler
+        - evaluate_questino.handler
     events:
       - s3:
           bucket: ${self:provider.stage}-data-candidate-response
