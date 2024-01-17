@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import Template from '../template/CreateAssessmentPage/CreateAssessmentPage';
 
 function CreateAssessmentPage() {
+  const navigate = useNavigate();
   const [testName, setTestName] = useState('');
   const [selectedPosition, setSelectedPosition] = useState('');
   const [selectedLevel, setSelectedLevel] = useState('');
@@ -12,7 +14,8 @@ function CreateAssessmentPage() {
   const handlePositionChange = (value: string) => setSelectedPosition(value);
   const handleLevelChange = (value: string) => setSelectedLevel(value);
   const handleNavigateToQuestionGenerationPage = () => {
-    console.log('navigate to question generation page');
+    // TODO: need a middle step to generate the questions
+    navigate('/assessments/123');
   };
 
   return (
