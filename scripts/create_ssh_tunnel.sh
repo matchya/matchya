@@ -35,6 +35,9 @@ echo "Adding bastion host to known hosts"
 echo "Fetching rds endpoint"
 # Fetch the rds endpoint via ssm param
 rds_endpoint=$(aws ssm get-parameter --name "/terraform/${environment}/rds/endpoint" --query "Parameter.Value" --output text)
+if [ "$CI" = "true" ]; then
+    echo "::add-mask::$rds_endpoint"
+fi
 echo "RDS endpoint: $rds_endpoint"
 
 local_port=5433
