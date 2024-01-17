@@ -10,10 +10,10 @@ const MainNav = () => {
         Candidates
       </Link>
       <Link
-        to="/tests"
+        to="/assessments"
         className="text-sm font-bold text-black hover:text-gray-200"
       >
-        Tests
+        Assessments
       </Link>
       <Link
         to="/interviews"

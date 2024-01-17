@@ -17,7 +17,7 @@ export const AssessmentsPage: Story = {
   render: () => (
     <>
       <Header />
-      <Component />
+      <Component onNavigateToAssessment={() => {}} />
     </>
   ),
 };
