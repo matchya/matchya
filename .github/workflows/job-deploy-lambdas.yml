@@ -111,8 +111,8 @@ jobs:
             label: Candidate
           - package: company
             label: Company
-          - package: question
-            label: Question
+          - package: interview
+            label: Interview
           - package: assessment
             label: Assessment
     runs-on: ubuntu-latest
