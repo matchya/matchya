@@ -2,19 +2,15 @@ import { createContext, useRef } from 'react';
 import { StoreApi, createStore } from 'zustand';
 
 import { StoreProviderProps } from './interface';
-import { PositionState } from './position';
 
 import { apiEndpoint } from '@/config/env';
 import { mockedCompanyInfo } from '@/data/mock';
 import { axiosInstance } from '@/lib/client';
-import { usePositionStore } from '@/store/store';
 
 export interface CompanyState {
   id: string;
   name: string;
   email: string;
-  github_username: string;
-  repository_names: string[];
   me: () => void;
   resetAll: () => void;
 }
@@ -44,15 +40,11 @@ export const StorybookCompanyStoreProvider = ({
 };
 
 export const CompanyStoreProvider = ({ children }: StoreProviderProps) => {
-  const positionStore: PositionState = usePositionStore();
-
   const storeRef = useRef(
     createStore<CompanyState>()(set => ({
       id: '',
       name: '',
       email: '',
-      github_username: '',
-      repository_names: [],
       me: async () => {
         try {
           const res = await axiosInstance.get(`${apiEndpoint}/companies/me`);
@@ -61,16 +53,8 @@ export const CompanyStoreProvider = ({ children }: StoreProviderProps) => {
             set({
               id: payload.id,
               name: payload.name,
-              email: payload.email,
-              github_username: payload.github_username,
-              repository_names: payload.repository_names,
+              email: payload.email
             });
-            if (payload.positions.length > 0) {
-              await positionStore.setPositions(payload.positions);
-              await positionStore.selectPosition(payload.positions[0]);
-            } else {
-              positionStore.setupPosition(true);
-            }
           } else {
             throw new Error(res.data.payload.message);
           }
@@ -82,9 +66,7 @@ export const CompanyStoreProvider = ({ children }: StoreProviderProps) => {
         set({
           id: '',
           name: '',
-          email: '',
-          github_username: '',
-          repository_names: [],
+          email: ''
         }),
     }))
   );
