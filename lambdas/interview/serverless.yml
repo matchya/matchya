@@ -37,7 +37,7 @@ functions:
     image:
       name: default
       command:
-        - evaluate_questino.handler
+        - evaluate_question.handler
     events:
       - s3:
           bucket: ${self:provider.stage}-data-candidate-response

@@ -272,6 +272,16 @@ def store_answer_evaluation_to_db(interview_id, question_id, score, feedback, au
     :param audio_url: The audio url.
     """
     logger.info('Storing the answer evaluation to db...')
+    # if answer is stored already, do nothing
+    sql = """
+        SELECT id FROM answer
+        WHERE answer.interview_id = '%s' AND answer.question_id = '%s'
+    """ % (interview_id, question_id)
+    db_cursor.execute(sql)
+    result = db_cursor.fetchall()
+    if result:
+        return
+
     feedback = feedback.replace("'", "''")
     sql = """
         INSERT INTO answer (id, interview_id, question_id, score, feedback, audio_url)
