@@ -48,7 +48,7 @@ functions:
         - evaluate_question.handler
     events:
       - s3:
-          bucket: ${self:provider.stage}-data-candidate-response
+          bucket: ${self:provider.stage}-data-question-response-audio
           event: s3:ObjectCreated:*
           existing: true
     timeout: 300
