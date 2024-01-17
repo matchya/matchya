@@ -13,8 +13,8 @@ jobs:
     outputs:
       infra-changed: ${{ steps.check.outputs.infra-changed }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Fetch Repository
+        uses: actions/checkout@v3
         with:
           fetch-depth: 2
 
@@ -39,8 +39,8 @@ jobs:
     outputs:
       web-changed: ${{ steps.check.outputs.web-changed }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Fetch Repository
+        uses: actions/checkout@v3
         with:
           fetch-depth: 2
 
@@ -65,8 +65,8 @@ jobs:
     outputs:
       lambdas-changed: ${{ steps.check.outputs.lambdas-changed }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Fetch Repository
+        uses: actions/checkout@v3
         with:
           fetch-depth: 2
 
@@ -91,8 +91,8 @@ jobs:
     outputs:
       db-changed: ${{ steps.check.outputs.db-changed }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Fetch Repository
+        uses: actions/checkout@v3
         with:
           fetch-depth: 2
 
