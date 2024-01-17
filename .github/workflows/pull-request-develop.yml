@@ -61,9 +61,8 @@ jobs:
             "authentication",
             "authorizer",
             "candidate",
-            "checklist",
             "company",
-            "position",
+            "assessment",
             "question",
           ]
     steps:
