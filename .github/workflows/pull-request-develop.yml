@@ -24,7 +24,7 @@ jobs:
             "assessment",
             "candidate",
             "company",
-            "question",
+            "interview",
           ]
     steps:
       - name: Fetch Repository
@@ -63,7 +63,7 @@ jobs:
             "candidate",
             "company",
             "assessment",
-            "question",
+            "interview",
           ]
     steps:
       - name: Fetch Repository
