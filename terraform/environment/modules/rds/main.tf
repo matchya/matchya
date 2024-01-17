@@ -30,11 +30,15 @@ resource "aws_db_instance" "secure" {
   username             = var.db_username
   password             = var.db_password
   parameter_group_name = "default.postgres14"
-  skip_final_snapshot  = true
+  skip_final_snapshot  = false
   publicly_accessible = false
+  auto_minor_version_upgrade = terraform.workspace == "staging"
+  maintenance_window      = "Fri:09:00-Fri:09:30"
+  backup_retention_period = 7
 
   vpc_security_group_ids = [var.rds_postgres_secure_security_group.id]
   db_subnet_group_name   = aws_db_subnet_group.secure[0].name
+  final_snapshot_identifier = "${terraform.workspace}-final-snapshot-${formatdate("YYYY-MM-DD-hh-mm-ss", timestamp())}"
 }
 
 resource "aws_db_subnet_group" "secure" {
