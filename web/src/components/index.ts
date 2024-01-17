@@ -3,6 +3,7 @@ export { default as Badge } from './Badge/Badge';
 export { default as Button } from './Button/Button';
 export * from './Card/Card';
 export { default as CreateAccountCard } from './Card/CreateAccountCard/CreateAccountCard';
+export { default as InviteCard } from './Card/InviteCard/InviteCard';
 export { default as OnboardingCard } from './Card/OnboardingCard/OnboardingCard';
 export { default as QuestionCard } from './Card/QuestionCard/QuestionCard';
 export { default as Checkbox } from './Checkbox/Checkbox';

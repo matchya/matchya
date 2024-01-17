@@ -5,6 +5,7 @@ import { StoreProvider } from './store';
 
 import AuthenticatedLayout from '@/layout/Authenticated';
 import UnAuthenticatedLayout from '@/layout/UnAuthenticated';
+import AssessmentDetailPage from '@/screens/AssessmentDetailPage';
 import AssessmentsPage from '@/screens/AssessmentsPage';
 import AuthenticationPage from '@/screens/AuthenticationPage';
 import CandidatesPage from '@/screens/CandidatesPage';
@@ -31,6 +32,7 @@ function App() {
               path="/create-assessment"
               element={<CreateAssessmentPage />}
             />
+            <Route path="/assessments/:id" element={<AssessmentDetailPage />} />
           </Route>
           <Route element={<UnAuthenticatedLayout />}>
             <Route path="/" element={<HomePage />} />
