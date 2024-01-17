@@ -45,5 +45,18 @@ functions:
           existing: true
     timeout: 300
 
+  evaluate-interview:
+    name: ${self:provider.stage}-interview-evaluate-interview
+    image:
+      name: default
+      command:
+        - evaluate_interview.handler
+    events:
+      - s3:
+          bucket: ${self:provider.stage}-data-interview-video
+          event: s3:ObjectCreated:*
+          existing: true
+    timeout: 30
+
 plugins:
   - serverless-deployment-bucket
