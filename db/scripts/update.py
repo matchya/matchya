@@ -85,7 +85,7 @@ if __name__ == "__main__":
 
     kwargs = {}
 
-    kwargs['rds_endpoint'] = get_ssm_parameter(f'/terraform/{args.stage}/rds/endpoint') if args.stage == 'dev' else '172.17.0.1'
+    kwargs['rds_endpoint'] = get_ssm_parameter(f'/terraform/{args.stage}/rds/endpoint') if args.stage == 'dev' else 'localhost'
     kwargs['rds_port'] = get_ssm_parameter(f'/terraform/{args.stage}/rds/port') if args.stage == 'dev' else 5433
     kwargs['db_username'] = get_ssm_parameter(f'/terraform/{args.stage}/rds/db_username')
     kwargs['db_password'] = get_ssm_parameter(f'/terraform/{args.stage}/rds/db_password')
