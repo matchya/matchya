@@ -47,14 +47,14 @@ def retrieve_candidates(company_id):
     sql = "SELECT id, email, first_name, last_name FROM candidate WHERE company_id = %s;"
     sql = """
         SELECT 
-            can.id, can.email, can.first_name, can.last_name, can.github_username,
-            can_res.id AS result_id, can_res.assessment_id, can_res.total_score, can_res.created_at, 
-            assessment.id AS assessment_id, assessment.name AS assessment_name    
-        FROM candidate AS can 
-        LEFT JOIN candidate_result AS can_res ON can_res.candidate_id = can.id
-        LEFT JOIN assessment ON assessment.id = can_res.assessment_id
-        LEFT JOIN company_candidate AS com_can ON com_can.candidate_id = can.id
-        WHERE com_can.company_id = '%s';
+            c.id, c.email, c.first_name, c.last_name, ac.added_at,
+            i.id AS i, i.total_score, i.created_at, i.status AS interview_status,
+            a.id AS assessment_id, a.name AS assessment_name
+        FROM candidate AS c 
+        LEFT JOIN interview as i ON i.candidate_id = c.id
+        LEFT JOIN assessment as a ON a.id = i.assessment_id
+        LEFT JOIN assessment_candidate AS ac ON ac.candidate_id = c.id
+        WHERE a.company_id = '%s';
         """ % company_id
     db_cursor.execute(sql, (company_id,))
     result = db_cursor.fetchall()
@@ -72,22 +72,24 @@ def process_sql_result(result):
     logger.info("Processing the SQL result...")
     candidates = {}
     for row in result:
-        (candidate_id, email, first_name, last_name, github_username,
-         result_id, assessment_id, total_score, created_at, assessment_id, assessment_name) = row
+        (candidate_id, email, first_name, last_name, added_at,
+         interview_id, total_score, created_at, interview_status, 
+         assessment_id, assessment_name) = row
         if candidate_id and candidate_id not in candidates:
             candidates[candidate_id] = {
                 'id': candidate_id,
                 'email': email,
                 'first_name': first_name,
                 'last_name': last_name,
-                'github_username': github_username,
-                'result': None
+                'added_at': str(added_at),
+                'assessment': None
             }
-        if result_id:
-            candidates[candidate_id]['result'] = {
-                'id': result_id,
+        if interview_id:
+            candidates[candidate_id]['assessment'] = {
                 'assessment_id': assessment_id,
                 'assessment_name': assessment_name,
+                'interview_id': interview_id,
+                'interview_status': interview_status,
                 'total_score': total_score,
                 'created_at': str(created_at)
             }

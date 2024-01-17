@@ -83,7 +83,7 @@ functions:
         - retrieve_result.handler
     events:
       - http:
-          path: /candidates/result/{candidate_result_id}
+          path: /candidates/result/{interview_id}
           method: GET
           cors:
             origins: ${self:custom.origins.${self:provider.stage}}
@@ -94,7 +94,7 @@ functions:
           request:
             parameters:
               paths:
-                candidate_result_id: true
+                interview_id: true
     timeout: 30
 
   evaluate:
