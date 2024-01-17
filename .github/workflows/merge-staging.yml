@@ -23,9 +23,9 @@ jobs:
         run: |
           if git diff --quiet HEAD^ HEAD -- ./terraform
           then
-            echo "::set-output name=changed::false"
+            echo "changed=false" >> $GITHUB_OUTPUT
           else
-            echo "::set-output name=changed::true"
+            echo "changed=true" >> $GITHUB_OUTPUT
           fi
 
       - name: Set output
@@ -49,9 +49,9 @@ jobs:
         run: |
           if git diff --quiet HEAD^ HEAD -- ./web
           then
-            echo "::set-output name=changed::false"
+            echo "changed=false" >> $GITHUB_OUTPUT
           else
-            echo "::set-output name=changed::true"
+            echo "changed=true" >> $GITHUB_OUTPUT
           fi
 
       - name: Set output
@@ -75,9 +75,9 @@ jobs:
         run: |
           if git diff --quiet HEAD^ HEAD -- ./lambdas
           then
-            echo "::set-output name=changed::false"
+            echo "changed=false" >> $GITHUB_OUTPUT
           else
-            echo "::set-output name=changed::true"
+            echo "changed=true" >> $GITHUB_OUTPUT
           fi
 
       - name: Set output
@@ -101,9 +101,9 @@ jobs:
         run: |
           if git diff --quiet HEAD^ HEAD -- ./db
           then
-            echo "::set-output name=changed::false"
+            echo "changed=false" >> $GITHUB_OUTPUT
           else
-            echo "::set-output name=changed::true"
+            echo "changed=true" >> $GITHUB_OUTPUT
           fi
 
       - name: Set output
