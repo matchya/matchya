@@ -121,3 +121,8 @@ CREATE TABLE IF NOT EXISTS answer (
 	foreign key (question_id) references question(id)
 );
 --rollback DROP TABLE IF EXISTS answer;
+
+
+--changeset author:11
+ALTER TABLE assessment_candidate ADD COLUMN IF NOT EXISTS created_at timestamp default CURRENT_TIMESTAMP;
+--rollback ALTER TABLE assessment_candidate DROP COLUMN IF EXISTS created_at;

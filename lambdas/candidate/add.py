@@ -85,17 +85,17 @@ def get_candidate_id(email):
 
 def save_assessment_candidate(assessment_id, candidate_id):
     """
-    Saves the candidate to company.
+    Register the candidate to assessment.
 
     :param assessment_id: The id of the assessment.
     :param candidate_id: The id of the candidate.
     """
-    logger.info("Saving the candidate to company...")
-    sql = "INSERT INTO company_candidate (assessment_id, candidate_id) VALUES (%s, %s);"
+    logger.info("Registering the candidate to assessment...")
+    sql = "INSERT INTO assessment_candidate (assessment_id, candidate_id) VALUES (%s, %s);"
     try:
         db_cursor.execute(sql, (assessment_id, candidate_id))
     except Exception as e:
-        raise RuntimeError(f"Error saving to company_candidate table: {e}")
+        raise RuntimeError(f"Error registering to assessment_candidate table: {e}")
 
 
 def create_new_interview(assessment_id, candidate_id):
@@ -138,7 +138,7 @@ def handler(event, context):
             candidate_id = get_candidate_id(body['email'])
 
         assessment_id = body['assessment_id']
-        save_assessment_candidate(candidate_id, assessment_id)
+        save_assessment_candidate(assessment_id, candidate_id)
         create_new_interview(assessment_id, candidate_id)
         send_invitation_email(body['email'], assessment_id)
 

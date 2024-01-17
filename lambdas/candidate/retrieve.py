@@ -47,7 +47,7 @@ def retrieve_candidates(company_id):
     sql = "SELECT id, email, first_name, last_name FROM candidate WHERE company_id = %s;"
     sql = """
         SELECT 
-            c.id, c.email, c.first_name, c.last_name,
+            c.id, c.email, c.first_name, c.last_name, ac.added_at,
             i.id AS i, i.total_score, i.created_at, i.status AS interview_status,
             a.id AS assessment_id, a.name AS assessment_name
         FROM candidate AS c 
@@ -72,7 +72,7 @@ def process_sql_result(result):
     logger.info("Processing the SQL result...")
     candidates = {}
     for row in result:
-        (candidate_id, email, first_name, last_name,
+        (candidate_id, email, first_name, last_name, added_at,
          interview_id, total_score, created_at, interview_status, 
          assessment_id, assessment_name) = row
         if candidate_id and candidate_id not in candidates:
@@ -81,6 +81,7 @@ def process_sql_result(result):
                 'email': email,
                 'first_name': first_name,
                 'last_name': last_name,
+                'added_at': str(added_at),
                 'assessment': None
             }
         if interview_id:
