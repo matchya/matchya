@@ -5,7 +5,7 @@ import psycopg2
 
 from config import Config
 from utils.response import generate_success_response, generate_error_response
-from utils.request import parse_header, parse_request_body, parse_cookie_body, validate_request_body
+from utils.request import parse_header, parse_request_body, validate_request_body
 
 # Logger
 logger = logging.getLogger('add candidate')
@@ -83,19 +83,24 @@ def get_candidate_id(email):
     return result[0]
 
 
-def save_company_candidate(company_id, candidate_id):
+def save_assessment_candidate(assessment_id, candidate_id):
     """
     Saves the candidate to company.
 
-    :param company_id: The id of the company.
+    :param assessment_id: The id of the assessment.
     :param candidate_id: The id of the candidate.
     """
     logger.info("Saving the candidate to company...")
-    sql = "INSERT INTO company_candidate (company_id, candidate_id) VALUES (%s, %s);"
+    sql = "INSERT INTO company_candidate (assessment_id, candidate_id) VALUES (%s, %s);"
     try:
-        db_cursor.execute(sql, (company_id, candidate_id))
+        db_cursor.execute(sql, (assessment_id, candidate_id))
     except Exception as e:
         raise RuntimeError(f"Error saving to company_candidate table: {e}")
+
+
+def send_invitation_email(email, assessment_id):
+    # TODO: Send email to candidate with the link to the assessment.
+    pass
 
 
 def handler(event, context):
@@ -105,19 +110,19 @@ def handler(event, context):
 
         logger.info("Parsing the request body...")
         body = parse_request_body(event)
-        logger.info("Parsing body from cookie...")
-        company_id = parse_cookie_body(event)['company_id']
         logger.info("Parsing the request header...")
         origin = parse_header(event)
         logger.info("Validating the candidate data...")
-        validate_request_body(body, ['email', 'first_name', 'last_name'])
+        validate_request_body(body, ['email', 'first_name', 'last_name', 'assessment_id'])
 
         if not candidate_exists(body['email']):
             candidate_id = create_candidate_record(body)
         else:
             candidate_id = get_candidate_id(body['email'])
 
-        save_company_candidate(company_id, candidate_id)
+        assessment_id = body['assessment_id']
+        save_assessment_candidate(candidate_id, assessment_id)
+        send_invitation_email(body['email'], assessment_id)
 
         data = {
             'candidate_id': candidate_id
