@@ -5,12 +5,12 @@
         "@semantic-release/commit-analyzer",
         {
           "releaseRules": [
-            { "type": "feat", "scope": "question", "release": "minor" },
-            { "type": "fix", "scope": "question", "release": "patch" },
-            { "type": "chore", "scope": "question", "release": "patch" },
-            { "type": "feat", "scope": "!question", "release": false },
-            { "type": "fix", "scope": "!question", "release": false },
-            { "type": "chore", "scope": "!question", "release": false }
+            { "type": "feat", "scope": "interview", "release": "minor" },
+            { "type": "fix", "scope": "interview", "release": "patch" },
+            { "type": "chore", "scope": "interview", "release": "patch" },
+            { "type": "feat", "scope": "!interview", "release": false },
+            { "type": "fix", "scope": "!interview", "release": false },
+            { "type": "chore", "scope": "!interview", "release": false }
           ]
         }
       ],
@@ -28,6 +28,6 @@
     "branches": [
       "staging"
     ],
-    "tagFormat": "position-v${version}"
+    "tagFormat": "interview-v${version}"
   }
   
