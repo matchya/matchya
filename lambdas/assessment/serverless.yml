@@ -56,6 +56,16 @@ functions:
             authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
             type: REQUEST
 
+  generate-questions:
+    name: ${self:provider.stage}-assessment-generate-questions
+    image:
+      name: default
+      command:
+        - generate_questions.handler
+    events:
+      - sqs: ${ssm:/terraform/${self:provider.stage}/sqs/question_generation_processor_queue_arn}
+    timeout: 300
+
   retrieve:
     name: ${self:provider.stage}-assessment-retrieve
     image:
