@@ -30,8 +30,6 @@ echo "Fetching bastion host public ip"
 bastion_public_ip=$(aws ssm get-parameter --name "/terraform/shared/ec2/elastic_ip/bastion_host" --query "Parameter.Value" --output text)
 echo "Bastion host public ip: $bastion_public_ip"
 
-echo "Adding bastion host to known hosts"
-
 echo "Fetching rds endpoint"
 # Fetch the rds endpoint via ssm param
 rds_endpoint=$(aws ssm get-parameter --name "/terraform/${environment}/rds/endpoint" --query "Parameter.Value" --output text)
