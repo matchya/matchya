@@ -186,7 +186,7 @@ def save_interview_result(interview_id, total_score, summary, video_url):
     summary = summary.replace("'", "''")
     sql = """
         UPDATE interview
-        SET total_score = %s, summary = %s, video_url = %s
+        SET total_score = %s, summary = %s, video_url = %s, status = 'COMPLETED'
         WHERE id = %s
     """
     try:

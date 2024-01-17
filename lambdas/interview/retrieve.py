@@ -78,7 +78,7 @@ def process_sql_result(result):
             interviews[interview_id] = {
                 'id': interview_id,
                 'total_score': interview_total_score,
-                'created_at': interview_created_at,
+                'created_at': str(interview_created_at),
                 'candidate': {
                     'id': candidate_id,
                     'first_name': candidate_first_name,
