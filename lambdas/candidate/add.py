@@ -98,6 +98,23 @@ def save_assessment_candidate(assessment_id, candidate_id):
         raise RuntimeError(f"Error saving to company_candidate table: {e}")
 
 
+def create_new_interview(assessment_id, candidate_id):
+    """
+    Creates a new interview record.
+
+    :param assessment_id: The id of the assessment.
+    :param candidate_id: The id of the candidate.
+    """
+    # TODO: generate quetions for the interview... not in the MVP
+    logger.info("Creating a new interview record...")
+    sql = "INSERT INTO interview (id, assessment_id, candidate_id) VALUES (%s, %s, %s);"
+    try:
+        interview_id = str(uuid.uuid4())
+        db_cursor.execute(sql, (interview_id, assessment_id, candidate_id))
+    except Exception as e:
+        raise RuntimeError(f"Error saving to interview table: {e}")
+
+
 def send_invitation_email(email, assessment_id):
     # TODO: Send email to candidate with the link to the assessment.
     pass
@@ -122,6 +139,7 @@ def handler(event, context):
 
         assessment_id = body['assessment_id']
         save_assessment_candidate(candidate_id, assessment_id)
+        create_new_interview(assessment_id, candidate_id)
         send_invitation_email(body['email'], assessment_id)
 
         data = {
