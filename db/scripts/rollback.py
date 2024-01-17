@@ -17,10 +17,10 @@ This script is a Python program designed to automate the process of building a D
 def build_request(rds_endpoint, rds_port, db_name, db_username, db_password):
     changelog_file_name = 'master-changelog.xml'
     return [
-        "docker", "run", "--rm",
+        "docker", "run", "--network=host", "--rm",
         "liquibase",
-        f"--changeLogFile={changelog_file_name}",
         "--defaultsFile=/liquibase/config/liquibase.properties",
+        f"--changeLogFile={changelog_file_name}",
         "--url", f"jdbc:postgresql://{rds_endpoint}:{rds_port}/{db_name}",
         "--username", db_username,
         "--password", db_password
@@ -84,10 +84,15 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     kwargs = {}
-    kwargs['rds_endpoint'] = get_ssm_parameter(f'/terraform/{args.stage}/rds/endpoint') if args.stage == 'dev' else 'host.docker.internal'
-    kwargs['rds_port'] = get_ssm_parameter(f'/terraform/{args.stage}/rds/port') if args.stage == 'dev' else 5433
-    kwargs['db_username'] = get_ssm_parameter('/terraform/dev/rds/db_username')
-    kwargs['db_password'] = get_ssm_parameter('/terraform/dev/rds/db_password')
+    if args.stage != 'dev':
+        # if this is on the ci/cd pipeline
+        kwargs['rds_endpoint'] = 'localhost' if os.environ.get('CI') else 'host.docker.internal'
+        kwargs['rds_port'] = 5433
+    else:
+        kwargs['rds_endpoint'] = get_ssm_parameter(f'/terraform/{args.stage}/rds/endpoint')
+        kwargs['rds_port'] = get_ssm_parameter(f'/terraform/{args.stage}/rds/port')
+    kwargs['db_username'] = get_ssm_parameter(f'/terraform/${args.stage}/rds/db_username')
+    kwargs['db_password'] = get_ssm_parameter(f'/terraform/${args.stage}/rds/db_password')
     kwargs['db_name'] = args.stage
     logger.info(f'Retrieving SSM params: {kwargs}')
 
