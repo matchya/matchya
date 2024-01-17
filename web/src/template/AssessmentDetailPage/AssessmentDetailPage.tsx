@@ -9,7 +9,7 @@ const AssessmentDetailPageTemplate = () => (
             <div className="mb-4">
               <h3 className="text-lg font-bold">SWE TEST</h3>
             </div>
-            <div className="flex flex-col-reverse lg:flex-row space-x-6">
+            <div className="flex flex-col-reverse lg:flex-row lg:space-x-6">
               <div className="space-y-6 flex-1">
                 <QuestionCard
                   question={'random question'}
@@ -24,7 +24,7 @@ const AssessmentDetailPageTemplate = () => (
                   difficulty={'medium'}
                 />
               </div>
-              <div>
+              <div className="mb-6 lg:mb-0">
                 <InviteCard />
               </div>
             </div>
