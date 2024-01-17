@@ -32,16 +32,6 @@ provider:
     QUESTION_GENERATION_PROCESSOR_QUEUE_URL: ${ssm:/terraform/${self:provider.stage}/sqs/question_generation_processor_queue_url}
 
 functions:
-  generate:
-    name: ${self:provider.stage}-question-generate
-    image:
-      name: default
-      command:
-        - generate.handler
-    events:
-      - sqs: ${ssm:/terraform/${self:provider.stage}/sqs/question_generation_processor_queue_arn}
-    timeout: 300
-
   evaluate:
     name: ${self:provider.stage}-question-evaluate
     image:
