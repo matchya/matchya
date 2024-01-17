@@ -123,3 +123,15 @@ CREATE TABLE IF NOT EXISTS answer (
 --changeset author:11
 ALTER TABLE assessment ADD COLUMN updated_at timestamp default CURRENT_TIMESTAMP;
 --rollback ALTER TABLE assessment DROP COLUMN updated_at;
+
+--changeset author:12
+ALTER TABLE candidate_result RENAME TO interview;
+ALTER TABLE interview ADD COLUMN status varchar(30) default 'PENDING';
+ALTER TABLE interview ADD COLUMN video_url varchar(1023);
+--rollback ALTER TABLE interview RENAME TO candidate_result;
+--rollback ALTER TABLE interview DROP COLUMN status;
+--rollback ALTER TABLE interview DROP COLUMN video_url;
+
+--changeset author:13
+ALTER TABLE answer RENAME COLUMN candidate_result_id TO interview_id;
+--rollback ALTER TABLE answer RENAME COLUMN interview_id TO candidate_result_id;
