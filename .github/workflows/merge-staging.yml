@@ -16,19 +16,21 @@ jobs:
       - name: Fetch Repository
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          fetch-depth: 2
 
-      - name: Check Infrastructure Files Changed
-        uses: dorny/paths-filter@v2
-        id: changes-infrastructure
-        with:
-          filters: |
-            package:
-              - 'terraform/**'
+      - name: Check if files have changed
+        id: files
+        run: |
+          if git diff --quiet HEAD^ HEAD -- ./terraform
+          then
+            echo "::set-output name=changed::false"
+          else
+            echo "::set-output name=changed::true"
+          fi
 
       - name: Set output
         id: check
-        run: echo "infra-changed=${{ steps.changes-infrastructure.outputs.package }}" >> $GITHUB_OUTPUT
+        run: echo "infra-changed=${{ steps.files.outputs.changed }}" >> $GITHUB_OUTPUT
 
   check-web-changes:
     if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop')
@@ -40,19 +42,21 @@ jobs:
       - name: Fetch Repository
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          fetch-depth: 2
 
-      - name: Check Web Files Changed
-        uses: dorny/paths-filter@v2
-        id: changes-web
-        with:
-          filters: |
-            package:
-              - 'web/**'
+      - name: Check if files have changed
+        id: files
+        run: |
+          if git diff --quiet HEAD^ HEAD -- ./web
+          then
+            echo "::set-output name=changed::false"
+          else
+            echo "::set-output name=changed::true"
+          fi
 
       - name: Set output
         id: check
-        run: echo "web-changed=${{ steps.changes-web.outputs.package }}" >> $GITHUB_OUTPUT
+        run: echo "web-changed=${{ steps.files.outputs.changed }}" >> $GITHUB_OUTPUT
 
   check-lambda-changes:
     if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop')
@@ -64,19 +68,21 @@ jobs:
       - name: Fetch Repository
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          fetch-depth: 2
 
-      - name: Check Lambda Files Changed
-        uses: dorny/paths-filter@v2
-        id: changes-lambda
-        with:
-          filters: |
-            package:
-              - 'lambdas/**'
+      - name: Check if files have changed
+        id: files
+        run: |
+          if git diff --quiet HEAD^ HEAD -- ./lambdas
+          then
+            echo "::set-output name=changed::false"
+          else
+            echo "::set-output name=changed::true"
+          fi
 
       - name: Set output
         id: check
-        run: echo "lambdas-changed=${{ steps.changes-lambda.outputs.package }}" >> $GITHUB_OUTPUT
+        run: echo "lambdas-changed=${{ steps.files.outputs.changed }}" >> $GITHUB_OUTPUT
 
   check-db-changes:
     if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop')
@@ -88,19 +94,21 @@ jobs:
       - name: Fetch Repository
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          fetch-depth: 2
 
-      - name: Check DB Files Changed
-        uses: dorny/paths-filter@v2
-        id: changes-db
-        with:
-          filters: |
-            package:
-              - 'db/**'
+      - name: Check files have changed
+        id: files
+        run: |
+          if git diff --quiet HEAD^ HEAD -- ./db
+          then
+            echo "::set-output name=changed::false"
+          else
+            echo "::set-output name=changed::true"
+          fi
 
       - name: Set output
         id: check
-        run: echo "db-changed=${{ steps.changes-db.outputs.package }}" >> $GITHUB_OUTPUT
+        run: echo "db-changed=${{ steps.files.outputs.changed }}" >> $GITHUB_OUTPUT
 
   cleanup:
     if: >-
