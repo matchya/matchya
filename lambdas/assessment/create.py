@@ -10,7 +10,7 @@ from utils.response import generate_success_response, generate_error_response
 from utils.request import parse_header, parse_request_body, parse_cookie_body, validate_request_body
 
 # Logger
-logger = logging.getLogger('create test')
+logger = logging.getLogger('create assessment')
 logger.setLevel(logging.INFO)
 
 formatter = logging.Formatter('[%(levelname)s]:%(funcName)s:%(lineno)d:%(message)s')
@@ -42,17 +42,17 @@ def connect_to_db():
     db_cursor = db_conn.cursor()
 
 
-def create_test_record(company_id, body):
+def create_assessment_record(company_id, body):
     """
-    Creates a new test record.
+    Creates a new assessment record.
 
-    :param body: The request body containing test data.
-    :return: The test id.
+    :param body: The request body containing assessment data.
+    :return: The assessment id.
     """
-    logger.info("Creating a new test record...")
+    logger.info("Creating a new assessment record...")
     test_id = str(uuid.uuid4())
     sql = """
-        INSERT INTO test (id, company_id, name, position_type, position_level)
+        INSERT INTO assessment (id, company_id, name, position_type, position_level)
         VALUES ('%s', '%s', '%s', '%s', '%s');
         """ % (test_id, company_id, body['name'], body['position_type'], body['position_level'])
     db_cursor.execute(sql)
@@ -81,31 +81,31 @@ def send_message_to_sqs(body):
 
 def handler(event, context):
     try:
-        logger.info('Creating a new test...')
+        logger.info('Creating a new assessment...')
         connect_to_db()
 
         logger.info("Parsing the request body...")
         body = parse_request_body(event)
         logger.info("Parsing the request header...")
         origin = parse_header(event)
-        logger.info("Validating the test data...")
+        logger.info("Validating the assessment data...")
         validate_request_body(body, ['name', 'position_type', 'position_level'])
 
         company_id = parse_cookie_body(event)['company_id']
 
-        test_id = create_test_record(company_id, body)
+        assessment_id = create_assessment_record(company_id, body)
         sqs_body = {
-            'test_id': test_id,
+            'assessment_id': assessment_id,
             'position_type': body['position_type'],
             'position_level': body['position_level']
         }
         send_message_to_sqs(sqs_body)
 
         data = {
-            'test_id': test_id
+            'assessment_id': assessment_id
         }
         db_conn.commit()
-        logger.info("Successfully created a new test.")
+        logger.info("Successfully created a new assessment.")
         return generate_success_response(origin, data)
     except (ValueError, RuntimeError) as e:
         status_code = 400
