@@ -9,7 +9,7 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
     "preview": "vite preview",
-    "storybook": "storybook dev -p 6006 -s ./src/assets -c .storybook",
+    "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "release": "semantic-release"
   },
