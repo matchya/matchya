@@ -21,3 +21,11 @@ variable "private_subnet_1" {
 variable "private_subnet_2" {
   type = any
 }
+
+variable "region" {
+  type = string
+}
+
+variable "account_id" {
+  type = string
+}
