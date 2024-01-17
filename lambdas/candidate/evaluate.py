@@ -42,17 +42,17 @@ def connect_to_db():
     db_cursor = db_conn.cursor()
 
 
-def get_candidate_result_id(assessment_id, candidate_id):
+def get_interview_id(assessment_id, candidate_id):
     """
-    Retrieves the candidate result ID from the database.
+    Retrieves the interview ID from the database.
 
     :param assessment_id: The assessment ID.
     :param candidate_id: The candidate ID.
     """
-    logger.info('Retrieving candidate result ID from db...')
+    logger.info('Retrieving interview ID from db...')
     sql = """
         SELECT id
-        FROM candidate_result
+        FROM interview
         WHERE assessment_id = '%s' AND candidate_id = '%s'
     """ % (assessment_id, candidate_id)
     try:
@@ -60,26 +60,26 @@ def get_candidate_result_id(assessment_id, candidate_id):
         result = db_cursor.fetchone()
         return result[0]
     except Exception as e:
-        logger.error(f'Failed to retrieve candidate result ID from db: {e}')
-        raise RuntimeError('Failed to retrieve candidate result ID from db, candidate might not have started the assessment.')
+        logger.error(f'Failed to retrieve interview ID from db: {e}')
+        raise RuntimeError('Failed to retrieve interview ID from db, candidate might not have started the assessment.')
 
 
-def get_candidate_answers(assessment_id, candidate_result_id):
+def get_candidate_answers(assessment_id, interview_id):
     """
     Retrieves the candidate answers from the database.
 
     :param assessment_id: The assessment ID.
-    :param candidate_id: The candidate ID.
+    :param interview_id: The interview ID.
     """
     logger.info('Retrieving candidate answers from db...')
     sql = """
     SELECT 
         answer.score, answer.feedback, question.text
     FROM answer
-    LEFT JOIN candidate_result ON answer.candidate_result_id = candidate_result.id
+    LEFT JOIN interview ON answer.interview_id = interview.id
     LEFT JOIN question ON answer.question_id = question.id
-    WHERE candidate_result.assessment_id = '%s' AND candidate_result.id = '%s'
-    """ % (assessment_id, candidate_result_id)
+    WHERE interview.assessment_id = '%s' AND interview.id = '%s'
+    """ % (assessment_id, interview_id)
     try:
         db_cursor.execute(sql)
         result = db_cursor.fetchall()
@@ -175,7 +175,7 @@ def save_candidate_result(candidate_result_id, total_score, summary):
     logger.info('Saving candidate result to db...')
     summary = summary.replace("'", "''")
     sql = """
-        UPDATE candidate_result
+        UPDATE interview
         SET total_score = %s, summary = %s
         WHERE id = %s
     """
@@ -198,17 +198,17 @@ def handler(event, context):
         logger.info("Validating the body data...")
         validate_request_body(body, ['assessment_id', 'candidate_id'])
 
-        candidate_result_id = get_candidate_result_id(body['assessment_id'], body['candidate_id'])
-        answers = get_candidate_answers(body['assessment_id'], candidate_result_id)
+        interview_id = get_interview_id(body['assessment_id'], body['candidate_id'])
+        answers = get_candidate_answers(body['assessment_id'], interview_id)
 
         total_score = calculate_total_score(answers)
         system_message, user_message = get_system_and_user_message(answers)
         summary = get_summary_from_gpt(system_message, user_message)
 
-        save_candidate_result(candidate_result_id, total_score, summary)
+        save_candidate_result(interview_id, total_score, summary)
 
         body = {
-            'candidate_result_id': candidate_result_id
+            'interview_id': interview_id
         }
         db_conn.commit()
         logger.info("Successfully evaluated a candidate.")
