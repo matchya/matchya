@@ -83,5 +83,26 @@ functions:
             type: REQUEST
     timeout: 30
 
+  retrieve-by-id:
+    name: ${self:provider.stage}-interview-retrieve-by-id
+    image:
+      name: default
+      command:
+        - retrieve_by_id.handler
+    events:
+      - http:
+          path: /interviews/{id}
+          method: GET
+          cors:
+            origins: ${self:custom.origins.${self:provider.stage}}
+            allowCredentials: true
+          authorizer:
+            authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
+            type: REQUEST
+          request:
+            parameters:
+              paths:
+                id: true
+
 plugins:
   - serverless-deployment-bucket
