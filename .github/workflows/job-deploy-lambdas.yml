@@ -109,12 +109,8 @@ jobs:
         include:
           - package: candidate
             label: Candidate
-          - package: checklist
-            label: Checklist
           - package: company
             label: Company
-          - package: position
-            label: Position
           - package: question
             label: Question
           - package: assessment

@@ -21,10 +21,9 @@ jobs:
             "web",
             "authentication",
             "authorizer",
+            "assessment",
             "candidate",
-            "checklist",
             "company",
-            "position",
             "question",
           ]
     steps:
@@ -62,9 +61,8 @@ jobs:
             "authentication",
             "authorizer",
             "candidate",
-            "checklist",
             "company",
-            "position",
+            "assessment",
             "question",
           ]
     steps:

@@ -63,7 +63,7 @@ jobs:
     strategy:
       matrix:
         component:
-          ["authentication", "authorizer", "checklist", "company", "position"]
+          ["authentication", "authorizer", "assessment", "candidate", "company", "question"]
     steps:
       - name: Fetch Repository
         uses: actions/checkout@v3
