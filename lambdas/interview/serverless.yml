@@ -81,6 +81,7 @@ functions:
           authorizer:
             authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
             type: REQUEST
+    timeout: 30
 
 plugins:
   - serverless-deployment-bucket
