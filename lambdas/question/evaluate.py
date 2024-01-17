@@ -228,7 +228,7 @@ def get_evaluation_from_gpt(system_message, user_message):
         raise RuntimeError('Failed to get the evaluation from GPT.')
 
 
-def get_candidate_result_id(assessment_id, candidate_id):
+def get_interview_id(assessment_id, candidate_id):
     """
     If the candidate result exists, returns the candidate result id.
     Otherwise, creates a new candidate result and returns the new candidate result id.
@@ -239,9 +239,9 @@ def get_candidate_result_id(assessment_id, candidate_id):
     logger.info('Getting the candidate result id...')
     sql = """
         SELECT 
-            candidate_result.id
-        FROM candidate_result
-        WHERE candidate_result.assessment_id = '%s' AND candidate_result.candidate_id = '%s'
+            id
+        FROM interview
+        WHERE interview.assessment_id = '%s' AND interview.candidate_id = '%s'
     """ % (assessment_id, candidate_id)
     try:
         db_cursor.execute(sql)
@@ -251,14 +251,14 @@ def get_candidate_result_id(assessment_id, candidate_id):
         else:
             id = str(uuid.uuid4())
             sql = """
-                INSERT INTO candidate_result (id, assessment_id, candidate_id)
+                INSERT INTO interview (id, assessment_id, candidate_id)
                 VALUES ('%s', '%s', '%s');
             """ % (id, assessment_id, candidate_id)
             db_cursor.execute(sql)
             return id
     except Exception as e:
-        logger.error(f'Failed to get the candidate result id: {e}')
-        raise RuntimeError('Failed to get the candidate result id.')
+        logger.error(f'Failed to get the interview id: {e}')
+        raise RuntimeError('Failed to get the interview id.')
 
 
 def store_answer_evaluation_to_db(candidate_result_id, question_id, score, feedback, audio_url):
@@ -306,10 +306,10 @@ def handler(event, context):
         system_message, user_message = get_system_and_user_messages(question, position_type, position_level, transcript)
         score, feedback = get_evaluation_from_gpt(system_message, user_message)
 
-        candidate_result_id = get_candidate_result_id(assessment_id, candidate_id)
+        interview_id = get_interview_id(assessment_id, candidate_id)
 
         audio_url = f'https://{bucket}.s3.amazonaws.com/{key}'
-        store_answer_evaluation_to_db(candidate_result_id, question_id, score, feedback, audio_url)
+        store_answer_evaluation_to_db(interview_id, question_id, score, feedback, audio_url)
 
         db_conn.commit()
         logger.info('Evaluating an answer successful')

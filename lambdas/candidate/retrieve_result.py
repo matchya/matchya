@@ -36,7 +36,7 @@ def connect_to_db():
     db_cursor = db_conn.cursor()
 
 
-def retrieve_candidate_with_result(candidate_result_id):
+def retrieve_interview_result(interview_id):
     """
     Retrieves a candidate with result by result id from the database.
 
@@ -47,25 +47,25 @@ def retrieve_candidate_with_result(candidate_result_id):
     sql = """
         SELECT
             c.id AS candidate_id, c.first_name, c.last_name, c.email, c.github_username,
-            cr.id AS result_id, cr.total_score, cr.summary, cr.created_at AS result_created_at,
+            in.id AS result_id, in.total_score, in.summary, in.created_at AS interview_created_at,
             a.id AS answer_id, a.audio_url, a.score AS answer_score, a.feedback,
             q.id AS question_id, q.text AS question_text, q.topic, q.difficulty,
             m.id AS metric_id, m.name AS metric_name
         FROM
             candidate c
         JOIN
-            candidate_result cr ON c.id = cr.candidate_id
+            interview in ON c.id = in.candidate_id
         JOIN
-            answer a ON cr.id = a.candidate_result_id
+            answer a ON in.id = a.interview_id
         JOIN
             question q ON a.question_id = q.id
         LEFT JOIN
             metric m ON q.id = m.question_id
         WHERE
-            cr.id = '%s'
+            in.id = '%s'
         ORDER BY
             q.id;
-    """ % candidate_result_id
+    """ % interview_id
 
     try:
         db_cursor.execute(sql)
@@ -90,7 +90,7 @@ def process_sql_result(result):
     candidate = {}
     for row in result:
         (candidate_id, first_name, last_name, email, github_username,
-         result_id, total_score, summary, result_created_at,
+         result_id, total_score, summary, interview_created_at,
          answer_id, audio_url, answer_score, feedback,
          question_id, question_text, topic, difficulty,
          metric_id, metric_name) = row
@@ -110,7 +110,7 @@ def process_sql_result(result):
                 'id': result_id,
                 'total_score': total_score,
                 'summary': summary,
-                'created_at': str(result_created_at),
+                'created_at': str(interview_created_at),
                 'answers': {}
             }
 
@@ -148,11 +148,11 @@ def handler(event, context):
         logger.info('Retrieving a candidate...')
         connect_to_db()
 
-        candidate_result_id = parse_request_parameter(event, 'candidate_result_id')
+        interview_id = parse_request_parameter(event, 'interview_id')
         logger.info("Parsing the request header...")
         origin = parse_header(event)
 
-        candidate = retrieve_candidate_with_result(candidate_result_id)
+        candidate = retrieve_interview_result(interview_id)
 
         logger.info("Successfully retrieved a candidate.")
         data = {

@@ -46,11 +46,11 @@ def retrieve_assessments_from_db(company_id):
     sql = """
         SELECT 
             t.id, t.name, t.position_type, t.position_level, t.updated_at,
-            COUNT(cr.candidate_id) AS num_candidates
+            COUNT(in.candidate_id) AS num_candidates
         FROM 
             assessment t
         LEFT JOIN 
-            candidate_result cr ON t.id = cr.assessment_id
+            interview in ON t.id = in.assessment_id
         WHERE 
             t.company_id = '%s'
         GROUP BY 
