@@ -12,6 +12,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import * as React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import {
   Table,
@@ -31,6 +32,7 @@ interface InterviewsTableProps {
 }
 
 const InterviewsTable = ({ interviews }: InterviewsTableProps) => {
+  const navigate = useNavigate();
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -93,7 +95,7 @@ const InterviewsTable = ({ interviews }: InterviewsTableProps) => {
                   {row.getVisibleCells().map(cell => (
                     <TableCell
                       className="cursor-pointer"
-                      onClick={() => alert('yo')}
+                      onClick={() => navigate(`/interviews/${row.id}`)}
                       key={cell.id}
                     >
                       {flexRender(

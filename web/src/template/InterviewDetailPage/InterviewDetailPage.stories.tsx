@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import Component from './AssessmentsPage';
+import Component from './InterviewDetailPage';
 
 import { Header } from '@/components';
 
@@ -13,11 +13,11 @@ export default meta;
 
 type Story = StoryObj<typeof Component>;
 
-export const AssessmentsPage: Story = {
+export const InterviewDetailPage: Story = {
   render: () => (
     <>
       <Header />
-      <Component onNavigateToAssessment={() => {}} />
+      <Component />
     </>
   ),
 };
