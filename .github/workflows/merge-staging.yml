@@ -6,19 +6,6 @@ on:
       - staging
 
 jobs:
-  cleanup:
-    if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop')
-    name: Clean Deployment History
-    runs-on: ubuntu-latest
-    permissions: write-all
-    steps:
-      - name: 🗑 Delete deployment
-        uses: strumwolf/delete-deployment-environment@v2
-        with:
-          environment: Staging
-          token: ${{ secrets.GH_TOKEN }}
-          onlyRemoveDeployments: true
-
   check-infrastructure-changes:
     if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop')
     name: Check Infrastructure Changes
@@ -115,11 +102,39 @@ jobs:
         id: check
         run: echo "db-changed=${{ steps.changes-db.outputs.package }}" >> $GITHUB_OUTPUT
 
+  cleanup:
+    if: >-
+      contains(github.event.head_commit.message, 'Merge pull request') &&
+      contains(github.event.head_commit.message, 'develop') &&
+      (
+        needs.check-infrastructure-changes.outputs.infra-changed == 'true' ||
+        needs.check-web-changes.outputs.web-changed == 'true' ||
+        needs.check-lambda-changes.outputs.lambdas-changed == 'true' ||
+        needs.check-db-changes.outputs.db-changed == 'true'
+      )
+    name: Clean Deployment History
+    needs:
+      [
+        check-infrastructure-changes,
+        check-web-changes,
+        check-lambda-changes,
+        check-db-changes,
+      ]
+    runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+      - name: 🗑 Delete deployment
+        uses: strumwolf/delete-deployment-environment@v2
+        with:
+          environment: Staging
+          token: ${{ secrets.GH_TOKEN }}
+          onlyRemoveDeployments: true
+
   deploy-terraform-shared:
     if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop') && needs.check-infrastructure-changes.outputs.infra-changed == 'true'
     name: Deployment
     permissions: write-all
-    needs: [cleanup, check-infrastructure-changes]
+    needs: [check-infrastructure-changes]
     uses: ./.github/workflows/job-deploy-infrastructure.yml
     with:
       component: shared
@@ -132,7 +147,7 @@ jobs:
     if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop') && needs.check-infrastructure-changes.outputs.infra-changed == 'true'
     name: Deployment
     permissions: write-all
-    needs: [cleanup, deploy-terraform-shared, check-infrastructure-changes]
+    needs: [deploy-terraform-shared, check-infrastructure-changes]
     uses: ./.github/workflows/job-deploy-infrastructure.yml
     with:
       component: environment
@@ -144,7 +159,7 @@ jobs:
   deploy-website:
     if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop') && needs.check-web-changes.outputs.web-changed == 'true'
     name: Deployment
-    needs: [cleanup, check-web-changes]
+    needs: [check-web-changes]
     uses: ./.github/workflows/job-deploy-website.yml
     with:
       environment: staging
@@ -154,7 +169,7 @@ jobs:
   deploy-lambdas:
     if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop') && needs.check-lambda-changes.outputs.lambdas-changed == 'true'
     name: Deployment
-    needs: [cleanup, check-lambda-changes]
+    needs: [check-lambda-changes]
     uses: ./.github/workflows/job-deploy-lambdas.yml
     with:
       environment: staging
@@ -164,7 +179,7 @@ jobs:
   deploy-db-changelog:
     if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop') && needs.check-db-changes.outputs.db-changed == 'true'
     name: Deployment
-    needs: [cleanup, check-db-changes]
+    needs: [check-db-changes]
     uses: ./.github/workflows/job-deploy-db-changelog.yml
     with:
       environment: staging
