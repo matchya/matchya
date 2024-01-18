@@ -17,7 +17,6 @@ export const Question: Story = {
   render: () => (
     <Component
       question={mockedQuestion.question}
-      metrics={mockedQuestion.metrics}
       keyword={mockedQuestion.keyword}
       difficulty={mockedQuestion.difficulty}
     />
