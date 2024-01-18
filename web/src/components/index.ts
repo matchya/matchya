@@ -11,7 +11,6 @@ export * from './Command/Command';
 export * from './Dialog/Dialog';
 export { default as AddCandidateDialog } from './Dialog/AddCandidateDialog/AddCandidateDialog';
 export { default as CreatePositionDialog } from './Dialog/CreatePositionDialog/CreatePositionDialog';
-export { default as GenerateCriteriaDialog } from './Dialog/GenerateCriteriaDialog/GenerateCriteriaDialog';
 export * from './DropdownMenu/DropdownMenu';
 export { default as UserNavDropdownMenu } from './DropdownMenu/UserNavDropdownMenu/UserNavDropdownMenu';
 export { default as Header } from './Header/Header';

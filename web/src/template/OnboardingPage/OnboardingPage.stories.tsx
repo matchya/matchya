@@ -17,7 +17,7 @@ export const OnboardingPage: Story = {
   render: () => (
     <>
       <Header />
-      <Component />
+      <Component companyName='Company A' />
     </>
   ),
 };
