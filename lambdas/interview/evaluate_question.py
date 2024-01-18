@@ -251,7 +251,7 @@ def get_evaluation_from_gpt(system_message, user_message):
         raise RuntimeError('Failed to get the evaluation from GPT.')
 
 
-def store_answer_evaluation_to_db(interview_id, question_id, score, feedback, audio_url):
+def store_answer_evaluation_to_db(interview_id, question_id, score, feedback, video_url):
     """
     Stores the answer evaluation to the database.
 
@@ -259,7 +259,7 @@ def store_answer_evaluation_to_db(interview_id, question_id, score, feedback, au
     :param question_id: The question id.
     :param score: The score.
     :param feedback: The feedback.
-    :param audio_url: The audio url.
+    :param video_url: The video url.
     """
     logger.info('Storing the answer evaluation to db...')
     # if answer is stored already, do nothing
@@ -274,9 +274,9 @@ def store_answer_evaluation_to_db(interview_id, question_id, score, feedback, au
 
     feedback = feedback.replace("'", "''")
     sql = """
-        INSERT INTO answer (id, interview_id, question_id, score, feedback, audio_url)
+        INSERT INTO answer (id, interview_id, question_id, score, feedback, video_url)
         VALUES ('%s', '%s', '%s', '%s', '%s', '%s');
-    """ % (str(uuid.uuid4()), interview_id, question_id, score, feedback, audio_url)
+    """ % (str(uuid.uuid4()), interview_id, question_id, score, feedback, video_url)
     try:
         db_cursor.execute(sql)
     except Exception as e:
@@ -307,8 +307,8 @@ def handler(event, context):
         system_message, user_message = get_system_and_user_messages(question, position_type, position_level, transcript)
         score, feedback = get_evaluation_from_gpt(system_message, user_message)
 
-        audio_url = f'https://{bucket}.s3.amazonaws.com/{key}'
-        store_answer_evaluation_to_db(interview_id, question_id, score, feedback, audio_url)
+        video_url = f'https://{bucket}.s3.amazonaws.com/{key}'
+        store_answer_evaluation_to_db(interview_id, question_id, score, feedback, video_url)
 
         db_conn.commit()
         logger.info('Evaluating an answer successful')

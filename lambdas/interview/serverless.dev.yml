@@ -61,6 +61,10 @@ functions:
           authorizer:
             authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
             type: REQUEST
+          request:
+            parameters:
+              paths:
+                id: true
     timeout: 30
 
   retrieve:
