@@ -10,9 +10,40 @@ import {
   Separator,
 } from '@/components';
 
+const CandidateRow = ({
+  initial,
+  name,
+  email,
+  score,
+}: {
+  initial: string;
+  name: string;
+  email: string;
+  score?: number;
+}) => {
+  return (
+    <div className="flex items-between justify-between space-x-4">
+      <div className="flex items-center space-x-4">
+        <Avatar altName={initial} imageUrl="/avatars/03.png"  />
+        <div>
+          <p className="text-sm font-medium leading-none">{name}</p>
+          <p className="text-sm text-muted-foreground">{email}</p>
+        </div>
+      </div>
+      {score ? (
+        <div>
+          <p className="mr-10">{score.toFixed(1)}</p>
+        </div>
+      ) : (
+        <Button className='bg-macha-600 hover:bg-macha-700 font-bold text-white'>Resend Email</Button>
+      )}
+    </div>
+  );
+};
+
 const InviteCard = () => {
   return (
-    <Card>
+    <Card className="bg-orange-50">
       <CardHeader>
         <CardTitle>Invite Candidates</CardTitle>
         <CardDescription>
@@ -23,7 +54,10 @@ const InviteCard = () => {
         <div className="flex space-x-2">
           <Input value="" placeholder="Name" />
           <Input value="" placeholder="Email" />
-          <Button variant="secondary" className="shrink-0">
+          <Button
+            variant="secondary"
+            className="shrink-0 bg-macha-500 hover:bg-macha-600 text-white font-bold"
+          >
             Invite
           </Button>
         </div>
@@ -31,78 +65,38 @@ const InviteCard = () => {
         <div className="space-y-4">
           <h4 className="text-sm font-medium">Filter: none Sort: evaluated</h4>
           <div className="grid gap-6">
-            <div className="flex items-center justify-between space-x-4">
-              <div className="flex items-center space-x-4">
-                <Avatar altName="OM" imageUrl="/avatars/03.png" />
-                <div>
-                  <p className="text-sm font-medium leading-none">
-                    Olivia Martin
-                  </p>
-                  <p className="text-sm text-muted-foreground">m@example.com</p>
-                </div>
-              </div>
-              <div>9.0</div>
-            </div>
-            <div className="flex items-center justify-between space-x-4">
-              <div className="flex items-center space-x-4">
-                <Avatar imageUrl="/avatars/05.png" altName="IN" />
-                <div>
-                  <p className="text-sm font-medium leading-none">
-                    Isabella Nguyen
-                  </p>
-                  <p className="text-sm text-muted-foreground">b@example.com</p>
-                </div>
-              </div>
-              <Button>Resend Email</Button>
-            </div>
-            <div className="flex items-center justify-between space-x-4">
-              <div className="flex items-center space-x-4">
-                <Avatar altName="SD" imageUrl="/avatars/01.png" />
-                <div>
-                  <p className="text-sm font-medium leading-none">
-                    Sofia Davis
-                  </p>
-                  <p className="text-sm text-muted-foreground">p@example.com</p>
-                </div>
-              </div>
-              <Button>Resend Email</Button>
-            </div>
-            <div className="flex items-center justify-between space-x-4">
-              <div className="flex items-center space-x-4">
-                <Avatar altName="SD" imageUrl="/avatars/01.png" />
-                <div>
-                  <p className="text-sm font-medium leading-none">
-                    Sofia Davis
-                  </p>
-                  <p className="text-sm text-muted-foreground">p@example.com</p>
-                </div>
-              </div>
-              <Button>Resend Email</Button>
-            </div>
-            <div className="flex items-center justify-between space-x-4">
-              <div className="flex items-center space-x-4">
-                <Avatar altName="SD" imageUrl="/avatars/01.png" />
-                <div>
-                  <p className="text-sm font-medium leading-none">
-                    Sofia Davis
-                  </p>
-                  <p className="text-sm text-muted-foreground">p@example.com</p>
-                </div>
-              </div>
-              <Button>Resend Email</Button>
-            </div>
-            <div className="flex items-center justify-between space-x-4">
-              <div className="flex items-center space-x-4">
-                <Avatar altName="SD" imageUrl="/avatars/01.png" />
-                <div>
-                  <p className="text-sm font-medium leading-none">
-                    Sofia Davis
-                  </p>
-                  <p className="text-sm text-muted-foreground">p@example.com</p>
-                </div>
-              </div>
-              <Button>Resend Email</Button>
-            </div>
+            <CandidateRow
+              initial="OM"
+              name="Olivia Martin"
+              email="m@example.com"
+              score={9.0}
+            />
+            <CandidateRow
+              initial="IN"
+              name="Isabella Nguyen"
+              email="m@example.com"
+              score={7.0}
+            />
+            <CandidateRow
+              initial="SD"
+              name="Sofia Davis"
+              email="s@example.com"
+            />
+            <CandidateRow
+              initial="SD"
+              name="Sofia Davis"
+              email="s@example.com"
+            />
+            <CandidateRow
+              initial="SD"
+              name="Sofia Davis"
+              email="s@example.com"
+            />
+            <CandidateRow
+              initial="SD"
+              name="Sofia Davis"
+              email="s@example.com"
+            />
           </div>
         </div>
       </CardContent>
