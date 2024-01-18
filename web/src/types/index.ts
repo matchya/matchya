@@ -20,6 +20,7 @@ export const candidateSchema = z.object({
     testId: z.string(),
     testName: z.string(),
     totalScore: z.number(),
+    interviewStatus: z.string(),
     createdAt: z.string(),
   }),
 });

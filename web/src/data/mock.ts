@@ -69,6 +69,7 @@ export const mockedSelectedCandidate: Candidate = {
     testId: '1',
     testName: 'Test 1',
     totalScore: 90,
+    interviewStatus: 'COMPLETED',
     createdAt: '2022-01-01',
   },
 };
@@ -86,6 +87,7 @@ export const mockedCandidates: Candidate[] = [
       testId: '1',
       testName: 'Test 1',
       totalScore: 90,
+      interviewStatus: 'PENDING',
       createdAt: '2022-01-01',
     },
   },
