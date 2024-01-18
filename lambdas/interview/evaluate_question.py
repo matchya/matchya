@@ -6,6 +6,7 @@ import uuid
 import psycopg2
 import boto3
 from openai import OpenAI
+from moviepy.editor import VideoFileClip
 
 from config import Config
 
@@ -56,7 +57,7 @@ def get_bucket_name_and_key(event):
     return bucket, key
 
 
-def download_file_from_s3(bucket, key, file_name):
+def download_video_file_from_s3(bucket, key, file_name):
     """
     Downloads a file from S3.
 
@@ -67,6 +68,27 @@ def download_file_from_s3(bucket, key, file_name):
     local_file_name = '/tmp/' + file_name
     s3.Bucket(bucket).download_file(key, local_file_name)
     return local_file_name
+
+
+def extract_audio_from_video(video_file_path):
+    """
+    Extracts audio from a video file.
+
+    :param video_file_path: The video file path.
+    :return The audio file path.
+    """
+    logger.info(f'Extracting audio from {video_file_path}...')
+    audio_file_path = video_file_path.replace('.mov', '.wav')
+    video_clip = VideoFileClip(video_file_path)
+    audio_clip = video_clip.audio
+
+    audio_clip.write_audiofile(audio_file_path, fps=10000, nbytes=2, codec='pcm_s16le')
+
+    audio_clip.close()
+    video_clip.close()
+
+    logger.info(f'Extracted audio file: {audio_file_path}')
+    return audio_file_path
 
 
 def transcript_from_audio(local_file_name):
@@ -229,7 +251,7 @@ def get_evaluation_from_gpt(system_message, user_message):
         raise RuntimeError('Failed to get the evaluation from GPT.')
 
 
-def store_answer_evaluation_to_db(interview_id, question_id, score, feedback, audio_url):
+def store_answer_evaluation_to_db(interview_id, question_id, score, feedback, video_url):
     """
     Stores the answer evaluation to the database.
 
@@ -237,7 +259,7 @@ def store_answer_evaluation_to_db(interview_id, question_id, score, feedback, au
     :param question_id: The question id.
     :param score: The score.
     :param feedback: The feedback.
-    :param audio_url: The audio url.
+    :param video_url: The video url.
     """
     logger.info('Storing the answer evaluation to db...')
     # if answer is stored already, do nothing
@@ -252,9 +274,9 @@ def store_answer_evaluation_to_db(interview_id, question_id, score, feedback, au
 
     feedback = feedback.replace("'", "''")
     sql = """
-        INSERT INTO answer (id, interview_id, question_id, score, feedback, audio_url)
+        INSERT INTO answer (id, interview_id, question_id, score, feedback, video_url)
         VALUES ('%s', '%s', '%s', '%s', '%s', '%s');
-    """ % (str(uuid.uuid4()), interview_id, question_id, score, feedback, audio_url)
+    """ % (str(uuid.uuid4()), interview_id, question_id, score, feedback, video_url)
     try:
         db_cursor.execute(sql)
     except Exception as e:
@@ -275,17 +297,18 @@ def handler(event, context):
         bucket, key = get_bucket_name_and_key(event)
         interview_id, question_id = key.split('/')[0], key.split('/')[1].split('.')[0]
 
-        file_name = interview_id + '_' + question_id + '.m4a'
-        local_file_name = download_file_from_s3(bucket, key, file_name)
-        transcript = transcript_from_audio(local_file_name)
+        file_name = interview_id + '_' + question_id + '.mov'
+        video_file_path = download_video_file_from_s3(bucket, key, file_name)
+        audio_file_path = extract_audio_from_video(video_file_path)
+        transcript = transcript_from_audio(audio_file_path)
 
         position_type, position_level = get_position_type_and_level(interview_id)
         question = get_question(question_id)
         system_message, user_message = get_system_and_user_messages(question, position_type, position_level, transcript)
         score, feedback = get_evaluation_from_gpt(system_message, user_message)
 
-        audio_url = f'https://{bucket}.s3.amazonaws.com/{key}'
-        store_answer_evaluation_to_db(interview_id, question_id, score, feedback, audio_url)
+        video_url = f'https://{bucket}.s3.amazonaws.com/{key}'
+        store_answer_evaluation_to_db(interview_id, question_id, score, feedback, video_url)
 
         db_conn.commit()
         logger.info('Evaluating an answer successful')

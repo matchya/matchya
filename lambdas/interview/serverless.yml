@@ -46,7 +46,7 @@ functions:
         - evaluate_question.handler
     events:
       - s3:
-          bucket: ${self:provider.stage}-data-question-response-audio
+          bucket: ${self:provider.stage}-data-question-response-video
           event: s3:ObjectCreated:*
           existing: true
     timeout: 300
@@ -58,10 +58,22 @@ functions:
       command:
         - evaluate_interview.handler
     events:
-      - s3:
-          bucket: ${self:provider.stage}-data-interview-video
-          event: s3:ObjectCreated:*
-          existing: true
+      - http:
+          path: /interviews/{id}
+          method: POST
+          cors:
+            origins: 
+              - "https://${ssm:/terraform/staging/domain_name}"
+              - "https://www.${ssm:/terraform/staging/domain_name}"
+            allowCredentials: true
+          authorizer:
+            authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
+            type: REQUEST
+          request:
+            parameters:
+              paths:
+                id: true
+    timeout: 30
 
   retrieve:
     name: ${self:provider.stage}-interview-retrieve
