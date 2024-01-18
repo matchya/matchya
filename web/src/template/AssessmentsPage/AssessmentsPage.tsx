@@ -3,10 +3,12 @@ import { mockedTests } from '@/data/mock';
 
 interface AssessmentsPageTemplateProps {
   onNavigateToAssessment: () => void;
+  handleNavigateToDetail: (id: string) => void;
 }
 
 const AssessmentsPageTemplate = ({
   onNavigateToAssessment,
+  handleNavigateToDetail
 }: AssessmentsPageTemplateProps) => (
   <div className="h-full min-h-[calc(100vh-64px)] overflow-hidden bg-macha-200">
     <div className="w-full h-full mx-auto">
@@ -22,7 +24,7 @@ const AssessmentsPageTemplate = ({
                   Create New
                 </Button>
               </div>
-              <TestTable tests={mockedTests} />
+              <TestTable tests={mockedTests} handleNavigateToDetail={handleNavigateToDetail} />
             </div>
           </div>
         </div>

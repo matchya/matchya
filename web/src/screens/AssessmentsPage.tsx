@@ -7,9 +7,15 @@ const AssessmentsPage = () => {
   const handleNavigateToAssessment = () => {
     navigate('/create-assessment');
   };
+
+  const handleNavigateToDetail = (id: string) => {
+    navigate(`/assessments/${id}`);
+  };
+
   return (
     <AssessmentsPageTemplate
       onNavigateToAssessment={handleNavigateToAssessment}
+      handleNavigateToDetail={handleNavigateToDetail}
     />
   );
 };

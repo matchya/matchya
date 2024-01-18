@@ -28,9 +28,10 @@ import { Test } from '@/types';
 
 interface TestTableProps {
   tests: Test[];
+  handleNavigateToDetail: (id: string) => void;
 }
 
-const TestTable = ({ tests }: TestTableProps) => {
+const TestTable = ({ tests, handleNavigateToDetail }: TestTableProps) => {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -67,7 +68,10 @@ const TestTable = ({ tests }: TestTableProps) => {
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (
-              <TableRow key={headerGroup.id} className='hover:bg-orange-100'>
+              <TableRow
+                key={headerGroup.id}
+                className="hover:bg-orange-100"
+              >
                 {headerGroup.headers.map(header => {
                   return (
                     <TableHead key={header.id} colSpan={header.colSpan}>
@@ -89,12 +93,12 @@ const TestTable = ({ tests }: TestTableProps) => {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
-                  className='hover:bg-orange-100'
+                  className="hover:bg-orange-100"
                 >
                   {row.getVisibleCells().map(cell => (
                     <TableCell
                       className="cursor-pointer"
-                      onClick={() => alert('yo')}
+                      onClick={() => handleNavigateToDetail(row.original.id)}
                       key={cell.id}
                     >
                       {flexRender(
