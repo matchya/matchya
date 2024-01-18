@@ -30,6 +30,11 @@ resource "aws_route_table" "private" {
   count = terraform.workspace != "dev" ? 1 : 0
   vpc_id = aws_vpc.main[0].id
 
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.nat[0].id
+  }
+
   tags = {
     Name = "${terraform.workspace}-route-table-private"
   }
