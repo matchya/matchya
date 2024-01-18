@@ -94,9 +94,9 @@ const CreateAssessmentPageTemplate = ({
           <div className="mt-10 w-full flex justify-center">
             <Button
               onClick={onNavigateToQuestionGenerationPage}
-              className="bg-lime-400 text-lg text-macha-50 hover:bg-lime-600 hover:text-macha-100 w-1/2 mx-auto rounded-lg"
+              className="bg-lime-400 text-lg text-macha-50 hover:bg-lime-600 hover:text-macha-100 w-1/2 py-6 mx-auto rounded-lg"
             >
-              Finish
+              Create Assessment
             </Button>
           </div>
         </div>
