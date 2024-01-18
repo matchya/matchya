@@ -40,10 +40,61 @@ functions:
         - evaluate_question.handler
     events:
       - s3:
-          bucket: ${self:provider.stage}-data-candidate-response
+          bucket: ${self:provider.stage}-data-question-response-audio
           event: s3:ObjectCreated:*
           existing: true
     timeout: 300
+
+  evaluate-interview:
+    name: ${self:provider.stage}-interview-evaluate-interview
+    image:
+      name: default
+      command:
+        - evaluate_interview.handler
+    events:
+      - s3:
+          bucket: ${self:provider.stage}-data-interview-video
+          event: s3:ObjectCreated:*
+          existing: true
+
+  retrieve:
+    name: ${self:provider.stage}-interview-retrieve
+    image:
+      name: default
+      command:
+        - retrieve.handler
+    events:
+      - http:
+          path: /interviews
+          method: GET
+          cors:
+            origins: "http://127.0.0.1:5173"
+            allowCredentials: true
+          authorizer:
+            authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
+            type: REQUEST
+    timeout: 30
+
+  retrieve-by-id:
+    name: ${self:provider.stage}-interview-retrieve-by-id
+    image:
+      name: default
+      command:
+        - retrieve_by_id.handler
+    events:
+      - http:
+          path: /interviews/{id}
+          method: GET
+          cors:
+            origins: "http://127.0.0.1:5173"
+            allowCredentials: true
+          authorizer:
+            authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
+            type: REQUEST
+          request:
+            parameters:
+              paths:
+                id: true
 
 plugins:
   - serverless-deployment-bucket

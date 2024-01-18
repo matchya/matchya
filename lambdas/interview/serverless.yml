@@ -37,14 +37,6 @@ provider:
     POSTGRES_PASSWORD: ${ssm:/terraform/${self:provider.stage}/rds/db_password}
     QUESTION_GENERATION_PROCESSOR_QUEUE_URL: ${ssm:/terraform/${self:provider.stage}/sqs/question_generation_processor_queue_url}
 
-custom:
-  origins:
-    staging:
-      - "https://${ssm:/terraform/staging/domain_name}"
-      - "https://www.${ssm:/terraform/staging/domain_name}"
-    dev:
-      - "http://127.0.0.1:5173"
-
 functions:
   evaluate-question:
     name: ${self:provider.stage}-interview-evaluate-question
@@ -82,7 +74,9 @@ functions:
           path: /interviews
           method: GET
           cors:
-            origins: ${self:custom.origins.${self:provider.stage}}
+            origins:
+              - "https://${ssm:/terraform/staging/domain_name}"
+              - "https://www.${ssm:/terraform/staging/domain_name}"
             allowCredentials: true
           authorizer:
             authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
@@ -100,7 +94,9 @@ functions:
           path: /interviews/{id}
           method: GET
           cors:
-            origins: ${self:custom.origins.${self:provider.stage}}
+            origins:
+              - "https://${ssm:/terraform/staging/domain_name}"
+              - "https://www.${ssm:/terraform/staging/domain_name}"
             allowCredentials: true
           authorizer:
             authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
