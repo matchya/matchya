@@ -1,5 +1,3 @@
-import { Link } from 'react-router-dom';
-
 import { OnboardingCard } from '@/components';
 
 const steps = [
@@ -37,9 +35,7 @@ const CandidatesPageTemplate = ({
                 </div>
                 <div className="flex flex-wrap gap-6">
                   {steps.map(({ description, link }) => (
-                    <Link to={link}>
-                      <OnboardingCard title={description} />
-                    </Link>
+                    <OnboardingCard title={description} link={link} />
                   ))}
                 </div>
               </div>
