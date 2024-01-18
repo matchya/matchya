@@ -2,7 +2,7 @@ import { OnboardingCard } from '@/components';
 
 const steps = [
   {
-    description: 'Create your Matchya test',
+    description: 'Create Matchya assessment',
     link: '/assessments',
   },
   {
