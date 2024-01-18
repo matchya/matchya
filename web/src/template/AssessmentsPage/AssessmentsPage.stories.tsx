@@ -3,6 +3,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import Component from './AssessmentsPage';
 
 import { Header } from '@/components';
+import { mockedAssessments } from '@/data/mock';
 
 const meta: Meta<typeof Component> = {
   title: 'Template',
@@ -17,7 +18,7 @@ export const AssessmentsPage: Story = {
   render: () => (
     <>
       <Header />
-      <Component onNavigateToAssessment={() => {}} handleNavigateToDetail={() => {}} />
+      <Component assessments={mockedAssessments} onNavigateToAssessment={() => {}} handleNavigateToDetail={() => {}} />
     </>
   ),
 };
