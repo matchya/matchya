@@ -40,7 +40,7 @@ functions:
         - evaluate_question.handler
     events:
       - s3:
-          bucket: ${self:provider.stage}-data-question-response-audio
+          bucket: ${self:provider.stage}-data-interview-video
           event: s3:ObjectCreated:*
           existing: true
     timeout: 300
@@ -52,10 +52,16 @@ functions:
       command:
         - evaluate_interview.handler
     events:
-      - s3:
-          bucket: ${self:provider.stage}-data-interview-video
-          event: s3:ObjectCreated:*
-          existing: true
+      - http:
+          path: /interviews
+          method: POST
+          cors:
+            origins: "http://127.0.0.1:5173"
+            allowCredentials: true
+          authorizer:
+            authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
+            type: REQUEST
+    timeout: 30
 
   retrieve:
     name: ${self:provider.stage}-interview-retrieve

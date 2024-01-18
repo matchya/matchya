@@ -6,6 +6,7 @@ import uuid
 import psycopg2
 import boto3
 from openai import OpenAI
+from moviepy.editor import VideoFileClip
 
 from config import Config
 
@@ -56,7 +57,7 @@ def get_bucket_name_and_key(event):
     return bucket, key
 
 
-def download_file_from_s3(bucket, key, file_name):
+def download_video_file_from_s3(bucket, key, file_name):
     """
     Downloads a file from S3.
 
@@ -67,6 +68,27 @@ def download_file_from_s3(bucket, key, file_name):
     local_file_name = '/tmp/' + file_name
     s3.Bucket(bucket).download_file(key, local_file_name)
     return local_file_name
+
+
+def extract_audio_from_video(video_file_path):
+    """
+    Extracts audio from a video file.
+
+    :param video_file_path: The video file path.
+    :return The audio file path.
+    """
+    logger.info(f'Extracting audio from {video_file_path}...')
+    audio_file_path = video_file_path.replace('.mov', '.wav')
+    video_clip = VideoFileClip(video_file_path)
+    audio_clip = video_clip.audio
+
+    audio_clip.write_audiofile(audio_file_path, fps=10000, nbytes=2, codec='pcm_s16le')
+
+    audio_clip.close()
+    video_clip.close()
+
+    logger.info(f'Extracted audio file: {audio_file_path}')
+    return audio_file_path
 
 
 def transcript_from_audio(local_file_name):
@@ -275,9 +297,10 @@ def handler(event, context):
         bucket, key = get_bucket_name_and_key(event)
         interview_id, question_id = key.split('/')[0], key.split('/')[1].split('.')[0]
 
-        file_name = interview_id + '_' + question_id + '.m4a'
-        local_file_name = download_file_from_s3(bucket, key, file_name)
-        transcript = transcript_from_audio(local_file_name)
+        file_name = interview_id + '_' + question_id + '.mov'
+        video_file_path = download_video_file_from_s3(bucket, key, file_name)
+        audio_file_path = extract_audio_from_video(video_file_path)
+        transcript = transcript_from_audio(audio_file_path)
 
         position_type, position_level = get_position_type_and_level(interview_id)
         question = get_question(question_id)
