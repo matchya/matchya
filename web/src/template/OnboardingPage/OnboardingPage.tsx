@@ -3,12 +3,15 @@ import { OnboardingCard } from '@/components';
 const steps = [
   {
     description: 'Create your Matchya test',
+    link: '/assessments',
   },
   {
     description: 'See your candidates',
+    link: '/candidates',
   },
   {
     description: 'Review your Interviews',
+    link: '/interviews',
   },
 ];
 
@@ -31,8 +34,8 @@ const CandidatesPageTemplate = ({
                   <p className="">Let's get started</p>
                 </div>
                 <div className="flex flex-wrap gap-6">
-                  {steps.map(({ description }) => (
-                    <OnboardingCard title={description} />
+                  {steps.map(({ description, link }) => (
+                    <OnboardingCard title={description} link={link} />
                   ))}
                 </div>
               </div>
