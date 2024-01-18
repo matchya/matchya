@@ -5,7 +5,7 @@ import Template from '../template/CreateAssessmentPage/CreateAssessmentPage';
 
 function CreateAssessmentPage() {
   const navigate = useNavigate();
-  const [testName, setTestName] = useState('');
+  const [testName, setTestName] = useState('Untitled');
   const [selectedPosition, setSelectedPosition] = useState('');
   const [selectedLevel, setSelectedLevel] = useState('');
 

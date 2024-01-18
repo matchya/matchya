@@ -1,16 +1,15 @@
 import logging
 import json
+import urllib
 
 import psycopg2
 from openai import OpenAI
 
 from config import Config
-from utils.response import generate_success_response, generate_error_response
-from utils.request import parse_header, parse_request_body, validate_request_body
 
 
 # Logger
-logger = logging.getLogger('evaluate candidate answers')
+logger = logging.getLogger('evaluate interview')
 logger.setLevel(logging.INFO)
 
 formatter = logging.Formatter('[%(levelname)s]:%(funcName)s:%(lineno)d:%(message)s')
@@ -40,6 +39,17 @@ def connect_to_db():
     if not db_conn or db_conn.closed:
         db_conn = psycopg2.connect(host=Config.POSTGRES_HOST, database=Config.POSTGRES_DB, user=Config.POSTGRES_USER, password=Config.POSTGRES_PASSWORD)
     db_cursor = db_conn.cursor()
+
+
+def get_bucket_name_and_key(event):
+    """
+    Gets the bucket name and key from the event data.
+
+    :param event: The event data.
+    """
+    bucket = event['Records'][0]['s3']['bucket']['name']
+    key = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['key'], encoding='utf-8')
+    return bucket, key
 
 
 def get_interview_id(assessment_id, candidate_id):
@@ -164,63 +174,51 @@ def get_summary_from_gpt(system_message, user_message):
         raise RuntimeError('Failed to get the summary from GPT.')
 
 
-def save_candidate_result(candidate_result_id, total_score, summary):
+def save_interview_result(interview_id, total_score, summary, video_url):
     """
-    Saves the candidate result to the database.
+    Saves the interivew result to the database.
 
-    :param candidate_result_id: The candidate result ID.
+    :param interview_id: The interview ID.
     :param total_score: The total score.
     :param summary: The summary.
     """
-    logger.info('Saving candidate result to db...')
+    logger.info('Saving interview result to db...')
     summary = summary.replace("'", "''")
     sql = """
         UPDATE interview
-        SET total_score = %s, summary = %s
+        SET total_score = %s, summary = %s, video_url = %s, status = 'COMPLETED'
         WHERE id = %s
     """
     try:
-        db_cursor.execute(sql, (total_score, summary, candidate_result_id))
+        db_cursor.execute(sql, (total_score, summary, video_url, interview_id))
     except Exception as e:
-        logger.error(f'Failed to save candidate result to db: {e}')
-        raise RuntimeError('Failed to save candidate result to db.')
+        logger.error(f'Failed to update interview result to db: {e}')
+        raise RuntimeError('Failed to update interview result to db.')
 
 
 def handler(event, context):
     try:
-        logger.info('Getting final evaluation of a candidate...')
+        logger.info('Getting final interview result...')
         connect_to_db()
 
-        logger.info("Parsing the request body...")
-        body = parse_request_body(event)
-        logger.info("Parsing the request header...")
-        origin = parse_header(event)
-        logger.info("Validating the body data...")
-        validate_request_body(body, ['assessment_id', 'candidate_id'])
+        bucket, key = get_bucket_name_and_key(event)
+        asseessment_id, interview_id = key.split('/')[0], key.split('/')[1].split('.')[0]
 
-        interview_id = get_interview_id(body['assessment_id'], body['candidate_id'])
-        answers = get_candidate_answers(body['assessment_id'], interview_id)
+        video_url = f'https://{bucket}.s3.amazonaws.com/{key}'
+        answers = get_candidate_answers(asseessment_id, interview_id)
 
         total_score = calculate_total_score(answers)
         system_message, user_message = get_system_and_user_message(answers)
         summary = get_summary_from_gpt(system_message, user_message)
 
-        save_candidate_result(interview_id, total_score, summary)
+        save_interview_result(interview_id, total_score, summary, video_url)
 
-        body = {
-            'interview_id': interview_id
-        }
         db_conn.commit()
-        logger.info("Successfully evaluated a candidate.")
-        return generate_success_response(origin, body)
+        logger.info("Successfully evaluated an interview.")
     except (ValueError, RuntimeError) as e:
-        status_code = 400
-        logger.error(f'Getting final evaluation of a candidate faild: {e}')
-        return generate_error_response(origin, status_code, str(e))
+        logger.error(f'Getting final evaluation of an interview faild: {e}')
     except Exception as e:
-        status_code = 500
-        logger.error(f'Getting final evaluation of a candidate faild: {e}')
-        return generate_error_response(origin, status_code, str(e))
+        logger.error(f'Getting final evaluation of an interview faild: {e}')
     finally:
         if db_cursor:
             db_cursor.close()

@@ -77,49 +77,5 @@ functions:
             type: REQUEST
     timeout: 30
 
-  retrieve-result:
-    name: ${self:provider.stage}-candidate-retrieve-result
-    image:
-      name: default
-      command:
-        - retrieve_result.handler
-    events:
-      - http:
-          path: /candidates/result/{interview_id}
-          method: GET
-          cors:
-            origins:
-              - "https://${ssm:/terraform/staging/domain_name}"
-              - "https://www.${ssm:/terraform/staging/domain_name}"
-            allowCredentials: true
-          authorizer:
-            authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
-            type: REQUEST
-          request:
-            parameters:
-              paths:
-                interview_id: true
-    timeout: 30
-
-  evaluate:
-    name: ${self:provider.stage}-candidate-evaluate
-    image:
-      name: default
-      command:
-        - evaluate.handler
-    events:
-      - http:
-          path: /candidates/evaluate
-          method: POST
-          cors:
-            origins:
-              - "https://${ssm:/terraform/staging/domain_name}"
-              - "https://www.${ssm:/terraform/staging/domain_name}"
-            allowCredentials: true
-          authorizer:
-            authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
-            type: REQUEST
-    timeout: 30
-
 plugins:
   - serverless-deployment-bucket

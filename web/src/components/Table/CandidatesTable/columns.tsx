@@ -10,7 +10,7 @@ export const columns: ColumnDef<Candidate>[] = [
   {
     accessorKey: 'result',
     header: ({ column }) => (
-      <CandidatesTableColumnHeader column={column} title="Assessment Date" />
+      <CandidatesTableColumnHeader column={column} title="Added at" />
     ),
     cell: ({ row }) => (
       <div className="min-w-[80px] max-w-[100px]">
@@ -36,7 +36,7 @@ export const columns: ColumnDef<Candidate>[] = [
   {
     accessorKey: 'testName',
     header: ({ column }) => (
-      <CandidatesTableColumnHeader column={column} title="Test Name" />
+      <CandidatesTableColumnHeader column={column} title="Test" />
     ),
     cell: ({ row }) => (
       <div className="min-w-[150px] max-w-[200px]">
@@ -48,12 +48,12 @@ export const columns: ColumnDef<Candidate>[] = [
     },
   },
   {
-    accessorKey: 'totalScore',
+    accessorKey: 'interviewStatus',
     header: ({ column }) => (
-      <CandidatesTableColumnHeader column={column} title="Total Score" />
+      <CandidatesTableColumnHeader column={column} title="Status" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px]">{row.original.result.totalScore}</div>
+      <div className="w-[80px]">{row.original.result.interviewStatus}</div>
     ),
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));

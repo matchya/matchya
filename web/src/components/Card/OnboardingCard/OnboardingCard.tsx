@@ -1,12 +1,18 @@
+import { Link } from 'react-router-dom';
+
 interface OnboardingCardProps {
   title: string;
+  link: string;
 }
 
-const OnboardingCard = ({ title }: OnboardingCardProps) => {
+const OnboardingCard = ({ title, link }: OnboardingCardProps) => {
   return (
-    <div className="w-full max-w-[200px] h-[125px] p-3 flex items-end rounded-xl bg-macha-50">
-      <h4 className="text-sm font-bold w-[120px] leading-4">{title}</h4>
-    </div>
+    <Link
+      to={link}
+      className="w-full max-w-[300px] h-[185px] px-10 py-5 flex items-end rounded-xl bg-orange-50 hover:shadow-md"
+    >
+      <h4 className="text-lg font-bold w-[140px] leading-6">{title}</h4>
+    </Link>
   );
 };
 

@@ -63,13 +63,13 @@ const InterviewsTable = ({ interviews }: InterviewsTableProps) => {
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
   return (
-    <div className="space-y-4 h-full overflow-y-scroll pb-40">
+    <div className="space-y-4 h-full overflow-y-scroll  bg-orange-50 rounded-md">
       {/* <InterviewsTableToolbar table={table} /> */}
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (
-              <TableRow key={headerGroup.id}>
+              <TableRow key={headerGroup.id} className='hover:bg-orange-100'>
                 {headerGroup.headers.map(header => {
                   return (
                     <TableHead key={header.id} colSpan={header.colSpan}>
@@ -91,6 +91,7 @@ const InterviewsTable = ({ interviews }: InterviewsTableProps) => {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
+                  className='hover:bg-orange-100'
                 >
                   {row.getVisibleCells().map(cell => (
                     <TableCell
