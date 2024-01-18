@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "deploy": "sls deploy",
-    "remove": "sls remove",
+    "dev:deploy": "sls deploy --config serverless.dev.yml",
+    "dev:remove": "sls remove --config serverless.dev.yml",
+    "staging:deploy": "sls deploy --stage staging --config serverless.yml",
+    "staging:remove": "sls remove --stage staging --config serverless.yml",
     "release": "semantic-release"
   },
   "author": "",

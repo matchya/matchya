@@ -1,7 +1,7 @@
 import { InviteCard, QuestionCard } from '@/components';
 
 const AssessmentDetailPageTemplate = () => (
-  <div className="h-full min-h-[calc(100vh-64px)] overflow-hidden">
+  <div className="h-full min-h-[calc(100vh-64px)] overflow-hidden bg-macha-200">
     <div className="w-full h-full mx-auto">
       <div className="w-full h-full mx-auto">
         <div className="justify-between items-center py-12">
@@ -13,13 +13,11 @@ const AssessmentDetailPageTemplate = () => (
               <div className="space-y-6 flex-1">
                 <QuestionCard
                   question={'random question'}
-                  metrics={['1', '2', '3', '4']}
                   keyword={'Docker'}
                   difficulty={'medium'}
                 />
                 <QuestionCard
                   question={'random question'}
-                  metrics={['1', '2', '3', '4']}
                   keyword={'Docker'}
                   difficulty={'medium'}
                 />

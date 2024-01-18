@@ -86,26 +86,27 @@ def transcript_from_audio(local_file_name):
     return transcript
 
 
-def get_position_type_and_level(assessment_id):
+def get_position_type_and_level(interview_id):
     """
-    Gets the position type and level by assessment id from the database.
+    Gets the position type and level by interview id from the database.
 
-    :param assessment_id: The assessment id.
+    :param interview_id: The interview id.
     """
-    logger.info('Getting the position type and level by assessment id from db...')
+    logger.info('Getting the position type and level by interview id from db...')
     sql = """
         SELECT 
             assessment.position_type, assessment.position_level
         FROM assessment
-        WHERE assessment.id = '%s'
-    """ % assessment_id
+        LEFT JOIN interview ON assessment.id = interview.assessment_id
+        WHERE interview.id = '%s'
+    """ % interview_id
     try:
         db_cursor.execute(sql)
         result = db_cursor.fetchall()
         return result[0]
     except Exception as e:
-        logger.error(f'Failed to get the position type and level by assessment id from db: {e}')
-        raise RuntimeError('Failed to get the position type and level by assessment id from db.')
+        logger.error(f'Failed to get the position type and level by interview id from db: {e}')
+        raise RuntimeError('Failed to get the position type and level by interview id from db.')
 
 
 def get_question(question_id):
@@ -228,39 +229,6 @@ def get_evaluation_from_gpt(system_message, user_message):
         raise RuntimeError('Failed to get the evaluation from GPT.')
 
 
-def get_interview_id(assessment_id, candidate_id):
-    """
-    If the candidate result exists, returns the candidate result id.
-    Otherwise, creates a new candidate result and returns the new candidate result id.
-
-    :param assessment_id: The assessment id.
-    :param candidate_id: The candidate id.
-    """
-    logger.info('Getting the candidate result id...')
-    sql = """
-        SELECT 
-            id
-        FROM interview
-        WHERE interview.assessment_id = '%s' AND interview.candidate_id = '%s'
-    """ % (assessment_id, candidate_id)
-    try:
-        db_cursor.execute(sql)
-        result = db_cursor.fetchall()
-        if result:
-            return result[0][0]
-        else:
-            id = str(uuid.uuid4())
-            sql = """
-                INSERT INTO interview (id, assessment_id, candidate_id)
-                VALUES ('%s', '%s', '%s');
-            """ % (id, assessment_id, candidate_id)
-            db_cursor.execute(sql)
-            return id
-    except Exception as e:
-        logger.error(f'Failed to get the interview id: {e}')
-        raise RuntimeError('Failed to get the interview id.')
-
-
 def store_answer_evaluation_to_db(interview_id, question_id, score, feedback, audio_url):
     """
     Stores the answer evaluation to the database.
@@ -305,18 +273,16 @@ def handler(event, context):
         connect_to_db()
 
         bucket, key = get_bucket_name_and_key(event)
-        assessment_id, question_id, candidate_id = key.split('/')[0], key.split('/')[1], key.split('/')[2].split('.')[0]
+        interview_id, question_id = key.split('/')[0], key.split('/')[1].split('.')[0]
 
-        file_name = assessment_id + '_' + question_id + '_' + candidate_id + '.m4a'
+        file_name = interview_id + '_' + question_id + '.m4a'
         local_file_name = download_file_from_s3(bucket, key, file_name)
         transcript = transcript_from_audio(local_file_name)
 
-        position_type, position_level = get_position_type_and_level(assessment_id)
+        position_type, position_level = get_position_type_and_level(interview_id)
         question = get_question(question_id)
         system_message, user_message = get_system_and_user_messages(question, position_type, position_level, transcript)
         score, feedback = get_evaluation_from_gpt(system_message, user_message)
-
-        interview_id = get_interview_id(assessment_id, candidate_id)
 
         audio_url = f'https://{bucket}.s3.amazonaws.com/{key}'
         store_answer_evaluation_to_db(interview_id, question_id, score, feedback, audio_url)

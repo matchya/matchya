@@ -1,5 +1,6 @@
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
+import matchyaSticker from '@/assets/matchya-sticker.png';
 import {
   Avatar,
   Button,
@@ -37,10 +38,15 @@ const Header = () => {
   return (
     <div className="border-b bg-macha-500">
       <div className="flex h-16 items-center px-4">
-        <div className="pl-8">
+        <Link to="/onboarding">
+          <div className="flex items-center space-x-4 px-4 cursor-pointer">
+            <img src={matchyaSticker} alt="logo" className="w-48" />
+          </div>
+        </Link>
+        <div className="pl-8 hidden sm:block">
           <MainNav />
         </div>
-        <div className="ml-auto flex items-center space-x-4">
+        <div className="ml-auto flex items-center space-x-4 hidden sm:block">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-8 w-8 rounded-full">

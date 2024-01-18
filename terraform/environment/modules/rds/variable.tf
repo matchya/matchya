@@ -14,6 +14,14 @@ variable "rds_postgres_secure_security_group" {
   type = any
 }
 
+variable "public_subnet_1" {
+  type = any
+}
+
+variable "public_subnet_2" {
+  type = any
+}
+
 variable "private_subnet_1" {
   type = any
 }

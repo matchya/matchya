@@ -24,6 +24,13 @@ module "dynamodb" {
   source = "./modules/dynamodb"
 }
 
+module "ec2" {
+  source = "./modules/ec2"
+
+  public_ec2_security_group = module.vpc.public_ec2_security_group
+  public_subnet_1 = module.vpc.public_subnet_1
+}
+
 module "iam" {
   source = "../shared/modules/iam"
 
@@ -38,6 +45,8 @@ module "rds" {
   rds_postgres_insecure_security_group = module.vpc.rds_postgres_insecure_security_group
   rds_postgres_secure_security_group = module.vpc.rds_postgres_secure_security_group
 
+  public_subnet_1 = module.vpc.public_subnet_1
+  public_subnet_2 = module.vpc.public_subnet_2
   private_subnet_1 = module.vpc.private_subnet_1
   private_subnet_2 = module.vpc.private_subnet_2
 
@@ -56,9 +65,5 @@ module "s3" {
 }
 
 module "vpc" {
-  source = "../shared/modules/vpc"
-
-  create_new = false
+  source = "./modules/vpc"
 }
-
-

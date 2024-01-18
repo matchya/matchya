@@ -4,20 +4,20 @@ const MainNav = () => {
   return (
     <div className="flex space-x-8">
       <Link
-        to="/candidates"
-        className="text-sm font-bold text-black hover:text-gray-200"
-      >
-        Candidates
-      </Link>
-      <Link
         to="/assessments"
-        className="text-sm font-bold text-black hover:text-gray-200"
+        className="text-sm font-bold text-macha-900 hover:text-macha-600"
       >
         Assessments
       </Link>
       <Link
+        to="/candidates"
+        className="text-sm font-bold text-macha-900 hover:text-macha-600"
+      >
+        Candidates
+      </Link>
+      <Link
         to="/interviews"
-        className="text-sm font-bold text-black hover:text-gray-200"
+        className="text-sm font-bold text-macha-900 hover:text-macha-600"
       >
         Interviews
       </Link>

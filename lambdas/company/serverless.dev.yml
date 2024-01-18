@@ -1,0 +1,51 @@
+service: company
+
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: python3.9
+  architecture: arm64
+  stage: dev
+  region: us-east-1
+  deploymentBucket:
+    name: ${self:provider.stage}-sls-company
+  iam:
+    role: ${ssm:/terraform/shared/iam/lambda_role_arn}
+  apiGateway:
+    restApiId: ${ssm:/terraform/${self:provider.stage}/api_gateway/id}
+    restApiRootResourceId: ${ssm:/terraform/${self:provider.stage}/api_gateway/root_resource_id}
+  ecr:
+    images:
+      default:
+        path: ./
+        file: Dockerfile
+        buildArgs:
+  environment:
+    ENVIRONMENT: ${self:provider.stage}
+    POSTGRES_HOST: ${ssm:/terraform/${self:provider.stage}/rds/endpoint}
+    POSTGRES_PORT: ${ssm:/terraform/${self:provider.stage}/rds/port}
+    POSTGRES_DB: ${ssm:/terraform/${self:provider.stage}/rds/db_name}
+    POSTGRES_USER: ${ssm:/terraform/${self:provider.stage}/rds/db_username}
+    POSTGRES_PASSWORD: ${ssm:/terraform/${self:provider.stage}/rds/db_password}
+
+functions:
+  me:
+    name: ${self:provider.stage}-company-me
+    image:
+      name: default
+      command:
+        - me.handler
+    events:
+      - http:
+          path: /companies/me
+          method: GET
+          cors:
+            origins: "http://127.0.0.1:5173"
+            allowCredentials: true
+          authorizer:
+            authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
+            type: REQUEST
+
+plugins:
+  - serverless-deployment-bucket
