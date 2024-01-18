@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import Component from './EvaluationTable';
+import Component from './AssessmentTable';
 
 import { mockedAssessments } from '@/data/mock';
 
@@ -13,6 +13,8 @@ export default meta;
 
 type Story = StoryObj<typeof Component>;
 
-export const Evaluation: Story = {
-  render: () => <Component assessments={mockedAssessments} />,
+export const Assessment: Story = {
+  render: () => (
+    <Component assessments={mockedAssessments} handleNavigateToDetail={() => {}} />
+  ),
 };

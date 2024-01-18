@@ -24,13 +24,14 @@ import {
 
 import { columns } from './columns';
 
-import { Test } from '@/types';
+import { Assessment } from '@/types';
 
-interface TestTableProps {
-  tests: Test[];
+interface AssessmentTableProps {
+  assessments: Assessment[];
+  handleNavigateToDetail: (id: string) => void;
 }
 
-const TestTable = ({ tests }: TestTableProps) => {
+const AssessmentTable = ({ assessments, handleNavigateToDetail }: AssessmentTableProps) => {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -40,7 +41,7 @@ const TestTable = ({ tests }: TestTableProps) => {
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
   const table = useReactTable({
-    data: tests,
+    data: assessments,
     columns,
     state: {
       sorting,
@@ -67,7 +68,10 @@ const TestTable = ({ tests }: TestTableProps) => {
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (
-              <TableRow key={headerGroup.id} className='hover:bg-orange-100'>
+              <TableRow
+                key={headerGroup.id}
+                className="hover:bg-orange-100"
+              >
                 {headerGroup.headers.map(header => {
                   return (
                     <TableHead key={header.id} colSpan={header.colSpan}>
@@ -89,12 +93,12 @@ const TestTable = ({ tests }: TestTableProps) => {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
-                  className='hover:bg-orange-100'
+                  className="hover:bg-orange-100"
                 >
                   {row.getVisibleCells().map(cell => (
                     <TableCell
                       className="cursor-pointer"
-                      onClick={() => alert('yo')}
+                      onClick={() => handleNavigateToDetail(row.original.id)}
                       key={cell.id}
                     >
                       {flexRender(
@@ -123,4 +127,4 @@ const TestTable = ({ tests }: TestTableProps) => {
   );
 };
 
-export default TestTable;
+export default AssessmentTable;
