@@ -24,14 +24,14 @@ import {
 
 import { columns } from './columns';
 
-import { Test } from '@/types';
+import { Assessment } from '@/types';
 
-interface TestTableProps {
-  tests: Test[];
+interface AssessmentTableProps {
+  assessments: Assessment[];
   handleNavigateToDetail: (id: string) => void;
 }
 
-const TestTable = ({ tests, handleNavigateToDetail }: TestTableProps) => {
+const AssessmentTable = ({ assessments, handleNavigateToDetail }: AssessmentTableProps) => {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -41,7 +41,7 @@ const TestTable = ({ tests, handleNavigateToDetail }: TestTableProps) => {
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
   const table = useReactTable({
-    data: tests,
+    data: assessments,
     columns,
     state: {
       sorting,
@@ -127,4 +127,4 @@ const TestTable = ({ tests, handleNavigateToDetail }: TestTableProps) => {
   );
 };
 
-export default TestTable;
+export default AssessmentTable;

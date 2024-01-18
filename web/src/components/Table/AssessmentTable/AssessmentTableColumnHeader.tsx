@@ -16,17 +16,17 @@ import {
 } from '@/components';
 import { cn } from '@/lib/utils';
 
-interface TestTableColumnHeaderProps<TData, TValue>
+interface AssessmentTableColumnHeaderProps<TData, TValue>
   extends React.HTMLAttributes<HTMLDivElement> {
   column: Column<TData, TValue>;
   title: string;
 }
 
-export function TestTableColumnHeader<TData, TValue>({
+export function AssessmentTableColumnHeader<TData, TValue>({
   column,
   title,
   className,
-}: TestTableColumnHeaderProps<TData, TValue>) {
+}: AssessmentTableColumnHeaderProps<TData, TValue>) {
   if (!column.getCanSort()) {
     return <div className={cn(className)}>{title}</div>;
   }

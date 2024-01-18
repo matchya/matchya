@@ -1,16 +1,16 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { z } from 'zod';
 
-import { TestTableColumnHeader } from './TestTableColumnHeader';
+import { AssessmentTableColumnHeader } from './AssessmentTableColumnHeader';
 
-import { mockedTests } from '@/data/mock';
-import { Test, testSchema } from '@/types';
+import { mockedAssessments } from '@/data/mock';
+import { Assessment, testSchema } from '@/types';
 
-export const columns: ColumnDef<Test>[] = [
+export const columns: ColumnDef<Assessment>[] = [
   {
     accessorKey: 'updatedAt',
     header: ({ column }) => (
-      <TestTableColumnHeader column={column} title="Updated At" />
+      <AssessmentTableColumnHeader column={column} title="Updated At" />
     ),
     cell: ({ row }) => (
       <div className="min-w-[80px] max-w-[100px]">
@@ -23,7 +23,7 @@ export const columns: ColumnDef<Test>[] = [
   {
     accessorKey: 'name',
     header: ({ column }) => (
-      <TestTableColumnHeader column={column} title="Name" />
+      <AssessmentTableColumnHeader column={column} title="Name" />
     ),
     cell: ({ row }) => (
       <div className="min-w-[100px] max-w-[500px]">{row.getValue('name')}</div>
@@ -34,7 +34,7 @@ export const columns: ColumnDef<Test>[] = [
   {
     accessorKey: 'positionType',
     header: ({ column }) => (
-      <TestTableColumnHeader column={column} title="Position" />
+      <AssessmentTableColumnHeader column={column} title="Position" />
     ),
     cell: ({ row }) => (
       <div className="min-w-[150px] max-w-[200px]">
@@ -48,7 +48,7 @@ export const columns: ColumnDef<Test>[] = [
   {
     accessorKey: 'positionLevel',
     header: ({ column }) => (
-      <TestTableColumnHeader column={column} title="Level" />
+      <AssessmentTableColumnHeader column={column} title="Level" />
     ),
     cell: ({ row }) => (
       <div className="w-[80px]">{row.getValue('positionLevel')}</div>
@@ -60,7 +60,7 @@ export const columns: ColumnDef<Test>[] = [
   {
     accessorKey: 'candidateCount',
     header: ({ column }) => (
-      <TestTableColumnHeader column={column} title="Candidates" />
+      <AssessmentTableColumnHeader column={column} title="Candidates" />
     ),
     cell: ({ row }) => (
       <div className="w-[30px]">{row.getValue('candidateCount')}</div>
@@ -71,7 +71,7 @@ export const columns: ColumnDef<Test>[] = [
   },
 ];
 
-export const getTransformedTests = async () => {
-  const tests = mockedTests;
-  return z.array(testSchema).parse(tests);
+export const getTransformedAssessments = async () => {
+  const assessments = mockedAssessments;
+  return z.array(testSchema).parse(assessments);
 };

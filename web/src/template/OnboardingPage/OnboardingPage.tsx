@@ -35,7 +35,7 @@ const CandidatesPageTemplate = ({
                 </div>
                 <div className="flex flex-wrap gap-6">
                   {steps.map(({ description, link }) => (
-                    <OnboardingCard title={description} link={link} />
+                    <OnboardingCard key={description} title={description} link={link} />
                   ))}
                 </div>
               </div>

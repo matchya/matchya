@@ -1,5 +1,5 @@
 import { Button, TestTable } from '@/components';
-import { mockedTests } from '@/data/mock';
+import { mockedAssessments } from '@/data/mock';
 
 interface AssessmentsPageTemplateProps {
   onNavigateToAssessment: () => void;
@@ -24,7 +24,7 @@ const AssessmentsPageTemplate = ({
                   Create New
                 </Button>
               </div>
-              <TestTable tests={mockedTests} handleNavigateToDetail={handleNavigateToDetail} />
+              <TestTable assessments={mockedAssessments} handleNavigateToDetail={handleNavigateToDetail} />
             </div>
           </div>
         </div>

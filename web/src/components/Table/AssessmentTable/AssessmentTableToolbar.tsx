@@ -1,19 +1,19 @@
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { Table } from '@tanstack/react-table';
 
+import { AssessmentTableFacetedFilter } from './AssessmentTableFacetedFilter';
+import { AssessmentTableViewOptions } from './AssessmentTableViewOptions';
 import { priorities, statuses } from './data';
-import { TestTableFacetedFilter } from './TestTableFacetedFilter';
-import { TestTableViewOptions } from './TestTableViewOptions';
 
 import { Button, Input } from '@/components';
 
-interface TestTableToolbarProps<TData> {
+interface AssessmentTableToolbarProps<TData> {
   table: Table<TData>;
 }
 
-export function TestTableToolbar<TData>({
+export function AssessmentTableToolbar<TData>({
   table,
-}: TestTableToolbarProps<TData>) {
+}: AssessmentTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
 
   return (
@@ -28,14 +28,14 @@ export function TestTableToolbar<TData>({
           className="h-8 w-[150px] lg:w-[250px]"
         />
         {table.getColumn('status') && (
-          <TestTableFacetedFilter
+          <AssessmentTableFacetedFilter
             column={table.getColumn('status')}
             title="Status"
             options={statuses}
           />
         )}
         {table.getColumn('priority') && (
-          <TestTableFacetedFilter
+          <AssessmentTableFacetedFilter
             column={table.getColumn('priority')}
             title="Priority"
             options={priorities}
@@ -52,7 +52,7 @@ export function TestTableToolbar<TData>({
           </Button>
         )}
       </div>
-      <TestTableViewOptions table={table} />
+      <AssessmentTableViewOptions table={table} />
     </div>
   );
 }
