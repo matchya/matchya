@@ -1,4 +1,4 @@
-service: assessment
+service: candidate
 
 frameworkVersion: "3"
 
@@ -6,16 +6,10 @@ provider:
   name: aws
   runtime: python3.9
   architecture: arm64
-  stage: ${opt:stage, 'staging'}
+  stage: dev
   region: us-east-1
   deploymentBucket:
-    name: ${self:provider.stage}-sls-assessment
-  vpc:
-    securityGroupIds:
-      - ${ssm:/terraform/${self:provider.stage}/vpc/security_group_id/lambda}
-    subnetIds:
-      - ${ssm:/terraform/${self:provider.stage}/vpc/subnet_id/private_1}
-      - ${ssm:/terraform/${self:provider.stage}/vpc/subnet_id/private_2}
+    name: ${self:provider.stage}-sls-candidate
   iam:
     role: ${ssm:/terraform/shared/iam/lambda_role_arn}
   apiGateway:
@@ -35,79 +29,56 @@ provider:
     POSTGRES_DB: ${ssm:/terraform/${self:provider.stage}/rds/db_name}
     POSTGRES_USER: ${ssm:/terraform/${self:provider.stage}/rds/db_username}
     POSTGRES_PASSWORD: ${ssm:/terraform/${self:provider.stage}/rds/db_password}
-    QUESTION_GENERATION_PROCESSOR_QUEUE_URL: ${ssm:/terraform/${self:provider.stage}/sqs/question_generation_processor_queue_url}
-
-custom:
-  origins:
-    staging:
-      - "https://${ssm:/terraform/staging/domain_name}"
-      - "https://www.${ssm:/terraform/staging/domain_name}"
-    dev:
-      - "http://127.0.0.1:5173"
 
 functions:
-  create:
-    name: ${self:provider.stage}-assessment-create
+  add:
+    name: ${self:provider.stage}-candidate-add
     image:
       name: default
       command:
-        - create.handler
+        - add.handler
     events:
       - http:
-          path: /assessments
+          path: /candidates
           method: POST
           cors:
-            origins:
-              - "https://${ssm:/terraform/${self:provider.stage}/domain_name}"
-              - "https://www.${ssm:/terraform/${self:provider.stage}/domain_name}"
+            origins: "http://127.0.0.1:5173"
             allowCredentials: true
           authorizer:
             authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
             type: REQUEST
-
-  generate-questions:
-    name: ${self:provider.stage}-assessment-generate-questions
-    image:
-      name: default
-      command:
-        - generate_questions.handler
-    events:
-      - sqs: ${ssm:/terraform/${self:provider.stage}/sqs/question_generation_processor_queue_arn}
-    timeout: 300
+    timeout: 30
 
   retrieve:
-    name: ${self:provider.stage}-assessment-retrieve
+    name: ${self:provider.stage}-candidate-retrieve
     image:
       name: default
       command:
         - retrieve.handler
     events:
       - http:
-          path: /assessments
+          path: /candidates
           method: GET
           cors:
-            origins:
-              - "https://${ssm:/terraform/${self:provider.stage}/domain_name}"
-              - "https://www.${ssm:/terraform/${self:provider.stage}/domain_name}"
+            origins: "http://127.0.0.1:5173"
             allowCredentials: true
           authorizer:
             authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
             type: REQUEST
+    timeout: 30
 
-  retrieve-by-id:
-    name: ${self:provider.stage}-assessment-retrieve-by-id
+  retrieve-result:
+    name: ${self:provider.stage}-candidate-retrieve-result
     image:
       name: default
       command:
-        - retrieve_by_id.handler
+        - retrieve_result.handler
     events:
       - http:
-          path: /assessments/{id}
+          path: /candidates/result/{interview_id}
           method: GET
           cors:
-            origins:
-              - "https://${ssm:/terraform/${self:provider.stage}/domain_name}"
-              - "https://www.${ssm:/terraform/${self:provider.stage}/domain_name}"
+            origins: "http://127.0.0.1:5173"
             allowCredentials: true
           authorizer:
             authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
@@ -115,7 +86,26 @@ functions:
           request:
             parameters:
               paths:
-                id: true
+                interview_id: true
+    timeout: 30
+
+  evaluate:
+    name: ${self:provider.stage}-candidate-evaluate
+    image:
+      name: default
+      command:
+        - evaluate.handler
+    events:
+      - http:
+          path: /candidates/evaluate
+          method: POST
+          cors:
+            origins: "http://127.0.0.1:5173"
+            allowCredentials: true
+          authorizer:
+            authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
+            type: REQUEST
+    timeout: 30
 
 plugins:
   - serverless-deployment-bucket

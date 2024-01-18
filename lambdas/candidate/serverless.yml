@@ -6,10 +6,16 @@ provider:
   name: aws
   runtime: python3.9
   architecture: arm64
-  stage: ${opt:stage, 'dev'}
+  stage: ${opt:stage, 'staging'}
   region: us-east-1
   deploymentBucket:
     name: ${self:provider.stage}-sls-candidate
+  vpc:
+    securityGroupIds:
+      - ${ssm:/terraform/${self:provider.stage}/vpc/security_group_id/lambda}
+    subnetIds:
+      - ${ssm:/terraform/${self:provider.stage}/vpc/subnet_id/private_1}
+      - ${ssm:/terraform/${self:provider.stage}/vpc/subnet_id/private_2}
   iam:
     role: ${ssm:/terraform/shared/iam/lambda_role_arn}
   apiGateway:
@@ -30,14 +36,6 @@ provider:
     POSTGRES_USER: ${ssm:/terraform/${self:provider.stage}/rds/db_username}
     POSTGRES_PASSWORD: ${ssm:/terraform/${self:provider.stage}/rds/db_password}
 
-custom:
-  origins:
-    staging:
-      - "https://${ssm:/terraform/staging/domain_name}"
-      - "https://www.${ssm:/terraform/staging/domain_name}"
-    dev:
-      - "http://127.0.0.1:5173"
-
 functions:
   add:
     name: ${self:provider.stage}-candidate-add
@@ -50,7 +48,9 @@ functions:
           path: /candidates
           method: POST
           cors:
-            origins: ${self:custom.origins.${self:provider.stage}}
+            origins:
+              - "https://${ssm:/terraform/staging/domain_name}"
+              - "https://www.${ssm:/terraform/staging/domain_name}"
             allowCredentials: true
           authorizer:
             authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
@@ -68,7 +68,9 @@ functions:
           path: /candidates
           method: GET
           cors:
-            origins: ${self:custom.origins.${self:provider.stage}}
+            origins:
+              - "https://${ssm:/terraform/staging/domain_name}"
+              - "https://www.${ssm:/terraform/staging/domain_name}"
             allowCredentials: true
           authorizer:
             authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}

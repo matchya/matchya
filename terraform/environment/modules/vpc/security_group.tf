@@ -1,8 +1,7 @@
 resource "aws_security_group" "lambda" {
-  count      = var.create_new ? 1 : 0
-  name = "lambda"
+  name = "${terraform.workspace}-lambda"
   description = "Security group for Serverless functions"
-  vpc_id      = aws_vpc.main[0].id
+  vpc_id      = terraform.workspace == "dev" ? data.aws_vpc.default.id : aws_vpc.main[0].id
 
   ingress {
     from_port        = 0
@@ -46,15 +45,15 @@ resource "aws_security_group" "lambda" {
 
 
   tags = {
-    Name = "lambda"
+    Name = "${terraform.workspace}-lambda"
   }
 }
 
 resource "aws_security_group" "rds_postgres_insecure" {
-  count      = var.create_new ? 1 : 0
-  name = "rds-postgres-insecure"
+  count = terraform.workspace == "dev" ? 1 : 0
+  name = "${terraform.workspace}-rds-postgres"
   description = "Security group for RDS instance"
-  vpc_id      = data.aws_vpc.default.id
+  vpc_id      = terraform.workspace == "dev" ? data.aws_vpc.default.id : aws_vpc.main[0].id
 
   ingress {
     from_port   = 5432
@@ -71,16 +70,16 @@ resource "aws_security_group" "rds_postgres_insecure" {
   }
 
   tags = {
-    Name = "rds-postgres-insecure"
+    Name = "${terraform.workspace}-rds-postgres"
   }
 }
 
 # testing new one inside vpc
 resource "aws_security_group" "rds_postgres_secure" {
-  count      = var.create_new ? 1 : 0
-  name = "rds-postgres-secure"
+  count = terraform.workspace != "dev" ? 1 : 0
+  name = "${terraform.workspace}-rds-postgres"
   description = "Security group for RDS Postgres database"
-  vpc_id      = aws_vpc.main[0].id
+  vpc_id      = terraform.workspace == "dev" ? data.aws_vpc.default.id : aws_vpc.main[0].id
 
   ingress {
     from_port   = 5432
@@ -104,15 +103,14 @@ resource "aws_security_group" "rds_postgres_secure" {
   }
 
   tags = {
-    Name = "rds-postgres-secure"
+    Name = "${terraform.workspace}-rds-postgres"
   }
 }
 
 resource "aws_security_group" "ec2_public" {
-  count      = var.create_new ? 1 : 0
-  name = "ec2-public"
+  name = "${terraform.workspace}-ec2-public"
   description = "Security group for EC2 Public Bastion Host. Used to access private resources within VPC."
-  vpc_id      = aws_vpc.main[0].id
+  vpc_id      = terraform.workspace == "dev" ? data.aws_vpc.default.id : aws_vpc.main[0].id
 
   ingress {
     from_port        = 22
@@ -163,13 +161,13 @@ resource "aws_security_group" "ec2_public" {
   }
 
   tags = {
-    "Name" = "ec2-public"
+    "Name" = "${terraform.workspace}-ec2-public"
   }
 }
 
 resource "aws_security_group" "vpc_endpoint" {
-  count      = var.create_new ? 1 : 0
-  name = "vpc-endpoint"
+  count = terraform.workspace != "dev" ? 1 : 0
+  name = "${terraform.workspace}-vpc-endpoint"
   description = "Security group for VPC Endpoint"
   vpc_id      = aws_vpc.main[0].id
 
@@ -177,7 +175,7 @@ resource "aws_security_group" "vpc_endpoint" {
     from_port       = 0
     to_port         = 0
     protocol        = -1
-    security_groups = [aws_security_group.lambda[0].id]
+    security_groups = [aws_security_group.lambda.id]
   }
 
   egress {
@@ -188,22 +186,6 @@ resource "aws_security_group" "vpc_endpoint" {
   }
 
   tags = {
-    "Name" = "vpc-endpoint"
+    "Name" = "${terraform.workspace}-vpc-endpoint"
   }
-}
-
-# Data sources
-data "aws_security_group" "rds_postgres_insecure" {
-  count      = var.create_new ? 0 : 1
-  name = "rds-postgres-insecure"
-}
-
-data "aws_security_group" "rds_postgres_secure" {
-  count      = var.create_new ? 0 : 1
-  name = "rds-postgres-secure"
-}
-
-data "aws_security_group" "ec2_public" {
-  count      = var.create_new ? 0 : 1
-  name = "ec2-public"
 }

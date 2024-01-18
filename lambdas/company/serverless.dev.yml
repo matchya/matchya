@@ -6,16 +6,10 @@ provider:
   name: aws
   runtime: python3.9
   architecture: arm64
-  stage: ${opt:stage, 'staging'}
+  stage: dev
   region: us-east-1
   deploymentBucket:
     name: ${self:provider.stage}-sls-company
-  vpc:
-    securityGroupIds:
-      - ${ssm:/terraform/${self:provider.stage}/vpc/security_group_id/lambda}
-    subnetIds:
-      - ${ssm:/terraform/${self:provider.stage}/vpc/subnet_id/private_1}
-      - ${ssm:/terraform/${self:provider.stage}/vpc/subnet_id/private_2}
   iam:
     role: ${ssm:/terraform/shared/iam/lambda_role_arn}
   apiGateway:
@@ -47,9 +41,7 @@ functions:
           path: /companies/me
           method: GET
           cors:
-            origins:
-              - "https://${ssm:/terraform/staging/domain_name}"
-              - "https://www.${ssm:/terraform/staging/domain_name}"
+            origins: "http://127.0.0.1:5173"
             allowCredentials: true
           authorizer:
             authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}

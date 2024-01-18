@@ -28,6 +28,12 @@ resource "aws_iam_role_policy_attachment" "dynamodb_full_access" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
 }
 
+resource "aws_iam_role_policy_attachment" "lambda_vpc_access_execution_role" {
+  count = var.create_new ? 1 : 0
+  role       = aws_iam_role.lambda_role[0].name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+}
+
 data "aws_iam_role" "lambda_role" {
   count = var.create_new ? 0 : 1
   name = "lambda_role"
