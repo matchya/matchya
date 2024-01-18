@@ -36,8 +36,8 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Setup SSH Key (Shared)
-        if: inputs.component == 'shared'
+      - name: Setup SSH Key (Environment)
+        if: inputs.component == 'environment'
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PUBLIC_KEY }}" > ~/.ssh/id_rsa_matchya.pub
