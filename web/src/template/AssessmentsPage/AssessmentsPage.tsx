@@ -1,14 +1,16 @@
 import { Button, TestTable } from '@/components';
-import { mockedTests } from '@/data/mock';
+import { mockedAssessments } from '@/data/mock';
 
 interface AssessmentsPageTemplateProps {
   onNavigateToAssessment: () => void;
+  handleNavigateToDetail: (id: string) => void;
 }
 
 const AssessmentsPageTemplate = ({
   onNavigateToAssessment,
+  handleNavigateToDetail
 }: AssessmentsPageTemplateProps) => (
-  <div className="h-full min-h-[calc(100vh-64px)] overflow-hidden">
+  <div className="h-full min-h-[calc(100vh-64px)] overflow-hidden bg-macha-200">
     <div className="w-full h-full mx-auto">
       <div>
         <div className="w-full h-full mx-auto">
@@ -18,11 +20,11 @@ const AssessmentsPageTemplate = ({
                 <div className="space-y-4">
                   <h3 className="text-4xl font-bold">Assessments</h3>
                 </div>
-                <Button onClick={onNavigateToAssessment}>
-                  Create an Assessment
+                <Button onClick={onNavigateToAssessment} className='bg-orange-200 text-black shadow hover:bg-orange-300'>
+                  Create New
                 </Button>
               </div>
-              <TestTable tests={mockedTests} />
+              <TestTable assessments={mockedAssessments} handleNavigateToDetail={handleNavigateToDetail} />
             </div>
           </div>
         </div>

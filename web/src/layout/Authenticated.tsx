@@ -18,6 +18,7 @@ const Layout = () => {
     try {
       await me();
     } catch (error) {
+      console.log(error);
       navigateToAuth();
     }
   };

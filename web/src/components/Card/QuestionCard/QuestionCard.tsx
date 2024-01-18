@@ -1,11 +1,4 @@
 import {
-  FaceIcon,
-  LightningBoltIcon,
-  MagicWandIcon,
-} from '@radix-ui/react-icons';
-import { RocketIcon } from 'lucide-react';
-
-import {
   Badge,
   Card,
   CardContent,
@@ -16,19 +9,17 @@ import {
 
 interface QuestionCardProps {
   question: string;
-  metrics: string[];
   keyword: string;
   difficulty: string;
 }
 
 const QuestionCard = ({
   question,
-  metrics,
   keyword,
   difficulty,
 }: QuestionCardProps) => {
   return (
-    <Card className="rounded-lg">
+    <Card className="rounded-lg bg-orange-50">
       <CardHeader className="grid grid-cols-[1fr_110px] items-start gap-4 space-y-0">
         <div className="space-y-1">
           <div className="flex items-center space-x-3">
@@ -42,7 +33,7 @@ const QuestionCard = ({
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="grid grid-cols-2 gap-2">
+        {/* <div className="grid grid-cols-2 gap-2">
           <div className="-mx-2 flex items-start space-x-4 rounded-md p-2 transition-all hover:bg-accent hover:text-accent-foreground">
             <RocketIcon className="mt-px h-5 w-5" />
             <div className="space-y-1">
@@ -79,7 +70,7 @@ const QuestionCard = ({
               <p className="text-sm text-muted-foreground">{metrics[3]}</p>
             </div>
           </div>
-        </div>
+        </div> */}
         <div className="flex space-x-2 text-sm text-muted-foreground">
           <Badge className="bg-green-700 text-white">{keyword}</Badge>
           <Badge className="bg-black text-white">{difficulty}</Badge>

@@ -6,7 +6,6 @@ import {
   Interview,
   Position,
   Question,
-  Test,
 } from '../types';
 
 export const mockedInterviews: Interview[] = [
@@ -24,7 +23,7 @@ export const mockedInterviews: Interview[] = [
   },
 ];
 
-export const mockedTests: Test[] = [
+export const mockedAssessments: Assessment[] = [
   {
     id: '1',
     name: 'Test 1',
@@ -69,6 +68,7 @@ export const mockedSelectedCandidate: Candidate = {
     testId: '1',
     testName: 'Test 1',
     totalScore: 90,
+    interviewStatus: 'COMPLETED',
     createdAt: '2022-01-01',
   },
 };
@@ -86,6 +86,7 @@ export const mockedCandidates: Candidate[] = [
       testId: '1',
       testName: 'Test 1',
       totalScore: 90,
+      interviewStatus: 'PENDING',
       createdAt: '2022-01-01',
     },
   },
@@ -178,66 +179,3 @@ export const mockedChecklist: Checklist = {
     },
   ],
 };
-
-export const mockedAssessments: Assessment[] = [
-  {
-    criterion: {
-      id: '1',
-      message: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-      keywords: [],
-      created_at: '',
-    },
-    score: 7,
-    reason: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-  },
-  {
-    criterion: {
-      id: '1',
-      message: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-      keywords: [],
-      created_at: '',
-    },
-    score: 7,
-    reason: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-  },
-  {
-    criterion: {
-      id: '1',
-      message: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-      keywords: [],
-      created_at: '',
-    },
-    score: 7,
-    reason: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-  },
-  {
-    criterion: {
-      id: '1',
-      message: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-      keywords: [],
-      created_at: '',
-    },
-    score: 7,
-    reason: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-  },
-  {
-    criterion: {
-      id: '1',
-      message: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-      keywords: [],
-      created_at: '',
-    },
-    score: 7,
-    reason: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-  },
-  {
-    criterion: {
-      id: '1',
-      message: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-      keywords: [],
-      created_at: '',
-    },
-    score: 7,
-    reason: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-  },
-];

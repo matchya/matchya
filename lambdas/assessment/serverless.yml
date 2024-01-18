@@ -6,10 +6,16 @@ provider:
   name: aws
   runtime: python3.9
   architecture: arm64
-  stage: ${opt:stage, 'dev'}
+  stage: ${opt:stage, 'staging'}
   region: us-east-1
   deploymentBucket:
     name: ${self:provider.stage}-sls-assessment
+  vpc:
+    securityGroupIds:
+      - ${ssm:/terraform/${self:provider.stage}/vpc/security_group_id/lambda}
+    subnetIds:
+      - ${ssm:/terraform/${self:provider.stage}/vpc/subnet_id/private_1}
+      - ${ssm:/terraform/${self:provider.stage}/vpc/subnet_id/private_2}
   iam:
     role: ${ssm:/terraform/shared/iam/lambda_role_arn}
   apiGateway:
@@ -51,7 +57,9 @@ functions:
           path: /assessments
           method: POST
           cors:
-            origins: ${self:custom.origins.${self:provider.stage}}
+            origins:
+              - "https://${ssm:/terraform/${self:provider.stage}/domain_name}"
+              - "https://www.${ssm:/terraform/${self:provider.stage}/domain_name}"
             allowCredentials: true
           authorizer:
             authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
@@ -78,7 +86,9 @@ functions:
           path: /assessments
           method: GET
           cors:
-            origins: ${self:custom.origins.${self:provider.stage}}
+            origins:
+              - "https://${ssm:/terraform/${self:provider.stage}/domain_name}"
+              - "https://www.${ssm:/terraform/${self:provider.stage}/domain_name}"
             allowCredentials: true
           authorizer:
             authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
@@ -95,7 +105,9 @@ functions:
           path: /assessments/{id}
           method: GET
           cors:
-            origins: ${self:custom.origins.${self:provider.stage}}
+            origins:
+              - "https://${ssm:/terraform/${self:provider.stage}/domain_name}"
+              - "https://www.${ssm:/terraform/${self:provider.stage}/domain_name}"
             allowCredentials: true
           authorizer:
             authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
