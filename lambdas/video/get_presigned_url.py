@@ -7,7 +7,7 @@ from utils.response import generate_error_response, generate_success_response
 from utils.request import parse_header
 
 # Logger
-logger = logging.getLogger('evaluate interview')
+logger = logging.getLogger('get presigned url')
 logger.setLevel(logging.INFO)
 
 formatter = logging.Formatter('[%(levelname)s]:%(funcName)s:%(lineno)d:%(message)s')
