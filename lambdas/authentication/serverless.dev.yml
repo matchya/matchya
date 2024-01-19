@@ -8,6 +8,7 @@ provider:
   architecture: arm64
   stage: dev
   region: us-east-1
+  stackName: ${self:provider.stage}-sls-${self:service}
   deploymentBucket:
     name: ${self:provider.stage}-sls-authentication
   iam:
