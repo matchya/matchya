@@ -8,6 +8,7 @@ provider:
   architecture: arm64
   stage: ${opt:stage, 'staging'}
   region: us-east-1
+  stackName: ${self:provider.stage}-sls-${self:service}
   deploymentBucket:
     name: ${self:provider.stage}-sls-company
   vpc:
@@ -52,7 +53,7 @@ functions:
               - "https://www.${ssm:/terraform/staging/domain_name}"
             allowCredentials: true
           authorizer:
-            authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
+            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
             type: REQUEST
 
 plugins:

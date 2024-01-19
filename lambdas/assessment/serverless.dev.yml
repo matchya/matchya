@@ -8,6 +8,7 @@ provider:
   architecture: arm64
   stage: dev
   region: us-east-1
+  stackName: ${self:provider.stage}-sls-${self:service}
   deploymentBucket:
     name: ${self:provider.stage}-sls-assessment
   iam:
@@ -46,7 +47,7 @@ functions:
             origins: "http://127.0.0.1:5173"
             allowCredentials: true
           authorizer:
-            authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
+            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
             type: REQUEST
 
   generate-questions:
@@ -73,7 +74,7 @@ functions:
             origins: "http://127.0.0.1:5173"
             allowCredentials: true
           authorizer:
-            authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
+            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
             type: REQUEST
 
   retrieve-by-id:
@@ -90,7 +91,7 @@ functions:
             origins: "http://127.0.0.1:5173"
             allowCredentials: true
           authorizer:
-            authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
+            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
             type: REQUEST
           request:
             parameters:

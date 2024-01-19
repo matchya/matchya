@@ -103,6 +103,7 @@ def handler(event, context):
         logger.info("Parsing the request header...")
         origin = parse_header(event)
 
+        logger.info("Parsing the request parameters...")
         interview_id = parse_request_parameter(event, 'id')
         interview = retrieve_interview_by_id(interview_id)
 

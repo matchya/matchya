@@ -6,6 +6,7 @@ import psycopg2
 from openai import OpenAI
 
 from config import Config
+from utils.request import parse_request_parameter
 
 
 # Logger
@@ -74,11 +75,10 @@ def get_interview_id(assessment_id, candidate_id):
         raise RuntimeError('Failed to retrieve interview ID from db, candidate might not have started the assessment.')
 
 
-def get_candidate_answers(assessment_id, interview_id):
+def get_candidate_answers(interview_id):
     """
     Retrieves the candidate answers from the database.
-
-    :param assessment_id: The assessment ID.
+    
     :param interview_id: The interview ID.
     """
     logger.info('Retrieving candidate answers from db...')
@@ -88,8 +88,8 @@ def get_candidate_answers(assessment_id, interview_id):
     FROM answer
     LEFT JOIN interview ON answer.interview_id = interview.id
     LEFT JOIN question ON answer.question_id = question.id
-    WHERE interview.assessment_id = '%s' AND interview.id = '%s'
-    """ % (assessment_id, interview_id)
+    WHERE AND interview.id = '%s'
+    """ % interview_id
     try:
         db_cursor.execute(sql)
         result = db_cursor.fetchall()
@@ -174,7 +174,7 @@ def get_summary_from_gpt(system_message, user_message):
         raise RuntimeError('Failed to get the summary from GPT.')
 
 
-def save_interview_result(interview_id, total_score, summary, video_url):
+def save_interview_result(interview_id, total_score, summary):
     """
     Saves the interivew result to the database.
 
@@ -186,11 +186,11 @@ def save_interview_result(interview_id, total_score, summary, video_url):
     summary = summary.replace("'", "''")
     sql = """
         UPDATE interview
-        SET total_score = %s, summary = %s, video_url = %s, status = 'COMPLETED'
+        SET total_score = %s, summary = %s, status = 'COMPLETED'
         WHERE id = %s
     """
     try:
-        db_cursor.execute(sql, (total_score, summary, video_url, interview_id))
+        db_cursor.execute(sql, (total_score, summary, interview_id))
     except Exception as e:
         logger.error(f'Failed to update interview result to db: {e}')
         raise RuntimeError('Failed to update interview result to db.')
@@ -201,17 +201,16 @@ def handler(event, context):
         logger.info('Getting final interview result...')
         connect_to_db()
 
-        bucket, key = get_bucket_name_and_key(event)
-        asseessment_id, interview_id = key.split('/')[0], key.split('/')[1].split('.')[0]
+        logger.info("Parsing the request parameters...")
+        interview_id = parse_request_parameter(event, 'id')
 
-        video_url = f'https://{bucket}.s3.amazonaws.com/{key}'
-        answers = get_candidate_answers(asseessment_id, interview_id)
+        answers = get_candidate_answers(interview_id)
 
         total_score = calculate_total_score(answers)
         system_message, user_message = get_system_and_user_message(answers)
         summary = get_summary_from_gpt(system_message, user_message)
 
-        save_interview_result(interview_id, total_score, summary, video_url)
+        save_interview_result(interview_id, total_score, summary)
 
         db_conn.commit()
         logger.info("Successfully evaluated an interview.")
