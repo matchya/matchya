@@ -8,6 +8,7 @@ provider:
   architecture: arm64
   stage: dev
   region: us-east-1
+  stackName: ${self:provider.stage}-sls-${self:service}
   deploymentBucket:
     name: ${self:provider.stage}-sls-candidate
   iam:
@@ -45,7 +46,7 @@ functions:
             origins: "http://127.0.0.1:5173"
             allowCredentials: true
           authorizer:
-            authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
+            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
             type: REQUEST
     timeout: 30
 
@@ -63,47 +64,7 @@ functions:
             origins: "http://127.0.0.1:5173"
             allowCredentials: true
           authorizer:
-            authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
-            type: REQUEST
-    timeout: 30
-
-  retrieve-result:
-    name: ${self:provider.stage}-candidate-retrieve-result
-    image:
-      name: default
-      command:
-        - retrieve_result.handler
-    events:
-      - http:
-          path: /candidates/result/{interview_id}
-          method: GET
-          cors:
-            origins: "http://127.0.0.1:5173"
-            allowCredentials: true
-          authorizer:
-            authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
-            type: REQUEST
-          request:
-            parameters:
-              paths:
-                interview_id: true
-    timeout: 30
-
-  evaluate:
-    name: ${self:provider.stage}-candidate-evaluate
-    image:
-      name: default
-      command:
-        - evaluate.handler
-    events:
-      - http:
-          path: /candidates/evaluate
-          method: POST
-          cors:
-            origins: "http://127.0.0.1:5173"
-            allowCredentials: true
-          authorizer:
-            authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
+            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
             type: REQUEST
     timeout: 30
 
