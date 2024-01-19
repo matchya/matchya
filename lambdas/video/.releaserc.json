@@ -1,33 +1,30 @@
 {
-    "extends": "semantic-release-monorepo",
-    "plugins": [
-      [
-        "@semantic-release/commit-analyzer",
-        {
-          "releaseRules": [
-            { "type": "feat", "scope": "interview", "release": "minor" },
-            { "type": "fix", "scope": "interview", "release": "patch" },
-            { "type": "chore", "scope": "interview", "release": "patch" },
-            { "type": "feat", "scope": "!interview", "release": false },
-            { "type": "fix", "scope": "!interview", "release": false },
-            { "type": "chore", "scope": "!interview", "release": false }
-          ]
-        }
-      ],
-      "@semantic-release/release-notes-generator",
-      "@semantic-release/changelog",
-      [
-          "@semantic-release/npm",
-          {
-            "npmPublish": false
-          }
-      ],
-      "@semantic-release/git",
-      "@semantic-release/github"
+  "extends": "semantic-release-monorepo",
+  "plugins": [
+    [
+      "@semantic-release/commit-analyzer",
+      {
+        "releaseRules": [
+          { "type": "feat", "scope": "video", "release": "minor" },
+          { "type": "fix", "scope": "video", "release": "patch" },
+          { "type": "chore", "scope": "video", "release": "patch" },
+          { "type": "feat", "scope": "!video", "release": false },
+          { "type": "fix", "scope": "!video", "release": false },
+          { "type": "chore", "scope": "!video", "release": false }
+        ]
+      }
     ],
-    "branches": [
-      "staging"
+    "@semantic-release/release-notes-generator",
+    "@semantic-release/changelog",
+    [
+      "@semantic-release/npm",
+      {
+        "npmPublish": false
+      }
     ],
-    "tagFormat": "interview-v${version}"
-  }
-  
+    "@semantic-release/git",
+    "@semantic-release/github"
+  ],
+  "branches": ["staging"],
+  "tagFormat": "video-v${version}"
+}
