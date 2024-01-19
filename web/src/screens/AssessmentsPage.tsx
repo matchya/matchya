@@ -4,6 +4,7 @@ import AssessmentsPageTemplate from '@/template/AssessmentsPage/AssessmentsPage'
 
 const AssessmentsPage = () => {
   const navigate = useNavigate();
+
   const handleNavigateToAssessment = () => {
     navigate('/create-assessment');
   };

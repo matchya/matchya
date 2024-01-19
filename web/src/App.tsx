@@ -16,6 +16,7 @@ import HomePage from '@/screens/HomePage';
 import InterviewDetailPage from '@/screens/InterviewDetailPage';
 import InterviewsPage from '@/screens/InterviewsPage';
 import OnboardingPage from '@/screens/OnboardingPage';
+import InterviewRecordingPage from './screens/InterviewRecordingPage';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
             <Route path="/candidates" element={<CandidatesPage />} />
             <Route path="/interviews" element={<InterviewsPage />} />
             <Route path="/interviews/:id" element={<InterviewDetailPage />} />
+            <Route path="/test" element={<InterviewRecordingPage />} />
             <Route path="/assessments" element={<AssessmentsPage />} />
             <Route
               path="/create-assessment"
