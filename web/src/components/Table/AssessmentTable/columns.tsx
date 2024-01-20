@@ -4,17 +4,17 @@ import { z } from 'zod';
 import { AssessmentTableColumnHeader } from './AssessmentTableColumnHeader';
 
 import { mockedAssessments } from '@/data/mock';
-import { Assessment, testSchema } from '@/types';
+import { Assessment, assessmentSchema } from '@/types';
 
 export const columns: ColumnDef<Assessment>[] = [
   {
-    accessorKey: 'updatedAt',
+    accessorKey: 'updated_at',
     header: ({ column }) => (
       <AssessmentTableColumnHeader column={column} title="Updated At" />
     ),
     cell: ({ row }) => (
       <div className="min-w-[80px] max-w-[100px]">
-        {row.getValue('updatedAt')}
+        {(row.getValue('updated_at') as string).substring(0, 10)}
       </div>
     ),
     enableSorting: false,
@@ -32,13 +32,13 @@ export const columns: ColumnDef<Assessment>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'positionType',
+    accessorKey: 'position_type',
     header: ({ column }) => (
       <AssessmentTableColumnHeader column={column} title="Position" />
     ),
     cell: ({ row }) => (
       <div className="min-w-[150px] max-w-[200px]">
-        {row.getValue('positionType')}
+        {row.getValue('position_type')}
       </div>
     ),
     filterFn: (row, id, value) => {
@@ -46,24 +46,24 @@ export const columns: ColumnDef<Assessment>[] = [
     },
   },
   {
-    accessorKey: 'positionLevel',
+    accessorKey: 'position_level',
     header: ({ column }) => (
       <AssessmentTableColumnHeader column={column} title="Level" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue('positionLevel')}</div>
+      <div className="w-[80px]">{row.getValue('position_level')}</div>
     ),
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
     },
   },
   {
-    accessorKey: 'candidateCount',
+    accessorKey: 'num_candidates',
     header: ({ column }) => (
       <AssessmentTableColumnHeader column={column} title="Candidates" />
     ),
     cell: ({ row }) => (
-      <div className="w-[30px]">{row.getValue('candidateCount')}</div>
+      <div className="w-[30px]">{row.getValue('num_candidates')}</div>
     ),
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
@@ -73,5 +73,5 @@ export const columns: ColumnDef<Assessment>[] = [
 
 export const getTransformedAssessments = async () => {
   const assessments = mockedAssessments;
-  return z.array(testSchema).parse(assessments);
+  return z.array(assessmentSchema).parse(assessments);
 };

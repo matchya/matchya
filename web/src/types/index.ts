@@ -27,12 +27,6 @@ export const candidateSchema = z.object({
 
 export type Candidate = z.infer<typeof candidateSchema>;
 
-// export interface Assessment {
-//   criterion: Criterion;
-//   score: number;
-//   reason: string;
-// }
-
 export const interviewSchema = z.object({
   createdAt: z.string(),
   candidateName: z.string(),
@@ -42,17 +36,17 @@ export const interviewSchema = z.object({
 
 export type Interview = z.infer<typeof interviewSchema>;
 
-export const testSchema = z.object({
+export const assessmentSchema = z.object({
   id: z.string(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
   name: z.string(),
-  positionType: z.string(),
-  positionLevel: z.string(),
-  candidateCount: z.number(),
+  position_type: z.string(),
+  position_level: z.string(),
+  // createdAt: z.string(),
+  updated_at: z.string(),
+  num_candidates: z.number(),
 });
 
-export type Assessment = z.infer<typeof testSchema>;
+export type Assessment = z.infer<typeof assessmentSchema>;
 
 export interface Criterion {
   id: string;

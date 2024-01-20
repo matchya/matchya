@@ -145,6 +145,11 @@ const Icons = {
       <path d="M21 12a9 9 0 1 1-6.219-8.56" />
     </svg>
   ),
+  circle: (props: IconProps) => (
+    <svg viewBox="0 0 24 24" {...props}>
+      <circle cx="12" cy="12" r="10" fill="currentColor" />
+    </svg>
+  ),
 };
 
 export default Icons;

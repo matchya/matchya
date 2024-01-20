@@ -14,6 +14,7 @@ import GithubAuthCallbackPage from '@/screens/GithubAuthCallbackPage';
 import GoogleAuthCallbackPage from '@/screens/GoogleAuthCallbackPage';
 import HomePage from '@/screens/HomePage';
 import InterviewDetailPage from '@/screens/InterviewDetailPage';
+import InterviewRecordingPage from '@/screens/InterviewRecordingPage';
 import InterviewsPage from '@/screens/InterviewsPage';
 import OnboardingPage from '@/screens/OnboardingPage';
 
@@ -27,9 +28,13 @@ function App() {
             <Route path="/candidates" element={<CandidatesPage />} />
             <Route path="/interviews" element={<InterviewsPage />} />
             <Route path="/interviews/:id" element={<InterviewDetailPage />} />
+            <Route
+              path="/interviews/:id/record"
+              element={<InterviewRecordingPage />}
+            />
             <Route path="/assessments" element={<AssessmentsPage />} />
             <Route
-              path="/create-assessment"
+              path="/assessments/create"
               element={<CreateAssessmentPage />}
             />
             <Route path="/assessments/:id" element={<AssessmentDetailPage />} />
