@@ -17,10 +17,11 @@ export const CreateAssessmentPage: Story = {
       testName={'test'}
       selectedPosition={'Software Engineer'}
       selectedLevel={'Senior'}
+      isLoading={false}
       onTestNameChange={() => {}}
       onPositionChange={() => {}}
       onLevelChange={() => {}}
-      onNavigateToQuestionGenerationPage={() => {}}
+      handleSubmit={() => {}}
     />
   ),
 };

@@ -24,20 +24,22 @@ interface CreateAssessmentPageTemplateProps {
   testName: string;
   selectedPosition: string;
   selectedLevel: string;
+  isLoading: boolean;
   onTestNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onPositionChange: (value: string) => void;
   onLevelChange: (value: string) => void;
-  onNavigateToQuestionGenerationPage: () => void;
+  handleSubmit: () => void;
 }
 
 const CreateAssessmentPageTemplate = ({
   testName,
   selectedPosition,
   selectedLevel,
+  isLoading,
   onTestNameChange,
   onPositionChange,
   onLevelChange,
-  onNavigateToQuestionGenerationPage,
+  handleSubmit,
 }: CreateAssessmentPageTemplateProps) => {
   return (
     <div className="w-full min-h-screen h-[1px] bg-macha-200">
@@ -53,7 +55,7 @@ const CreateAssessmentPageTemplate = ({
               value={testName}
               onChange={onTestNameChange}
               type="text"
-              className="text-4xl font-bold text-macha-800 p-6 bg-macha-400"
+              className="text-2xl font-bold text-macha-800 p-6 bg-macha-400"
             />
           </div>
           <div className="w-full ">
@@ -93,7 +95,8 @@ const CreateAssessmentPageTemplate = ({
           </div>
           <div className="mt-10 w-full flex justify-center">
             <Button
-              onClick={onNavigateToQuestionGenerationPage}
+              onClick={handleSubmit}
+              disabled={isLoading}
               className="bg-lime-400 text-lg text-macha-50 hover:bg-lime-600 hover:text-macha-100 w-1/2 py-6 mx-auto rounded-lg"
             >
               Create Assessment
