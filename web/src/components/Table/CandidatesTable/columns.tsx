@@ -8,39 +8,39 @@ import { Candidate, candidateSchema } from '@/types';
 
 export const columns: ColumnDef<Candidate>[] = [
   {
-    accessorKey: 'result',
+    accessorKey: 'assessment',
     header: ({ column }) => (
       <CandidatesTableColumnHeader column={column} title="Added at" />
     ),
     cell: ({ row }) => (
       <div className="min-w-[80px] max-w-[100px]">
-        {row.original.result.createdAt}
+        {row.original.assessment.created_at}
       </div>
     ),
     enableSorting: false,
     enableHiding: false,
   },
   {
-    accessorKey: 'firstName',
+    accessorKey: 'first_name',
     header: ({ column }) => (
       <CandidatesTableColumnHeader column={column} title="Name" />
     ),
     cell: ({ row }) => (
       <div className="min-w-[100px] max-w-[500px]">
-        {`${row.original.firstName} ${row.original.lastName}`}
+        {`${row.original.first_name} ${row.original.last_name}`}
       </div>
     ),
     enableSorting: false,
     enableHiding: false,
   },
   {
-    accessorKey: 'testName',
+    accessorKey: 'assessment_name',
     header: ({ column }) => (
-      <CandidatesTableColumnHeader column={column} title="Test" />
+      <CandidatesTableColumnHeader column={column} title="Assessment" />
     ),
     cell: ({ row }) => (
       <div className="min-w-[150px] max-w-[200px]">
-        {row.original.result.testName}
+        {row.original.assessment.assessment_name}
       </div>
     ),
     filterFn: (row, id, value) => {
@@ -48,12 +48,12 @@ export const columns: ColumnDef<Candidate>[] = [
     },
   },
   {
-    accessorKey: 'interviewStatus',
+    accessorKey: 'interview_status',
     header: ({ column }) => (
       <CandidatesTableColumnHeader column={column} title="Status" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px]">{row.original.result.interviewStatus}</div>
+      <div className="w-[80px]">{row.original.assessment.interview_status}</div>
     ),
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));

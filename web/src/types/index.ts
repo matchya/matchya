@@ -11,17 +11,16 @@ export interface Company {
 
 export const candidateSchema = z.object({
   id: z.string(),
-  firstName: z.string(),
-  lastName: z.string(),
+  first_name: z.string(),
+  last_name: z.string(),
   email: z.string(),
-  githubUsername: z.string(),
-  result: z.object({
-    id: z.string(),
-    testId: z.string(),
-    testName: z.string(),
-    totalScore: z.number(),
-    interviewStatus: z.string(),
-    createdAt: z.string(),
+  assessment: z.object({
+    assessment_id: z.string(),
+    assessment_name: z.string(),
+    interview_id: z.string(),
+    interview_status: z.string(),
+    total_score: z.number(),
+    created_at: z.string(),
   }),
 });
 
