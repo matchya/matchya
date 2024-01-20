@@ -26,14 +26,16 @@ def handler(event, context):
     """
     Handles the lambda function call.
     """
-    logger.info('Generating presigned url...')
-    user_id = 1
-    unique_id = generate_hash()
+    logger.info(event)
+    interview_id = event.get('queryStringParameters', {}).get('interview_id', None)
+    question_id = event.get('queryStringParameters', {}).get('question_id', None)
+    logger.info(f'Interview ID: {interview_id}')
+    logger.info(f'Question ID: {question_id}')
     origin = parse_header(event)
     try:
         presigned_url = s3_client.generate_presigned_post(
             Bucket=f'{Config.ENVIRONMENT}-data-question-response-video',
-            Key=f'{user_id}_{unique_id}.webm',
+            Key=f'{interview_id}/{question_id}.webm',
             ExpiresIn=3600
         )
         return generate_success_response(origin, presigned_url)

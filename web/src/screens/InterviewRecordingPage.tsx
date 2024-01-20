@@ -10,6 +10,8 @@ const InterviewRecordingPage = () => {
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
     null
   );
+  const interviewId = '123';
+  const questionId = '456';
 
   const handleVideoCapture = (blob: Blob) => {
     const videoFile = new File([blob], 'video.webm', { type: 'video/webm' });
@@ -23,7 +25,9 @@ const InterviewRecordingPage = () => {
     }
 
     // Fetch the presigned POST URL from your server
-    const response = await axiosInstance.get('/videos/presigned-url');
+    const response = await axiosInstance.get(
+      `/videos/presigned-url?interview_id=${interviewId}&question_id=${questionId}`
+    );
 
     // Use FormData to build the request
     const formData = new FormData();
