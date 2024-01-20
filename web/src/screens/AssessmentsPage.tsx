@@ -1,11 +1,13 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { axiosInstance } from '@/lib/client';
 import AssessmentsPageTemplate from '@/template/AssessmentsPage/AssessmentsPage';
+import { Assessment } from '@/types';
 
 const AssessmentsPage = () => {
   const navigate = useNavigate();
+  const [assessments, setAssessments] = useState<Assessment[]>([]);
 
   useEffect(() => {
     fetchAssessments();
@@ -13,12 +15,12 @@ const AssessmentsPage = () => {
 
   const fetchAssessments = async () => {
     try {
-      const res = await axiosInstance.get('/assessments');
-      if (res.data.status == 'success') {
-        console.log(res.data.payload);
+      const response = await axiosInstance.get('/assessments');
+      if (response.data.status === 'success') {
+        setAssessments(response.data.payload.assessments);
       }
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -32,6 +34,7 @@ const AssessmentsPage = () => {
 
   return (
     <AssessmentsPageTemplate
+      assessments={assessments}
       onNavigateToAssessment={handleNavigateToAssessment}
       handleNavigateToDetail={handleNavigateToDetail}
     />
