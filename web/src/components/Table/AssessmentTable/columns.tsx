@@ -14,7 +14,7 @@ export const columns: ColumnDef<Assessment>[] = [
     ),
     cell: ({ row }) => (
       <div className="min-w-[80px] max-w-[100px]">
-        {row.getValue('updated_at')}
+        {(row.getValue('updated_at') as string).substring(0, 10)}
       </div>
     ),
     enableSorting: false,
