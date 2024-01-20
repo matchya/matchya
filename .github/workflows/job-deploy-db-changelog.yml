@@ -24,7 +24,7 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa_matchya
           chmod 600 ~/.ssh/id_rsa_matchya
           chmod 600 ~/.ssh/id_rsa_matchya.pub
-          ssh-keyscan -H ${{ secrets.SSH_HOST_IP_BASTION }} >> ~/.ssh/known_hosts
+          ssh-keyscan -v -H ${{ secrets.SSH_HOST_IP_BASTION }} >> ~/.ssh/known_hosts
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2

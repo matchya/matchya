@@ -79,7 +79,16 @@ const InterviewRecordingPage = () => {
   return (
     <div>
       <div>
-        <Webcam audio={true} ref={webcamRef} />
+        <Webcam
+          className="hidden"
+          videoConstraints={{
+            width: 1280,
+            height: 720,
+            facingMode: 'user',
+          }}
+          audio={true}
+          ref={webcamRef}
+        />
         {recording ? (
           <button onClick={handleStopRecording}>Stop Recording</button>
         ) : (
