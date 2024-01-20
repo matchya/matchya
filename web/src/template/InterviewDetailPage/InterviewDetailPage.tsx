@@ -1,8 +1,19 @@
+import ReactPlayer from 'react-player';
 import { Link } from 'react-router-dom';
 
 import interviewMock from '@/assets/interview-mock.png';
 
-const InterviewDetailPage = ({ testName = 'random test' }) => {
+interface InterviewDetailPageTemplateProps {
+  questionId: string;
+  interviewId: string;
+  testName?: string;
+}
+
+const InterviewDetailPageTemplate = ({
+  questionId,
+  interviewId,
+  testName,
+}: InterviewDetailPageTemplateProps) => {
   return (
     <div className="h-[calc(100vh-64px)] overflow-y-scroll bg-macha-200">
       <div className="w-full mx-auto">
@@ -27,9 +38,10 @@ const InterviewDetailPage = ({ testName = 'random test' }) => {
                   </div>
                   <div className="w-full">
                     <div className="lg:flex-grow-0 lg:flex-shrink-0">
-                      <img
-                        src={interviewMock}
-                        className="w-full h-full max-h-[1087px] object-cover"
+                      <ReactPlayer
+                        url={`https://dev-data-question-response-video.s3.amazonaws.com/${interviewId}/${questionId}.webm`}
+                        controls={true}
+                        className="w-full h-full max-h-[1087px] object-contain"
                       />
                     </div>
                   </div>
@@ -138,4 +150,4 @@ const InterviewDetailPage = ({ testName = 'random test' }) => {
   );
 };
 
-export default InterviewDetailPage;
+export default InterviewDetailPageTemplate;
