@@ -2,5 +2,4 @@
 node_modules
 Dockerfile
 package-lock.json
-package.json
 serverless.yml

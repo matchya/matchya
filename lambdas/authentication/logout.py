@@ -1,7 +1,28 @@
 import json
 import logging
 
+import sentry_sdk
+from sentry_sdk.integrations.aws_lambda import AwsLambdaIntegration
+
+from config import Config
 from utils.request import parse_header
+
+# Load and parse package.json
+with open('package.json') as f:
+    package_json = json.load(f)
+
+# Get the version
+version = package_json.get('version', 'unknown')
+
+if Config.SENTRY_DSN:
+    sentry_sdk.init(
+        dsn=Config.SENTRY_DSN,
+        environment=Config.ENVIRONMENT,
+        integrations=[AwsLambdaIntegration(timeout_warning=True)],
+        release=f'authentication@{version}',
+        traces_sample_rate=0.5,
+        profiles_sample_rate=1.0,
+    )
 
 # Logger
 logger = logging.getLogger('logout')

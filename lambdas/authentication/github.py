@@ -5,12 +5,31 @@ import uuid
 
 import boto3
 import psycopg2
+import sentry_sdk
+from sentry_sdk.integrations.aws_lambda import AwsLambdaIntegration
 
 from config import Config
 from utils.response import generate_success_response, generate_error_response
 from utils.request import parse_header, parse_request_body, validate_request_body
 from utils.token import generate_access_token, create_access_token_record
 from utils.company import company_already_exists, get_company_id, create_company_record
+
+# Load and parse package.json
+with open('package.json') as f:
+    package_json = json.load(f)
+
+# Get the version
+version = package_json.get('version', 'unknown')
+
+if Config.SENTRY_DSN:
+    sentry_sdk.init(
+        dsn=Config.SENTRY_DSN,
+        environment=Config.ENVIRONMENT,
+        integrations=[AwsLambdaIntegration(timeout_warning=True)],
+        release=f'authentication@{version}',
+        traces_sample_rate=0.5,
+        profiles_sample_rate=1.0,
+    )
 
 # Logger
 logger = logging.getLogger('github authentication')
@@ -24,7 +43,6 @@ if not logger.handlers:
     logger.addHandler(ch)
 
 logger.propagate = False
-
 
 # DynamoDB
 dynamodb = boto3.resource('dynamodb')
