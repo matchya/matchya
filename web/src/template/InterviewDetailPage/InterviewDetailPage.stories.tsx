@@ -13,11 +13,11 @@ export default meta;
 
 type Story = StoryObj<typeof Component>;
 
-export const InterviewDetailPage: Story = {
+export const InterviewDetailPageTemplate: Story = {
   render: () => (
     <>
       <Header />
-      <Component />
+      <Component questionId='123' testName='random test' interviewId='456' />
     </>
   ),
 };
