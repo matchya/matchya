@@ -8,6 +8,7 @@ provider:
   architecture: arm64
   stage: ${opt:stage, 'staging'}
   region: us-east-1
+  stackName: ${self:provider.stage}-sls-${self:service}
   deploymentBucket:
     name: ${self:provider.stage}-sls-assessment
   vpc:
@@ -37,14 +38,6 @@ provider:
     POSTGRES_PASSWORD: ${ssm:/terraform/${self:provider.stage}/rds/db_password}
     QUESTION_GENERATION_PROCESSOR_QUEUE_URL: ${ssm:/terraform/${self:provider.stage}/sqs/question_generation_processor_queue_url}
 
-custom:
-  origins:
-    staging:
-      - "https://${ssm:/terraform/staging/domain_name}"
-      - "https://www.${ssm:/terraform/staging/domain_name}"
-    dev:
-      - "http://127.0.0.1:5173"
-
 functions:
   create:
     name: ${self:provider.stage}-assessment-create
@@ -62,7 +55,7 @@ functions:
               - "https://www.${ssm:/terraform/${self:provider.stage}/domain_name}"
             allowCredentials: true
           authorizer:
-            authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
+            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
             type: REQUEST
 
   generate-questions:
@@ -91,7 +84,7 @@ functions:
               - "https://www.${ssm:/terraform/${self:provider.stage}/domain_name}"
             allowCredentials: true
           authorizer:
-            authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
+            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
             type: REQUEST
 
   retrieve-by-id:
@@ -110,7 +103,7 @@ functions:
               - "https://www.${ssm:/terraform/${self:provider.stage}/domain_name}"
             allowCredentials: true
           authorizer:
-            authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
+            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
             type: REQUEST
           request:
             parameters:

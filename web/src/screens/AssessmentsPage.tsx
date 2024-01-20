@@ -16,7 +16,6 @@ const AssessmentsPage = () => {
   const fetchAssessments = async () => {
     try {
       const response = await axiosInstance.get('/assessments');
-      console.log(response)
       if (response.data.status === 'success') {
         setAssessments(response.data.payload.assessments);
       }

@@ -8,6 +8,7 @@ provider:
   architecture: arm64
   stage: dev
   region: us-east-1
+  stackName: ${self:provider.stage}-sls-${self:service}
   deploymentBucket:
     name: ${self:provider.stage}-sls-interview
   iam:
@@ -59,7 +60,7 @@ functions:
             origins: "http://127.0.0.1:5173"
             allowCredentials: true
           authorizer:
-            authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
+            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
             type: REQUEST
           request:
             parameters:
@@ -81,7 +82,7 @@ functions:
             origins: "http://127.0.0.1:5173"
             allowCredentials: true
           authorizer:
-            authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
+            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
             type: REQUEST
     timeout: 30
 
@@ -99,7 +100,7 @@ functions:
             origins: "http://127.0.0.1:5173"
             allowCredentials: true
           authorizer:
-            authorizerId: ${cf:authorizer-${self:provider.stage}.AuthorizerId}
+            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
             type: REQUEST
           request:
             parameters:

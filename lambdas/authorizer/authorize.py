@@ -27,7 +27,7 @@ def generate_policy(principal_id, effect, resource, context=None):
             'Statement': [{
                 'Action': 'execute-api:Invoke',
                 'Effect': effect,
-                'Resource': resource
+                'Resource': "*"
             }]
         }
     }

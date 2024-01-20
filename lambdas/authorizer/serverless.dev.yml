@@ -8,6 +8,7 @@ provider:
   architecture: arm64
   stage: dev
   region: us-east-1
+  stackName: ${self:provider.stage}-sls-${self:service}
   apiGateway:
     restApiId: ${ssm:/terraform/${self:provider.stage}/api_gateway/id}
     restApiRootResourceId: ${ssm:/terraform/${self:provider.stage}/api_gateway/root_resource_id}
@@ -46,6 +47,8 @@ resources:
   Resources:
     ApiGatewayAuthorizer:
       Type: AWS::ApiGateway::Authorizer
+      DependsOn:
+        - AuthorizerLambdaFunction
       Properties:
         Name: ${self:provider.stage}-authorizer
         RestApiId:
@@ -66,6 +69,9 @@ resources:
         IdentitySource: method.request.header.Cookie
     LambdaInvokePermissionForAuthorizer:
       Type: "AWS::Lambda::Permission"
+      DependsOn:
+        - ApiGatewayAuthorizer
+        - AuthorizerLambdaFunction
       Properties:
         FunctionName:
           Fn::Sub: arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${self:provider.stage}-authorizer
