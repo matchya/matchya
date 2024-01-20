@@ -14,9 +14,9 @@ type Story = StoryObj<typeof Component>;
 export const AuthenticationPage: Story = {
   render: () => (
     <Component
-      isGitHubLoading={false}
+      // isGitHubLoading={false}
       isGoogleLoading={false}
-      onGithubLogin={() => {}}
+      // onGithubLogin={() => {}}
       onGoogleLogin={() => {}}
     />
   ),
