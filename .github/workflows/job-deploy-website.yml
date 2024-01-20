@@ -36,8 +36,9 @@ jobs:
 
       - name: Fetch environment variables and create .env in web folder
         run: |
-          echo "VITE_API_URL=${{ vars.VITE_API_URL }}" >> web/.env
+          echo "VITE_API_URL=${{ vars.VITE_API_URL }}" > web/.env
           echo "VITE_GITHUB_CLIENT_ID=${{ secrets.VITE_GITHUB_CLIENT_ID }}" >> web/.env
+          echo "VITE_GOOGLE_CLIENT_ID=${{ secrets.VITE_GOOGLE_CLIENT_ID }}" >> web/.env
           echo "VITE_CLIENT_URL=${{ vars.VITE_CLIENT_URL }}" >> web/.env
 
       - name: Install dependencies
