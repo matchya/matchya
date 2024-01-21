@@ -7,6 +7,7 @@ class Config:
     """
     ENVIRONMENT = os.getenv('ENVIRONMENT', 'dev')
     JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
+    SENTRY_DSN = os.getenv('SENTRY_DSN')
 
     @classmethod
     def validate(cls):
