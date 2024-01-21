@@ -1,11 +1,30 @@
+import json
 import logging
 
 import psycopg2
+import sentry_sdk
+from sentry_sdk.integrations.aws_lambda import AwsLambdaIntegration
 
 from config import Config
-
 from utils.request import parse_header, parse_cookie_body
 from utils.response import generate_success_response, generate_error_response
+
+# Load and parse package.json
+with open('package.json') as f:
+    package_json = json.load(f)
+
+# Get the version
+version = package_json.get('version', 'unknown')
+
+if Config.SENTRY_DSN:
+    sentry_sdk.init(
+        dsn=Config.SENTRY_DSN,
+        environment=Config.ENVIRONMENT,
+        integrations=[AwsLambdaIntegration(timeout_warning=True)],
+        release=f'company@{version}',
+        traces_sample_rate=0.5,
+        profiles_sample_rate=1.0,
+    )
 
 # Logger
 logger = logging.getLogger('company me')
@@ -80,6 +99,7 @@ def get_repositories_by_company_id(company_id):
 
 
 def handler(event, context):
+    1 / 0
     logger.info(event)
     try:
         connect_to_db()
