@@ -125,8 +125,10 @@ def process_sql_result(result):
                 'first_name': first_name,
                 'last_name': last_name,
                 'email': email,
-                'status': status,
-                'total_score': total_score
+                'assessment': {
+                    'interview_status': status,
+                    'total_score': total_score
+                }
             }
             candidates[candidate_id] = candidate
 
