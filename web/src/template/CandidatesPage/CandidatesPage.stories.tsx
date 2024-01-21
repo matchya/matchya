@@ -3,6 +3,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import Component from './CandidatesPage';
 
 import { Header } from '@/components';
+import { mockedCandidates } from '@/data/mock';
 
 const meta: Meta<typeof Component> = {
   title: 'Template',
@@ -17,7 +18,7 @@ export const CandidatesPage: Story = {
   render: () => (
     <>
       <Header />
-      <Component />
+      <Component candidates={mockedCandidates} isLoading={false} />
     </>
   ),
 };

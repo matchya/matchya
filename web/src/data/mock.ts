@@ -59,17 +59,16 @@ export const mockedQuestion: Question = {
 
 export const mockedSelectedCandidate: Candidate = {
   id: '1',
-  firstName: 'John',
-  lastName: 'Doe',
+  first_name: 'John',
+  last_name: 'Doe',
   email: 'john.doe@example.com',
-  githubUsername: 'johndoe',
-  result: {
-    id: '1',
-    testId: '1',
-    testName: 'Test 1',
-    totalScore: 90,
-    interviewStatus: 'COMPLETED',
-    createdAt: '2022-01-01',
+  assessment: {
+    assessment_id: '1',
+    interview_id: '1',
+    assessment_name: 'Test 1',
+    total_score: 90,
+    interview_status: 'COMPLETED',
+    created_at: '2022-01-01',
   },
 };
 
@@ -77,17 +76,16 @@ export const mockedCandidates: Candidate[] = [
   mockedSelectedCandidate,
   {
     id: '2',
-    firstName: 'Jane',
-    lastName: 'Doe',
+    first_name: 'Jane',
+    last_name: 'Doe',
     email: 'jane.doe@example.com',
-    githubUsername: 'janedoe',
-    result: {
-      id: '1',
-      testId: '1',
-      testName: 'Test 1',
-      totalScore: 90,
-      interviewStatus: 'PENDING',
-      createdAt: '2022-01-01',
+    assessment: {
+      assessment_id: '1',
+      interview_id: '1',
+      assessment_name: 'Test 1',
+      total_score: 90,
+      interview_status: 'PENDING',
+      created_at: '2022-01-01',
     },
   },
 ];
