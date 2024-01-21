@@ -43,6 +43,27 @@ export const assessmentSchema = z.object({
   // createdAt: z.string(),
   updated_at: z.string(),
   num_candidates: z.number(),
+  questions: z.array(
+    z.object({
+      id: z.string(),
+      text: z.string(),
+      metrics: z.array(z.string()),
+      topic: z.string(),
+      difficulty: z.string(),
+    })
+  ),
+  candidates: z.array(
+    z.object({
+      id: z.string(),
+      first_name: z.string(),
+      last_name: z.string(),
+      email: z.string(),
+      assessment: z.object({
+        interview_status: z.string(),
+        total_score: z.number(),
+      }),
+    })
+  ),
 });
 
 export type Assessment = z.infer<typeof assessmentSchema>;

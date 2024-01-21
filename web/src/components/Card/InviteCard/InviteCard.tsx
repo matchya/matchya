@@ -9,6 +9,7 @@ import {
   Input,
   Separator,
 } from '@/components';
+import { Candidate } from '@/types';
 
 const CandidateRow = ({
   initial,
@@ -24,7 +25,7 @@ const CandidateRow = ({
   return (
     <div className="flex items-between justify-between space-x-4">
       <div className="flex items-center space-x-4">
-        <Avatar altName={initial} imageUrl="/avatars/03.png"  />
+        <Avatar altName={initial} imageUrl="/avatars/03.png" />
         <div>
           <p className="text-sm font-medium leading-none">{name}</p>
           <p className="text-sm text-muted-foreground">{email}</p>
@@ -35,13 +36,18 @@ const CandidateRow = ({
           <p className="mr-10">{score.toFixed(1)}</p>
         </div>
       ) : (
-        <Button className='bg-macha-600 hover:bg-macha-700 font-bold text-white'>Resend Email</Button>
+        <Button className="bg-macha-600 hover:bg-macha-700 font-bold text-white">
+          Resend Email
+        </Button>
       )}
     </div>
   );
 };
 
-const InviteCard = () => {
+interface InviteCardProps {
+  candidates: Candidate[];
+}
+const InviteCard = ({ candidates }: InviteCardProps) => {
   return (
     <Card className="bg-orange-50">
       <CardHeader>
@@ -65,38 +71,14 @@ const InviteCard = () => {
         <div className="space-y-4">
           <h4 className="text-sm font-medium">Filter: none Sort: evaluated</h4>
           <div className="grid gap-6">
-            <CandidateRow
-              initial="OM"
-              name="Olivia Martin"
-              email="m@example.com"
-              score={9.0}
-            />
-            <CandidateRow
-              initial="IN"
-              name="Isabella Nguyen"
-              email="m@example.com"
-              score={7.0}
-            />
-            <CandidateRow
-              initial="SD"
-              name="Sofia Davis"
-              email="s@example.com"
-            />
-            <CandidateRow
-              initial="SD"
-              name="Sofia Davis"
-              email="s@example.com"
-            />
-            <CandidateRow
-              initial="SD"
-              name="Sofia Davis"
-              email="s@example.com"
-            />
-            <CandidateRow
-              initial="SD"
-              name="Sofia Davis"
-              email="s@example.com"
-            />
+            {candidates.map(candidate => (
+              <CandidateRow
+                initial={candidate.first_name[0] + candidate.last_name[0]}
+                name={candidate.first_name + ' ' + candidate.last_name}
+                email={candidate.email}
+                score={candidate.assessment.total_score}
+              />
+            ))}
           </div>
         </div>
       </CardContent>
