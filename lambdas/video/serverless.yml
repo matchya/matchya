@@ -30,6 +30,7 @@ provider:
         buildArgs:
   environment:
     ENVIRONMENT: ${self:provider.stage}
+    SENTRY_DSN: ${ssm:/secrets/${self:provider.stage}/sentry_dsn/${self:service}}
 
 functions:
   get-presigned-url:
