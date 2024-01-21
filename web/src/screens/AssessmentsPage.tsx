@@ -25,7 +25,7 @@ const AssessmentsPage = () => {
   };
 
   const handleNavigateToAssessment = () => {
-    navigate('/create-assessment');
+    navigate('/assessments/create');
   };
 
   const handleNavigateToDetail = (id: string) => {
