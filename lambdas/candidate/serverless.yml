@@ -59,6 +59,29 @@ functions:
             type: REQUEST
     timeout: 30
 
+  invite:
+    name: ${self:provider.stage}-candidate-invite
+    image:
+      name: default
+      command:
+        - invite.handler
+    events:
+      - http:
+          path: /candidates/invite/{id}
+          method: POST
+          cors:
+            origins:
+              - "https://${ssm:/terraform/staging/domain_name}"
+              - "https://www.${ssm:/terraform/staging/domain_name}"
+            allowCredentials: true
+          authorizer:
+            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
+            type: REQUEST
+          request:
+            parameters:
+              paths:
+                id: true
+
   retrieve:
     name: ${self:provider.stage}-candidate-retrieve
     image:
