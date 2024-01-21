@@ -13,10 +13,14 @@ Our project uses Terraform for infrastructure management. We have two main folde
 - `environment`: This folder contains configurations for environment-specific resources. To apply these configurations, you need to select the appropriate Terraform workspace that corresponds to your environment. You can do this by running the following command in your terminal:
 
   ```
-  terraform workspace select dev
+  terraform workspace select <environment>
   ```
 
-  Replace <environment> with the name of your environment (e.g., dev, staging, prod). For example, if you're working on your local machine and want to apply the configurations to the dev environment, you would run:
+  Replace <environment> with the name of your environment (e.g., dev, staging, production). For example, if you're working on your local machine and want to apply the configurations to the dev environment, you would run:
+
+  ```
+  terraform workspace select dev
+  ```
 
   This command sets the Terraform workspace to dev, and any subsequent terraform apply commands will apply the configurations to the dev environment.
 
