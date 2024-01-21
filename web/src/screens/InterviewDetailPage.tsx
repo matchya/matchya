@@ -1,8 +1,8 @@
 import Template from '../template/InterviewDetailPage/InterviewDetailPage';
 
 function InterviewDetailPage() {
-  const questionId = '123';
-  const interviewId = '456';
+  const interviewId = '123';
+  const questionId = '456';
   const testName = 'random test';
   return (
     <Template
