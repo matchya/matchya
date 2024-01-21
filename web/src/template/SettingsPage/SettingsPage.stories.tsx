@@ -18,7 +18,7 @@ export const SettingsPage: Story = {
     <Component
       companyName={mockedCompanyInfo.name}
       email={mockedCompanyInfo.email}
-      githubUsername={mockedCompanyInfo.github_username}
+      githubUsername={mockedCompanyInfo.githubUsername}
       onSubmit={() => {}}
       onCompanyNameChange={() => {}}
       onEmailChange={() => {}}

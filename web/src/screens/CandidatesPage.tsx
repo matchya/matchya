@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { axiosInstance } from '@/lib/client';
+import { caseSensitiveAxiosInstance } from '@/lib/client';
 import CandidatesPageTemplate from '@/template/CandidatesPage/CandidatesPage';
 import { Candidate } from '@/types';
 
@@ -15,22 +15,22 @@ const CandidatesPage = () => {
   const fetchCandidates = async () => {
     try {
       setIsLoading(true);
-      const response = await axiosInstance.get('/candidates');
+      const response = await caseSensitiveAxiosInstance.get('/candidates');
       if (response.data.status === 'success') {
         const candidates: Candidate[] = response.data.payload.candidates.map(
           (candidate: any) => {
             return {
               id: candidate.id,
-              first_name: candidate.first_name,
-              last_name: candidate.last_name,
+              firstName: candidate.firstName,
+              lastName: candidate.lastName,
               email: candidate.email,
               assessment: {
-                assessment_id: candidate.assessment.assessment_id,
-                assessment_name: candidate.assessment.assessment_name,
-                interview_id: candidate.assessment.interview_id,
-                interview_status: candidate.assessment.interview_status,
-                total_score: candidate.assessment.total_score,
-                created_at: candidate.assessment.created_at,
+                assessmentId: candidate.assessment.assessmentId,
+                assessmentName: candidate.assessment.assessmentName,
+                interviewId: candidate.assessment.interviewId,
+                interviewStatus: candidate.assessment.interviewStatus,
+                totalScore: candidate.assessment.totalScore,
+                createdAt: candidate.assessment.createdAt,
               },
             };
           }

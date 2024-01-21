@@ -27,20 +27,18 @@ export const mockedAssessments: Assessment[] = [
   {
     id: '1',
     name: 'Test 1',
-    position_type: 'Software Engineer',
-    position_level: 'Senior',
-    num_candidates: 5,
-    // created_at: '2022-01-01',
-    updated_at: '2022-01-01',
+    positionType: 'Software Engineer',
+    positionLevel: 'Senior',
+    numCandidates: 5,
+    updatedAt: '2022-01-01',
   },
   {
     id: '2',
     name: 'Test 1',
-    position_type: 'Frontend Engineer',
-    position_level: 'Junior',
-    num_candidates: 5,
-    // created_at: '2022-01-01',
-    updated_at: '2022-01-01',
+    positionType: 'Frontend Engineer',
+    positionLevel: 'Junior',
+    numCandidates: 5,
+    updatedAt: '2022-01-01',
   },
 ];
 
@@ -59,16 +57,16 @@ export const mockedQuestion: Question = {
 
 export const mockedSelectedCandidate: Candidate = {
   id: '1',
-  first_name: 'John',
-  last_name: 'Doe',
+  firstName: 'John',
+  lastName: 'Doe',
   email: 'john.doe@example.com',
   assessment: {
-    assessment_id: '1',
-    interview_id: '1',
-    assessment_name: 'Test 1',
-    total_score: 90,
-    interview_status: 'COMPLETED',
-    created_at: '2022-01-01',
+    assessmentId: '1',
+    interviewId: '1',
+    assessmentName: 'Test 1',
+    totalScore: 90,
+    interviewStatus: 'COMPLETED',
+    createdAt: '2022-01-01',
   },
 };
 
@@ -76,16 +74,16 @@ export const mockedCandidates: Candidate[] = [
   mockedSelectedCandidate,
   {
     id: '2',
-    first_name: 'Jane',
-    last_name: 'Doe',
+    firstName: 'Jane',
+    lastName: 'Doe',
     email: 'jane.doe@example.com',
     assessment: {
-      assessment_id: '1',
-      interview_id: '1',
-      assessment_name: 'Test 1',
-      total_score: 90,
-      interview_status: 'PENDING',
-      created_at: '2022-01-01',
+      assessmentId: '1',
+      interviewId: '1',
+      assessmentName: 'Test 1',
+      totalScore: 90,
+      interviewStatus: 'PENDING',
+      createdAt: '2022-01-01',
     },
   },
 ];
@@ -95,24 +93,24 @@ export const mockedSelectedPosition: Position = {
   name: 'Position 1',
   checklist: {
     id: '1',
-    repository_names: ['Repo 1', 'Repo 2'],
+    repositoryNames: ['Repo 1', 'Repo 2'],
     criteria: [
       {
         id: '1',
         message: 'Criteria 1',
         keywords: ['keyword1', 'keyword2'],
-        created_at: '2022-01-01T00:00:00Z',
+        createdAt: '2022-01-01T00:00:00Z',
       },
       {
         id: '2',
         message: 'Criteria 2',
         keywords: ['keyword3', 'keyword4'],
-        created_at: '2022-01-02T00:00:00Z',
+        createdAt: '2022-01-02T00:00:00Z',
       },
     ],
   },
   candidates: mockedCandidates,
-  checklist_status: 'active',
+  checklistStatus: 'active',
   questions: [mockedQuestion, mockedQuestion, mockedQuestion],
 };
 
@@ -123,11 +121,11 @@ export const mockedPositions: Position[] = [
     name: 'Position 2',
     checklist: {
       id: '2',
-      repository_names: ['Repo 3', 'Repo 4'],
+      repositoryNames: ['Repo 3', 'Repo 4'],
       criteria: [],
     },
     candidates: [],
-    checklist_status: 'active',
+    checklistStatus: 'active',
     questions: [mockedQuestion],
   },
 ];
@@ -136,42 +134,42 @@ export const mockedCompanyInfo: Company = {
   id: '12398723948',
   name: 'Peter Parker',
   email: 'peterparker@gmail.com',
-  github_username: 'peterparker',
-  repository_names: ['repo1', 'repo2', 'repo3'],
+  githubUsername: 'peterparker',
+  repositoryNames: ['repo1', 'repo2', 'repo3'],
   positions: [],
 };
 
 export const mockedChecklist: Checklist = {
   id: '1',
-  repository_names: ['Repo 1', 'Repo 2'],
+  repositoryNames: ['Repo 1', 'Repo 2'],
   criteria: [
     {
       id: '1',
-      created_at: '2022-01-01',
+      createdAt: '2022-01-01',
       keywords: ['react', 'typescript', 'firebase', 'yo'],
       message: 'This is a description for the first item in the checklist',
     },
     {
       id: '2',
-      created_at: '2022-01-02',
+      createdAt: '2022-01-02',
       keywords: ['react', 'typescript'],
       message: 'This is a description for the second item in the checklist',
     },
     {
       id: '3',
-      created_at: '2022-01-03',
+      createdAt: '2022-01-03',
       keywords: ['react', 'typescript'],
       message: 'This is a description for the third item in the checklist',
     },
     {
       id: '4',
-      created_at: '2022-01-04',
+      createdAt: '2022-01-04',
       keywords: ['react', 'typescript'],
       message: 'This is a description for the fourth item in the checklist',
     },
     {
       id: '5',
-      created_at: '2022-01-05',
+      createdAt: '2022-01-05',
       keywords: ['react', 'typescript'],
       message: 'This is a description for the fifth item in the checklist',
     },

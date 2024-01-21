@@ -4,7 +4,7 @@ import { StoreApi, createStore } from 'zustand';
 import { StoreProviderProps } from './interface';
 
 import { mockedPositions, mockedSelectedPosition } from '@/data/mock';
-import { axiosInstance } from '@/lib/client';
+import { caseSensitiveAxiosInstance } from '@/lib/client';
 import { Candidate, CustomError, Position } from '@/types';
 
 export interface PositionState {
@@ -74,14 +74,14 @@ export const PositionStoreProvider = ({ children }: StoreProviderProps) => {
           if (!selectedPosition) {
             throw new Error('No position selected');
           }
-          const res = await axiosInstance.get(`/positions/${positionId}`, {
-            withCredentials: true,
-          });
+          const res = await caseSensitiveAxiosInstance.get(
+            `/positions/${positionId}`
+          );
           if (res.data.status === 'success') {
             set({
               selectedPosition: {
                 ...selectedPosition,
-                checklist_status: res.data.payload.checklist_status,
+                checklistStatus: res.data.payload.checklistStatus,
                 checklist: res.data.payload.checklist,
               },
             });

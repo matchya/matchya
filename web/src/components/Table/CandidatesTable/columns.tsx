@@ -13,7 +13,7 @@ export const columns: ColumnDef<Candidate>[] = [
       <CandidatesTableColumnHeader column={column} title="Added at" />
     ),
     cell: ({ row }) => {
-      const date = new Date(row.original.assessment.created_at);
+      const date = new Date(row.original.assessment.createdAt);
       const formattedDate = date.toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'short',
@@ -25,26 +25,26 @@ export const columns: ColumnDef<Candidate>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'first_name',
+    accessorKey: 'firstName',
     header: ({ column }) => (
       <CandidatesTableColumnHeader column={column} title="Name" />
     ),
     cell: ({ row }) => (
       <div className="min-w-[100px] max-w-[500px]">
-        {`${row.original.first_name} ${row.original.last_name}`}
+        {`${row.original.firstName} ${row.original.lastName}`}
       </div>
     ),
     enableSorting: false,
     enableHiding: false,
   },
   {
-    accessorKey: 'assessment_name',
+    accessorKey: 'assessmentName',
     header: ({ column }) => (
       <CandidatesTableColumnHeader column={column} title="Assessment" />
     ),
     cell: ({ row }) => (
       <div className="min-w-[150px] max-w-[200px]">
-        {row.original.assessment.assessment_name}
+        {row.original.assessment.assessmentName}
       </div>
     ),
     filterFn: (row, id, value) => {
@@ -52,12 +52,12 @@ export const columns: ColumnDef<Candidate>[] = [
     },
   },
   {
-    accessorKey: 'interview_status',
+    accessorKey: 'interviewStatus',
     header: ({ column }) => (
       <CandidatesTableColumnHeader column={column} title="Status" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px]">{row.original.assessment.interview_status}</div>
+      <div className="w-[80px]">{row.original.assessment.interviewStatus}</div>
     ),
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
