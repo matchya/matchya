@@ -9,6 +9,7 @@ from sentry_sdk.integrations.aws_lambda import AwsLambdaIntegration
 from config import Config
 from utils.response import generate_success_response, generate_error_response
 from utils.request import parse_header, parse_request_body, validate_request_body
+from utils.email import send_email
 
 # Load and parse package.json
 with open('package.json') as f:
@@ -135,11 +136,6 @@ def create_new_interview(assessment_id, candidate_id):
         raise RuntimeError(f"Error saving to interview table: {e}")
 
 
-def send_invitation_email(email, assessment_id):
-    # TODO: Send email to candidate with the link to the assessment.
-    pass
-
-
 def handler(event, context):
     try:
         logger.info('Creating a candidate...')
@@ -160,7 +156,8 @@ def handler(event, context):
         assessment_id = body['assessment_id']
         save_assessment_candidate(assessment_id, candidate_id)
         create_new_interview(assessment_id, candidate_id)
-        send_invitation_email(body['email'], assessment_id)
+
+        send_email(body['email'])
 
         data = {
             'candidate_id': candidate_id
