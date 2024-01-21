@@ -1,7 +1,16 @@
 import { CandidatesTable } from '@/components';
-import { mockedCandidates } from '@/data/mock';
+import { Candidate } from '@/types';
 
-const CandidatesPageTemplate = () => {
+interface CandidatesPageTemplateProps {
+  candidates: Candidate[];
+  isLoading: boolean;
+}
+
+const CandidatesPageTemplate = ({
+  candidates,
+  isLoading,
+}: CandidatesPageTemplateProps) => {
+
   return (
     <div className="h-full min-h-[calc(100vh-64px)] overflow-hidden bg-macha-200">
       <div className="w-full h-full mx-auto">
@@ -14,7 +23,7 @@ const CandidatesPageTemplate = () => {
                     <h3 className="text-4xl font-bold">Candidates</h3>
                   </div>
                 </div>
-                <CandidatesTable candidates={mockedCandidates} />
+                {!isLoading && <CandidatesTable candidates={candidates} />}
               </div>
             </div>
           </div>
