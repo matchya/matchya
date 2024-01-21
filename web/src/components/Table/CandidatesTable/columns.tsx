@@ -12,11 +12,15 @@ export const columns: ColumnDef<Candidate>[] = [
     header: ({ column }) => (
       <CandidatesTableColumnHeader column={column} title="Added at" />
     ),
-    cell: ({ row }) => (
-      <div className="min-w-[80px] max-w-[100px]">
-        {row.original.assessment.created_at}
-      </div>
-    ),
+    cell: ({ row }) => {
+      const date = new Date(row.original.assessment.created_at);
+      const formattedDate = date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      });
+      return <div className="min-w-[80px] max-w-[100px]">{formattedDate}</div>;
+    },
     enableSorting: false,
     enableHiding: false,
   },
