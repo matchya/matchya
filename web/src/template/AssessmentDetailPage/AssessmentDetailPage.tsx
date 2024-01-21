@@ -28,7 +28,7 @@ const AssessmentDetailPageTemplate = ({
                 ))}
               </div>
               <div className="mb-6 lg:mb-0">
-                <InviteCard candidates={assessment?.candidates ? assessment?.candidates : []} />
+                <InviteCard candidates={assessment?.candidates ? assessment?.candidates : []} assessmentId={assessment?.id} />
               </div>
             </div>
           </div>
