@@ -4,9 +4,28 @@ import logging
 
 import psycopg2
 from openai import OpenAI
+import sentry_sdk
+from sentry_sdk.integrations.aws_lambda import AwsLambdaIntegration
 
 from config import Config
 from utils.topics import get_random_topics_by_position_type_and_level
+
+# Load and parse package.json
+with open('package.json') as f:
+    package_json = json.load(f)
+
+# Get the version
+version = package_json.get('version', 'unknown')
+
+if Config.SENTRY_DSN:
+    sentry_sdk.init(
+        dsn=Config.SENTRY_DSN,
+        environment=Config.ENVIRONMENT,
+        integrations=[AwsLambdaIntegration(timeout_warning=True)],
+        release=f'assessment@{version}',
+        traces_sample_rate=0.5,
+        profiles_sample_rate=1.0,
+    )
 
 # Logger
 logger = logging.getLogger('generate questions')

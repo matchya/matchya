@@ -18,6 +18,8 @@ class Config:
     GITHUB_CLIENT_SECRET = os.getenv('GITHUB_CLIENT_SECRET')
     GITHUB_FERNET_KEY = os.getenv('GITHUB_FERNET_KEY')
 
+    SENTRY_DSN = os.getenv('SENTRY_DSN')
+
     @classmethod
     def validate(cls):
         """

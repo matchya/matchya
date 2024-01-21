@@ -4,6 +4,5 @@ Dockerfile
 package-lock.json
 serverless.yml
 serverless.dev.yml
-CHANGELOG.md
-.releaserc
+.releaserc.json
 changelog.config.js

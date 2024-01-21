@@ -8,6 +8,7 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 
 # Copy the necessary files and directories to the container
+COPY package.json package.json
 COPY *.py .
 COPY utils/ ./utils/
 

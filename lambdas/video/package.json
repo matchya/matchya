@@ -1,6 +1,6 @@
 {
   "name": "video",
-  "version": "",
+  "version": "1.0.0",
   "description": "",
   "scripts": {
     "deploy:dev": "sls deploy --config serverless.dev.yml",

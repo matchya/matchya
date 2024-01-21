@@ -2,5 +2,8 @@
 node_modules
 Dockerfile
 package-lock.json
-package.json
 serverless.yml
+serverless.dev.yml
+CHANGELOG.md
+changelog.config.js
+.releaserc
