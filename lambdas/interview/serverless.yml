@@ -37,7 +37,7 @@ provider:
     POSTGRES_USER: ${ssm:/terraform/${self:provider.stage}/rds/db_username}
     POSTGRES_PASSWORD: ${ssm:/terraform/${self:provider.stage}/rds/db_password}
     QUESTION_GENERATION_PROCESSOR_QUEUE_URL: ${ssm:/terraform/${self:provider.stage}/sqs/question_generation_processor_queue_url}
-    SENTRY_DSN: ${ssm:/secrets/${self:provider.stage}/sentry_dsn/interview}
+    SENTRY_DSN: ${ssm:/secrets/${self:provider.stage}/sentry_dsn/${self:service}}
 
 functions:
   evaluate-question:
