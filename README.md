@@ -1,5 +1,31 @@
 # Matchya
 
+## Using Terraform
+
+Our project uses Terraform for infrastructure management. We have two main folders for Terraform configurations:
+
+- `shared`: This folder contains configurations for environment-agnostic infrastructure. To apply these configurations, you can simply run the following command in your terminal:
+
+  ```sh
+  terraform apply
+  ```
+
+- `environment`: This folder contains configurations for environment-specific resources. To apply these configurations, you need to select the appropriate Terraform workspace that corresponds to your environment. You can do this by running the following command in your terminal:
+
+  ```
+  terraform workspace select <environment>
+  ```
+
+  Replace <environment> with the name of your environment (e.g., dev, staging, production). For example, if you're working on your local machine and want to apply the configurations to the dev environment, you would run:
+
+  ```
+  terraform workspace select dev
+  ```
+
+  This command sets the Terraform workspace to dev, and any subsequent terraform apply commands will apply the configurations to the dev environment.
+
+Remember to always check your current Terraform workspace before applying configurations to avoid updating resources in the wrong environment.
+
 ## How to Access Staging/Production Database
 
 Accessing the staging or production database involves creating a secure connection to the database server. This is often done using a method called SSH tunneling.
