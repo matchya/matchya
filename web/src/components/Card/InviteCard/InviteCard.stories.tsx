@@ -12,5 +12,5 @@ export default meta;
 type Story = StoryObj<typeof Component>;
 
 export const Invite: Story = {
-  render: () => <Component candidates={[]} />,
+  render: () => <Component candidates={[]} assessmentId='' />,
 };
