@@ -47,7 +47,6 @@ def handler(event, context):
     """
     Handles the lambda function call.
     """
-    1 / 0
     logger.info(event)
     interview_id = event.get('queryStringParameters', {}).get('interview_id', None)
     question_id = event.get('queryStringParameters', {}).get('question_id', None)
