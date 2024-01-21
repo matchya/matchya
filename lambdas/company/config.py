@@ -12,6 +12,7 @@ class Config:
     POSTGRES_DB = os.getenv('POSTGRES_DB')
     POSTGRES_USER = os.getenv('POSTGRES_USER')
     POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
+    SENTRY_DSN = os.getenv('SENTRY_DSN')
 
     @classmethod
     def validate(cls):
