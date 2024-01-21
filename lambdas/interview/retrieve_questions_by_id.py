@@ -27,7 +27,7 @@ if Config.SENTRY_DSN:
     )
 
 # Logger
-logger = logging.getLogger('retrieve interview by id')
+logger = logging.getLogger('retrieve interview questions by id')
 logger.setLevel(logging.INFO)
 
 formatter = logging.Formatter('[%(levelname)s]:%(funcName)s:%(lineno)d:%(message)s')
@@ -56,31 +56,36 @@ def connect_to_db():
     db_cursor = db_conn.cursor()
 
 
-def retrieve_interview_by_id(interview_id):
+def retrieve_interview_questions_by_id(interview_id):
     """
-    Retrieves a interview by interview id from the database.
+    Retrieves a interview questions by interview id from the database.
 
     :param interview_id: The interview ID.
-    :return: The interview. 
+    :return: The interview data.
     """
-    logger.info('Retrieving a interview by interview id from db...')
-    sql = """
-        SELECT 
-            c.id, c.first_name, c.last_name, 
-            a.id, a.name, 
-            i.id, i.total_score, i.summary, i.video_url, i.created_at
-        FROM interview AS i
-        LEFT JOIN candidate AS c ON i.candidate_id = c.id
-        LEFT JOIN assessment AS a ON i.assessment_id = a.id
-        WHERE i.id = '%s'
+    logger.info('Retrieving a interview questions by interview id from db...')
+    sql = """  
+        SELECT
+            i.id, i.created_at,
+            a.id, a.name,
+            c.id, c.first_name, c.last_name, c.email,
+            q.id, q.text,
+            m.id, m.name
+        FROM interview i
+        LEFT JOIN assessment a ON a.id = i.assessment_id
+        LEFT JOIN candidate c ON c.id = i.candidate_id
+        LEFT JOIN assessment_question aq ON aq.assessment_id = a.id
+        LEFT JOIN question q ON q.id = aq.question_id
+        LEFT JOIN metric m ON m.question_id = q.id
+        WHERE i.id = '%s';
     """ % interview_id
     try:
         db_cursor.execute(sql)
         result = db_cursor.fetchall()
-        interview = process_sql_result(result)
-        return interview
+        return process_sql_result(result)
     except Exception as e:
-        raise RuntimeError(f'Failed to retrieve interview by id: {e}')
+        logger.error(f'Retrieving a interview questions by interview id from db failed: {e}')
+        raise RuntimeError('Failed to retrieve a interview questions by interview id from db.')
 
 
 def process_sql_result(result):
@@ -90,29 +95,46 @@ def process_sql_result(result):
     :param result: The SQL result.
     :return: The processed result.
     """
-    interview = {}
+
+    if not result:
+        raise ValueError('Interview not found.')
+
+    interview = {
+        'id': result[0][0],
+        'created_at': str(result[0][1]),
+        'assessment': {
+            'id': result[0][2],
+            'name': result[0][3],
+        },
+        'candidate': {
+            'id': result[0][4],
+            'first_name': result[0][5],
+            'last_name': result[0][6],
+            'email': result[0][7],
+        },
+        'questions': [],
+    }
+    questions = {}
     for row in result:
-        (candidate_id, candidate_first_name, candidate_last_name,
-         assessment_id, assessment_name,
-         interview_id, interview_total_score, interview_summary, interview_video_url, interview_created_at) = row
-        if interview_id not in interview:
-            interview[interview_id] = {
-                'id': interview_id,
-                'total_score': interview_total_score,
-                'summary': interview_summary,
-                'video_url': interview_video_url,
-                'created_at': str(interview_created_at),
-                'candidate': {
-                    'id': candidate_id,
-                    'first_name': candidate_first_name,
-                    'last_name': candidate_last_name
-                },
-                'assessment': {
-                    'id': assessment_id,
-                    'name': assessment_name
-                }
+        (question_id, question_text, metric_id, metric_name) = row[8:]
+        if question_id and question_id not in questions:
+            questions[question_id] = {
+                'id': question_id,
+                'text': question_text,
+                'metrics': {},
             }
-    return list(interview.values())
+
+        if metric_id and metric_id not in questions[question_id]['metrics']:
+            metric = {
+                'id': metric_id,
+                'name': metric_name,
+            }
+            questions[question_id]['metrics'][metric_id] = metric
+
+    for question_id in questions:
+        questions[question_id]['metrics'] = list(questions[question_id]['metrics'].values())
+        interview['questions'].append(questions[question_id])
+    return interview
 
 
 def handler(event, context):
@@ -125,10 +147,10 @@ def handler(event, context):
 
         logger.info("Parsing the request parameters...")
         interview_id = parse_request_parameter(event, 'id')
-        interview = retrieve_interview_by_id(interview_id)
+        interview = retrieve_interview_questions_by_id(interview_id)
 
         data = {
-            'interviews': interview
+            'interview': interview
         }
         logger.info("Successfully retrieved interview by id.")
         return generate_success_response(origin, data)

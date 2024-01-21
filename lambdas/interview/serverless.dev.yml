@@ -86,15 +86,15 @@ functions:
             type: REQUEST
     timeout: 30
 
-  retrieve-by-id:
-    name: ${self:provider.stage}-interview-retrieve-by-id
+  retrieve-questions-by-id:
+    name: ${self:provider.stage}-interview-retrieve-questions-by-id
     image:
       name: default
       command:
-        - retrieve_by_id.handler
+        - retrieve_questions_by_id.handler
     events:
       - http:
-          path: /interviews/{id}
+          path: /interviews/{id}/questions
           method: GET
           cors:
             origins: "http://127.0.0.1:5173"
