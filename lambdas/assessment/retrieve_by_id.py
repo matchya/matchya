@@ -68,11 +68,14 @@ def retrieve_assessment_by_id_from_db(company_id, assessment_id):
         SELECT 
             assessment.id, assessment.name, assessment.position_type, assessment.position_level, assessment.created_at, 
             question.id, question.text, question.topic, question.difficulty,
-            metric.id, metric.name
+            candidate.id, candidate.first_name, candidate.last_name, candidate.email,
+            interview.status, interview.total_score
         FROM assessment
         LEFT JOIN assessment_question ON assessment.id = assessment_question.assessment_id
         LEFT JOIN question ON assessment_question.question_id = question.id
-        LEFT JOIN metric ON question.id = metric.question_id
+        LEFT JOIN assessment_candidate ON assessment.id = assessment_candidate.assessment_id
+        LEFT JOIN candidate ON assessment_candidate.candidate_id = candidate.id
+        LEFT JOIN interview ON interview.assessment_id = assessment.id AND interview.candidate_id = candidate.id
         WHERE assessment.company_id = '%s' AND assessment.id = '%s'
     """ % (company_id, assessment_id)
     try:
@@ -99,30 +102,36 @@ def process_sql_result(result):
         'position_type': result[0][2],
         'position_level': result[0][3],
         'created_at': str(result[0][4]),
-        'questions': []
+        'questions': [],
+        'candidates': []
     }
     questions = {}
+    candidates = {}
     for row in result:
-        (question_id, question_text, question_topic, question_difficulty, metric_id, metric_name) = row[5:]
+        (question_id, question_text, question_topic, question_difficulty,
+         candidate_id, first_name, last_name, email, status, total_score) = row[5:]
         if question_id and question_id not in questions:
             question = {
                 'id': question_id,
                 'text': question_text,
                 'topic': question_topic,
-                'difficulty': question_difficulty,
-                'metrics': []
+                'difficulty': question_difficulty
             }
             questions[question_id] = question
-            questions[question_id]['metrics'] = []
 
-        if metric_id and metric_id not in questions[question_id]['metrics']:
-            metric = {
-                'id': metric_id,
-                'name': metric_name
+        if candidate_id and candidate_id not in candidates:
+            candidate = {
+                'id': candidate_id,
+                'first_name': first_name,
+                'last_name': last_name,
+                'email': email,
+                'status': status,
+                'total_score': total_score
             }
-            questions[question_id]['metrics'].append(metric)
+            candidates[candidate_id] = candidate
 
     assessment['questions'] = list(questions.values())
+    assessment['candidates'] = list(candidates.values())
     return assessment
 
 
