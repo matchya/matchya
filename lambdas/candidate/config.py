@@ -12,8 +12,8 @@ class Config:
     POSTGRES_DB = os.getenv('POSTGRES_DB')
     POSTGRES_USER = os.getenv('POSTGRES_USER')
     POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
-    
     OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+    SENTRY_DSN = os.getenv('SENTRY_DSN')
 
     @classmethod
     def validate(cls):
