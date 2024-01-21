@@ -4,10 +4,28 @@ import urllib
 
 import psycopg2
 from openai import OpenAI
+import sentry_sdk
+from sentry_sdk.integrations.aws_lambda import AwsLambdaIntegration
 
 from config import Config
 from utils.request import parse_request_parameter
 
+# Load and parse package.json
+with open('package.json') as f:
+    package_json = json.load(f)
+
+# Get the version
+version = package_json.get('version', 'unknown')
+
+if Config.SENTRY_DSN:
+    sentry_sdk.init(
+        dsn=Config.SENTRY_DSN,
+        environment=Config.ENVIRONMENT,
+        integrations=[AwsLambdaIntegration(timeout_warning=True)],
+        release=f'interview@{version}',
+        traces_sample_rate=0.5,
+        profiles_sample_rate=1.0,
+    )
 
 # Logger
 logger = logging.getLogger('evaluate interview')
@@ -78,7 +96,7 @@ def get_interview_id(assessment_id, candidate_id):
 def get_candidate_answers(interview_id):
     """
     Retrieves the candidate answers from the database.
-    
+
     :param interview_id: The interview ID.
     """
     logger.info('Retrieving candidate answers from db...')
