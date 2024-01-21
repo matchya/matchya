@@ -97,7 +97,7 @@ def process_sql_result(result):
     """
 
     if not result:
-        raise ValueError('Interview not found.')
+        raise ValueError('Interview results not found.')
 
     interview = {
         'id': result[0][0],
