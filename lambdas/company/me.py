@@ -99,7 +99,6 @@ def get_repositories_by_company_id(company_id):
 
 
 def handler(event, context):
-    1 / 0
     logger.info(event)
     try:
         connect_to_db()
