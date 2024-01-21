@@ -15,6 +15,7 @@ class Config:
     OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 
     QUESTION_GENERATION_PROCESSOR_QUEUE_URL = os.getenv('QUESTION_GENERATION_PROCESSOR_QUEUE_URL')
+    SENTRY_DSN = os.getenv('SENTRY_DSN')
 
     @classmethod
     def validate(cls):
