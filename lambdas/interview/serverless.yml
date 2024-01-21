@@ -97,15 +97,38 @@ functions:
             type: REQUEST
     timeout: 30
 
-  retrieve-by-id:
-    name: ${self:provider.stage}-interview-retrieve-by-id
+  retrieve-questions-by-id:
+    name: ${self:provider.stage}-interview-retrieve-questions-by-id
     image:
       name: default
       command:
-        - retrieve_by_id.handler
+        - retrieve_questions_by_id.handler
     events:
       - http:
-          path: /interviews/{id}
+          path: /interviews/{id}/questions
+          method: GET
+          cors:
+            origins:
+              - "https://${ssm:/terraform/staging/domain_name}"
+              - "https://www.${ssm:/terraform/staging/domain_name}"
+            allowCredentials: true
+          authorizer:
+            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
+            type: REQUEST
+          request:
+            parameters:
+              paths:
+                id: true
+
+  retrieve-results-by-id:
+    name: ${self:provider.stage}-interview-retrieve-results-by-id
+    image:
+      name: default
+      command:
+        - retrieve_results_by_id.handler
+    events:
+      - http:
+          path: /interviews/{id}/results
           method: GET
           cors:
             origins:
