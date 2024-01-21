@@ -77,7 +77,7 @@ def retrieve_interview_results_by_id(interview_id):
         LEFT JOIN assessment_question aq ON aq.assessment_id = a.id
         LEFT JOIN question q ON q.id = aq.question_id
         LEFT JOIN answer ans ON ans.question_id = q.id
-        WHERE i.id = '%s';
+        WHERE i.id = '%s' AND i.status = 'COMPLETED';
     """ % interview_id
     try:
         db_cursor.execute(sql)
