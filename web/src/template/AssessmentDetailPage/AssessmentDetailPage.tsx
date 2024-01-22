@@ -21,7 +21,7 @@ const AssessmentDetailPageTemplate = ({
                 {assessment?.questions.map(question => (
                   <QuestionCard
                     key={question.id}
-                    question={question.text}
+                    text={question.text}
                     keyword={question.topic}
                     difficulty={question.difficulty}
                   />

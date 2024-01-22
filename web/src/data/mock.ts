@@ -41,13 +41,26 @@ export const mockedAssessments: Assessment[] = [
 ];
 
 export const mockedQuestion: Question = {
-  question:
+  id: '1',
+  text:
     'How would you optimize a Dockerfile for a web application to ensure efficient build times and image sizes? Describe the steps you would take and the rationale behind them.',
   metrics: [
-    'Knowledge of Dockerfile optimization techniques',
-    'Efficient image construction and management',
-    'Rationale behind optimization choices',
-    'Awareness of potential pitfalls and best practices.',
+    {
+      'id': '1',
+      'name': 'Knowledge of Dockerfile optimization techniques',
+    },
+    {
+      'id': '2',
+      'name': 'Efficient image construction and management',
+    },
+    {
+      'id': '3',
+      'name': 'Rationale behind optimization choices',
+    },
+    {
+      'id': '4',
+      'name': 'Awareness of potential pitfalls and best practices.',
+    }
   ],
   topic: 'typescript',
   difficulty: 'medium',

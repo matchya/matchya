@@ -8,13 +8,13 @@ import {
 } from '../..';
 
 interface QuestionCardProps {
-  question: string;
+  text: string;
   keyword: string;
   difficulty: string;
 }
 
 const QuestionCard = ({
-  question,
+  text,
   keyword,
   difficulty,
 }: QuestionCardProps) => {
@@ -28,7 +28,7 @@ const QuestionCard = ({
             </CardTitle>
           </div>
           <CardDescription className="text-md text-black">
-            {question}
+            {text}
           </CardDescription>
         </div>
       </CardHeader>
