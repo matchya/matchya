@@ -6,7 +6,7 @@ import uuid
 import psycopg2
 import boto3
 from openai import OpenAI
-from moviepy.editor import VideoFileClip
+from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_audio
 import sentry_sdk
 from sentry_sdk.integrations.aws_lambda import AwsLambdaIntegration
 
@@ -51,6 +51,10 @@ s3 = boto3.resource('s3')
 
 # OpenAI
 openai_client = OpenAI()
+
+# Video Extension
+VIDEO_EXTENSION = '.webm'
+AUDIO_EXTENSION = '.wav'
 
 
 def connect_to_db():
@@ -97,14 +101,16 @@ def extract_audio_from_video(video_file_path):
     :return The audio file path.
     """
     logger.info(f'Extracting audio from {video_file_path}...')
-    audio_file_path = video_file_path.replace('.mov', '.wav')
-    video_clip = VideoFileClip(video_file_path)
-    audio_clip = video_clip.audio
+    audio_file_path = video_file_path.replace(VIDEO_EXTENSION, AUDIO_EXTENSION)
+    
+    ffmpeg_extract_audio(video_file_path, audio_file_path)
+    # video_clip = VideoFileClip(video_file_path)
+    # audio_clip = video_clip.audio
 
-    audio_clip.write_audiofile(audio_file_path, fps=10000, nbytes=2, codec='pcm_s16le')
+    # audio_clip.write_audiofile(audio_file_path, fps=10000, nbytes=2, codec='pcm_s16le')
 
-    audio_clip.close()
-    video_clip.close()
+    # audio_clip.close()
+    # video_clip.close()
 
     logger.info(f'Extracted audio file: {audio_file_path}')
     return audio_file_path
@@ -316,7 +322,7 @@ def handler(event, context):
         bucket, key = get_bucket_name_and_key(event)
         interview_id, question_id = key.split('/')[0], key.split('/')[1].split('.')[0]
 
-        file_name = interview_id + '_' + question_id + '.mov'
+        file_name = interview_id + '_' + question_id + VIDEO_EXTENSION
         video_file_path = download_video_file_from_s3(bucket, key, file_name)
         audio_file_path = extract_audio_from_video(video_file_path)
         transcript = transcript_from_audio(audio_file_path)

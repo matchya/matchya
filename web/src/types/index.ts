@@ -71,10 +71,16 @@ export const assessmentSchema = z.object({
 export type Assessment = z.infer<typeof assessmentSchema>;
 
 export interface Question {
-  question: string;
-  metrics: string[];
+  id: string;
+  text: string;
+  metrics: Metric[];
   topic: string;
   difficulty: string;
+}
+
+export interface Metric {
+  id: string;
+  name: string;
 }
 
 export interface CustomError {

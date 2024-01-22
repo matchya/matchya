@@ -8,7 +8,8 @@ import sentry_sdk
 from sentry_sdk.integrations.aws_lambda import AwsLambdaIntegration
 
 from config import Config
-from utils.request import parse_request_parameter
+from utils.request import parse_request_parameter, parse_header
+from utils.response import generate_success_response
 
 # Load and parse package.json
 with open('package.json') as f:
@@ -106,7 +107,7 @@ def get_candidate_answers(interview_id):
     FROM answer
     LEFT JOIN interview ON answer.interview_id = interview.id
     LEFT JOIN question ON answer.question_id = question.id
-    WHERE AND interview.id = '%s'
+    WHERE interview.id = '%s'
     """ % interview_id
     try:
         db_cursor.execute(sql)
@@ -218,6 +219,9 @@ def handler(event, context):
     try:
         logger.info('Getting final interview result...')
         connect_to_db()
+        
+        logger.info("Parsing the request header...")
+        origin = parse_header(event)
 
         logger.info("Parsing the request parameters...")
         interview_id = parse_request_parameter(event, 'id')
@@ -232,6 +236,8 @@ def handler(event, context):
 
         db_conn.commit()
         logger.info("Successfully evaluated an interview.")
+        generate_success_response(origin)
+        return 
     except (ValueError, RuntimeError) as e:
         logger.error(f'Getting final evaluation of an interview faild: {e}')
     except Exception as e:
