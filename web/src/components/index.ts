@@ -17,6 +17,7 @@ export { default as Input } from './Input/Input';
 export { default as Label } from './Label/Label';
 export { default as MainNav } from './MainNav/MainNav';
 export { default as MultiSelect } from './MultiSelect/MultiSelect';
+export * from './Popover/Popover';
 export * from './Select/Select';
 export { default as Separator } from './Separator/Separator';
 export { default as TestTable } from './Table/AssessmentTable/AssessmentTable';
