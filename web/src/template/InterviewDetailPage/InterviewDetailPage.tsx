@@ -35,9 +35,7 @@ const InterviewDetailPageTemplate = ({
                   </div>
                   <div className="w-full ml-3 flex justify-around mb-3 items-center">
                     <p className="text-3xl font-bold">
-                      {interview.candidate.first_name +
-                        ' ' +
-                        interview.candidate.last_name}
+                      {interview.candidate.name}
                     </p>
                     <p className="text-2xl">
                       {interview.assessment.name} -{' '}
@@ -68,7 +66,9 @@ const InterviewDetailPageTemplate = ({
                       >
                         <img src={interviewMock} className="w-1/3 pl-3" />
                         <div className="w-2/3 p-4">
-                          <p className="text-xl font-bold">{answer.question_topic}</p>
+                          <p className="text-xl font-bold">
+                            {answer.question_topic}
+                          </p>
                           <p className="text-xs">
                             {answer.question_text.substring(0, 100) + '...'}
                           </p>

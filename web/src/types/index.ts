@@ -4,13 +4,11 @@ export interface Company {
   id: string;
   name: string;
   email: string;
-  github_username: string;
 }
 
 export const candidateSchema = z.object({
   id: z.string(),
-  first_name: z.string(),
-  last_name: z.string(),
+  name: z.string(),
   email: z.string(),
   assessment: z.object({
     assessment_id: z.string(),
@@ -35,8 +33,7 @@ export const interviewSchema = z.object({
   }),
   candidate: z.object({
     id: z.string(),
-    first_name: z.string(),
-    last_name: z.string(),
+    name: z.string(),
     email: z.string(),
   }),
   answers: z.array(
@@ -70,8 +67,7 @@ export const assessmentSchema = z.object({
   candidates: z.array(
     z.object({
       id: z.string(),
-      first_name: z.string(),
-      last_name: z.string(),
+      name: z.string(),
       email: z.string(),
       assessment: z.object({
         assessment_id: z.string(),

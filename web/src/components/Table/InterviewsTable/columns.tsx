@@ -25,7 +25,7 @@ export const columns: ColumnDef<Interview>[] = [
     ),
     cell: ({ row }) => (
       <div className="min-w-[100px] max-w-[500px]">
-        {row.original.candidate.first_name + ' ' + row.original.candidate.last_name}
+        {row.original.candidate.name}
       </div>
     ),
     enableSorting: false,
