@@ -132,3 +132,11 @@ ALTER TABLE answer RENAME COLUMN audio_url TO video_url;
 ALTER TABLE interview DROP COLUMN video_url;
 --rollback ALTER TABLE answer RENAME COLUMN video_url TO audio_url;
 --rollback ALTER TABLE interview ADD COLUMN IF NOT EXISTS video_url varchar(1023);
+
+--changeset author:13
+ALTER TABLE candidate ADD COLUMN IF NOT EXISTS name varchar(255);
+ALTER TABLE candidate DROP COLUMN IF EXISTS first_name;
+ALTER TABLE candidate DROP COLUMN IF EXISTS last_name;
+--rollback ALTER TABLE candidate DROP COLUMN IF EXISTS name;
+--rollback ALTER TABLE candidate ADD COLUMN IF NOT EXISTS first_name varchar(255);
+--rollback ALTER TABLE candidate ADD COLUMN IF NOT EXISTS last_name varchar(255);
