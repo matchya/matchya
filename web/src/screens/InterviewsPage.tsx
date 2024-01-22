@@ -15,7 +15,6 @@ const InterviewsPage = () => {
     try {
       const response = await axiosInstance.get('/interviews');
       if (response.data.status === 'success') {
-        console.log(response.data.payload.interviews);
         setInterviews(response.data.payload.interviews);
       }
     } catch (error) {

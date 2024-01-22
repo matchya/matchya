@@ -18,7 +18,6 @@ const AssessmentDetailPage = () => {
     try {
       const response = await axiosInstance.get(`/assessments/${params.id}`);
       if (response.data.status === 'success') {
-        console.log(response.data.payload.assessment);
         setAssessment(response.data.payload.assessment);
       }
     } catch (error) {
