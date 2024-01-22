@@ -69,6 +69,26 @@ def get_candidate_email(candidate_id):
     return email
 
 
+def get_interview_id(candidate_id):
+    """
+    Retrieves the interview id.
+    """
+    logger.info('Retrieving the interview id...')
+    sql = """
+        SELECT id
+        FROM interview
+        WHERE interview.candidate_id = '%s';
+    """ % candidate_id
+    try:
+        db_cursor.execute(sql)
+        interview_id = db_cursor.fetchone()[0]
+        logger.info('Interview id: %s', interview_id)
+        return interview_id
+    except Exception as e:
+        logger.error(e)
+        raise Exception('Interview not found')
+
+
 def handler(event, context):
     logger.info('Event: %s', event)
     try:
@@ -79,7 +99,8 @@ def handler(event, context):
         candidate_id = parse_request_parameter(event, 'id')
 
         email = get_candidate_email(candidate_id)
-        send_email(email)
+        interview_id = get_interview_id(candidate_id)
+        send_email(email, interview_id)
 
         return generate_success_response(origin)
     except Exception as e:
