@@ -27,6 +27,7 @@ export type Candidate = z.infer<typeof candidateSchema>;
 export const interviewSchema = z.object({
   id: z.string(),
   total_score: z.number(),
+  summary: z.string(),
   created_at: z.string(),
   assessment: z.object({
     id: z.string(),
@@ -38,6 +39,13 @@ export const interviewSchema = z.object({
     last_name: z.string(),
     email: z.string(),
   }),
+  answers: z.array(
+    z.object({
+      question_id: z.string(),
+      question_text: z.string(),
+      question_topic: z.string(),
+    })
+  ),
 });
 
 export type Interview = z.infer<typeof interviewSchema>;
