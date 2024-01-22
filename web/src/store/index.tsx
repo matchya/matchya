@@ -1,18 +1,12 @@
-import { CompanyStoreProvider } from './company';
+import { CompanyStoreProvider, StorybookCompanyStoreProvider } from './company';
 import { StoreProviderProps } from './interface';
 
-// export const StorybookStoreProvider = ({ children }: StoreProviderProps) => {
-//   return (
-//     <StorybookPositionStoreProvider>
-//       <StorybookCompanyStoreProvider>{children}</StorybookCompanyStoreProvider>
-//     </StorybookPositionStoreProvider>
-//   );
-// };
+export const StorybookStoreProvider = ({ children }: StoreProviderProps) => {
+  return (
+    <StorybookCompanyStoreProvider>{children}</StorybookCompanyStoreProvider>
+  );
+};
 
 export const StoreProvider = ({ children }: StoreProviderProps) => {
-  return (
-   
-      <CompanyStoreProvider>{children}</CompanyStoreProvider>
- 
-  );
+  return <CompanyStoreProvider>{children}</CompanyStoreProvider>;
 };
