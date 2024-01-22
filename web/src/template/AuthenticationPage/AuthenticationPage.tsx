@@ -1,4 +1,4 @@
-import matchyaLogo from '@/assets/matchya-logo.png';
+import matchyaSticker from '@/assets/matchya-sticker.png';
 import { Badge, Button, Icons } from '@/components';
 import { cn } from '@/lib/utils';
 
@@ -38,13 +38,11 @@ const AuthenticationPageTemplate = ({
         <div className="absolute inset-0 bg-macha-500" />
         <div className="relative z-20 flex items-center text-lg font-medium">
           <img
-            src={matchyaLogo}
+            src={matchyaSticker}
             alt="Logo"
-            className="w-12 h-12 md:w-16 md:h-16 relative bottom-1"
+            className="w-52 h-12 md:h-16 relative bottom-1"
           />
-          <h1 className="text-sm md:text-xl font-bold text-black relative right-3">
-            Matchya
-          </h1>
+        
         </div>
       </div>
       <div className="h-full bg-macha-200 flex items-center justify-center">
