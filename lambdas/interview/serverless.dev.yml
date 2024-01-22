@@ -54,7 +54,7 @@ functions:
         - evaluate_interview.handler
     events:
       - http:
-          path: /interviews
+          path: /interviews/{id}
           method: POST
           cors:
             origins: "http://127.0.0.1:5173"
