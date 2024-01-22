@@ -68,7 +68,7 @@ def retrieve_assessment_by_id_from_db(company_id, assessment_id):
         SELECT 
             assessment.id, assessment.name, assessment.position_type, assessment.position_level, assessment.created_at, 
             question.id, question.text, question.topic, question.difficulty,
-            candidate.id, candidate.first_name, candidate.last_name, candidate.email,
+            candidate.id, candidate.name, candidate.email,
             interview.status, interview.total_score
         FROM assessment
         LEFT JOIN assessment_question ON assessment.id = assessment_question.assessment_id
@@ -109,7 +109,7 @@ def process_sql_result(result):
     candidates = {}
     for row in result:
         (question_id, question_text, question_topic, question_difficulty,
-         candidate_id, first_name, last_name, email, status, total_score) = row[5:]
+         candidate_id, candidate_name, email, status, total_score) = row[5:]
         if question_id and question_id not in questions:
             question = {
                 'id': question_id,
@@ -122,11 +122,12 @@ def process_sql_result(result):
         if candidate_id and candidate_id not in candidates:
             candidate = {
                 'id': candidate_id,
-                'first_name': first_name,
-                'last_name': last_name,
+                'name': candidate_name,
                 'email': email,
-                'status': status,
-                'total_score': total_score
+                'assessment': {
+                    'interview_status': status,
+                    'total_score': total_score
+                }
             }
             candidates[candidate_id] = candidate
 

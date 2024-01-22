@@ -1,25 +1,21 @@
-import {
-  Assessment,
-  Candidate,
-  Checklist,
-  Company,
-  Interview,
-  Position,
-  Question,
-} from '../types';
+import { Assessment, Candidate, Company, Interview, Question } from '../types';
 
 export const mockedInterviews: Interview[] = [
   {
-    createdAt: '2022-01-01',
-    candidateName: 'John Doe',
-    testName: 'Test 1',
-    totalScore: 90,
-  },
-  {
-    createdAt: '2022-01-01',
-    candidateName: 'John Doe',
-    testName: 'Test 1',
-    totalScore: 90,
+    id: '1',
+    total_score: 90,
+    summary: 'This is a summary',
+    created_at: '2022-01-01',
+    candidate: {
+      id: '1',
+      name: 'John Doe',
+      email: '',
+    },
+    assessment: {
+      id: '1',
+      name: 'Test 1',
+    },
+    answers: [],
   },
 ];
 
@@ -32,6 +28,8 @@ export const mockedAssessments: Assessment[] = [
     num_candidates: 5,
     // created_at: '2022-01-01',
     updated_at: '2022-01-01',
+    questions: [],
+    candidates: [],
   },
   {
     id: '2',
@@ -41,26 +39,39 @@ export const mockedAssessments: Assessment[] = [
     num_candidates: 5,
     // created_at: '2022-01-01',
     updated_at: '2022-01-01',
+    questions: [],
+    candidates: [],
   },
 ];
 
 export const mockedQuestion: Question = {
-  question:
-    'How would you optimize a Dockerfile for a web application to ensure efficient build times and image sizes? Describe the steps you would take and the rationale behind them.',
+  id: '1',
+  text: 'How would you optimize a Dockerfile for a web application to ensure efficient build times and image sizes? Describe the steps you would take and the rationale behind them.',
   metrics: [
-    'Knowledge of Dockerfile optimization techniques',
-    'Efficient image construction and management',
-    'Rationale behind optimization choices',
-    'Awareness of potential pitfalls and best practices.',
+    {
+      id: '1',
+      name: 'Knowledge of Dockerfile optimization techniques',
+    },
+    {
+      id: '2',
+      name: 'Efficient image construction and management',
+    },
+    {
+      id: '3',
+      name: 'Rationale behind optimization choices',
+    },
+    {
+      id: '4',
+      name: 'Awareness of potential pitfalls and best practices.',
+    },
   ],
-  keyword: 'typescript',
+  topic: 'typescript',
   difficulty: 'medium',
 };
 
 export const mockedSelectedCandidate: Candidate = {
   id: '1',
-  first_name: 'John',
-  last_name: 'Doe',
+  name: 'John Doe',
   email: 'john.doe@example.com',
   assessment: {
     assessment_id: '1',
@@ -76,8 +87,7 @@ export const mockedCandidates: Candidate[] = [
   mockedSelectedCandidate,
   {
     id: '2',
-    first_name: 'Jane',
-    last_name: 'Doe',
+    name: 'Jane Doe',
     email: 'jane.doe@example.com',
     assessment: {
       assessment_id: '1',
@@ -90,90 +100,8 @@ export const mockedCandidates: Candidate[] = [
   },
 ];
 
-export const mockedSelectedPosition: Position = {
-  id: '1',
-  name: 'Position 1',
-  checklist: {
-    id: '1',
-    repository_names: ['Repo 1', 'Repo 2'],
-    criteria: [
-      {
-        id: '1',
-        message: 'Criteria 1',
-        keywords: ['keyword1', 'keyword2'],
-        created_at: '2022-01-01T00:00:00Z',
-      },
-      {
-        id: '2',
-        message: 'Criteria 2',
-        keywords: ['keyword3', 'keyword4'],
-        created_at: '2022-01-02T00:00:00Z',
-      },
-    ],
-  },
-  candidates: mockedCandidates,
-  checklist_status: 'active',
-  questions: [mockedQuestion, mockedQuestion, mockedQuestion],
-};
-
-export const mockedPositions: Position[] = [
-  mockedSelectedPosition,
-  {
-    id: '2',
-    name: 'Position 2',
-    checklist: {
-      id: '2',
-      repository_names: ['Repo 3', 'Repo 4'],
-      criteria: [],
-    },
-    candidates: [],
-    checklist_status: 'active',
-    questions: [mockedQuestion],
-  },
-];
-
 export const mockedCompanyInfo: Company = {
   id: '12398723948',
   name: 'Peter Parker',
-  email: 'peterparker@gmail.com',
-  github_username: 'peterparker',
-  repository_names: ['repo1', 'repo2', 'repo3'],
-  positions: [],
-};
-
-export const mockedChecklist: Checklist = {
-  id: '1',
-  repository_names: ['Repo 1', 'Repo 2'],
-  criteria: [
-    {
-      id: '1',
-      created_at: '2022-01-01',
-      keywords: ['react', 'typescript', 'firebase', 'yo'],
-      message: 'This is a description for the first item in the checklist',
-    },
-    {
-      id: '2',
-      created_at: '2022-01-02',
-      keywords: ['react', 'typescript'],
-      message: 'This is a description for the second item in the checklist',
-    },
-    {
-      id: '3',
-      created_at: '2022-01-03',
-      keywords: ['react', 'typescript'],
-      message: 'This is a description for the third item in the checklist',
-    },
-    {
-      id: '4',
-      created_at: '2022-01-04',
-      keywords: ['react', 'typescript'],
-      message: 'This is a description for the fourth item in the checklist',
-    },
-    {
-      id: '5',
-      created_at: '2022-01-05',
-      keywords: ['react', 'typescript'],
-      message: 'This is a description for the fifth item in the checklist',
-    },
-  ],
+  email: 'peterparker@gmail.com'
 };

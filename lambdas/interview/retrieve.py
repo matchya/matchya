@@ -67,7 +67,7 @@ def retrieve_interviews(company_id):
     sql = """
         SELECT
             i.id AS interview_id, i.total_score AS interview_total_score, i.created_at AS interview_created_at,
-            c.id AS candidate_id, c.first_name AS candidate_first_name, c.last_name AS candidate_last_name,
+            c.id AS candidate_id, c.name AS candidate_name,
             a.id AS assessment_id, a.name AS assessment_name
         FROM interview AS i
         LEFT JOIN candidate AS c ON c.id = i.candidate_id
@@ -91,7 +91,7 @@ def process_sql_result(result):
     interviews = {}
     for row in result:
         (interview_id, interview_total_score, interview_created_at,
-         candidate_id, candidate_first_name, candidate_last_name,
+         candidate_id, candidate_name,
          assessment_id, assessment_name) = row
 
         if interview_id and interview_id not in interviews:
@@ -101,8 +101,7 @@ def process_sql_result(result):
                 'created_at': str(interview_created_at),
                 'candidate': {
                     'id': candidate_id,
-                    'first_name': candidate_first_name,
-                    'last_name': candidate_last_name
+                    'name': candidate_name
                 },
             }
             if assessment_id:

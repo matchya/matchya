@@ -79,25 +79,6 @@ def get_company_by_id(company_id):
         raise RuntimeError(f"Failed to retrieve company: {e}")
 
 
-def get_repositories_by_company_id(company_id):
-    """
-    Retrieves the repositories for a given company_id from the database.
-
-    :param company_id: Unique identifier for the company.
-    :return: List of repositories for the given company_id.
-    """
-    logger.info("Getting the repositories by company id...")
-    try:
-        db_cursor.execute(f"SELECT repository_name FROM company_repository WHERE company_id = '{company_id}'")
-        result = db_cursor.fetchall()
-        if not result:
-            return []
-        repositories = [item[0] for item in result]
-        return repositories
-    except Exception as e:
-        raise RuntimeError(f"Failed to retrieve repositories: {e}")
-
-
 def handler(event, context):
     logger.info(event)
     try:
@@ -108,12 +89,10 @@ def handler(event, context):
         company_id = cookie_body.get('company_id')
 
         company = get_company_by_id(company_id)
-        repositories = get_repositories_by_company_id(company_id)
         body = {
             "id": company["id"],
             "name": company["name"],
             "email": company["email"],
-            "repository_names": repositories
         }
         logger.info(f"Retrieved company successfully: {body}")
         return generate_success_response(origin, body)

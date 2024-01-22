@@ -12,6 +12,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import * as React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import {
   Table,
@@ -60,6 +61,13 @@ const CandidatesTable = ({ candidates }: CandidatesTableProps) => {
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
+  const navigate = useNavigate();
+
+  const handleNavigateToDetail = (assessment: any) => {
+    if (!assessment || assessment.interview_status !== 'COMPLETED') return;
+    navigate(`/interviews/${assessment.interview_id}`);
+  };
+
   return (
     <div className="space-y-4 h-full overflow-y-scroll bg-orange-50 rounded-md">
       {/* <CandidatesTableToolbar table={table} /> */}
@@ -67,7 +75,7 @@ const CandidatesTable = ({ candidates }: CandidatesTableProps) => {
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (
-              <TableRow key={headerGroup.id} className='hover:bg-orange-100'>
+              <TableRow key={headerGroup.id} className="hover:bg-orange-100">
                 {headerGroup.headers.map(header => {
                   return (
                     <TableHead key={header.id} colSpan={header.colSpan}>
@@ -89,12 +97,14 @@ const CandidatesTable = ({ candidates }: CandidatesTableProps) => {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
-                  className='hover:bg-orange-100'
+                  className="hover:bg-orange-100"
                 >
                   {row.getVisibleCells().map(cell => (
                     <TableCell
                       className="cursor-pointer"
-                      onClick={() => alert('yo')}
+                      onClick={() =>
+                        handleNavigateToDetail(row.original.assessment)
+                      }
                       key={cell.id}
                     >
                       {flexRender(

@@ -64,10 +64,9 @@ def retrieve_candidates(company_id):
     :return: The candidate.
     """
     logger.info("Retrieving a candidates...")
-    sql = "SELECT id, email, first_name, last_name FROM candidate WHERE company_id = %s;"
     sql = """
         SELECT 
-            c.id, c.email, c.first_name, c.last_name, ac.created_at AS added_at,
+            c.id, c.email, c.name, ac.created_at AS added_at,
             i.id AS i, i.total_score, i.created_at, i.status AS interview_status,
             a.id AS assessment_id, a.name AS assessment_name
         FROM candidate AS c 
@@ -92,15 +91,14 @@ def process_sql_result(result):
     logger.info("Processing the SQL result...")
     candidates = {}
     for row in result:
-        (candidate_id, email, first_name, last_name, added_at,
+        (candidate_id, email, name, added_at,
          interview_id, total_score, created_at, interview_status,
          assessment_id, assessment_name) = row
         if candidate_id and candidate_id not in candidates:
             candidates[candidate_id] = {
                 'id': candidate_id,
                 'email': email,
-                'first_name': first_name,
-                'last_name': last_name,
+                'name': name,
                 'added_at': str(added_at),
                 'assessment': None
             }

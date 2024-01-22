@@ -96,7 +96,7 @@ const InterviewsTable = ({ interviews }: InterviewsTableProps) => {
                   {row.getVisibleCells().map(cell => (
                     <TableCell
                       className="cursor-pointer"
-                      onClick={() => navigate(`/interviews/${row.id}`)}
+                      onClick={() => navigate(`/interviews/${row.original.id}`)}
                       key={cell.id}
                     >
                       {flexRender(

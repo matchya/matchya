@@ -3,6 +3,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import Component from './InterviewDetailPage';
 
 import { Header } from '@/components';
+import { mockedInterviews } from '@/data/mock';
 
 const meta: Meta<typeof Component> = {
   title: 'Template',
@@ -17,7 +18,11 @@ export const InterviewDetailPageTemplate: Story = {
   render: () => (
     <>
       <Header />
-      <Component questionId='123' testName='random test' interviewId='456' />
+      <Component
+        questionId="123"
+        interview={mockedInterviews[0]}
+        selectVideo={() => {}}
+      />
     </>
   ),
 };

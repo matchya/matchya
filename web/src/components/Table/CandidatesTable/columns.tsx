@@ -25,13 +25,13 @@ export const columns: ColumnDef<Candidate>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'first_name',
+    accessorKey: 'name',
     header: ({ column }) => (
       <CandidatesTableColumnHeader column={column} title="Name" />
     ),
     cell: ({ row }) => (
       <div className="min-w-[100px] max-w-[500px]">
-        {`${row.original.first_name} ${row.original.last_name}`}
+        {`${row.original.name}`}
       </div>
     ),
     enableSorting: false,

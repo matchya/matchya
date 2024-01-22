@@ -28,10 +28,6 @@ function App() {
             <Route path="/candidates" element={<CandidatesPage />} />
             <Route path="/interviews" element={<InterviewsPage />} />
             <Route path="/interviews/:id" element={<InterviewDetailPage />} />
-            <Route
-              path="/interviews/:id/record"
-              element={<InterviewRecordingPage />}
-            />
             <Route path="/assessments" element={<AssessmentsPage />} />
             <Route
               path="/assessments/create"
@@ -49,6 +45,10 @@ function App() {
             <Route
               path="/auth/google/callback"
               element={<GoogleAuthCallbackPage />}
+            />
+            <Route
+              path="/interviews/:id/record"
+              element={<InterviewRecordingPage />}
             />
           </Route>
         </SentryRoutes>
