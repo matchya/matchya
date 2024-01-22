@@ -74,6 +74,13 @@ jobs:
             echo "\"$record\"," >> terraform.tfvars
           done
           echo '] }' >> terraform.tfvars
+          IFS=',' read -ra webflow_records_a <<< "${{ vars.WEBFLOW_RECORDS_A }}"
+          echo 'webflow_records = { "txt" = ["${{ vars.WEBFLOW_RECORDS_TXT }}"], "a" = [' >> terraform.tfvars
+          for record in "${webflow_records_a[@]}"; do
+            echo "\"$record\"," >> terraform.tfvars
+          done
+          echo '] }' >> terraform.tfvars
+          echo 'www_webflow_records = { "cname" = ["${{ vars.WWW_WEBFLOW_RECORDS_CNAME }}"] }' >> terraform.tfvars
         working-directory: terraform/${{ inputs.component }}
 
       - name: Terraform Plan
