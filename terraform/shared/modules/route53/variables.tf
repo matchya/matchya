@@ -13,3 +13,13 @@ variable "create_new" {
   type = bool
   default = false
 }
+
+variable "webflow_records" {
+  description = "Map of webflow records"
+  type = map(list(string))
+}
+
+variable "www_webflow_records" {
+  description = "Map of www webflow records"
+  type = map(list(string))
+}
