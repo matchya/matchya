@@ -2,16 +2,21 @@ import { Assessment, Candidate, Company, Interview, Question } from '../types';
 
 export const mockedInterviews: Interview[] = [
   {
-    createdAt: '2022-01-01',
-    candidateName: 'John Doe',
-    testName: 'Test 1',
-    totalScore: 90,
-  },
-  {
-    createdAt: '2022-01-01',
-    candidateName: 'John Doe',
-    testName: 'Test 1',
-    totalScore: 90,
+    id: '1',
+    total_score: 90,
+    summary: 'This is a summary',
+    created_at: '2022-01-01',
+    candidate: {
+      id: '1',
+      first_name: 'John',
+      last_name: 'Doe',
+      email: '',
+    },
+    assessment: {
+      id: '1',
+      name: 'Test 1',
+    },
+    answers: [],
   },
 ];
 
@@ -36,31 +41,30 @@ export const mockedAssessments: Assessment[] = [
     // created_at: '2022-01-01',
     updated_at: '2022-01-01',
     questions: [],
-    candidates: []
+    candidates: [],
   },
 ];
 
 export const mockedQuestion: Question = {
   id: '1',
-  text:
-    'How would you optimize a Dockerfile for a web application to ensure efficient build times and image sizes? Describe the steps you would take and the rationale behind them.',
+  text: 'How would you optimize a Dockerfile for a web application to ensure efficient build times and image sizes? Describe the steps you would take and the rationale behind them.',
   metrics: [
     {
-      'id': '1',
-      'name': 'Knowledge of Dockerfile optimization techniques',
+      id: '1',
+      name: 'Knowledge of Dockerfile optimization techniques',
     },
     {
-      'id': '2',
-      'name': 'Efficient image construction and management',
+      id: '2',
+      name: 'Efficient image construction and management',
     },
     {
-      'id': '3',
-      'name': 'Rationale behind optimization choices',
+      id: '3',
+      name: 'Rationale behind optimization choices',
     },
     {
-      'id': '4',
-      'name': 'Awareness of potential pitfalls and best practices.',
-    }
+      id: '4',
+      name: 'Awareness of potential pitfalls and best practices.',
+    },
   ],
   topic: 'typescript',
   difficulty: 'medium',

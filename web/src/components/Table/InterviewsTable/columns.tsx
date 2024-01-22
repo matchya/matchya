@@ -8,24 +8,24 @@ import { Interview, interviewSchema } from '@/types';
 
 export const columns: ColumnDef<Interview>[] = [
   {
-    accessorKey: 'createdAt',
+    accessorKey: 'created_at',
     header: ({ column }) => (
       <InterviewsTableColumnHeader column={column} title="Date" />
     ),
     cell: ({ row }) => (
-      <div className="min-w-[80px] max-w-[100px]">{row.original.createdAt}</div>
+      <div className="min-w-[80px] max-w-[100px]">{row.original.created_at}</div>
     ),
     enableSorting: false,
     enableHiding: false,
   },
   {
-    accessorKey: 'candidatename',
+    accessorKey: 'candidate.name',
     header: ({ column }) => (
       <InterviewsTableColumnHeader column={column} title="Candidate" />
     ),
     cell: ({ row }) => (
       <div className="min-w-[100px] max-w-[500px]">
-        {row.original.candidateName}
+        {row.original.candidate.first_name + ' ' + row.original.candidate.last_name}
       </div>
     ),
     enableSorting: false,
@@ -37,7 +37,7 @@ export const columns: ColumnDef<Interview>[] = [
       <InterviewsTableColumnHeader column={column} title="Test Name" />
     ),
     cell: ({ row }) => (
-      <div className="min-w-[150px] max-w-[200px]">{row.original.testName}</div>
+      <div className="min-w-[150px] max-w-[200px]">{row.original.assessment.name}</div>
     ),
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
@@ -49,7 +49,7 @@ export const columns: ColumnDef<Interview>[] = [
       <InterviewsTableColumnHeader column={column} title="Total Score" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px]">{row.original.totalScore}</div>
+      <div className="w-[80px]">{row.original.total_score}</div>
     ),
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
