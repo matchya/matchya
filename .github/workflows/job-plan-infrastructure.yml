@@ -59,20 +59,28 @@ jobs:
       - name: Set Terraform Variables (Environment)
         if: inputs.component == 'environment'
         run: |
+          echo 'hosted_zone = "${{ secrets.TF_HOSTED_ZONE }}"' > terraform.tfvars
           echo 'db_username = "${{ secrets.TF_DB_USERNAME }}"' >> terraform.tfvars
-          echo 'db_password = "${{ secrets.TF_DB_PASSWORD}}"' >> terraform.tfvars
+          echo 'db_password = "${{ secrets.TF_DB_PASSWORD }}"' >> terraform.tfvars
         working-directory: terraform/${{ inputs.component }}
 
       - name: Set Terraform Variables (Shared)
         if: inputs.component == 'shared'
         run: |
-          IFS=',' read -ra records <<< "${{ vars.GOOGLE_WORKSPACE_RECORDS }}"
+          IFS=',' read -ra google_workspace_records_mx <<< "${{ vars.GOOGLE_WORKSPACE_RECORDS_MX }}"
           echo 'hosted_zone = "${{ vars.TF_HOSTED_ZONE }}"' > terraform.tfvars
           echo 'google_workspace_records = { "mx" = [' >> terraform.tfvars
-          for record in "${records[@]}"; do
+          for record in "${google_workspace_records_mx[@]}"; do
             echo "\"$record\"," >> terraform.tfvars
           done
           echo '] }' >> terraform.tfvars
+          IFS=',' read -ra webflow_records_a <<< "${{ vars.WEBFLOW_RECORDS_A }}"
+          echo 'webflow_records = { "txt" = ["${{ vars.WEBFLOW_RECORDS_TXT }}"], "a" = [' >> terraform.tfvars
+          for record in "${webflow_records_a[@]}"; do
+            echo "\"$record\"," >> terraform.tfvars
+          done
+          echo '] }' >> terraform.tfvars
+          echo 'www_webflow_records = { "cname" = ["${{ vars.WWW_WEBFLOW_RECORDS_CNAME }}"] }' >> terraform.tfvars
         working-directory: terraform/${{ inputs.component }}
 
       - name: Terraform Plan
