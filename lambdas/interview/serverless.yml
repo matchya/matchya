@@ -68,9 +68,9 @@ functions:
               - "https://${ssm:/terraform/staging/domain_name}"
               - "https://www.${ssm:/terraform/staging/domain_name}"
             allowCredentials: true
-          authorizer:
-            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
-            type: REQUEST
+          # authorizer:
+          #   authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
+          #   type: REQUEST
           request:
             parameters:
               paths:
@@ -112,9 +112,9 @@ functions:
               - "https://${ssm:/terraform/staging/domain_name}"
               - "https://www.${ssm:/terraform/staging/domain_name}"
             allowCredentials: true
-          authorizer:
-            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
-            type: REQUEST
+          # authorizer:
+          #   authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
+          #   type: REQUEST
           request:
             parameters:
               paths:
