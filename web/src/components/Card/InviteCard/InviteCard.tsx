@@ -86,10 +86,8 @@ const InviteCard = ({ candidates, assessmentId }: InviteCardProps) => {
     try {
       setIsLoading(true);
       const data = {
-        first_name: name.split(' ')[0],
-        last_name: name.split(' ')[1],
+        name: name,
         email: email,
-        github_username: '',
         assessment_id: assessmentId,
       };
       const response = await axiosInstance.post('/candidates', data);
@@ -142,8 +140,8 @@ const InviteCard = ({ candidates, assessmentId }: InviteCardProps) => {
               <CandidateRow
                 key={candidate.id}
                 id={candidate.id}
-                initial={candidate.first_name[0] + candidate.last_name[0]}
-                name={candidate.first_name + ' ' + candidate.last_name}
+                initial={candidate.name[0].toUpperCase()}
+                name={candidate.name}
                 email={candidate.email}
                 score={candidate.assessment.total_score}
               />

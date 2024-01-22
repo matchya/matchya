@@ -8,8 +8,7 @@ export const mockedInterviews: Interview[] = [
     created_at: '2022-01-01',
     candidate: {
       id: '1',
-      first_name: 'John',
-      last_name: 'Doe',
+      name: 'John Doe',
       email: '',
     },
     assessment: {
@@ -72,8 +71,7 @@ export const mockedQuestion: Question = {
 
 export const mockedSelectedCandidate: Candidate = {
   id: '1',
-  first_name: 'John',
-  last_name: 'Doe',
+  name: 'John Doe',
   email: 'john.doe@example.com',
   assessment: {
     assessment_id: '1',
@@ -89,8 +87,7 @@ export const mockedCandidates: Candidate[] = [
   mockedSelectedCandidate,
   {
     id: '2',
-    first_name: 'Jane',
-    last_name: 'Doe',
+    name: 'Jane Doe',
     email: 'jane.doe@example.com',
     assessment: {
       assessment_id: '1',
@@ -106,6 +103,5 @@ export const mockedCandidates: Candidate[] = [
 export const mockedCompanyInfo: Company = {
   id: '12398723948',
   name: 'Peter Parker',
-  email: 'peterparker@gmail.com',
-  github_username: 'peterparker',
+  email: 'peterparker@gmail.com'
 };
