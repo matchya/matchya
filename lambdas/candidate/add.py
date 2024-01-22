@@ -80,11 +80,10 @@ def create_candidate_record(body) -> str:
     :return: The id of the newly created candidate record.
     """
     logger.info("Creating a candidate record...")
-    sql = "INSERT INTO candidate (id, first_name, last_name, email, github_username) VALUES (%s, %s, %s, %s, %s);"
+    sql = "INSERT INTO candidate (id, first_name, last_name, email) VALUES (%s, %s, %s, %s);"
     try:
         candidate_id = str(uuid.uuid4())
-        github_username = body.get('github_username', '')
-        db_cursor.execute(sql, (candidate_id, body['first_name'], body['last_name'], body['email'], github_username))
+        db_cursor.execute(sql, (candidate_id, body['first_name'], body['last_name'], body['email']))
         return candidate_id
     except Exception as e:
         raise RuntimeError(f"Error saving to candidate table: {e}")
