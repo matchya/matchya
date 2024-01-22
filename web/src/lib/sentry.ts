@@ -31,6 +31,9 @@ if (import.meta.env.MODE !== 'development') {
         maskAllText: false,
         blockAllMedia: false,
       }),
+      new Sentry.Feedback({
+        colorScheme: 'light',
+      }),
     ],
     debug: import.meta.env.MODE === 'staging',
     release: `web@${import.meta.env.NPM_PACKAGE_VERSION}`,

@@ -16,8 +16,8 @@ type Story = StoryObj<typeof Component>;
 export const Question: Story = {
   render: () => (
     <Component
-      question={mockedQuestion.question}
-      keyword={mockedQuestion.keyword}
+      text={mockedQuestion.text}
+      keyword={mockedQuestion.topic}
       difficulty={mockedQuestion.difficulty}
     />
   ),
