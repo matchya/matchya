@@ -125,6 +125,7 @@ def create_new_interview(assessment_id, candidate_id):
 
     :param assessment_id: The id of the assessment.
     :param candidate_id: The id of the candidate.
+    :return: The id of the newly created interview record.
     """
     # TODO: generate quetions for the interview... not in the MVP
     logger.info("Creating a new interview record...")
@@ -132,6 +133,7 @@ def create_new_interview(assessment_id, candidate_id):
     try:
         interview_id = str(uuid.uuid4())
         db_cursor.execute(sql, (interview_id, assessment_id, candidate_id))
+        return interview_id
     except Exception as e:
         raise RuntimeError(f"Error saving to interview table: {e}")
 
@@ -155,9 +157,9 @@ def handler(event, context):
 
         assessment_id = body['assessment_id']
         save_assessment_candidate(assessment_id, candidate_id)
-        create_new_interview(assessment_id, candidate_id)
+        interview_id = create_new_interview(assessment_id, candidate_id)
 
-        send_email(body['email'])
+        send_email(body['email'], interview_id)
 
         data = {
             'candidate_id': candidate_id

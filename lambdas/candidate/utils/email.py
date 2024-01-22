@@ -1,18 +1,6 @@
 import boto3
 from botocore.exceptions import ClientError
 
-# The HTML body of the email.
-BODY_HTML = """<html>
-<head></head>
-<body>
-  <h1>You received an invitation to Matchya Assessment from [Company Name]</h1>
-  <p>Click this link to start the assessment: 
-    <a href='https://www.matchya.ai'>Take the assessment now</a>
-</p>
-<p>(Test email... link is not working yet)</p>
-</body>
-</html>
-            """
 
 # The email body for recipients with non-HTML email clients.
 BODY_TEXT = ("You received an invitation to Matchya Assessment from [Company Name] Take the assessment now: https://www.matchya.ai")
@@ -32,10 +20,30 @@ SENDER = "admin@matchya.ai"
 CONFIGURATION_SET = "ConfigSet"
 
 
-def send_email(candidate_email):
+def get_body_html(interview_id):
+    # interview_link = f"https://www.matchya.ai/interviews/{interview_id}/record"
+    interview_link = f"http://127.0.0.1:5173/interviews/{interview_id}/record"
+    body = """
+        <html>
+            <head></head>
+            <body>
+                <h1>You received an invitation to Matchya Assessment from [Company Name]</h1>
+                <p>Click this link to start the assessment: 
+                    <a href='%s'>Take the assessment now</a>
+                </p>
+                <p>(Test email... link is not working yet)</p>
+            </body>
+        </html>
+    """ % interview_link
+    return body
+
+
+def send_email(candidate_email, interview_id):
     CHARSET = "UTF-8"
     client = boto3.client('ses')
     print(f"Sending email to {candidate_email} from {SENDER}")
+
+    BODY_HTML = get_body_html(interview_id)
     try:
         response = client.send_email(
             Destination={
