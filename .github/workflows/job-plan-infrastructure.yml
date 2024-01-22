@@ -59,7 +59,7 @@ jobs:
       - name: Set Terraform Variables (Environment)
         if: inputs.component == 'environment'
         run: |
-          echo 'hosted_zone = "${{ secrets.TF_HOSTED_ZONE }}"' > terraform.tfvars
+          echo 'hosted_zone = "${{ vars.TF_HOSTED_ZONE }}"' > terraform.tfvars
           echo 'db_username = "${{ secrets.TF_DB_USERNAME }}"' >> terraform.tfvars
           echo 'db_password = "${{ secrets.TF_DB_PASSWORD }}"' >> terraform.tfvars
         working-directory: terraform/${{ inputs.component }}

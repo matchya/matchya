@@ -34,6 +34,18 @@ resource "aws_iam_role_policy_attachment" "lambda_vpc_access_execution_role" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
 }
 
+resource "aws_iam_role_policy_attachment" "ses_full_access" {
+  count = var.create_new ? 1 : 0
+  role       = aws_iam_role.lambda_role[0].name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSESFullAccess"
+}
+
+resource "aws_iam_role_policy_attachment" "sqs_full_access" {
+  count = var.create_new ? 1 : 0
+  role       = aws_iam_role.lambda_role[0].name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSQSFullAccess"
+}
+
 resource "aws_iam_role_policy_attachment" "s3_full_access" {
   count = var.create_new ? 1 : 0
   role       = aws_iam_role.lambda_role[0].name
