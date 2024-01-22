@@ -1,7 +1,9 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import Webcam from 'react-webcam';
 
 import { axiosInstance } from '@/lib/client';
+import { CandidateAssessmentPageTemplate } from '@/template';
 
 const InterviewRecordingPage = () => {
   const [videoFile, setVideoFile] = useState<File | null>(null);
@@ -10,8 +12,30 @@ const InterviewRecordingPage = () => {
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
     null
   );
-  const interviewId = '123';
-  const questionId = '456';
+  const [questions, setQuestions] = useState([]);
+  const [questionIndex, setQuestionIndex] = useState(0);
+  const [interviewDone, setInterviewDone] = useState(false);
+  const params = useParams<{ id: string }>();
+  const interviewId = params.id;
+
+  useEffect(() => {
+    fetchInterviewQuestions();
+  }, [params.id]);
+
+  const fetchInterviewQuestions = async () => {
+    try {
+      const response = await axiosInstance.get(
+        `/interviews/${interviewId}/questions`
+      );
+      if (response.data.status === 'success') {
+        const interview = response.data.payload.interview;
+        setQuestions(interview.questions);
+        console.log(interview.questions);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handleVideoCapture = (blob: Blob) => {
     const videoFile = new File([blob], 'video.webm', { type: 'video/webm' });
@@ -26,7 +50,7 @@ const InterviewRecordingPage = () => {
 
     // Fetch the presigned POST URL from your server
     const response = await axiosInstance.get(
-      `/videos/presigned-url?interview_id=${interviewId}&question_id=${questionId}`
+      `/videos/presigned-url?interview_id=${interviewId}&question_id=${questions[questionIndex].id}`
     );
 
     // Use FormData to build the request
@@ -46,6 +70,13 @@ const InterviewRecordingPage = () => {
 
       if (uploadResponse.ok) {
         alert('Video uploaded successfully');
+        setVideoFile(null);
+        if (questionIndex < questions.length - 1) {
+          setQuestionIndex(questionIndex + 1);
+        } else {
+          alert('Interview completed');
+          evaluateInterview();
+        }
       } else {
         alert('Upload failed');
       }
@@ -76,29 +107,32 @@ const InterviewRecordingPage = () => {
     setRecording(false);
   };
 
+  const evaluateInterview = async () => {
+    try {
+      const response = await axiosInstance.post(`/interviews/${interviewId}`);
+      if (response.data.status === 'success') {
+        setInterviewDone(true);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  if (interviewDone) {
+    return <div>Interview Done. Thank you.</div>;
+  }
+
   return (
-    <div>
-      <div>
-        <Webcam
-          className="hidden"
-          videoConstraints={{
-            width: 1280,
-            height: 720,
-            facingMode: 'user',
-          }}
-          audio={true}
-          ref={webcamRef}
-        />
-        {recording ? (
-          <button onClick={handleStopRecording}>Stop Recording</button>
-        ) : (
-          <button onClick={handleStartRecording}>Start Recording</button>
-        )}
-      </div>
-      <button onClick={uploadVideo} disabled={!videoFile}>
-        Upload Video
-      </button>
-    </div>
+    <CandidateAssessmentPageTemplate
+      question={questions[questionIndex]}
+      index={questionIndex}
+      isRecording={recording}
+      webcamRef={webcamRef}
+      videoFile={videoFile}
+      onStartRecording={handleStartRecording}
+      onStopRecording={handleStopRecording}
+      uploadVideo={uploadVideo}
+    />
   );
 };
 
