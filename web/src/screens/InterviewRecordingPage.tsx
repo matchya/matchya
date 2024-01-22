@@ -3,7 +3,8 @@ import { useParams } from 'react-router-dom';
 import Webcam from 'react-webcam';
 
 import { axiosInstance } from '@/lib/client';
-import { CandidateAssessmentPageTemplate } from '@/template';
+import { InterviewRecordingPageTemplate } from '@/template';
+import { Question } from '@/types';
 
 const InterviewRecordingPage = () => {
   const [videoFile, setVideoFile] = useState<File | null>(null);
@@ -12,7 +13,7 @@ const InterviewRecordingPage = () => {
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
     null
   );
-  const [questions, setQuestions] = useState([]);
+  const [questions, setQuestions] = useState<Question[]>([]);
   const [questionIndex, setQuestionIndex] = useState(0);
   const [interviewDone, setInterviewDone] = useState(false);
   const params = useParams<{ id: string }>();
@@ -123,7 +124,7 @@ const InterviewRecordingPage = () => {
   }
 
   return (
-    <CandidateAssessmentPageTemplate
+    <InterviewRecordingPageTemplate
       question={questions[questionIndex]}
       index={questionIndex}
       isRecording={recording}
