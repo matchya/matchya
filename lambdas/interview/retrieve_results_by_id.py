@@ -67,7 +67,7 @@ def retrieve_interview_results_by_id(interview_id):
     sql = """  
         SELECT
             i.id, i.total_score, i.summary, i.created_at,
-            c.id, c.first_name, c.last_name, c.email,
+            c.id, c.name, c.email,
             a.id, a.name,
             q.id, q.text, q.topic,
             ans.video_url
@@ -106,19 +106,18 @@ def process_sql_result(result):
         'created_at': str(result[0][3]),
         'candidate': {
             'id': result[0][4],
-            'first_name': result[0][5],
-            'last_name': result[0][6],
-            'email': result[0][7],
+            'name': result[0][5],
+            'email': result[0][6],
         },
         'assessment': {
-            'id': result[0][8],
-            'name': result[0][9],
+            'id': result[0][7],
+            'name': result[0][8],
         },
         'answers': [],
     }
 
     for row in result:
-        (question_id, question_text, question_topic, video_url) = row[10:]
+        (question_id, question_text, question_topic, video_url) = row[9:]
         if question_id and video_url:
             answer = {
                 'question_id': question_id,

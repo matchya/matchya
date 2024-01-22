@@ -80,10 +80,10 @@ def create_candidate_record(body) -> str:
     :return: The id of the newly created candidate record.
     """
     logger.info("Creating a candidate record...")
-    sql = "INSERT INTO candidate (id, first_name, last_name, email) VALUES (%s, %s, %s, %s);"
+    sql = "INSERT INTO candidate (id, name, email) VALUES (%s, %s, %s);"
     try:
         candidate_id = str(uuid.uuid4())
-        db_cursor.execute(sql, (candidate_id, body['first_name'], body['last_name'], body['email']))
+        db_cursor.execute(sql, (candidate_id, body['name'], body['email']))
         return candidate_id
     except Exception as e:
         raise RuntimeError(f"Error saving to candidate table: {e}")
@@ -147,7 +147,7 @@ def handler(event, context):
         logger.info("Parsing the request header...")
         origin = parse_header(event)
         logger.info("Validating the candidate data...")
-        validate_request_body(body, ['email', 'first_name', 'last_name', 'assessment_id'])
+        validate_request_body(body, ['email', 'name', 'assessment_id'])
 
         if not candidate_exists(body['email']):
             candidate_id = create_candidate_record(body)

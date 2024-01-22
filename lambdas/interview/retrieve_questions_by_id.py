@@ -68,7 +68,7 @@ def retrieve_interview_questions_by_id(interview_id):
         SELECT
             i.id, i.created_at,
             a.id, a.name,
-            c.id, c.first_name, c.last_name, c.email,
+            c.id, c.name, c.email,
             q.id, q.text,
             m.id, m.name
         FROM interview i
@@ -108,15 +108,14 @@ def process_sql_result(result):
         },
         'candidate': {
             'id': result[0][4],
-            'first_name': result[0][5],
-            'last_name': result[0][6],
-            'email': result[0][7],
+            'name': result[0][5],
+            'email': result[0][6],
         },
         'questions': [],
     }
     questions = {}
     for row in result:
-        (question_id, question_text, metric_id, metric_name) = row[8:]
+        (question_id, question_text, metric_id, metric_name) = row[7:]
         if question_id and question_id not in questions:
             questions[question_id] = {
                 'id': question_id,
