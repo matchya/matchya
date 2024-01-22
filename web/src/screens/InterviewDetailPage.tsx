@@ -19,7 +19,7 @@ function InterviewDetailPage() {
       const response = await axiosInstance.get(`/interviews/${params.id}/results`);
       if (response.data.status === 'success') {
         setInterview(response.data.payload.interview);
-        setQuestionId(response.data.payload.interview.answers[0].question.id);
+        setQuestionId(response.data.payload.interview.answers[0].question_id);
       }
     } catch (error) {
       console.log(error);

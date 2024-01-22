@@ -2,10 +2,11 @@ import ReactPlayer from 'react-player';
 import { Link } from 'react-router-dom';
 
 import interviewMock from '@/assets/interview-mock.png';
+import { Interview } from '@/types';
 
 interface InterviewDetailPageTemplateProps {
   questionId: string;
-  interview: any;
+  interview: Interview;
   selectVideo: (questionId: string) => void;
 }
 
