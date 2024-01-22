@@ -54,6 +54,16 @@ module "rds" {
   account_id = data.aws_caller_identity.current.account_id
 }
 
+module "route53" {
+  count = terraform.workspace != "dev" ? 1 : 0
+  source = "./modules/route53"
+
+  hosted_zone = var.hosted_zone
+  app_cloudfront_distributon_url = module.app[0].cloudfront_distribution_url
+  www_app_cloudfront_distribution_url = module.app[0].www_cloudfront_distribution_url
+  app_cloudfront_distribution_zone = module.app[0].cloudfront_distribution_zone
+}
+
 module "sqs" {
   source = "./modules/sqs"
 }
