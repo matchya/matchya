@@ -18,7 +18,6 @@ const GoogleAuthCallback = () => {
 
   const handleGoogleLogin = async (token: string) => {
     try {
-      console.log(token);
       const response = await axiosInstance.post('/login/google', { token });
       if (response.data.status === 'success') {
         navigate('/onboarding');

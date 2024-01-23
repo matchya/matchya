@@ -8,13 +8,13 @@ import { Assessment, assessmentSchema } from '@/types';
 
 export const columns: ColumnDef<Assessment>[] = [
   {
-    accessorKey: 'updated_at',
+    accessorKey: 'updatedAt',
     header: ({ column }) => (
       <AssessmentTableColumnHeader column={column} title="Updated At" />
     ),
     cell: ({ row }) => (
       <div className="min-w-[80px] max-w-[100px]">
-        {(row.getValue('updated_at') as string).substring(0, 10)}
+        {(row.getValue('updatedAt') as string).substring(0, 10)}
       </div>
     ),
     enableSorting: false,
@@ -32,13 +32,13 @@ export const columns: ColumnDef<Assessment>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'position_type',
+    accessorKey: 'positionType',
     header: ({ column }) => (
       <AssessmentTableColumnHeader column={column} title="Position" />
     ),
     cell: ({ row }) => (
       <div className="min-w-[150px] max-w-[200px]">
-        {row.getValue('position_type')}
+        {row.getValue('positionType')}
       </div>
     ),
     filterFn: (row, id, value) => {
@@ -46,24 +46,24 @@ export const columns: ColumnDef<Assessment>[] = [
     },
   },
   {
-    accessorKey: 'position_level',
+    accessorKey: 'positionLevel',
     header: ({ column }) => (
       <AssessmentTableColumnHeader column={column} title="Level" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue('position_level')}</div>
+      <div className="w-[80px]">{row.getValue('positionLevel')}</div>
     ),
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
     },
   },
   {
-    accessorKey: 'num_candidates',
+    accessorKey: 'numCandidates',
     header: ({ column }) => (
       <AssessmentTableColumnHeader column={column} title="Candidates" />
     ),
     cell: ({ row }) => (
-      <div className="w-[30px]">{row.getValue('num_candidates')}</div>
+      <div className="w-[30px]">{row.getValue('numCandidates')}</div>
     ),
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
