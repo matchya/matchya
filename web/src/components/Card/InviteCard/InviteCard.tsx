@@ -14,17 +14,39 @@ import {
 import { axiosInstance } from '@/lib/client';
 import { Candidate } from '@/types';
 
-const CandidateRow = ({
-  initial,
-  name,
-  email,
-  score,
-}: {
+interface CandidateRowProps {
+  id: string;
   initial: string;
   name: string;
   email: string;
   score?: number;
-}) => {
+}
+
+const CandidateRow = ({
+  id,
+  initial,
+  name,
+  email,
+  score,
+}: CandidateRowProps) => {
+  const [emailSent, setEmailSent] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const sendInvitation = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axiosInstance.post(`/candidates/invite/${id}`);
+      if (response.data.status === 'success') {
+        console.log('success');
+        setEmailSent(true);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="flex items-between justify-between space-x-4">
       <div className="flex items-center space-x-4">
@@ -39,8 +61,12 @@ const CandidateRow = ({
           <p className="mr-10">{score.toFixed(1)}</p>
         </div>
       ) : (
-        <Button className="bg-macha-600 hover:bg-macha-700 font-bold text-white">
-          Resend Email
+        <Button
+          className="bg-macha-600 hover:bg-macha-700 font-bold text-white"
+          onClick={sendInvitation}
+          disabled={emailSent || isLoading}
+        >
+          {emailSent ? 'Email Sent!' : 'Resent Email'}
         </Button>
       )}
     </div>
@@ -60,15 +86,15 @@ const InviteCard = ({ candidates, assessmentId }: InviteCardProps) => {
     try {
       setIsLoading(true);
       const data = {
-        first_name: name.split(' ')[0],
-        last_name: name.split(' ')[1],
+        name: name,
         email: email,
-        github_username: '',
         assessment_id: assessmentId,
       };
       const response = await axiosInstance.post('/candidates', data);
       if (response.data.status === 'success') {
         console.log('success');
+        setName('');
+        setEmail('');
       }
     } catch (error) {
       console.log(error);
@@ -113,8 +139,9 @@ const InviteCard = ({ candidates, assessmentId }: InviteCardProps) => {
             {candidates.map(candidate => (
               <CandidateRow
                 key={candidate.id}
-                initial={candidate.firstName[0] + candidate.lastName[0]}
-                name={candidate.firstName + ' ' + candidate.lastName}
+                id={candidate.id}
+                initial={candidate.name[0].toUpperCase()}
+                name={candidate.name}
                 email={candidate.email}
                 score={candidate.assessment.totalScore}
               />

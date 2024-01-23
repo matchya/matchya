@@ -2,7 +2,7 @@ locals {
   cidr_blocks = {
     dev = null
     staging = "10.1.0.0/16"
-    prod    = "10.2.0.0/16"
+    production    = "10.2.0.0/16"
   }
   cidr_block = lookup(local.cidr_blocks, terraform.workspace)
 }

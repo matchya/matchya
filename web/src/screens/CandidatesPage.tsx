@@ -21,8 +21,7 @@ const CandidatesPage = () => {
           (candidate: any) => {
             return {
               id: candidate.id,
-              firstName: candidate.firstName,
-              lastName: candidate.lastName,
+              name: candidate.name,
               email: candidate.email,
               assessment: {
                 assessmentId: candidate.assessment.assessmentId,

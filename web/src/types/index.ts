@@ -4,13 +4,11 @@ export interface Company {
   id: string;
   name: string;
   email: string;
-  githubUsername: string;
 }
 
 export const candidateSchema = z.object({
   id: z.string(),
-  firstName: z.string(),
-  lastName: z.string(),
+  name: z.string(),
   email: z.string(),
   assessment: z.object({
     assessmentId: z.string(),
@@ -25,10 +23,26 @@ export const candidateSchema = z.object({
 export type Candidate = z.infer<typeof candidateSchema>;
 
 export const interviewSchema = z.object({
-  createdAt: z.string(),
-  candidateName: z.string(),
-  testName: z.string(),
-  totalScore: z.number(),
+  id: z.string(),
+  total_score: z.number(),
+  summary: z.string(),
+  created_at: z.string(),
+  assessment: z.object({
+    id: z.string(),
+    name: z.string(),
+  }),
+  candidate: z.object({
+    id: z.string(),
+    name: z.string(),
+    email: z.string(),
+  }),
+  answers: z.array(
+    z.object({
+      question_id: z.string(),
+      question_text: z.string(),
+      question_topic: z.string(),
+    })
+  ),
 });
 
 export type Interview = z.infer<typeof interviewSchema>;
@@ -53,8 +67,7 @@ export const assessmentSchema = z.object({
   candidates: z.array(
     z.object({
       id: z.string(),
-      firstName: z.string(),
-      lastName: z.string(),
+      name: z.string(),
       email: z.string(),
       assessment: z.object({
         assessmentId: z.string(),
@@ -71,10 +84,16 @@ export const assessmentSchema = z.object({
 export type Assessment = z.infer<typeof assessmentSchema>;
 
 export interface Question {
-  question: string;
-  metrics: string[];
+  id: string;
+  text: string;
+  metrics: Metric[];
   topic: string;
   difficulty: string;
+}
+
+export interface Metric {
+  id: string;
+  name: string;
 }
 
 export interface CustomError {

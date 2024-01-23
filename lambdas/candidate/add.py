@@ -9,6 +9,7 @@ from sentry_sdk.integrations.aws_lambda import AwsLambdaIntegration
 from config import Config
 from utils.response import generate_success_response, generate_error_response
 from utils.request import parse_header, parse_request_body, validate_request_body
+from utils.email import send_email
 
 # Load and parse package.json
 with open('package.json') as f:
@@ -79,11 +80,10 @@ def create_candidate_record(body) -> str:
     :return: The id of the newly created candidate record.
     """
     logger.info("Creating a candidate record...")
-    sql = "INSERT INTO candidate (id, first_name, last_name, email, github_username) VALUES (%s, %s, %s, %s, %s);"
+    sql = "INSERT INTO candidate (id, name, email) VALUES (%s, %s, %s);"
     try:
         candidate_id = str(uuid.uuid4())
-        github_username = body.get('github_username', '')
-        db_cursor.execute(sql, (candidate_id, body['first_name'], body['last_name'], body['email'], github_username))
+        db_cursor.execute(sql, (candidate_id, body['name'], body['email']))
         return candidate_id
     except Exception as e:
         raise RuntimeError(f"Error saving to candidate table: {e}")
@@ -124,6 +124,7 @@ def create_new_interview(assessment_id, candidate_id):
 
     :param assessment_id: The id of the assessment.
     :param candidate_id: The id of the candidate.
+    :return: The id of the newly created interview record.
     """
     # TODO: generate quetions for the interview... not in the MVP
     logger.info("Creating a new interview record...")
@@ -131,13 +132,9 @@ def create_new_interview(assessment_id, candidate_id):
     try:
         interview_id = str(uuid.uuid4())
         db_cursor.execute(sql, (interview_id, assessment_id, candidate_id))
+        return interview_id
     except Exception as e:
         raise RuntimeError(f"Error saving to interview table: {e}")
-
-
-def send_invitation_email(email, assessment_id):
-    # TODO: Send email to candidate with the link to the assessment.
-    pass
 
 
 def handler(event, context):
@@ -150,7 +147,7 @@ def handler(event, context):
         logger.info("Parsing the request header...")
         origin = parse_header(event)
         logger.info("Validating the candidate data...")
-        validate_request_body(body, ['email', 'first_name', 'last_name', 'assessment_id'])
+        validate_request_body(body, ['email', 'name', 'assessment_id'])
 
         if not candidate_exists(body['email']):
             candidate_id = create_candidate_record(body)
@@ -159,8 +156,9 @@ def handler(event, context):
 
         assessment_id = body['assessment_id']
         save_assessment_candidate(assessment_id, candidate_id)
-        create_new_interview(assessment_id, candidate_id)
-        send_invitation_email(body['email'], assessment_id)
+        interview_id = create_new_interview(assessment_id, candidate_id)
+
+        send_email(body['email'], interview_id)
 
         data = {
             'candidate_id': candidate_id

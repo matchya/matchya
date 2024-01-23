@@ -2,16 +2,20 @@ import { Assessment, Candidate, Company, Interview, Question } from '../types';
 
 export const mockedInterviews: Interview[] = [
   {
-    createdAt: '2022-01-01',
-    candidateName: 'John Doe',
-    testName: 'Test 1',
-    totalScore: 90,
-  },
-  {
-    createdAt: '2022-01-01',
-    candidateName: 'John Doe',
-    testName: 'Test 1',
-    totalScore: 90,
+    id: '1',
+    total_score: 90,
+    summary: 'This is a summary',
+    created_at: '2022-01-01',
+    candidate: {
+      id: '1',
+      name: 'John Doe',
+      email: '',
+    },
+    assessment: {
+      id: '1',
+      name: 'Test 1',
+    },
+    answers: [],
   },
 ];
 
@@ -39,13 +43,25 @@ export const mockedAssessments: Assessment[] = [
 ];
 
 export const mockedQuestion: Question = {
-  question:
-    'How would you optimize a Dockerfile for a web application to ensure efficient build times and image sizes? Describe the steps you would take and the rationale behind them.',
+  id: '1',
+  text: 'How would you optimize a Dockerfile for a web application to ensure efficient build times and image sizes? Describe the steps you would take and the rationale behind them.',
   metrics: [
-    'Knowledge of Dockerfile optimization techniques',
-    'Efficient image construction and management',
-    'Rationale behind optimization choices',
-    'Awareness of potential pitfalls and best practices.',
+    {
+      id: '1',
+      name: 'Knowledge of Dockerfile optimization techniques',
+    },
+    {
+      id: '2',
+      name: 'Efficient image construction and management',
+    },
+    {
+      id: '3',
+      name: 'Rationale behind optimization choices',
+    },
+    {
+      id: '4',
+      name: 'Awareness of potential pitfalls and best practices.',
+    },
   ],
   topic: 'typescript',
   difficulty: 'medium',
@@ -53,8 +69,7 @@ export const mockedQuestion: Question = {
 
 export const mockedSelectedCandidate: Candidate = {
   id: '1',
-  firstName: 'John',
-  lastName: 'Doe',
+  name: 'John Doe',
   email: 'john.doe@example.com',
   assessment: {
     assessmentId: '1',
@@ -70,8 +85,7 @@ export const mockedCandidates: Candidate[] = [
   mockedSelectedCandidate,
   {
     id: '2',
-    firstName: 'Jane',
-    lastName: 'Doe',
+    name: 'Jane Doe',
     email: 'jane.doe@example.com',
     assessment: {
       assessmentId: '1',
@@ -88,5 +102,4 @@ export const mockedCompanyInfo: Company = {
   id: '12398723948',
   name: 'Peter Parker',
   email: 'peterparker@gmail.com',
-  githubUsername: 'peterparker',
 };
