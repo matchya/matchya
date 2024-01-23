@@ -3,9 +3,9 @@ import { Assessment, Candidate, Company, Interview, Question } from '../types';
 export const mockedInterviews: Interview[] = [
   {
     id: '1',
-    total_score: 90,
+    totalScore: 90,
     summary: 'This is a summary',
-    created_at: '2022-01-01',
+    createdAt: '2022-01-01',
     candidate: {
       id: '1',
       name: 'John Doe',

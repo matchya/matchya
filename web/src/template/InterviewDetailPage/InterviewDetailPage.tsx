@@ -39,7 +39,7 @@ const InterviewDetailPageTemplate = ({
                     </p>
                     <p className="text-2xl">
                       {interview.assessment.name} -{' '}
-                      {interview.created_at.substring(0, 10)}
+                      {interview.createdAt.substring(0, 10)}
                     </p>
                   </div>
                   <div className="w-full">
@@ -61,16 +61,16 @@ const InterviewDetailPageTemplate = ({
                     {interview.answers.map(answer => (
                       <div
                         className="w-full flex items-center cursor-pointer hover:bg-orange-100"
-                        key={answer.question_id}
-                        onClick={() => selectVideo(answer.question_id)}
+                        key={answer.questionId}
+                        onClick={() => selectVideo(answer.questionId)}
                       >
                         <img src={interviewMock} className="w-1/3 pl-3" />
                         <div className="w-2/3 p-4">
                           <p className="text-xl font-bold">
-                            {answer.question_topic}
+                            {answer.questionTopic}
                           </p>
                           <p className="text-xs">
-                            {answer.question_text.substring(0, 100) + '...'}
+                            {answer.questionText.substring(0, 100) + '...'}
                           </p>
                         </div>
                       </div>
@@ -84,7 +84,7 @@ const InterviewDetailPageTemplate = ({
                       <p className="text-md">
                         Score:{' '}
                         <span className="text-xl font-bold text-macha-700 ml-1">
-                          {interview.total_score}
+                          {interview.totalScore}
                         </span>{' '}
                         / 10
                       </p>
