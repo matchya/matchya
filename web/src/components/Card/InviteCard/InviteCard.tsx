@@ -11,7 +11,7 @@ import {
   Input,
   Separator,
 } from '@/components';
-import { axiosInstance } from '@/lib/client';
+import { axiosInstance } from '@/lib/axios';
 import { Candidate } from '@/types';
 
 interface CandidateRowProps {

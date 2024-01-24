@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import Template from '../template/CreateAssessmentPage/CreateAssessmentPage';
 
-import { axiosInstance } from '@/lib/client';
+import { axiosInstance } from '@/lib/axios';
 
 function CreateAssessmentPage() {
   const navigate = useNavigate();
@@ -43,7 +43,7 @@ function CreateAssessmentPage() {
       selectedPosition={selectedPosition}
       selectedLevel={selectedLevel}
       isLoading={isLoading}
-      onTestNameChange={(e) => setTestName(e.target.value)}
+      onTestNameChange={e => setTestName(e.target.value)}
       onPositionChange={(value: string) => setSelectedPosition(value)}
       onLevelChange={(value: string) => setSelectedLevel(value)}
       handleSubmit={handleSubmit}

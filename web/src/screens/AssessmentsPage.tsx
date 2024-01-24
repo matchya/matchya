@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { axiosInstance } from '@/lib/client';
+import { axiosInstance } from '@/lib/axios';
 import AssessmentsPageTemplate from '@/template/AssessmentsPage/AssessmentsPage';
 import { Assessment } from '@/types';
 

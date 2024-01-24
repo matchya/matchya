@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 
 import Template from '../template/InterviewDetailPage/InterviewDetailPage';
 
-import { axiosInstance } from '@/lib/client';
+import { axiosInstance } from '@/lib/axios';
 
 function InterviewDetailPage() {
   const [interview, setInterview] = useState(null);

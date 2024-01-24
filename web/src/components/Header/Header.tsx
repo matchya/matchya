@@ -9,7 +9,7 @@ import {
   MainNav,
   UserNavDropdownMenu,
 } from '@/components';
-import { axiosInstance } from '@/lib/client';
+import { axiosInstance } from '@/lib/axios';
 import { useCompanyStore } from '@/store/store';
 
 const Header = () => {

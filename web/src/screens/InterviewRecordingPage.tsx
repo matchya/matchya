@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Webcam from 'react-webcam';
 
-import { axiosInstance } from '@/lib/client';
+import { axiosInstance } from '@/lib/axios';
 import { InterviewRecordingPageTemplate } from '@/template';
 import { Question } from '@/types';
 

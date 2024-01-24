@@ -5,7 +5,7 @@ import { StoreProviderProps } from './interface';
 
 import { apiEndpoint } from '@/config/env';
 import { mockedCompanyInfo } from '@/data/mock';
-import { axiosInstance } from '@/lib/client';
+import { axiosInstance } from '@/lib/axios';
 
 export interface CompanyState {
   id: string;
@@ -53,7 +53,7 @@ export const CompanyStoreProvider = ({ children }: StoreProviderProps) => {
             set({
               id: payload.id,
               name: payload.name,
-              email: payload.email
+              email: payload.email,
             });
           } else {
             throw new Error(res.data.payload.message);
@@ -66,7 +66,7 @@ export const CompanyStoreProvider = ({ children }: StoreProviderProps) => {
         set({
           id: '',
           name: '',
-          email: ''
+          email: '',
         }),
     }))
   );
