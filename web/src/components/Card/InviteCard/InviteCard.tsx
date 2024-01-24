@@ -143,7 +143,7 @@ const InviteCard = ({ candidates, assessmentId }: InviteCardProps) => {
                 initial={candidate.name[0].toUpperCase()}
                 name={candidate.name}
                 email={candidate.email}
-                score={candidate.assessment.total_score}
+                score={candidate.assessment.totalScore}
               />
             ))}
           </div>

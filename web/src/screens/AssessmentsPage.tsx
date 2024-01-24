@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { axiosInstance } from '@/lib/axios';
+import { caseSensitiveAxiosInstance } from '@/lib/axios';
 import AssessmentsPageTemplate from '@/template/AssessmentsPage/AssessmentsPage';
 import { Assessment } from '@/types';
 
@@ -15,7 +15,7 @@ const AssessmentsPage = () => {
 
   const fetchAssessments = async () => {
     try {
-      const response = await axiosInstance.get('/assessments');
+      const response = await caseSensitiveAxiosInstance.get('/assessments');
       if (response.data.status === 'success') {
         setAssessments(response.data.payload.assessments);
       }

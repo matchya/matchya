@@ -81,6 +81,18 @@ jobs:
           done
           echo '] }' >> terraform.tfvars
           echo 'www_webflow_records = { "cname" = ["${{ vars.WWW_WEBFLOW_RECORDS_CNAME }}"] }' >> terraform.tfvars
+          echo 'sendgrid_cname_1_name = "${{ vars.SENDGRID_CNAME_1_NAME }}"' >> terraform.tfvars
+          echo 'sendgrid_cname_1_record = "${{ vars.SENDGRID_CNAME_1_RECORD }}"' >> terraform.tfvars
+          echo 'sendgrid_cname_2_name = "${{ vars.SENDGRID_CNAME_2_NAME }}"' >> terraform.tfvars
+          echo 'sendgrid_cname_2_record = "${{ vars.SENDGRID_CNAME_2_RECORD }}"' >> terraform.tfvars
+          echo 'sendgrid_cname_3_name = "${{ vars.SENDGRID_CNAME_3_NAME }}"' >> terraform.tfvars
+          echo 'sendgrid_cname_3_record = "${{ vars.SENDGRID_CNAME_3_RECORD }}"' >> terraform.tfvars
+          echo 'sendgrid_cname_4_name = "${{ vars.SENDGRID_CNAME_4_NAME }}"' >> terraform.tfvars
+          echo 'sendgrid_cname_4_record = "${{ vars.SENDGRID_CNAME_4_RECORD }}"' >> terraform.tfvars
+          echo 'sendgrid_cname_5_name = "${{ vars.SENDGRID_CNAME_5_NAME }}"' >> terraform.tfvars
+          echo 'sendgrid_cname_5_record = "${{ vars.SENDGRID_CNAME_5_RECORD }}"' >> terraform.tfvars
+          echo 'sendgrid_txt_name = "${{ vars.SENDGRID_TXT_NAME }}"' >> terraform.tfvars
+          echo 'sendgrid_txt_record = "${{ vars.SENDGRID_TXT_RECORD }}"' >> terraform.tfvars
         working-directory: terraform/${{ inputs.component }}
 
       - name: Terraform Plan
