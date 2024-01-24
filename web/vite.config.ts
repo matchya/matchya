@@ -30,6 +30,12 @@ export default defineConfig({
     'import.meta.env.SENTRY_ENVIRONMENT': JSON.stringify(
       process.env.SENTRY_ENVIRONMENT
     ),
+    'import.meta.env.RUDDERSTACK_WRITE_KEY': JSON.stringify(
+      process.env.RUDDERSTACK_WRITE_KEY
+    ),
+    'import.meta.env.RUDDERSTACK_DATA_PLANE_URL': JSON.stringify(
+      process.env.RUDDERSTACK_DATA_PLANE_URL
+    ),
   },
   plugins,
   server: {
