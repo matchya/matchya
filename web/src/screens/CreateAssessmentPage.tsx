@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Template from '../template/CreateAssessmentPage/CreateAssessmentPage';
 
 import { caseSensitiveAxiosInstance } from '@/lib/client';
+import { trackEvent } from '@/lib/rudderstack';
 
 function CreateAssessmentPage() {
   const navigate = useNavigate();
@@ -13,6 +14,14 @@ function CreateAssessmentPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async () => {
+    trackEvent({
+      eventName: 'create_assessment',
+      properties: {
+        testName,
+        selectedPosition,
+        selectedLevel,
+      },
+    });
     if (testName === '' || selectedPosition === '' || selectedLevel === '') {
       alert('Test name is required');
       return;

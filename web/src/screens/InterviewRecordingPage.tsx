@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import Webcam from 'react-webcam';
 
 import { axiosInstance } from '@/lib/client';
+import { trackEvent } from '@/lib/rudderstack';
 import { InterviewRecordingPageTemplate } from '@/template';
 import { Question } from '@/types';
 
@@ -88,6 +89,10 @@ const InterviewRecordingPage = () => {
   };
 
   const handleStartRecording = () => {
+    trackEvent({
+      eventName: 'start_recording',
+      properties: { questionId: questions[questionIndex].id },
+    });
     setRecording(true);
     const options = { mimeType: 'video/webm' };
     const recorder = new MediaRecorder(
@@ -104,6 +109,10 @@ const InterviewRecordingPage = () => {
   };
 
   const handleStopRecording = () => {
+    trackEvent({
+      eventName: 'stop_recording',
+      properties: { questionId: questions[questionIndex].id },
+    });
     mediaRecorder?.stop();
     setRecording(false);
   };
