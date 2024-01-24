@@ -7,13 +7,13 @@ import { Interview } from '@/types';
 interface InterviewDetailPageTemplateProps {
   questionId: string;
   interview: Interview;
-  selectVideo: (questionId: string) => void;
+  onSelectVideo: (questionId: string) => void;
 }
 
 const InterviewDetailPageTemplate = ({
   questionId,
   interview,
-  selectVideo,
+  onSelectVideo,
 }: InterviewDetailPageTemplateProps) => {
   return (
     <div className="h-[calc(100vh-64px)] overflow-y-scroll bg-macha-200">
@@ -62,7 +62,7 @@ const InterviewDetailPageTemplate = ({
                       <div
                         className="w-full flex items-center cursor-pointer hover:bg-orange-100"
                         key={answer.questionId}
-                        onClick={() => selectVideo(answer.questionId)}
+                        onClick={() => onSelectVideo(answer.questionId)}
                       >
                         <img src={interviewMock} className="w-1/3 pl-3" />
                         <div className="w-2/3 p-4">

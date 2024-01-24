@@ -12,11 +12,11 @@ const GoogleAuthCallback = () => {
   useEffect(() => {
     const token = new URLSearchParams(location.hash).get('#access_token');
     if (token) {
-      handleGoogleLogin(token);
+      googleLogin(token);
     }
   }, [location]);
 
-  const handleGoogleLogin = async (token: string) => {
+  const googleLogin = async (token: string) => {
     try {
       const response = await axiosInstance.post('/login/google', { token });
       if (response.data.status === 'success') {

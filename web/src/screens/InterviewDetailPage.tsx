@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import Template from '../template/InterviewDetailPage/InterviewDetailPage';
 
 import { axiosInstance } from '@/lib/axios';
+import { trackEvent } from '@/lib/rudderstack';
 
 function InterviewDetailPage() {
   const [interview, setInterview] = useState(null);
@@ -28,6 +29,11 @@ function InterviewDetailPage() {
     }
   };
 
+  const handleSelectVideo = (questionId: string) => {
+    trackEvent({ eventName: 'select_video', properties: { questionId } });
+    setQuestionId(questionId);
+  };
+
   if (!interview) {
     return null;
   }
@@ -36,7 +42,7 @@ function InterviewDetailPage() {
     <Template
       questionId={questionId}
       interview={interview}
-      selectVideo={(questionId: string) => setQuestionId(questionId)}
+      onSelectVideo={handleSelectVideo}
     />
   );
 }

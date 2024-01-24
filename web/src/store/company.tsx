@@ -6,6 +6,7 @@ import { StoreProviderProps } from './interface';
 import { apiEndpoint } from '@/config/env';
 import { mockedCompanyInfo } from '@/data/mock';
 import { caseSensitiveAxiosInstance } from '@/lib/axios';
+import { identifyUser } from '@/lib/rudderstack';
 
 export interface CompanyState {
   id: string;
@@ -47,10 +48,19 @@ export const CompanyStoreProvider = ({ children }: StoreProviderProps) => {
       email: '',
       me: async () => {
         try {
+          const currentState = storeRef.current.getState();
+          if (currentState.id !== '') {
+            return;
+          }
           const res = await caseSensitiveAxiosInstance.get(
             `${apiEndpoint}/companies/me`
           );
           if (res.data.status === 'success') {
+            identifyUser({
+              userId: res.data.payload.id,
+              name: res.data.payload.name,
+              email: res.data.payload.email,
+            });
             const payload = res.data.payload;
             set({
               id: payload.id,

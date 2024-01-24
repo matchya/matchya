@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import { clientEndpoint, googleClientId } from '@/config/env';
+import { trackEvent } from '@/lib/rudderstack';
 import { AuthenticationPageTemplate } from '@/template';
 
 const AuthenticationPage = () => {
@@ -16,6 +17,7 @@ const AuthenticationPage = () => {
   // };
 
   const handleGoogleLogin = () => {
+    trackEvent({ eventName: 'attempt_google_login' });
     setIsGoogleLoading(true);
     const redirectUri = `${clientEndpoint}/auth/google/callback`;
     const scope =
