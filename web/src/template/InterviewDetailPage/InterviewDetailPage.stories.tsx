@@ -21,7 +21,7 @@ export const InterviewDetailPageTemplate: Story = {
       <Component
         questionId="123"
         interview={mockedInterviews[0]}
-        selectVideo={() => {}}
+        onSelectVideo={() => {}}
       />
     </>
   ),

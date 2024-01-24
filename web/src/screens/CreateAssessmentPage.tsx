@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 
 import Template from '../template/CreateAssessmentPage/CreateAssessmentPage';
 
-import { axiosInstance } from '@/lib/client';
+import { caseSensitiveAxiosInstance } from '@/lib/client';
+import { trackEvent } from '@/lib/rudderstack';
 
 function CreateAssessmentPage() {
   const navigate = useNavigate();
@@ -13,6 +14,14 @@ function CreateAssessmentPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async () => {
+    trackEvent({
+      eventName: 'create_assessment',
+      properties: {
+        testName,
+        selectedPosition,
+        selectedLevel,
+      },
+    });
     if (testName === '' || selectedPosition === '' || selectedLevel === '') {
       alert('Test name is required');
       return;
@@ -21,13 +30,16 @@ function CreateAssessmentPage() {
       setIsLoading(true);
       const data = {
         name: testName,
-        position_type: selectedPosition,
-        position_level: selectedLevel,
+        positionType: selectedPosition,
+        positionLevel: selectedLevel,
       };
-      const response = await axiosInstance.post('/assessments', data);
+      const response = await caseSensitiveAxiosInstance.post(
+        '/assessments',
+        data
+      );
       if (response.data.status === 'success') {
         console.log(response.data.payload);
-        const id = response.data.payload.assessment_id;
+        const id = response.data.payload.assessmentId;
         navigate(`/assessments/${id}`);
       }
     } catch (error) {
@@ -43,7 +55,7 @@ function CreateAssessmentPage() {
       selectedPosition={selectedPosition}
       selectedLevel={selectedLevel}
       isLoading={isLoading}
-      onTestNameChange={(e) => setTestName(e.target.value)}
+      onTestNameChange={e => setTestName(e.target.value)}
       onPositionChange={(value: string) => setSelectedPosition(value)}
       onLevelChange={(value: string) => setSelectedLevel(value)}
       handleSubmit={handleSubmit}
