@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { caseSensitiveAxiosInstance } from '@/lib/client';
+import { trackEvent } from '@/lib/rudderstack';
 import AssessmentsPageTemplate from '@/template/AssessmentsPage/AssessmentsPage';
 import { Assessment } from '@/types';
 
@@ -25,10 +26,18 @@ const AssessmentsPage = () => {
   };
 
   const handleNavigateToAssessment = () => {
+    trackEvent({
+      eventName: 'navigate_to_assessment',
+      properties: { assessments },
+    });
     navigate('/assessments/create');
   };
 
   const handleNavigateToDetail = (id: string) => {
+    trackEvent({
+      eventName: 'navigate_to_assessment_details',
+      properties: { assessmentId: id },
+    });
     navigate(`/assessments/${id}`);
   };
 
