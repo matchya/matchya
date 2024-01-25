@@ -1,5 +1,6 @@
 resource "aws_vpc_endpoint" "rds" {
-  count = terraform.workspace != "dev" ? 1 : 0
+  # will just use nat gateway for now to save money
+  count = 0
   depends_on = [ aws_security_group.vpc_endpoint ]
   vpc_id              = aws_vpc.main[0].id
   service_name        = "com.amazonaws.us-east-1.rds"
