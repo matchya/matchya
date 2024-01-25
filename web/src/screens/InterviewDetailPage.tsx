@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 
 import Template from '../template/InterviewDetailPage/InterviewDetailPage';
 
-import { axiosInstance } from '@/lib/axios';
+import { caseSensitiveAxiosInstance } from '@/lib/axios';
 import { trackEvent } from '@/lib/rudderstack';
 
 function InterviewDetailPage() {
@@ -17,7 +17,7 @@ function InterviewDetailPage() {
 
   const fetchInterviewResults = async () => {
     try {
-      const response = await axiosInstance.get(
+      const response = await caseSensitiveAxiosInstance.get(
         `/interviews/${params.id}/results`
       );
       if (response.data.status === 'success') {
