@@ -94,7 +94,7 @@ const InterviewRecordingPage = () => {
       properties: { questionId: questions[questionIndex].id },
     });
     setRecording(true);
-    const options = { mimeType: 'video/webm' };
+    const options = { mimeType: 'video/webm', audioBitsPerSecond: 128000 };
     const recorder = new MediaRecorder(
       (webcamRef.current as Webcam).stream as MediaStream,
       options

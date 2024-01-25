@@ -4,6 +4,22 @@ import matchyaSticker from '@/assets/matchya-sticker.png';
 import { Button, Icons } from '@/components';
 import { Question } from '@/types';
 
+const VIDEO_CONSTRAINTS: boolean | MediaTrackConstraints | undefined = {
+  width: 1280,
+  height: 720,
+  facingMode: 'user',
+};
+
+const AUDIO_CONSTRAINTS: MediaTrackConstraints = {
+  advanced: [
+    {
+      echoCancellation: true,
+      noiseSuppression: true,
+      autoGainControl: true,
+    },
+  ],
+};
+
 interface InterviewRecordingPageTemplateProps {
   question: Question;
   index: number;
@@ -31,11 +47,8 @@ const InterviewRecordingPageTemplate = ({
       <div>
         <Webcam
           className="hidden"
-          videoConstraints={{
-            width: 1280,
-            height: 720,
-            facingMode: 'user',
-          }}
+          audioConstraints={AUDIO_CONSTRAINTS}
+          videoConstraints={VIDEO_CONSTRAINTS}
           audio={true}
           ref={webcamRef}
         />
