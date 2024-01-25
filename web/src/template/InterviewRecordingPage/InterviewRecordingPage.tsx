@@ -28,7 +28,7 @@ interface InterviewRecordingPageTemplateProps {
   videoFile: File | null;
   onStartRecording: () => void;
   onStopRecording: () => void;
-  uploadVideo: () => void;
+  onUploadVideo: () => void;
 }
 
 const InterviewRecordingPageTemplate = ({
@@ -39,7 +39,7 @@ const InterviewRecordingPageTemplate = ({
   videoFile,
   onStartRecording,
   onStopRecording,
-  uploadVideo,
+  onUploadVideo,
 }: InterviewRecordingPageTemplateProps) => {
   if (!question) return <div>Question not found</div>;
   return (
@@ -104,7 +104,7 @@ const InterviewRecordingPageTemplate = ({
         {videoFile ? (
           <Button
             className="bg-macha-200 hover:bg-macha-300 text-orange-300 font-bold py-8 px-10 text-xl rounded-full border-2 border-orange-300 ml-10"
-            onClick={uploadVideo}
+            onClick={onUploadVideo}
           >
             Upload Video
           </Button>

@@ -44,7 +44,7 @@ const InterviewRecordingPage = () => {
     setVideoFile(videoFile);
   };
 
-  const uploadVideo = async () => {
+  const handleUploadVideo = async () => {
     if (!videoFile) {
       alert('No video to upload');
       return;
@@ -141,7 +141,7 @@ const InterviewRecordingPage = () => {
       videoFile={videoFile}
       onStartRecording={handleStartRecording}
       onStopRecording={handleStopRecording}
-      uploadVideo={uploadVideo}
+      onUploadVideo={handleUploadVideo}
     />
   );
 };
