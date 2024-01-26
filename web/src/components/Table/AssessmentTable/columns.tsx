@@ -1,10 +1,8 @@
 import { ColumnDef } from '@tanstack/react-table';
-import { z } from 'zod';
 
 import { AssessmentTableColumnHeader } from './AssessmentTableColumnHeader';
 
-import { mockedAssessments } from '@/data/mock';
-import { Assessment, assessmentSchema } from '@/types';
+import { Assessment } from '@/types';
 
 export const columns: ColumnDef<Assessment>[] = [
   {
@@ -70,8 +68,3 @@ export const columns: ColumnDef<Assessment>[] = [
     },
   },
 ];
-
-export const getTransformedAssessments = async () => {
-  const assessments = mockedAssessments;
-  return z.array(assessmentSchema).parse(assessments);
-};
