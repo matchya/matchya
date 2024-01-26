@@ -150,6 +150,33 @@ const Icons = {
       <circle cx="12" cy="12" r="10" fill="currentColor" />
     </svg>
   ),
+  triangle_down: (props: IconProps) => (
+    <svg viewBox="0 0 24 24" {...props}>
+      <path
+        fill="currentColor"
+        d="M12 2.25L1.5 21.75h21z"
+        transform="rotate(180 12 12)"
+      />
+    </svg>
+  ),
+  triangle_right: (props: IconProps) => (
+    <svg viewBox="0 0 24 24" {...props}>
+      <path
+        fill="currentColor"
+        d="M12 2.25L1.5 21.75h21z"
+        transform="rotate(90 12 12)"
+      />
+    </svg>
+  ),
+  // close icon is X to close modals
+  close: (props: IconProps) => (
+    <svg viewBox="0 0 24 24" {...props}>
+      <path
+        fill="currentColor"
+        d="M13.414 12l5.293-5.293a1 1 0 0 0-1.414-1.414L12 10.586 6.707 5.293a1 1 0 0 0-1.414 1.414L10.586 12l-5.293 5.293a1 1 0 1 0 1.414 1.414L12 13.414l5.293 5.293a1 1 0 0 0 1.414-1.414L13.414 12z"
+      />
+    </svg>
+  ),
 };
 
 export default Icons;

@@ -104,8 +104,8 @@ def process_sql_result(result):
             }
         if interview_id:
             candidates[candidate_id]['assessment'] = {
-                'assessment_id': assessment_id,
-                'assessment_name': assessment_name,
+                'id': assessment_id,
+                'name': assessment_name,
                 'interview_id': interview_id,
                 'interview_status': interview_status,
                 'total_score': total_score,

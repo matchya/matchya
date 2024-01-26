@@ -28,7 +28,7 @@ const AssessmentsPage = () => {
   const handleNavigateToAssessment = () => {
     trackEvent({
       eventName: 'navigate_to_assessment',
-      properties: { assessments },
+      properties: { assessmentsCount: assessments.length },
     });
     navigate('/assessments/create');
   };
