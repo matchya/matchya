@@ -14,3 +14,13 @@ resource "aws_vpc_endpoint" "rds" {
     Name = "${terraform.workspace}-rds"
   }
 }
+
+resource "aws_vpc_endpoint" "s3" {
+  vpc_id              = terraform.workspace != "dev" ? aws_vpc.main[0].id : data.aws_vpc.default.id
+  service_name = "com.amazonaws.${var.region}.s3"
+}
+
+resource "aws_vpc_endpoint" "dynamodb" {
+  vpc_id              = terraform.workspace != "dev" ? aws_vpc.main[0].id : data.aws_vpc.default.id
+  service_name = "com.amazonaws.${var.region}.dynamodb"
+}
