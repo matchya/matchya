@@ -45,6 +45,9 @@ const CreateAssessmentPageTemplate = ({
         </div>
       </Link>
       <div className="w-full md:w-[768px] px-10 py-5 rounded-lg">
+        <p className="text-2xl font-bold text-black mb-4 mx-8">
+          Create Assessment
+        </p>
         <div className="bg-orange-50 w-full rounded-lg my-2 mx-auto p-6 pl-8">
           <p className="text-sm font-bold text-black mb-2 pl-8">
             Assessment Name
