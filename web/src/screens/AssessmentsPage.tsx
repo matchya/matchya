@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { caseSensitiveAxiosInstance } from '@/lib/client';
+import { caseSensitiveAxiosInstance } from '@/lib/axios';
 import { trackEvent } from '@/lib/rudderstack';
 import AssessmentsPageTemplate from '@/template/AssessmentsPage/AssessmentsPage';
 import { Assessment } from '@/types';
@@ -28,7 +28,7 @@ const AssessmentsPage = () => {
   const handleNavigateToAssessment = () => {
     trackEvent({
       eventName: 'navigate_to_assessment',
-      properties: { assessments },
+      properties: { assessmentsCount: assessments.length },
     });
     navigate('/assessments/create');
   };

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { axiosInstance } from '@/lib/client';
+import { axiosInstance } from '@/lib/axios';
 import AssessmentDetailPageTemplate from '@/template/AssessmentDetailPage/AssessmentDetailPage';
 import { Assessment } from '@/types';
 
@@ -13,7 +13,6 @@ const AssessmentDetailPage = () => {
     fetchAssessment();
   }, [params.id]);
 
-
   const fetchAssessment = async () => {
     try {
       const response = await axiosInstance.get(`/assessments/${params.id}`);
@@ -24,7 +23,6 @@ const AssessmentDetailPage = () => {
       console.log(error);
     }
   };
-
 
   return <AssessmentDetailPageTemplate assessment={assessment} />;
 };

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { axiosInstance } from '@/lib/client';
+import { axiosInstance } from '@/lib/axios';
 import InterviewsPageTemplate from '@/template/InterviewsPage/InterviewsPage';
 import { Interview } from '@/types';
 

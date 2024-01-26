@@ -1,10 +1,8 @@
 import { ColumnDef } from '@tanstack/react-table';
-import { z } from 'zod';
 
 import { InterviewsTableColumnHeader } from './InterviewsTableColumnHeader';
 
-import { mockedInterviews } from '@/data/mock';
-import { Interview, interviewSchema } from '@/types';
+import { Interview } from '@/types';
 
 export const columns: ColumnDef<Interview>[] = [
   {
@@ -58,8 +56,3 @@ export const columns: ColumnDef<Interview>[] = [
     },
   },
 ];
-
-export const getTransformedInterviews = async () => {
-  const Interviews = mockedInterviews;
-  return z.array(interviewSchema).parse(Interviews);
-};

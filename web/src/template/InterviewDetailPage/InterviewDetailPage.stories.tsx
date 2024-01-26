@@ -19,7 +19,7 @@ export const InterviewDetailPageTemplate: Story = {
     <>
       <Header />
       <Component
-        questionId="123"
+        currentAnswer={mockedInterviews[0].answers[0]}
         interview={mockedInterviews[0]}
         onSelectVideo={() => {}}
       />

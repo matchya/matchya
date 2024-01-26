@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { caseSensitiveAxiosInstance } from '@/lib/client';
+import { caseSensitiveAxiosInstance } from '@/lib/axios';
 import CandidatesPageTemplate from '@/template/CandidatesPage/CandidatesPage';
 import { Candidate } from '@/types';
 

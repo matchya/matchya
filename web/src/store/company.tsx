@@ -5,7 +5,7 @@ import { StoreProviderProps } from './interface';
 
 import { apiEndpoint } from '@/config/env';
 import { mockedCompanyInfo } from '@/data/mock';
-import { caseSensitiveAxiosInstance } from '@/lib/client';
+import { caseSensitiveAxiosInstance } from '@/lib/axios';
 import { identifyUser } from '@/lib/rudderstack';
 
 export interface CompanyState {

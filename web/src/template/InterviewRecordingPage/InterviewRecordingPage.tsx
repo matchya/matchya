@@ -4,6 +4,22 @@ import matchyaSticker from '@/assets/matchya-sticker.png';
 import { Button, Icons } from '@/components';
 import { Question } from '@/types';
 
+const VIDEO_CONSTRAINTS: boolean | MediaTrackConstraints | undefined = {
+  width: 1280,
+  height: 720,
+  facingMode: 'user',
+};
+
+const AUDIO_CONSTRAINTS: MediaTrackConstraints = {
+  advanced: [
+    {
+      echoCancellation: true,
+      noiseSuppression: true,
+      autoGainControl: true,
+    },
+  ],
+};
+
 interface InterviewRecordingPageTemplateProps {
   question: Question;
   index: number;
@@ -12,7 +28,7 @@ interface InterviewRecordingPageTemplateProps {
   videoFile: File | null;
   onStartRecording: () => void;
   onStopRecording: () => void;
-  uploadVideo: () => void;
+  onUploadVideo: () => void;
 }
 
 const InterviewRecordingPageTemplate = ({
@@ -23,7 +39,7 @@ const InterviewRecordingPageTemplate = ({
   videoFile,
   onStartRecording,
   onStopRecording,
-  uploadVideo,
+  onUploadVideo,
 }: InterviewRecordingPageTemplateProps) => {
   if (!question) return <div>Question not found</div>;
   return (
@@ -31,12 +47,10 @@ const InterviewRecordingPageTemplate = ({
       <div>
         <Webcam
           className="hidden"
-          videoConstraints={{
-            width: 1280,
-            height: 720,
-            facingMode: 'user',
-          }}
+          audioConstraints={AUDIO_CONSTRAINTS}
+          videoConstraints={VIDEO_CONSTRAINTS}
           audio={true}
+          muted={true}
           ref={webcamRef}
         />
         {/* Header for Candidate Assessment Page */}
@@ -91,7 +105,7 @@ const InterviewRecordingPageTemplate = ({
         {videoFile ? (
           <Button
             className="bg-macha-200 hover:bg-macha-300 text-orange-300 font-bold py-8 px-10 text-xl rounded-full border-2 border-orange-300 ml-10"
-            onClick={uploadVideo}
+            onClick={onUploadVideo}
           >
             Upload Video
           </Button>

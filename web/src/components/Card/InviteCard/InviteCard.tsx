@@ -11,7 +11,7 @@ import {
   Input,
   Separator,
 } from '@/components';
-import { axiosInstance } from '@/lib/client';
+import { axiosInstance } from '@/lib/axios';
 import { Candidate } from '@/types';
 
 interface CandidateRowProps {
@@ -143,7 +143,7 @@ const InviteCard = ({ candidates, assessmentId }: InviteCardProps) => {
                 initial={candidate.name[0].toUpperCase()}
                 name={candidate.name}
                 email={candidate.email}
-                score={candidate.assessment.totalScore}
+                score={candidate.assessment?.totalScore}
               />
             ))}
           </div>

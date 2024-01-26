@@ -39,6 +39,21 @@ resource "aws_dynamodb_table" "access_token" {
   }
 }
 
+resource "aws_dynamodb_table" "interview_access_token" {
+  name           = "${terraform.workspace}-InterviewAccessToken"
+  billing_mode   = "PROVISIONED"
+  hash_key       = "token"
+
+  read_capacity  = 10
+  write_capacity = 10
+
+  attribute {
+    name = "token"
+    type = "S"
+  }
+}
+
+
 resource "aws_dynamodb_table" "criterion" {
   name           = "${terraform.workspace}-Criterion"
   billing_mode   = "PROVISIONED"

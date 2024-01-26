@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Webcam from 'react-webcam';
 
-import { axiosInstance } from '@/lib/client';
+import { axiosInstance } from '@/lib/axios';
 import { trackEvent } from '@/lib/rudderstack';
 import { InterviewRecordingPageTemplate } from '@/template';
 import { Question } from '@/types';
@@ -44,7 +44,7 @@ const InterviewRecordingPage = () => {
     setVideoFile(videoFile);
   };
 
-  const uploadVideo = async () => {
+  const handleUploadVideo = async () => {
     if (!videoFile) {
       alert('No video to upload');
       return;
@@ -94,7 +94,7 @@ const InterviewRecordingPage = () => {
       properties: { questionId: questions[questionIndex].id },
     });
     setRecording(true);
-    const options = { mimeType: 'video/webm' };
+    const options = { mimeType: 'video/webm', audioBitsPerSecond: 128000 };
     const recorder = new MediaRecorder(
       (webcamRef.current as Webcam).stream as MediaStream,
       options
@@ -141,7 +141,7 @@ const InterviewRecordingPage = () => {
       videoFile={videoFile}
       onStartRecording={handleStartRecording}
       onStopRecording={handleStopRecording}
-      uploadVideo={uploadVideo}
+      onUploadVideo={handleUploadVideo}
     />
   );
 };
