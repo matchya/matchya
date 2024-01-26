@@ -6,7 +6,7 @@ from entity.interview import Interview
 from utils.logger import Logger
 
 
-logger = Logger.configure(os.path.basename(__file__))
+logger = Logger.configure(os.path.relpath(__file__, os.path.join(os.path.dirname(__file__), '..')))
 
 
 class InterviewRepository:
@@ -26,11 +26,12 @@ class InterviewRepository:
         :return: The id of the newly created interview record.
         """
         # TODO: generate quetions for the interview... not in the MVP
-        logger.info(f'insert: {assessment_id}, {candidate_id}')
+        logger.info(f'Inserting to interview table: {assessment_id}, {candidate_id}')
         sql = "INSERT INTO interview (id, assessment_id, candidate_id) VALUES (%s, %s, %s);"
         try:
             interview_id = str(uuid.uuid4())
             self.db_client.execute(sql, (interview_id, assessment_id, candidate_id))
+            logger.info('Successfully inserted to interview table')
             return interview_id
         except Exception as e:
             raise RuntimeError(f"Error saving to interview table: {e}")
@@ -39,7 +40,7 @@ class InterviewRepository:
         """
         Retrieves the interview id.
         """
-        logger.info('Retrieving the interview id...')
+        logger.info(f'Retrieving interview by candidate id: {candidate_id}')
         sql = """
             SELECT *
             FROM interview
@@ -51,6 +52,7 @@ class InterviewRepository:
             interview = Interview(assessment_id=result[1])
             interview.id = result[0]
             interview.candidate_id = result[1]
+            logger.info('Successfully retrieved interview')
             return interview
         except Exception as e:
             logger.error(e)

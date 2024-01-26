@@ -4,7 +4,7 @@ from typing import Any, Dict
 
 from utils.logger import Logger
 
-logger = Logger.configure(os.path.basename(__file__))
+logger = Logger.configure(os.path.relpath(__file__, os.path.join(os.path.dirname(__file__), '..')))
 
 
 class ResponseGenerator:
@@ -34,7 +34,7 @@ class ResponseGenerator:
         :param body: The body of the response, can be any type that is convertible to a string.
         :return: A dictionary representing the HTTP response.
         """
-        logger.info(f'_generate_response: {status_code}, {body}')
+        logger.info(f'Generating response: {status_code}, {body}')
         if self._origin_domain:
             self.COMMON_HEADERS['Access-Control-Allow-Origin'] = self._origin_domain
         return {
@@ -51,7 +51,7 @@ class ResponseGenerator:
         :param message: The error message to be included in the response.
         :return: A dictionary representing the HTTP response.
         """
-        logger.info(f'generate_error_response: {status_code}, {message}')
+        logger.info(f'Generating error response: {status_code}, {message}')
         body = {
             'status': 'error',
             'message': message
@@ -65,7 +65,7 @@ class ResponseGenerator:
         :param body: The generated access token.
         :return: A success response containing the access token and current timestamp.
         """
-        logger.info(f'generate_success_response: {payload}')
+        logger.info(f'Generating success response: {payload}')
         body = {
             'status': 'success'
         }

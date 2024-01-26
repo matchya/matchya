@@ -5,14 +5,14 @@ from sentry_sdk.integrations.aws_lambda import AwsLambdaIntegration
 from config import Config
 from utils.logger import Logger
 
-logger = Logger.configure(os.path.basename(__file__))
+logger = Logger.configure(os.path.relpath(__file__, os.path.join(os.path.dirname(__file__), '..')))
 
 
 class SentryClient:
     @staticmethod
     def initialize(version):
         if Config.SENTRY_DSN:
-            logger.info(f"initialize: {version}")
+            logger.info('Initializing sentry')
             sentry_sdk.init(
                 dsn=Config.SENTRY_DSN,
                 environment=Config.ENVIRONMENT,
