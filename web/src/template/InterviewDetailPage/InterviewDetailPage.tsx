@@ -5,14 +5,12 @@ import interviewMock from '@/assets/interview-mock.png';
 import { Interview } from '@/types';
 
 interface InterviewDetailPageTemplateProps {
-  questionId: string;
   currentAnswer: any;
   interview: Interview;
   onSelectVideo: (answer: any) => void;
 }
 
 const InterviewDetailPageTemplate = ({
-  questionId,
   currentAnswer,
   interview,
   onSelectVideo,
@@ -48,7 +46,7 @@ const InterviewDetailPageTemplate = ({
                   <div className="w-full flex flex-col items-center justify-center">
                     <div className="lg:flex-grow-0 lg:flex-shrink-0">
                       <ReactPlayer
-                        url={`https://dev-data-question-response-video.s3.amazonaws.com/${interview.id}/${questionId}.webm`}
+                        url={`https://dev-data-question-response-video.s3.amazonaws.com/${interview.id}/${currentAnswer.questionId}.webm`}
                         controls={true}
                         className="w-full h-full max-h-[1087px] object-contain"
                       />
