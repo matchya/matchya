@@ -160,8 +160,12 @@ const CreateAssessmentPageTemplate = ({
                 Description
               </p>
               <textarea
-                className="w-full h-32 text-black p-1 px-4 bg-orange-50 active:ring-0 focus:ring-0 border-2"
-                placeholder="Description"
+                className="w-full h-32 text-black p-1 px-4 bg-orange-50 active:ring-0 focus:ring-0 border-2 text-sm"
+                placeholder={
+                  "Let us know more about your position to generate better questions for you.\n" +
+                  "ex)\n - Seeking a front-end engineer proficient in design.\n" +
+                  " - Back-end engineer with experience working for a large-scale company."
+                }
               />
             </div>
           )}
