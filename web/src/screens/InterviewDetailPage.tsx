@@ -5,10 +5,11 @@ import Template from '../template/InterviewDetailPage/InterviewDetailPage';
 
 import { caseSensitiveAxiosInstance } from '@/lib/axios';
 import { trackEvent } from '@/lib/rudderstack';
+import { Interview } from '@/types';
 
 function InterviewDetailPage() {
-  const [interview, setInterview] = useState(null);
-  const [questionId, setQuestionId] = useState('');
+  const [interview, setInterview] = useState<Interview | null>(null);
+  const [currentAnswer, setCurrentAnswer] = useState(null);
   const params = useParams<{ id: string }>();
 
   useEffect(() => {
@@ -22,16 +23,22 @@ function InterviewDetailPage() {
       );
       if (response.data.status === 'success') {
         setInterview(response.data.payload.interview);
-        setQuestionId(response.data.payload.interview.answers[0].question_id);
+        if (response.data.payload.interview.answers.length > 0) {
+          setCurrentAnswer(
+            response.data.payload.interview.answers[0]
+          );
+        }
       }
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handleSelectVideo = (questionId: string) => {
-    trackEvent({ eventName: 'select_video', properties: { questionId } });
-    setQuestionId(questionId);
+  const handleSelectVideo = (answer: any) => {
+    if (!interview || !interview.answers.length) return;
+    const id = answer.questionId
+    trackEvent({ eventName: 'select_video', properties: { id } });
+    setCurrentAnswer(answer);
   };
 
   if (!interview) {
@@ -40,7 +47,7 @@ function InterviewDetailPage() {
 
   return (
     <Template
-      questionId={questionId}
+      currentAnswer={currentAnswer}
       interview={interview}
       onSelectVideo={handleSelectVideo}
     />
