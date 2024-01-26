@@ -127,11 +127,13 @@ CREATE TABLE IF NOT EXISTS answer (
 ALTER TABLE assessment_candidate ADD COLUMN IF NOT EXISTS created_at timestamp default CURRENT_TIMESTAMP;
 --rollback ALTER TABLE assessment_candidate DROP COLUMN IF EXISTS created_at;
 
+
 --changeset author:12
 ALTER TABLE answer RENAME COLUMN audio_url TO video_url;
 ALTER TABLE interview DROP COLUMN video_url;
 --rollback ALTER TABLE answer RENAME COLUMN video_url TO audio_url;
 --rollback ALTER TABLE interview ADD COLUMN IF NOT EXISTS video_url varchar(1023);
+
 
 --changeset author:13
 ALTER TABLE candidate ADD COLUMN IF NOT EXISTS name varchar(255);
@@ -141,6 +143,12 @@ ALTER TABLE candidate DROP COLUMN IF EXISTS last_name;
 --rollback ALTER TABLE candidate ADD COLUMN IF NOT EXISTS first_name varchar(255);
 --rollback ALTER TABLE candidate ADD COLUMN IF NOT EXISTS last_name varchar(255);
 
+
 --changeset author:14
 ALTER TABLE assessment ALTER COLUMN name TYPE varchar(255);
 --rollback ALTER TABLE assessment ALTER COLUMN name TYPE varchar(30);
+
+
+--changeset author:15
+ALTER TABLE question ALTER COLUMN topic TYPE varchar(255);
+--rollback ALTER TABLE question ALTER COLUMN topic TYPE varchar(30);
