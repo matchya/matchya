@@ -22,6 +22,7 @@ response_generator = ResponseGenerator()
 def handler(event, context):
     try:
         logger.info('handler')
+
         # initialize the parser, generators
         parser = RequestParser(event)
 
