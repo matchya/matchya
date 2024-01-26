@@ -17,11 +17,16 @@ interface CreateAssessmentPageTemplateProps {
   selectedPosition: string;
   selectedLevel: string;
   advanceSettingOpen: boolean;
+  topicInputValue: string;
+  specifiedTopics: string[];
   isLoading: boolean;
   onTestNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onPositionChange: (value: string) => void;
   onLevelChange: (value: string) => void;
   setAdvanceSettingOpen: (value: boolean) => void;
+  setTopicInputValue: (value: string) => void;
+  handleAddTopics: () => void;
+  handleRemoveTopic: (topic: string) => void;
   handleSubmit: () => void;
 }
 
@@ -30,11 +35,16 @@ const CreateAssessmentPageTemplate = ({
   selectedPosition,
   selectedLevel,
   advanceSettingOpen,
+  topicInputValue,
+  specifiedTopics,
   isLoading,
   onTestNameChange,
   onPositionChange,
   onLevelChange,
   setAdvanceSettingOpen,
+  setTopicInputValue,
+  handleAddTopics,
+  handleRemoveTopic,
   handleSubmit,
 }: CreateAssessmentPageTemplateProps) => {
   return (
@@ -123,19 +133,25 @@ const CreateAssessmentPageTemplate = ({
               </p>
               <div className="relative">
                 <Input
-                  value={''}
-                  onChange={() => {}}
+                  value={topicInputValue}
+                  onChange={e => setTopicInputValue(e.target.value)}
                   type="text"
                   className="w-full relative text-macha-800 p-1 px-4 bg-orange-50 active:ring-0 focus:ring-0 h-12"
                 />
-                <Button className="absolute top-0 right-0 bg-macha-700 text-macha-50 hover:bg-macha-800 hover:text-macha-100 mt-1 mr-2 h-10 w-20">
+                <Button
+                  className="absolute top-0 right-0 bg-macha-700 text-macha-50 hover:bg-macha-800 hover:text-macha-100 mt-1 mr-2 h-10 w-20"
+                  onClick={handleAddTopics}
+                >
                   Add
                 </Button>
               </div>
               <div className="w-full flex flex-wrap">
-                {['React', 'Javascript', 'HTML', 'CSS'].map(topic => (
+                {specifiedTopics.map(topic => (
                   <div className="px-2 py-1 flex justify-start items-center my-2 cursor-pointer bg-macha-400 mx-4 rounded-2xl">
-                    <Icons.close className="w-4 h-4 mr-2" />
+                    <Icons.close
+                      className="w-4 h-4 mr-2"
+                      onClick={() => handleRemoveTopic(topic)}
+                    />
                     <p className="text-sm font-bold">{topic}</p>
                   </div>
                 ))}

@@ -12,6 +12,8 @@ function CreateAssessmentPage() {
   const [selectedPosition, setSelectedPosition] = useState('Software Engineer');
   const [selectedLevel, setSelectedLevel] = useState('Junior');
   const [advanceSettingOpen, setAdvanceSettingOpen] = useState(false);
+  const [topicInputValue, setTopicInputValue] = useState<string>('');
+  const [specifiedTopics, setSpecifiedTopics] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async () => {
@@ -33,6 +35,7 @@ function CreateAssessmentPage() {
         name: testName,
         positionType: selectedPosition,
         positionLevel: selectedLevel,
+        topics: specifiedTopics,
       };
       const response = await caseSensitiveAxiosInstance.post(
         '/assessments',
@@ -70,17 +73,35 @@ function CreateAssessmentPage() {
     setSelectedLevel(value);
   };
 
+  const handleAddTopics = () => {
+    if (topicInputValue === '' || specifiedTopics.includes(topicInputValue)) {
+      return;
+    }
+    setSpecifiedTopics([...specifiedTopics, topicInputValue]);
+    setTopicInputValue('');
+  }
+
+  const handleRemoveTopic = (topic: string) => {  
+    const newTopics = specifiedTopics.filter(t => t !== topic);
+    setSpecifiedTopics(newTopics);
+  }
+
   return (
     <Template
       testName={testName}
       selectedPosition={selectedPosition}
       selectedLevel={selectedLevel}
       advanceSettingOpen={advanceSettingOpen}
+      topicInputValue={topicInputValue}
+      specifiedTopics={specifiedTopics}
       isLoading={isLoading}
       onTestNameChange={e => setTestName(e.target.value)}
       onPositionChange={(value: string) => handlePositionChange(value)}
       onLevelChange={(value: string) => handleLevelChange(value)}
       setAdvanceSettingOpen={setAdvanceSettingOpen}
+      setTopicInputValue={setTopicInputValue}
+      handleAddTopics={handleAddTopics}
+      handleRemoveTopic={handleRemoveTopic}
       handleSubmit={handleSubmit}
     />
   );
