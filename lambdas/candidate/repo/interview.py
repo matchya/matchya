@@ -1,0 +1,57 @@
+import os
+import uuid
+
+from client.postgres import PostgresDBClient
+from entity.interview import Interview
+from utils.logger import Logger
+
+
+logger = Logger.configure(os.path.basename(__file__))
+
+
+class InterviewRepository:
+    """
+    This class is responsible for all the database operations
+    """
+
+    def __init__(self, db_client: PostgresDBClient):
+        self.db_client = db_client
+
+    def insert(self, assessment_id: str, candidate_id: str) -> str:
+        """
+        Creates a new interview record.
+
+        :param assessment_id: The id of the assessment.
+        :param candidate_id: The id of the candidate.
+        :return: The id of the newly created interview record.
+        """
+        # TODO: generate quetions for the interview... not in the MVP
+        logger.info(f'insert: {assessment_id}, {candidate_id}')
+        sql = "INSERT INTO interview (id, assessment_id, candidate_id) VALUES (%s, %s, %s);"
+        try:
+            interview_id = str(uuid.uuid4())
+            self.db_client.execute(sql, (interview_id, assessment_id, candidate_id))
+            return interview_id
+        except Exception as e:
+            raise RuntimeError(f"Error saving to interview table: {e}")
+
+    def retrieve_by_candidate_id(self, candidate_id: str) -> Interview:
+        """
+        Retrieves the interview id.
+        """
+        logger.info('Retrieving the interview id...')
+        sql = """
+            SELECT *
+            FROM interview
+            WHERE interview.candidate_id = '%s';
+        """ % candidate_id
+        try:
+            self.db_client.execute(sql)
+            result = self.db_client.fetchone()
+            interview = Interview(assessment_id=result[1])
+            interview.id = result[0]
+            interview.candidate_id = result[1]
+            return interview
+        except Exception as e:
+            logger.error(e)
+            raise Exception('Interview not found')
