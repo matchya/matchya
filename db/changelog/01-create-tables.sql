@@ -140,3 +140,7 @@ ALTER TABLE candidate DROP COLUMN IF EXISTS last_name;
 --rollback ALTER TABLE candidate DROP COLUMN IF EXISTS name;
 --rollback ALTER TABLE candidate ADD COLUMN IF NOT EXISTS first_name varchar(255);
 --rollback ALTER TABLE candidate ADD COLUMN IF NOT EXISTS last_name varchar(255);
+
+--changeset author:14
+ALTER TABLE assessment ALTER COLUMN name TYPE varchar(255);
+--rollback ALTER TABLE assessment ALTER COLUMN name TYPE varchar(30);

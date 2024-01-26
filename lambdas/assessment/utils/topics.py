@@ -142,37 +142,58 @@ SOFTWARE_ENGINEERING_TOPICS = {
 }
 
 
-def get_random_topics_by_position_type_and_level(type, level, num_topics=8):
+LEVELS = ['Easy', 'Medium', 'Hard']
+
+
+def get_random_topics_by_position_type_and_level(type, level, topics, num_topics=8):
     """
     Returns a list of random topics from the given topics.
     """
+
     level_probabilities = [0.3, 0.5, 0.2]
     if level == "Junior":
         level_probabilities = [0.6, 0.3, 0.1]
-    elif level == "Intermediate":
+    elif level == "Mid-Level":
         level_probabilities = [0.3, 0.4, 0.3]
     elif level == "Senior":
         level_probabilities = [0.2, 0.4, 0.4]
+    elif level == "Lead":
+        level_probabilities = [0.1, 0.3, 0.6]
+
+    num_topics -= len(topics)
+    specified_topics = _get_specified_topics_list(topics, level_probabilities)
 
     if type == "Frontend Engineer":
-        return _get_random_topics(FRONTEND_TOPICS, level_probabilities, num_topics)
+        return specified_topics + _get_random_topics(FRONTEND_TOPICS, level_probabilities, num_topics)
     elif type == "Backend Engineer":
-        return _get_random_topics(BACKEND_TOPICS, level_probabilities, num_topics)
+        return specified_topics + _get_random_topics(BACKEND_TOPICS, level_probabilities, num_topics)
     elif type == "DevOps Engineer":
-        return _get_random_topics(DEVOPS_TOPICS, level_probabilities, num_topics)
+        return specified_topics + _get_random_topics(DEVOPS_TOPICS, level_probabilities, num_topics)
     elif type == "Mobile Engineer":
-        return _get_random_topics(MOBILE_TOPICS, level_probabilities, num_topics)
+        return specified_topics + _get_random_topics(MOBILE_TOPICS, level_probabilities, num_topics)
     elif type == "Software Engineer":
-        return _get_topic_for_software_engineer(level_probabilities, num_topics)
+        return specified_topics + _get_topic_for_software_engineer(level_probabilities, num_topics)
 
-    return _get_random_topics_from_all(level_probabilities, num_topics)
+    return specified_topics + _get_random_topics_from_all(level_probabilities, num_topics)
+
+
+def _get_specified_topics_list(topics, level_probabilities):
+    """
+    Returns a list of specified topics
+    """
+    result = []
+    for topic in topics:
+        result.append({
+            'topic': topic,
+            'difficulty': random.choices(LEVELS, weights=level_probabilities)
+        })
+    return result
 
 
 def _get_random_topics(topics, level_probabilities, num_topics):
     """
     Returns a list of random topics from the given topics.
     """
-    LEVELS = ['Easy', 'Medium', 'Hard']
     result = []
     category_list = list(topics.keys())
     counter = 0
@@ -202,7 +223,6 @@ def _get_random_topics_from_all(level_probabilities, num_topics):
     """
     Returns a list of random topics from all topics
     """
-    LEVELS = ['Easy', 'Medium', 'Hard']
     result = []
     counter = 0
     while counter < num_topics:

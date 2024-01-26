@@ -30,6 +30,7 @@ class SqsClient:
         message_body = {
             'assessment_id': assessment.id,
             'position_type': assessment.position_type,
-            'position_level': assessment.position_level
+            'position_level': assessment.position_level,
+            'topics': assessment.topics
         }
         self._send_message(message_body=message_body)

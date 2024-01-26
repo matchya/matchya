@@ -33,7 +33,7 @@ def handler(event, context):
         response_generator.origin_domain = origin
 
         # business logic
-        assessment = Assessment(body.get('name'), body.get('position_type'), body.get('position_level'))
+        assessment = Assessment(body.get('name'), body.get('position_type'), body.get('position_level'), body.get('topics'))
 
         # db operations
         with postgres_client as db_client:
