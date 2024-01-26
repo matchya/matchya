@@ -1,181 +1,64 @@
-import json
-import logging
-import uuid
+import os
 
-import psycopg2
-import sentry_sdk
-from sentry_sdk.integrations.aws_lambda import AwsLambdaIntegration
-
-from config import Config
-from utils.response import generate_success_response, generate_error_response
-from utils.request import parse_header, parse_request_body, validate_request_body
+from client.postgres import PostgresDBClient
+from client.sentry import SentryClient
+from entity.candidate import Candidate
+from entity.interview import Interview
+from repo.assessment_candidate import AssessmentCandidateRepository
+from repo.candidate import CandidateRepository
+from repo.interview import InterviewRepository
+from utils.logger import Logger
+from utils.package_info import PackageInfo
+from utils.request_parser import RequestParser
+from utils.response_generator import ResponseGenerator
 from utils.email import send_email
 
-# Load and parse package.json
-with open('package.json') as f:
-    package_json = json.load(f)
+logger = Logger.configure(os.path.basename(__file__))
 
-# Get the version
-version = package_json.get('version', 'unknown')
-
-if Config.SENTRY_DSN:
-    sentry_sdk.init(
-        dsn=Config.SENTRY_DSN,
-        environment=Config.ENVIRONMENT,
-        integrations=[AwsLambdaIntegration(timeout_warning=True)],
-        release=f'candidate@{version}',
-        traces_sample_rate=0.5,
-        profiles_sample_rate=1.0,
-    )
-
-# Logger
-logger = logging.getLogger('add candidate')
-logger.setLevel(logging.INFO)
-
-formatter = logging.Formatter('[%(levelname)s]:%(funcName)s:%(lineno)d:%(message)s')
-
-if not logger.handlers:
-    ch = logging.StreamHandler()
-    ch.setFormatter(formatter)
-    logger.addHandler(ch)
-
-logger.propagate = False
-
-# Postgres
-db_conn = None
-db_cursor = None
-
-
-def connect_to_db():
-    """
-    Reconnects to the database.
-    """
-    logger.info('Connecting to db...')
-    global db_conn
-    global db_cursor
-    if not db_conn or db_conn.closed:
-        db_conn = psycopg2.connect(host=Config.POSTGRES_HOST, database=Config.POSTGRES_DB, user=Config.POSTGRES_USER, password=Config.POSTGRES_PASSWORD)
-    db_cursor = db_conn.cursor()
-
-
-def candidate_exists(email):
-    """
-    Checks if a candidate exists in the database.
-
-    :param email: The email of the candidate.
-    :return: True if the candidate exists, False otherwise.
-    """
-    logger.info("Checking if candidate exists...")
-    sql = "SELECT id FROM candidate WHERE email = %s;"
-    db_cursor.execute(sql, (email,))
-    result = db_cursor.fetchone()
-    return result is not None
-
-
-def create_candidate_record(body) -> str:
-    """
-    Creates a new candidate record in the database.
-
-    :param body: The request body containing the candidate data.
-    :return: The id of the newly created candidate record.
-    """
-    logger.info("Creating a candidate record...")
-    sql = "INSERT INTO candidate (id, name, email) VALUES (%s, %s, %s);"
-    try:
-        candidate_id = str(uuid.uuid4())
-        db_cursor.execute(sql, (candidate_id, body['name'], body['email']))
-        return candidate_id
-    except Exception as e:
-        raise RuntimeError(f"Error saving to candidate table: {e}")
-
-
-def get_candidate_id(email):
-    """
-    Gets the id of a candidate.
-
-    :param email: The email of the candidate.
-    :return: The id of the candidate.
-    """
-    logger.info("Getting the id of the candidate...")
-    sql = "SELECT id FROM candidate WHERE email = %s;"
-    db_cursor.execute(sql, (email,))
-    result = db_cursor.fetchone()
-    return result[0]
-
-
-def save_assessment_candidate(assessment_id, candidate_id):
-    """
-    Register the candidate to assessment.
-
-    :param assessment_id: The id of the assessment.
-    :param candidate_id: The id of the candidate.
-    """
-    logger.info("Registering the candidate to assessment...")
-    sql = "INSERT INTO assessment_candidate (assessment_id, candidate_id) VALUES (%s, %s);"
-    try:
-        db_cursor.execute(sql, (assessment_id, candidate_id))
-    except Exception as e:
-        raise RuntimeError(f"Error registering to assessment_candidate table: {e}")
-
-
-def create_new_interview(assessment_id, candidate_id):
-    """
-    Creates a new interview record.
-
-    :param assessment_id: The id of the assessment.
-    :param candidate_id: The id of the candidate.
-    :return: The id of the newly created interview record.
-    """
-    # TODO: generate quetions for the interview... not in the MVP
-    logger.info("Creating a new interview record...")
-    sql = "INSERT INTO interview (id, assessment_id, candidate_id) VALUES (%s, %s, %s);"
-    try:
-        interview_id = str(uuid.uuid4())
-        db_cursor.execute(sql, (interview_id, assessment_id, candidate_id))
-        return interview_id
-    except Exception as e:
-        raise RuntimeError(f"Error saving to interview table: {e}")
+SentryClient.initialize(PackageInfo('package.json').get_version())
+postgres_client = PostgresDBClient()
+response_generator = ResponseGenerator()
 
 
 def handler(event, context):
     try:
-        logger.info('Creating a candidate...')
-        connect_to_db()
+        logger.info(handler)
 
-        logger.info("Parsing the request body...")
-        body = parse_request_body(event)
-        logger.info("Parsing the request header...")
-        origin = parse_header(event)
-        logger.info("Validating the candidate data...")
-        validate_request_body(body, ['email', 'name', 'assessment_id'])
+        # initialize the parser
+        parser = RequestParser(event)
 
-        if not candidate_exists(body['email']):
-            candidate_id = create_candidate_record(body)
-        else:
-            candidate_id = get_candidate_id(body['email'])
+        # parsing from the event
+        body = parser.parse_request_body()
+        origin = parser.parse_header()
+        response_generator.origin = origin
 
-        assessment_id = body['assessment_id']
-        save_assessment_candidate(assessment_id, candidate_id)
-        interview_id = create_new_interview(assessment_id, candidate_id)
+        # business logic
+        candidate = Candidate()
+        candidate.name = body.get('name')
+        candidate.email = body.get('email')
+        interview = Interview(body.get('assessment_id'))
 
-        send_email(body['email'], interview_id)
+        with postgres_client as db_client:
+            candidate_repo = CandidateRepository(db_client)
+            assessment_candidate_repo = AssessmentCandidateRepository(db_client)
+            interview_repo = InterviewRepository(db_client)
 
-        data = {
-            'candidate_id': candidate_id
-        }
-        db_conn.commit()
-        logger.info("Successfully add a candidate.")
-        return generate_success_response(origin, data)
+            if not candidate_repo.check_exists_by_email(body['email']):
+                candidate.id = candidate_repo.insert(body)
+            else:
+                candidate.id = candidate_repo.retrieve_by_email(body['email'])
+
+            assessment_candidate_repo.insert(assessment_id=interview.assessment_id, candidate_id=candidate.id)
+            interview.id = interview_repo.insert(interview.assessment_id, candidate_id=candidate.id)
+            send_email(candidate_email=candidate.email, interview_id=interview.id)
+            db_client.commit()
+
+        return response_generator.generate_success_response({
+            'candidate_id': candidate.id
+        })
     except (ValueError, RuntimeError) as e:
-        status_code = 400
         logger.error(f'Adding a new candidate failed: {e}')
-        return generate_error_response(origin, status_code, str(e))
+        return response_generator.generate_error_response(400, str(e))
     except Exception as e:
-        status_code = 500
         logger.error(f'Adding a new candidate failed: {e}')
-        return generate_error_response(origin, status_code, str(e))
-    finally:
-        if db_cursor:
-            db_cursor.close()
-        if db_conn:
-            db_conn.close()
+        return response_generator.generate_error_response(500, str(e))

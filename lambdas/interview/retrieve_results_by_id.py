@@ -69,8 +69,8 @@ def retrieve_interview_results_by_id(interview_id):
             i.id, i.total_score, i.summary, i.created_at,
             c.id, c.name, c.email,
             a.id, a.name,
-            q.id, q.text, q.topic,
-            ans.video_url
+            q.id, q.text, q.topic, q.difficulty, 
+            ans.video_url, ans.feedback, ans.score
         FROM interview i
         LEFT JOIN assessment a ON a.id = i.assessment_id
         LEFT JOIN candidate c ON c.id = i.candidate_id
@@ -117,13 +117,17 @@ def process_sql_result(result):
     }
 
     for row in result:
-        (question_id, question_text, question_topic, video_url) = row[9:]
+        (question_id, question_text, question_topic, question_difficulty, 
+         video_url, feedback, score) = row[9:]
         if question_id and video_url:
             answer = {
                 'question_id': question_id,
                 'question_text': question_text,
                 'question_topic': question_topic,
+                'question_difficulty': question_difficulty,
                 'video_url': video_url,
+                'feedback': feedback,
+                'score': score,
             }
             interview['answers'].append(answer)
 

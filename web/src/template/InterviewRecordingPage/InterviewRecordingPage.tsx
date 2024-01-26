@@ -50,6 +50,7 @@ const InterviewRecordingPageTemplate = ({
           audioConstraints={AUDIO_CONSTRAINTS}
           videoConstraints={VIDEO_CONSTRAINTS}
           audio={true}
+          muted={true}
           ref={webcamRef}
         />
         {/* Header for Candidate Assessment Page */}

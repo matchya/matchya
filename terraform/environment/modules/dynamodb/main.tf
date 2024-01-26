@@ -39,29 +39,16 @@ resource "aws_dynamodb_table" "access_token" {
   }
 }
 
-resource "aws_dynamodb_table" "criterion" {
-  name           = "${terraform.workspace}-Criterion"
+resource "aws_dynamodb_table" "interview_access_token" {
+  name           = "${terraform.workspace}-InterviewAccessToken"
   billing_mode   = "PROVISIONED"
-  hash_key       = "id"
+  hash_key       = "token"
 
-  read_capacity = 1
-  write_capacity = 1
-
-  attribute {
-    name = "id"
-    type = "S"
-  }
+  read_capacity  = 10
+  write_capacity = 10
 
   attribute {
-    name = "checklist_id"
+    name = "token"
     type = "S"
-  }
-
-  global_secondary_index {
-    name               = "ChecklistIdIndex"
-    hash_key           = "checklist_id"
-    projection_type    = "ALL"
-    read_capacity      = 10
-    write_capacity     = 10
   }
 }

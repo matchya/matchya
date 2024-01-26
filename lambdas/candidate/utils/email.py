@@ -1,5 +1,11 @@
+import os
+
 import boto3
 from botocore.exceptions import ClientError
+
+from utils.logger import Logger
+
+logger = Logger.configure(os.path.basename(__file__))
 
 
 # The email body for recipients with non-HTML email clients.
@@ -39,6 +45,7 @@ def get_body_html(interview_id):
 
 
 def send_email(candidate_email, interview_id):
+    logger.info(f'send_email: {candidate_email}, {interview_id}')
     CHARSET = "UTF-8"
     client = boto3.client('ses')
     print(f"Sending email to {candidate_email} from {SENDER}")
