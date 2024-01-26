@@ -6,7 +6,8 @@ class Config:
     This class handles the configuration settings for the application.
     """
     ENVIRONMENT = os.getenv('ENVIRONMENT', 'dev')
-
+    SENDER_EMAIL_ADDRESS = os.getenv('SENDER_EMAIL_ADDRESS', 'admin@matchya.ai')
+    LINK_BASE_URL = os.getenv('LINK_BASE_URL')
     POSTGRES_HOST = os.getenv('POSTGRES_HOST')
     POSTGRES_PORT = os.getenv('POSTGRES_PORT')
     POSTGRES_DB = os.getenv('POSTGRES_DB')
@@ -22,7 +23,7 @@ class Config:
         Raises an exception if any required configuration is missing.
         """
         required_variables = [
-            'POSTGRES_HOST', 'POSTGRES_PORT', 'POSTGRES_DB',
+            'LINK_BASE_URL', 'POSTGRES_HOST', 'POSTGRES_PORT', 'POSTGRES_DB',
             'POSTGRES_USER', 'POSTGRES_PASSWORD', 'OPENAI_API_KEY'
         ]
         missing_variables = [variable for variable in required_variables if not getattr(cls, variable)]

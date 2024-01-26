@@ -4,7 +4,7 @@ from client.postgres import PostgresDBClient
 from utils.logger import Logger
 
 
-logger = Logger.configure(os.path.basename(__file__))
+logger = Logger.configure(os.path.relpath(__file__, os.path.join(os.path.dirname(__file__), '..')))
 
 
 class AssessmentCandidateRepository:
@@ -22,9 +22,10 @@ class AssessmentCandidateRepository:
         :param assessment_id: The id of the assessment.
         :param candidate_id: The id of the candidate.
         """
-        logger.info(f'insert: {assessment_id}, {candidate_id}')
+        logger.info(f'Inserting to assessment_candidate table: {assessment_id}, {candidate_id}')
         sql = "INSERT INTO assessment_candidate (assessment_id, candidate_id) VALUES (%s, %s);"
         try:
             self.db_client.execute(sql, (assessment_id, candidate_id))
+            logger.info('Successfully inserted to assessment_candidate table')
         except Exception as e:
             raise RuntimeError(f"Error registering to assessment_candidate table: {e}")

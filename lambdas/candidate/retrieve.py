@@ -8,7 +8,7 @@ from utils.package_info import PackageInfo
 from utils.request_parser import RequestParser
 from utils.response_generator import ResponseGenerator
 
-logger = Logger.configure(os.path.basename(__file__))
+logger = Logger.configure(os.path.relpath(__file__, os.path.join(os.path.dirname(__file__), '.')))
 
 SentryClient.initialize(PackageInfo('package.json').get_version())
 postgres_client = PostgresDBClient()
@@ -16,15 +16,13 @@ response_generator = ResponseGenerator()
 
 
 def handler(event, context):
+    logger.info('Starting lambda execution')
     try:
-        logger.info('handler')
-
         # initialize the parser
         parser = RequestParser(event)
 
         # parsing from the event
         company_id = parser.parse_cookie_body()['company_id']
-        logger.info("Parsing the request header...")
         origin = parser.parse_header()
         response_generator.origin_domain = origin
 

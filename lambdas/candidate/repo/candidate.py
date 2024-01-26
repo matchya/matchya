@@ -6,7 +6,7 @@ from client.postgres import PostgresDBClient
 from entity.candidate import Candidate
 from utils.logger import Logger
 
-logger = Logger.configure(os.path.basename(__file__))
+logger = Logger.configure(os.path.relpath(__file__, os.path.join(os.path.dirname(__file__), '..')))
 
 
 class CandidateRepository:
@@ -24,11 +24,13 @@ class CandidateRepository:
         :param email: The email of the candidate.
         :return: True if the candidate exists, False otherwise.
         """
-        logger.info(f'check_exists_by_email: {email}')
+        logger.info(f'Checking if candidate exists: {email}')
         sql = "SELECT id FROM candidate WHERE email = %s;"
         self.db_client.execute(sql, (email,))
         result = self.db_client.fetchone()
-        return result is not None
+        if not result:
+            logger.info('Candidate does not exist')
+        return result
 
     def insert(self, name: str, email: str) -> str:
         """
@@ -37,11 +39,12 @@ class CandidateRepository:
         :param body: The request body containing the candidate data.
         :return: The id of the newly created candidate record.
         """
-        logger.info(f'insert: {name}, {email}')
+        logger.info(f'Inserting to candidate table: {name}, {email}')
         sql = "INSERT INTO candidate (id, name, email) VALUES (%s, %s, %s);"
         try:
             candidate_id = str(uuid.uuid4())
             self.db_client.execute(sql, (candidate_id, name, email))
+            logger.info('Successfully inserted to candidate table')
             return candidate_id
         except Exception as e:
             raise RuntimeError(f"Error saving to candidate table: {e}")
@@ -53,23 +56,25 @@ class CandidateRepository:
         :param email: The email of the candidate.
         :return: The id of the candidate.
         """
-        logger.info(f'retrieve_by_email: {email}')
+        logger.info(f'Retrieving candidate by email: {email}')
         sql = "SELECT * FROM candidate WHERE email = %s;"
         self.db_client.execute(sql, (email,))
+        logger.info('Successfully retrieved candidate')
         return self.db_client.fetchone()[0]
 
-    def retrieve_by_id(self, candidate_id: str):
+    def retrieve_by_id(self, id: str):
         """
         Retrieves the candidate's email address.
         """
-        logger.info(f'retrieve_by_id: {candidate_id}')
+        logger.info(f'Retrieving candidate by id: {id}')
         sql = 'SELECT * FROM candidate WHERE id = %s;'
-        self.db_client.execute(sql, (candidate_id,))
+        self.db_client.execute(sql, (id,))
         result = self.db_client.fetchone()
         candidate = Candidate()
         candidate.id = result[0]
         candidate.email = result[1]
         candidate.name = result[4]
+        logger.info('Successfully retrieved candidate')
         return candidate
 
     def retrieve_many_by_company_id(self, company_id: str) -> List[Candidate]:
@@ -79,7 +84,7 @@ class CandidateRepository:
         :param company_id: The id of the company.
         :return: The candidate.
         """
-        logger.info(f'retrieve_many_by_company_id: {company_id}')
+        logger.info(f'Retrieving candidates by company id: {company_id}')
         sql = """
             SELECT 
                 c.id, c.email, c.name, ac.created_at AS added_at,
@@ -110,4 +115,5 @@ class CandidateRepository:
                     'created_at': str(row[6])
                 }
             candidates.append(candidate)
+        logger.info('Successfully retrieved candidates')
         return candidates

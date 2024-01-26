@@ -7,7 +7,7 @@ class Logger:
         logger = logging.getLogger(name)
         logger.setLevel(logging.INFO)
 
-        formatter = logging.Formatter('[%(levelname)s]:%(name)s:%(funcName)s:%(lineno)d:%(message)s')
+        formatter = logging.Formatter('[%(levelname)s]:%(name)s:%(funcName)s:%(lineno)d %(message)s')
 
         if not logger.handlers:
             ch = logging.StreamHandler()
