@@ -6,15 +6,18 @@ import { Interview } from '@/types';
 
 interface InterviewDetailPageTemplateProps {
   questionId: string;
+  currentAnswer: any;
   interview: Interview;
-  onSelectVideo: (questionId: string) => void;
+  onSelectVideo: (answer: any) => void;
 }
 
 const InterviewDetailPageTemplate = ({
   questionId,
+  currentAnswer,
   interview,
   onSelectVideo,
 }: InterviewDetailPageTemplateProps) => {
+  console.log(interview);
   return (
     <div className="h-[calc(100vh-64px)] overflow-y-scroll bg-macha-200">
       <div className="w-full mx-auto">
@@ -42,13 +45,30 @@ const InterviewDetailPageTemplate = ({
                       {interview.createdAt.substring(0, 10)}
                     </p>
                   </div>
-                  <div className="w-full">
+                  <div className="w-full flex flex-col items-center justify-center">
                     <div className="lg:flex-grow-0 lg:flex-shrink-0">
                       <ReactPlayer
                         url={`https://dev-data-question-response-video.s3.amazonaws.com/${interview.id}/${questionId}.webm`}
                         controls={true}
                         className="w-full h-full max-h-[1087px] object-contain"
                       />
+                    </div>
+                    <div className="w-4/5 mt-8 bg-orange-50 p-10 mx-20 rounded">
+                      <div className="flex px-10 justify-around">
+                        <h3 className="text-2xl font-bold text-macha-800">
+                          Review By Matchya AI
+                        </h3>
+                        <p className="text-lg">
+                          Total Score:{' '}
+                          <span className="text-2xl font-bold text-macha-700 ml-1">
+                            {interview.totalScore}
+                          </span>{' '}
+                          / 10
+                        </p>
+                      </div>
+                      <p className="text-lg pt-3 pl-3 ml-3">
+                        {interview.summary}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -62,7 +82,7 @@ const InterviewDetailPageTemplate = ({
                       <div
                         className="w-full flex items-center cursor-pointer hover:bg-orange-100"
                         key={answer.questionId}
-                        onClick={() => onSelectVideo(answer.questionId)}
+                        onClick={() => onSelectVideo(answer)}
                       >
                         <img src={interviewMock} className="w-1/3 pl-3" />
                         <div className="w-2/3 p-4">
@@ -77,19 +97,28 @@ const InterviewDetailPageTemplate = ({
                     ))}
                   </div>
                   <div className="p-6 bg-orange-50 rounded-lg mb-12">
-                    <div className="mb-2">
+                    <p className="text-2xl text-center font-bold text-black mb-4">
+                      Question
+                    </p>
+                    <div className="flex justify-around mb-2">
                       <h3 className="text-xl font-bold text-macha-800">
-                        Review by Matchya AI
+                        {currentAnswer.questionTopic}
                       </h3>
                       <p className="text-md">
                         Score:{' '}
                         <span className="text-xl font-bold text-macha-700 ml-1">
-                          {interview.totalScore}
+                          {currentAnswer.score}
                         </span>{' '}
                         / 10
                       </p>
                     </div>
-                    <p className="indent-4 text-sm">{interview.summary}</p>
+                    <p className="indent-4 text-sm mb-6">
+                      {currentAnswer.questionText}
+                    </p>
+                    <p className="text-2xl text-center font-bold text-black mb-4">
+                      Feedback
+                    </p>
+                    <p className="text-sm">{currentAnswer.feedback}</p>
                   </div>
                 </div>
               </div>

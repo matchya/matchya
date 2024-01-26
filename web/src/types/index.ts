@@ -41,6 +41,9 @@ export const interviewSchema = z.object({
       questionId: z.string(),
       questionText: z.string(),
       questionTopic: z.string(),
+      questionDifficulty: z.string(),
+      feedback: z.string(),
+      score: z.number(),
     })
   ),
 });
