@@ -1,10 +1,8 @@
 import { ColumnDef } from '@tanstack/react-table';
-import { z } from 'zod';
 
 import { CandidatesTableColumnHeader } from './CandidatesTableColumnHeader';
 
-import { mockedCandidates } from '@/data/mock';
-import { Candidate, candidateSchema } from '@/types';
+import { Candidate } from '@/types';
 
 export const columns: ColumnDef<Candidate>[] = [
   {
@@ -13,7 +11,7 @@ export const columns: ColumnDef<Candidate>[] = [
       <CandidatesTableColumnHeader column={column} title="Added at" />
     ),
     cell: ({ row }) => {
-      const date = new Date(row.original.assessment.createdAt);
+      const date = row.original.assessment ? new Date(row.original.assessment.createdAt) : new Date();
       const formattedDate = date.toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'short',
@@ -44,7 +42,7 @@ export const columns: ColumnDef<Candidate>[] = [
     ),
     cell: ({ row }) => (
       <div className="min-w-[150px] max-w-[200px]">
-        {row.original.assessment.assessmentName}
+        {row.original.assessment?.name}
       </div>
     ),
     filterFn: (row, id, value) => {
@@ -57,15 +55,10 @@ export const columns: ColumnDef<Candidate>[] = [
       <CandidatesTableColumnHeader column={column} title="Status" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px]">{row.original.assessment.interviewStatus}</div>
+      <div className="w-[80px]">{row.original.assessment?.interviewStatus}</div>
     ),
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
     },
   },
 ];
-
-export const getTransformedCandidates = async () => {
-  const candidates = mockedCandidates;
-  return z.array(candidateSchema).parse(candidates);
-};

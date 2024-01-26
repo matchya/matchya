@@ -18,7 +18,7 @@ const AssessmentDetailPageTemplate = ({
             </div>
             <div className="flex flex-col-reverse lg:flex-row lg:space-x-6">
               <div className="space-y-6 flex-1">
-                {assessment?.questions.map(question => (
+                {assessment?.questions?.map(question => (
                   <QuestionCard
                     key={question.id}
                     text={question.text}
