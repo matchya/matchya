@@ -26,23 +26,22 @@ class PostgresDBClient:
         return self
 
     def __exit__(self, *_):
-        logger.info('Closing DB Connection...')
+        logger.info('Closing DB Cursor...')
         if self.db_cursor:
             self.db_cursor.close()
 
     def execute(self, sql_statement, params=None):
-        logger.info('execute')
         self.db_cursor.execute(sql_statement, params)
 
     def fetchall(self):
-        logger.info('fetchall')
         return self.db_cursor.fetchall()
 
+    def fetchone(self):
+        return self.db_cursor.fetchone()
+
     def commit(self):
-        logger.info('commit')
         self.db_conn.commit()
 
     def close(self):
-        logger.info('close')
         if self.db_conn:
             self.db_conn.close()
