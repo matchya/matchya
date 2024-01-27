@@ -12,7 +12,7 @@ For example:
 import { trackEvent } from 'rudderstack';
 
 handleButtonClick() {
-  // logic here
   trackEvent('Button Clicked');
+  // logic here
 }
 ```
