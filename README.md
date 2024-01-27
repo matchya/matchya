@@ -1,5 +1,46 @@
 # Matchya
 
+## PR Title Naming Convention
+
+We follow semantic release versioning in our project. Therefore, it's important to specify the type, scope, and a brief description in the title of each pull request. Here are the types available:
+
+### Types
+
+- `feat`: A new feature
+- `fix`: A bug fix
+- `perf`: A code change that improves performance
+- `revert`: Reverts a previous commit
+- `docs`: Documentation only changes
+- `style`: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
+- `refactor`: A code change that neither fixes a bug nor adds a feature
+- `test`: Adding missing tests or correcting existing tests
+
+### Scopes
+
+The following are all the available scopes:
+
+- `web`
+- `authentication`
+- `authorizer`
+- `assessment`
+- `candidate`
+- `company`
+- `interview`
+- `ci`
+- `terraform`
+- `db`
+- `lambdas`
+- `script`
+- `video`
+
+The PR title should follow this format: `type(scope): description`
+
+For example:
+
+`feat(authentication): add login functionality`
+
+By following this convention, we can ensure that our versioning is consistent and meaningful.
+
 ## Using Terraform
 
 Our project uses Terraform for infrastructure management. We have two main folders for Terraform configurations:
