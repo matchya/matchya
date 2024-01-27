@@ -58,10 +58,7 @@ functions:
           method: POST
           cors:
             origins: "http://127.0.0.1:5173"
-            allowCredentials: true
-          # authorizer:
-          #   authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
-          #   type: REQUEST
+            allowCredentials: true # may not need?
           request:
             parameters:
               paths:
@@ -98,10 +95,7 @@ functions:
           method: GET
           cors:
             origins: "http://127.0.0.1:5173"
-            allowCredentials: true
-          # authorizer:
-          #   authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
-          #   type: REQUEST
+            allowCredentials: true # may not need?
           request:
             parameters:
               paths:
@@ -127,6 +121,20 @@ functions:
             parameters:
               paths:
                 id: true
+
+  verify-token:
+    name: ${self:provider.stage}-interview-verify-token
+    image:
+      name: default
+      command:
+        - verify_token.handler
+    events:
+      - http:
+          path: /interviews/verify
+          method: POST
+          cors:
+            origins: "http://127.0.0.1:5173"
+            allowCredentials: true # may not need?
 
 plugins:
   - serverless-deployment-bucket
