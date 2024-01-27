@@ -1,8 +1,8 @@
 import os
 
 import boto3
-from lambdas.interview.config import Config
 
+from config import Config
 from utils.logger import Logger
 
 logger = Logger.configure(os.path.relpath(__file__, os.path.join(os.path.dirname(__file__), '..')))

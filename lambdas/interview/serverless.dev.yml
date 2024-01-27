@@ -123,19 +123,5 @@ functions:
               paths:
                 id: true
 
-  verify-token:
-    name: ${self:provider.stage}-interview-verify-token
-    image:
-      name: default
-      command:
-        - verify_token.handler
-    events:
-      - http:
-          path: /interviews/verify
-          method: POST
-          cors:
-            origins: "http://127.0.0.1:5173"
-            allowCredentials: true # may not need?
-
 plugins:
   - serverless-deployment-bucket
