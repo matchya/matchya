@@ -6,16 +6,15 @@ class Config:
     This class handles the configuration settings for the application.
     """
     ENVIRONMENT = os.getenv('ENVIRONMENT', 'dev')
-
+    OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
     POSTGRES_HOST = os.getenv('POSTGRES_HOST')
     POSTGRES_PORT = os.getenv('POSTGRES_PORT')
     POSTGRES_DB = os.getenv('POSTGRES_DB')
     POSTGRES_USER = os.getenv('POSTGRES_USER')
     POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
-    OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
-
     QUESTION_GENERATION_PROCESSOR_QUEUE_URL = os.getenv('QUESTION_GENERATION_PROCESSOR_QUEUE_URL')
     SENTRY_DSN = os.getenv('SENTRY_DSN')
+    SERVICE_NAME = os.getenv('SERVICE_NAME')
 
     @classmethod
     def validate(cls):

@@ -17,7 +17,7 @@ class SentryClient:
                 dsn=Config.SENTRY_DSN,
                 environment=Config.ENVIRONMENT,
                 integrations=[AwsLambdaIntegration(timeout_warning=True)],
-                release=f'assessment@{version}',
+                release=f'{Config.SERVICE_NAME}@{version}',
                 traces_sample_rate=0.5,
                 profiles_sample_rate=1.0,
             )
