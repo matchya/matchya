@@ -17,10 +17,11 @@ class PostgresDBClient:
 
     def __init__(self):
         if not hasattr(self, 'db_conn'):
+            logger.info('Connecting to DB...')
             self.db_conn = psycopg2.connect(host=Config.POSTGRES_HOST, database=Config.POSTGRES_DB, user=Config.POSTGRES_USER, password=Config.POSTGRES_PASSWORD)
 
     def __enter__(self):
-        logger.info('Creating DB Connection...')
+        logger.info('Starting DB Transaction...')
         self.db_cursor = self.db_conn.cursor()
         return self
 
