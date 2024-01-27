@@ -53,7 +53,7 @@ def handler(event, context):
             raise Exception('Candidate already invited')
         # save the interview access token
         token = str(uuid.uuid4())
-        interview_access_token_repo.insert(token=token, candidate_id=candidate.id, interview_id=interview.id, expiry_time=int(time.time()) + 3600)
+        interview_access_token_repo.insert(token=token, candidate_id=candidate.id, interview_id=interview.id, expiry_time=int(time.time()) + 3600, status='Active')
         # send the invitation email
         body_html_content, body_text_content = CandidateInviteEmailContentGenerator.generate(interview_id=interview.id, 
                                                                                              interview_access_token=token)
