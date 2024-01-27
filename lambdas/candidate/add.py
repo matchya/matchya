@@ -21,7 +21,6 @@ SentryClient.initialize(PackageInfo('package.json').get_version())
 postgres_client = PostgresDBClient()
 ses_client = SESClient()
 response_generator = ResponseGenerator()
-email_content_generator = CandidateInviteEmailContentGenerator()
 
 
 def handler(event, context):
@@ -53,7 +52,7 @@ def handler(event, context):
 
             assessment_candidate_repo.insert(assessment_id=interview.assessment_id, candidate_id=candidate.id)
             interview.id = interview_repo.insert(interview.assessment_id, candidate_id=candidate.id)
-            body_html_content, body_text_content = email_content_generator.generate(interview.id)
+            body_html_content, body_text_content = CandidateInviteEmailContentGenerator.generate(interview_id=interview.id)
             email_id = ses_client.send_email(sender=Config.SENDER_EMAIL_ADDRESS, destinations=[candidate.email],
                                              body_html_content=body_html_content,
                                              body_text_content=body_text_content,
