@@ -24,4 +24,23 @@ resource "aws_dynamodb_table" "interview_access_token" {
     name = "token"
     type = "S"
   }
+
+  attribute {
+    name = "candidate_id"
+    type = "S"
+  }
+
+  attribute {
+    name = "interview_id"
+    type = "S"
+  }
+
+  global_secondary_index {
+    name               = "CandidateInterviewIndex"
+    hash_key           = "candidate_id"
+    range_key          = "interview_id"
+    write_capacity     = 10
+    read_capacity      = 10
+    projection_type    = "ALL"
+  }
 }
