@@ -152,3 +152,8 @@ ALTER TABLE assessment ALTER COLUMN name TYPE varchar(255);
 --changeset author:15
 ALTER TABLE question ALTER COLUMN topic TYPE varchar(255);
 --rollback ALTER TABLE question ALTER COLUMN topic TYPE varchar(30);
+
+
+--changeset author:16
+ALTER TABLE company DROP COLUMN IF EXISTS github_access_token;
+--rollback ALTER TABLE company ADD COLUMN IF NOT EXISTS github_access_token bytea;
