@@ -1,41 +1,14 @@
-import json
-import logging
+import os
 
-import sentry_sdk
-from sentry_sdk.integrations.aws_lambda import AwsLambdaIntegration
+from client.sentry import SentryClient
+from utils.logger import Logger
+from utils.package_info import PackageInfo
+from utils.request_parser import RequestParser
+from utils.response_generator import ResponseGenerator
 
-from config import Config
-from utils.request import parse_header
+logger = Logger.configure(os.path.relpath(__file__, os.path.join(os.path.dirname(__file__), '.')))
 
-# Load and parse package.json
-with open('package.json') as f:
-    package_json = json.load(f)
-
-# Get the version
-version = package_json.get('version', 'unknown')
-
-if Config.SENTRY_DSN:
-    sentry_sdk.init(
-        dsn=Config.SENTRY_DSN,
-        environment=Config.ENVIRONMENT,
-        integrations=[AwsLambdaIntegration(timeout_warning=True)],
-        release=f'authentication@{version}',
-        traces_sample_rate=0.5,
-        profiles_sample_rate=1.0,
-    )
-
-# Logger
-logger = logging.getLogger('logout')
-logger.setLevel(logging.INFO)
-
-formatter = logging.Formatter('[%(levelname)s]:%(funcName)s:%(lineno)d:%(message)s')
-
-if not logger.handlers:
-    ch = logging.StreamHandler()
-    ch.setFormatter(formatter)
-    logger.addHandler(ch)
-
-logger.propagate = False
+SentryClient.initialize(PackageInfo('package.json').get_version())
 
 
 def handler(event, context):
@@ -47,21 +20,10 @@ def handler(event, context):
     :return: A dictionary with a status code and the body of the response.
              The response body contains a message indicating successful logout.
     """
-    logger.info(event)
+    logger.info("Starting the lambda execution")
 
-    logger.info('Parsing the header...')
-    origin, host = parse_header(event)
+    # initializing the parser
+    parser = RequestParser(event)
+    origin, host = parser.parse_header()
 
-    headers = {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': origin,
-        'Access-Control-Allow-Credentials': 'true',
-        'Set-Cookie': f't=; HttpOnly; Domain={host}; Path=/; Max-Age=0; SameSite=None; Secure'
-    }
-
-    response = {
-        'statusCode': 200,
-        'headers': headers,
-        'body': json.dumps({'status': 'success'})
-    }
-    return response
+    return ResponseGenerator.generate_logout_response(origin, host)
