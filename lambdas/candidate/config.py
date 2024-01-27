@@ -15,6 +15,7 @@ class Config:
     POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
     OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
     SENTRY_DSN = os.getenv('SENTRY_DSN')
+    SERVICE_NAME = os.getenv('SERVICE_NAME')
 
     @classmethod
     def validate(cls):
