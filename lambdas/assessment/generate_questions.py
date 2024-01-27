@@ -11,7 +11,7 @@ from utils.logger import Logger
 from utils.package_info import PackageInfo
 from utils.topics import get_random_topics_by_position_type_and_level
 
-logger = Logger.configure(os.path.basename(__file__))
+logger = Logger.configure(os.path.relpath(__file__, os.path.join(os.path.dirname(__file__), '.')))
 
 SentryClient.initialize(PackageInfo('package.json').get_version())
 postgres_client = PostgresDBClient()

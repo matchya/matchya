@@ -11,7 +11,7 @@ from utils.package_info import PackageInfo
 from utils.request_parser import RequestParser
 from utils.response_generator import ResponseGenerator
 
-logger = Logger.configure(os.path.basename(__file__))
+logger = Logger.configure(os.path.relpath(__file__, os.path.join(os.path.dirname(__file__), '.')))
 
 SentryClient.initialize(PackageInfo('package.json').get_version())
 sqs_client = SqsClient(queue_url=Config.QUESTION_GENERATION_PROCESSOR_QUEUE_URL)
