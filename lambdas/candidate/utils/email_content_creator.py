@@ -31,8 +31,8 @@ class CandidateInviteEmailContentGenerator(EmailContentGenerator):
     @classmethod
     def _get_body_html(cls, **kwargs):
         logger.info(f'Creating html based on {kwargs}')
-        interview_id = kwargs.get('interview_id')
-        interview_link = f"{Config.LINK_BASE_URL}/interviews/{interview_id}/record"
+        interview_access_token = kwargs.get('interview_access_token')
+        interview_link = f"{Config.LINK_BASE_URL}/auth/invitation?access_token={interview_access_token}"
         body = """
             <h1>You received an invitation to Matchya Assessment from Matchya</h1>
             <p>Click this link to start the assessment: 
