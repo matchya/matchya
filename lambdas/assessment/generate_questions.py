@@ -11,7 +11,7 @@ from utils.logger import Logger
 from utils.package_info import PackageInfo
 from utils.topics import get_random_topics_by_position_type_and_level
 
-logger = Logger.configure(os.path.basename(__file__))
+logger = Logger.configure(os.path.relpath(__file__, os.path.join(os.path.dirname(__file__), '.')))
 
 SentryClient.initialize(PackageInfo('package.json').get_version())
 postgres_client = PostgresDBClient()
@@ -31,11 +31,12 @@ def handler(event, context):
         assessment_id = body.get('assessment_id')
         position_type = body.get('position_type')
         position_level = body.get('position_level')
+        topics = body.get('topics')
 
         # business logic
         NUM_QUESTIONS = 8
         logger.info("Getting the keywords from the position type and level...")
-        keywords: list = get_random_topics_by_position_type_and_level(position_type, position_level, NUM_QUESTIONS)
+        keywords: list = get_random_topics_by_position_type_and_level(position_type, position_level, topics, NUM_QUESTIONS)
         questions = open_ai_client.generate_questions(keywords, position_type, position_level)
 
         # db operations

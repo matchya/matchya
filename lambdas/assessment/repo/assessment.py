@@ -5,7 +5,7 @@ from client.postgres import PostgresDBClient
 from entity.assessment import Assessment
 from utils.logger import Logger
 
-logger = Logger.configure(os.path.basename(__file__))
+logger = Logger.configure(os.path.relpath(__file__, os.path.join(os.path.dirname(__file__), '..')))
 
 
 class AssessmentRepository:

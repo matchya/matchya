@@ -6,7 +6,7 @@ import boto3
 from entity.assessment import Assessment
 from utils.logger import Logger
 
-logger = Logger.configure(os.path.basename(__file__))
+logger = Logger.configure(os.path.relpath(__file__, os.path.join(os.path.dirname(__file__), '..')))
 
 
 class SqsClient:
@@ -30,6 +30,7 @@ class SqsClient:
         message_body = {
             'assessment_id': assessment.id,
             'position_type': assessment.position_type,
-            'position_level': assessment.position_level
+            'position_level': assessment.position_level,
+            'topics': assessment.topics
         }
         self._send_message(message_body=message_body)

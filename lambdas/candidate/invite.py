@@ -1,108 +1,56 @@
-import json
-import logging
+import os
 
-import psycopg2
-import sentry_sdk
-from sentry_sdk.integrations.aws_lambda import AwsLambdaIntegration
-
+from client.postgres import PostgresDBClient
+from client.sentry import SentryClient
+from client.ses import SESClient
 from config import Config
-from utils.email import send_email
-from utils.response import generate_success_response, generate_error_response
-from utils.request import parse_header, parse_request_parameter
+from entity.candidate import Candidate
+from repo.candidate import CandidateRepository
+from repo.interview import InterviewRepository
+from utils.email_content_creator import CandidateInviteEmailContentGenerator
+from utils.logger import Logger
+from utils.package_info import PackageInfo
+from utils.request_parser import RequestParser
+from utils.response_generator import ResponseGenerator
 
-# Load and parse package.json
-with open('package.json') as f:
-    package_json = json.load(f)
+logger = Logger.configure(os.path.relpath(__file__, os.path.join(os.path.dirname(__file__), '.')))
 
-# Get the version
-version = package_json.get('version', 'unknown')
-
-if Config.SENTRY_DSN:
-    sentry_sdk.init(
-        dsn=Config.SENTRY_DSN,
-        environment=Config.ENVIRONMENT,
-        integrations=[AwsLambdaIntegration(timeout_warning=True)],
-        release=f'candidate@{version}',
-        traces_sample_rate=0.5,
-        profiles_sample_rate=1.0,
-    )
-
-# Logger
-logger = logging.getLogger('invite candidate')
-logger.setLevel(logging.INFO)
-
-formatter = logging.Formatter('[%(levelname)s]:%(funcName)s:%(lineno)d:%(message)s')
-
-if not logger.handlers:
-    ch = logging.StreamHandler()
-    ch.setFormatter(formatter)
-    logger.addHandler(ch)
-
-logger.propagate = False
-
-
-# Postgres
-db_conn = None
-db_cursor = None
-
-
-def connect_to_db():
-    """
-    Reconnects to the database.
-    """
-    logger.info('Connecting to db...')
-    global db_conn
-    global db_cursor
-    if not db_conn or db_conn.closed:
-        db_conn = psycopg2.connect(host=Config.POSTGRES_HOST, database=Config.POSTGRES_DB, user=Config.POSTGRES_USER, password=Config.POSTGRES_PASSWORD)
-    db_cursor = db_conn.cursor()
-
-
-def get_candidate_email(candidate_id):
-    """
-    Retrieves the candidate's email address.
-    """
-    logger.info('Retrieving the candidate\'s email address...')
-    db_cursor.execute('SELECT email FROM candidate WHERE id = %s', (candidate_id,))
-    email = db_cursor.fetchone()[0]
-    logger.info('Candidate\'s email address: %s', email)
-    return email
-
-
-def get_interview_id(candidate_id):
-    """
-    Retrieves the interview id.
-    """
-    logger.info('Retrieving the interview id...')
-    sql = """
-        SELECT id
-        FROM interview
-        WHERE interview.candidate_id = '%s';
-    """ % candidate_id
-    try:
-        db_cursor.execute(sql)
-        interview_id = db_cursor.fetchone()[0]
-        logger.info('Interview id: %s', interview_id)
-        return interview_id
-    except Exception as e:
-        logger.error(e)
-        raise Exception('Interview not found')
+SentryClient.initialize(PackageInfo('package.json').get_version())
+postgres_client = PostgresDBClient()
+ses_client = SESClient()
+response_generator = ResponseGenerator()
 
 
 def handler(event, context):
-    logger.info('Event: %s', event)
+    logger.info('Starting lambda execution')
     try:
-        connect_to_db()
-        logger.info("Parsing the request header...")
-        origin = parse_header(event)
-        logger.info("Parsing the request parameter...")
-        candidate_id = parse_request_parameter(event, 'id')
+        # initialize the parser
+        parser = RequestParser(event)
 
-        email = get_candidate_email(candidate_id)
-        interview_id = get_interview_id(candidate_id)
-        send_email(email, interview_id)
+        # parsing from the event
+        origin = parser.parse_header()
+        response_generator.origin_domain = origin
+        candidate_id = parser.parse_request_parameter('id')
 
-        return generate_success_response(origin)
+        # business logic
+        candidate = Candidate()
+        candidate.id = candidate_id
+
+        with postgres_client as db_client:
+            candidate_repo = CandidateRepository(db_client)
+            interview_repo = InterviewRepository(db_client)
+            candidate = candidate_repo.retrieve_by_id(candidate.id)
+            interview = interview_repo.retrieve_by_candidate_id(candidate.id)
+
+        body_html_content, body_text_content = CandidateInviteEmailContentGenerator.generate(interview_id=interview.id)
+        email_id = ses_client.send_email(sender=Config.SENDER_EMAIL_ADDRESS, destinations=[candidate.email],
+                                         body_html_content=body_html_content,
+                                         body_text_content=body_text_content,
+                                         subject="You received an invitation to the assessment from Matchya")
+
+        return response_generator.generate_success_response({
+            'email_id': email_id
+        })
     except Exception as e:
         logger.error(e)
-        return generate_error_response(400, str(e))
+        return response_generator.generate_error_response(400, str(e))

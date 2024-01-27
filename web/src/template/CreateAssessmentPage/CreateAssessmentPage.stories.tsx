@@ -18,11 +18,16 @@ export const CreateAssessmentPage: Story = {
       selectedPosition={'Software Engineer'}
       selectedLevel={'Senior'}
       advanceSettingOpen={false}
+      topicInputValue=''
+      specifiedTopics={['topic1', 'topic2']}
       isLoading={false}
       onTestNameChange={() => {}}
       onPositionChange={() => {}}
       onLevelChange={() => {}}
       setAdvanceSettingOpen={() => {}}
+      setTopicInputValue={() => {}}
+      handleAddTopics={() => {}}
+      handleRemoveTopic={() => {}}
       handleSubmit={() => {}}
     />
   ),

@@ -78,4 +78,5 @@ module "vpc" {
   source = "./modules/vpc"
 
   nat_eip_id = module.ec2.nat_eip_id
+  region = data.aws_region.current.name
 }
