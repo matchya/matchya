@@ -40,14 +40,14 @@ def handler(event, context):
             company_repo = CompanyRepository(db_client)
             if company_repo.company_already_exists(email):
                 company_id = company_repo.get_company_id(email)
-                access_token = TokenGenerator.generate_access_token(company_id)
+                access_token = TokenGenerator.generate_company_access_token(company_id)
                 return ResponseGenerator.generate_success_response(origin, host, access_token)
             company_id = str(uuid.uuid4())
             company_repo.create_company_record(company_id, {
                 "name": username,
                 "email": email
             })
-            access_token = TokenGenerator.generate_access_token(company_id)
+            access_token = TokenGenerator.generate_company_access_token(company_id)
             access_token_repo.create_access_token_record(company_id, access_token)
             db_client.commit()
 

@@ -10,7 +10,7 @@ from config import Config
 from entity.candidate import Candidate
 from repo.candidate import CandidateRepository
 from repo.interview import InterviewRepository
-from repo.interview_access_token import InterviewAccessTokenRepo
+from repo.interview_access_token import InterviewAccessTokenRepository
 from utils.email_content_creator import CandidateInviteEmailContentGenerator
 from utils.logger import Logger
 from utils.package_info import PackageInfo
@@ -24,7 +24,7 @@ postgres_client = PostgresDBClient()
 dynamodb_client = DynamodbClient()
 ses_client = SESClient()
 response_generator = ResponseGenerator()
-interview_access_token_repo = InterviewAccessTokenRepo(dynamodb_client)
+interview_access_token_repo = InterviewAccessTokenRepository(dynamodb_client)
 
 
 def handler(event, context):
