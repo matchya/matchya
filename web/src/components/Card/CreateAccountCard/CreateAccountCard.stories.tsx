@@ -14,11 +14,10 @@ type Story = StoryObj<typeof Component>;
 export const CreateAccount: Story = {
   render: () => (
     <Component
-      handleInputChange={() => {}}
-      handleGithubAuthentication={() => {}}
-      handleCreateAccount={() => {}}
       password=""
       email=""
+      handleCreateAccount={() => {}}
+      handleInputChange={() => {}}
     />
   ),
 };

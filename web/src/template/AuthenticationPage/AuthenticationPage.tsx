@@ -3,16 +3,12 @@ import { Badge, Button, Icons } from '@/components';
 import { cn } from '@/lib/utils';
 
 interface AuthenticationPageTemplateProps {
-  // isGitHubLoading: boolean;
   isGoogleLoading: boolean;
-  // onGithubLogin: () => void;
   onGoogleLogin: () => void;
 }
 
 const AuthenticationPageTemplate = ({
-  // isGitHubLoading,
   isGoogleLoading,
-  // onGithubLogin,
   onGoogleLogin,
 }: AuthenticationPageTemplateProps) => (
   <div>
@@ -42,7 +38,6 @@ const AuthenticationPageTemplate = ({
             alt="Logo"
             className="w-52 h-12 md:h-16 relative bottom-1"
           />
-        
         </div>
       </div>
       <div className="h-full bg-macha-200 flex items-center justify-center">
@@ -57,20 +52,6 @@ const AuthenticationPageTemplate = ({
               </h1>
             </div>
             <div className={cn('grid gap-6')}>
-              {/* <Button
-                variant="outline"
-                type="button"
-                disabled={isGitHubLoading || isGoogleLoading}
-                onClick={onGithubLogin}
-                className="flex gap-4 w-full py-6 mx-auto text-white bg-black text-md hover:bg-gray-600 hover:text-white dark:bg-white dark:text-black dark:border-black dark:hover:bg-gray-100 dark:hover:text-black dark:hover:border-black"
-              >
-                {isGitHubLoading ? (
-                  <Icons.spinner className="h-5 w-5 animate-spin" />
-                ) : (
-                  <Icons.gitHub className="h-5 w-5" />
-                )}{' '}
-                Sign in with GitHub
-              </Button> */}
               <Button
                 variant="outline"
                 type="button"

@@ -3,7 +3,6 @@ import os
 import psycopg2
 
 from client.postgres import PostgresDBClient
-from utils.token_generator import TokenGenerator
 from utils.logger import Logger
 
 logger = Logger.configure(os.path.relpath(__file__, os.path.join(os.path.dirname(__file__), '..')))
@@ -54,11 +53,9 @@ class CompanyRepository:
         :param body: The request body containing company data.
         """
         logger.info(f'Creating a new company record: {company_id}')
-        sql = "INSERT INTO company (id, name, email, github_access_token) VALUES (%s, %s, %s, %s);"
+        sql = "INSERT INTO company (id, name, email) VALUES (%s, %s, %s, %s);"
         try:
-            github_access_token = body.get('gihub_access_token', None)
-            encrypted = TokenGenerator.encrypt_github_access_token(github_access_token) if github_access_token else None
-            self.db_client.execute(sql, (company_id, body['name'], body['email'], encrypted))
+            self.db_client.execute(sql, (company_id, body['name'], body['email']))
             logger.info('Successfully created a new company record')
         except psycopg2.IntegrityError:
             raise RuntimeError(f"Email address is already used: {body['email']}")
