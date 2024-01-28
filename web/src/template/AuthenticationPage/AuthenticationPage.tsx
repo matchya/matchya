@@ -60,7 +60,7 @@ const AuthenticationPageTemplate = ({
                 className="flex gap-4 w-full py-6 mx-auto border text-black bg-white text-md hover:bg-gray-100 hover:text-black dark:bg-white dark:text-black dark:border-black dark:hover:bg-gray-100 dark:hover:text-black dark:hover:border-black"
               >
                 {isGoogleLoading ? (
-                  <Icons.spinner className="h-5 w-5 animate-spin" />
+                  <Icons.spinner className="h-6 w-6 spinner" />
                 ) : (
                   <Icons.google className="h-5 w-5" />
                 )}{' '}
