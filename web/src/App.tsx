@@ -23,7 +23,7 @@ function App() {
       <Router>
         <SentryRoutes>
           <Route element={<AuthenticatedLayout />}>
-            <Route path="/onboarding" element={<OnboardingPage />} />
+            <Route path="/dashboard" element={<OnboardingPage />} />
             <Route path="/candidates" element={<CandidatesPage />} />
             <Route path="/interviews" element={<InterviewsPage />} />
             <Route path="/interviews/:id" element={<InterviewDetailPage />} />
