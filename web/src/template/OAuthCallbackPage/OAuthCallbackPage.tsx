@@ -14,7 +14,7 @@ const OAuthCallbackPageTemplate = ({
   <div className="h-screen flex justify-center items-center">
     <div className="flex flex-col justify-center items-center mb-5">
       {!isLoginFailed && (
-        <Icons.spinner className="mb-3 h-10 w-10 animate-spin" />
+        <Icons.spinner className='spinner mb-2 h-10 w-10' />
       )}
       <p className="text-xl">
         {!isLoginFailed
