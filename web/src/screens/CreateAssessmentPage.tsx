@@ -42,7 +42,6 @@ function CreateAssessmentPage() {
         data
       );
       if (response.data.status === 'success') {
-        console.log(response.data.payload);
         const id = response.data.payload.assessmentId;
         navigate(`/assessments/${id}`);
       }

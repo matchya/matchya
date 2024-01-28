@@ -32,7 +32,7 @@ def handler(event, context):
         # parsing from the event
         body = parser.parse_request_body()
         origin = parser.parse_header()
-        response_generator.origin = origin
+        response_generator.origin_domain = origin
 
         # business logic
         candidate = Candidate()

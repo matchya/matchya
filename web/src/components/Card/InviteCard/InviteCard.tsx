@@ -11,7 +11,7 @@ import {
   Input,
   Separator,
 } from '@/components';
-import { axiosInstance } from '@/lib/axios';
+import { axiosInstance, caseSensitiveAxiosInstance } from '@/lib/axios';
 import { Candidate } from '@/types';
 
 interface CandidateRowProps {
@@ -86,13 +86,15 @@ const InviteCard = ({ candidates, assessmentId }: InviteCardProps) => {
     try {
       setIsLoading(true);
       const data = {
-        name: name,
-        email: email,
+        name,
+        email,
         assessment_id: assessmentId,
       };
-      const response = await axiosInstance.post('/candidates', data);
+      const response = await caseSensitiveAxiosInstance.post(
+        '/candidates',
+        data
+      );
       if (response.data.status === 'success') {
-        console.log('success');
         setName('');
         setEmail('');
       }
