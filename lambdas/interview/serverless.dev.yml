@@ -60,9 +60,6 @@ functions:
           cors:
             origins: "http://127.0.0.1:5173"
             allowCredentials: true
-          # authorizer:
-          #   authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
-          #   type: REQUEST
           request:
             parameters:
               paths:
@@ -83,7 +80,7 @@ functions:
             origins: "http://127.0.0.1:5173"
             allowCredentials: true
           authorizer:
-            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
+            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.CookieAuthorizerId}
             type: REQUEST
     timeout: 30
 
@@ -100,9 +97,6 @@ functions:
           cors:
             origins: "http://127.0.0.1:5173"
             allowCredentials: true
-          # authorizer:
-          #   authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
-          #   type: REQUEST
           request:
             parameters:
               paths:
@@ -122,7 +116,7 @@ functions:
             origins: "http://127.0.0.1:5173"
             allowCredentials: true
           authorizer:
-            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
+            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.CookieAuthorizerId}
             type: REQUEST
           request:
             parameters:
