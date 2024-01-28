@@ -9,6 +9,7 @@ import { Assessment } from '@/types';
 const AssessmentsPage = () => {
   const navigate = useNavigate();
   const [assessments, setAssessments] = useState<Assessment[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     fetchAssessments();
@@ -16,12 +17,15 @@ const AssessmentsPage = () => {
 
   const fetchAssessments = async () => {
     try {
+      setIsLoading(true);
       const response = await caseSensitiveAxiosInstance.get('/assessments');
       if (response.data.status === 'success') {
         setAssessments(response.data.payload.assessments);
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -44,6 +48,7 @@ const AssessmentsPage = () => {
   return (
     <AssessmentsPageTemplate
       assessments={assessments}
+      isLoading={isLoading}
       onNavigateToAssessment={handleNavigateToAssessment}
       handleNavigateToDetail={handleNavigateToDetail}
     />
