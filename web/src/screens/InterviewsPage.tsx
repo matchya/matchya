@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { axiosInstance } from '@/lib/axios';
+import { caseSensitiveAxiosInstance } from '@/lib/axios';
 import InterviewsPageTemplate from '@/template/InterviewsPage/InterviewsPage';
 import { Interview } from '@/types';
 
@@ -15,7 +15,7 @@ const InterviewsPage = () => {
   const fetchInterviews = async () => {
     try {
       setIsLoading(true);
-      const response = await axiosInstance.get('/interviews');
+      const response = await caseSensitiveAxiosInstance.get('/interviews');
       if (response.data.status === 'success') {
         setInterviews(response.data.payload.interviews);
       }
