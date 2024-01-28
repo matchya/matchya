@@ -31,6 +31,7 @@ provider:
     POSTGRES_DB: ${ssm:/terraform/${self:provider.stage}/rds/db_name}
     POSTGRES_USER: ${ssm:/terraform/${self:provider.stage}/rds/db_username}
     POSTGRES_PASSWORD: ${ssm:/terraform/${self:provider.stage}/rds/db_password}
+    SERVICE_NAME: ${self:service}
 
 functions:
   add:
@@ -47,7 +48,7 @@ functions:
             origins: "http://127.0.0.1:5173"
             allowCredentials: true
           authorizer:
-            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
+            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.CookieAuthorizerId}
             type: REQUEST
     timeout: 30
 
@@ -65,7 +66,7 @@ functions:
             origins: "http://127.0.0.1:5173"
             allowCredentials: true
           authorizer:
-            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
+            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.CookieAuthorizerId}
             type: REQUEST
           request:
             parameters:
@@ -87,7 +88,7 @@ functions:
             origins: "http://127.0.0.1:5173"
             allowCredentials: true
           authorizer:
-            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
+            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.CookieAuthorizerId}
             type: REQUEST
     timeout: 30
 

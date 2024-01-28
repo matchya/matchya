@@ -24,6 +24,7 @@ provider:
         buildArgs:
   environment:
     ENVIRONMENT: ${self:provider.stage}
+    SERVICE_NAME: ${self:service}
 
 functions:
   get-presigned-url:
@@ -39,9 +40,6 @@ functions:
           cors:
             origins: "http://127.0.0.1:5173"
             allowCredentials: true
-          # authorizer:
-          #   authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
-          #   type: REQUEST
     timeout: 30
 
 plugins:

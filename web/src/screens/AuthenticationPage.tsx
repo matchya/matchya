@@ -5,16 +5,7 @@ import { trackEvent } from '@/lib/rudderstack';
 import { AuthenticationPageTemplate } from '@/template';
 
 const AuthenticationPage = () => {
-  // const [isGitHubLoading, setIsGitHubLoading] = useState<boolean>(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState<boolean>(false);
-
-  // const handleGithubLogin = () => {
-  //   setIsGitHubLoading(true);
-  //   const redirectUri = `${clientEndpoint}/auth/github/callback`;
-  //   const loginUrl = `https://github.com/login/oauth/authorize?client_id=${githubClientId}&redirect_uri=${redirectUri}&scope=repo,user`;
-
-  //   window.location.href = loginUrl;
-  // };
 
   const handleGoogleLogin = () => {
     trackEvent({ eventName: 'attempt_google_login' });
@@ -29,9 +20,7 @@ const AuthenticationPage = () => {
 
   return (
     <AuthenticationPageTemplate
-      // isGitHubLoading={isGitHubLoading}
       isGoogleLoading={isGoogleLoading}
-      // onGithubLogin={handleGithubLogin}
       onGoogleLogin={handleGoogleLogin}
     />
   );

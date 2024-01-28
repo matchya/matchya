@@ -16,7 +16,7 @@ export const OAuthCallbackPage: Story = {
     <Component
       isLoginFailed={false}
       onRetryLogin={() => {}}
-      authType="GitHub"
+      authType="Google"
     />
   ),
 };

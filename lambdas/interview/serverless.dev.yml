@@ -31,6 +31,7 @@ provider:
     POSTGRES_USER: ${ssm:/terraform/${self:provider.stage}/rds/db_username}
     POSTGRES_PASSWORD: ${ssm:/terraform/${self:provider.stage}/rds/db_password}
     QUESTION_GENERATION_PROCESSOR_QUEUE_URL: ${ssm:/terraform/${self:provider.stage}/sqs/question_generation_processor_queue_url}
+    SERVICE_NAME: ${self:service}
 
 functions:
   evaluate-question:
@@ -59,9 +60,6 @@ functions:
           cors:
             origins: "http://127.0.0.1:5173"
             allowCredentials: true
-          # authorizer:
-          #   authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
-          #   type: REQUEST
           request:
             parameters:
               paths:
@@ -82,7 +80,7 @@ functions:
             origins: "http://127.0.0.1:5173"
             allowCredentials: true
           authorizer:
-            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
+            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.CookieAuthorizerId}
             type: REQUEST
     timeout: 30
 
@@ -99,9 +97,6 @@ functions:
           cors:
             origins: "http://127.0.0.1:5173"
             allowCredentials: true
-          # authorizer:
-          #   authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
-          #   type: REQUEST
           request:
             parameters:
               paths:
@@ -121,7 +116,7 @@ functions:
             origins: "http://127.0.0.1:5173"
             allowCredentials: true
           authorizer:
-            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
+            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.CookieAuthorizerId}
             type: REQUEST
           request:
             parameters:

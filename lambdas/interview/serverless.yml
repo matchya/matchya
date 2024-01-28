@@ -38,6 +38,7 @@ provider:
     POSTGRES_PASSWORD: ${ssm:/terraform/${self:provider.stage}/rds/db_password}
     QUESTION_GENERATION_PROCESSOR_QUEUE_URL: ${ssm:/terraform/${self:provider.stage}/sqs/question_generation_processor_queue_url}
     SENTRY_DSN: ${ssm:/secrets/${self:provider.stage}/sentry_dsn/${self:service}}
+    SERVICE_NAME: ${self:service}
 
 functions:
   evaluate-question:
@@ -68,9 +69,6 @@ functions:
               - "https://${ssm:/terraform/staging/domain_name}"
               - "https://www.${ssm:/terraform/staging/domain_name}"
             allowCredentials: true
-          # authorizer:
-          #   authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
-          #   type: REQUEST
           request:
             parameters:
               paths:
@@ -93,7 +91,7 @@ functions:
               - "https://www.${ssm:/terraform/staging/domain_name}"
             allowCredentials: true
           authorizer:
-            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
+            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.CookieAuthorizerId}
             type: REQUEST
     timeout: 30
 
@@ -112,9 +110,6 @@ functions:
               - "https://${ssm:/terraform/staging/domain_name}"
               - "https://www.${ssm:/terraform/staging/domain_name}"
             allowCredentials: true
-          # authorizer:
-          #   authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
-          #   type: REQUEST
           request:
             parameters:
               paths:
@@ -136,7 +131,7 @@ functions:
               - "https://www.${ssm:/terraform/staging/domain_name}"
             allowCredentials: true
           authorizer:
-            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
+            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.CookieAuthorizerId}
             type: REQUEST
           request:
             parameters:

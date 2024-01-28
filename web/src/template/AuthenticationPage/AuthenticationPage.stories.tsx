@@ -12,12 +12,5 @@ export default meta;
 type Story = StoryObj<typeof Component>;
 
 export const AuthenticationPage: Story = {
-  render: () => (
-    <Component
-      // isGitHubLoading={false}
-      isGoogleLoading={false}
-      // onGithubLogin={() => {}}
-      onGoogleLogin={() => {}}
-    />
-  ),
+  render: () => <Component isGoogleLoading={false} onGoogleLogin={() => {}} />,
 };

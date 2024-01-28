@@ -10,7 +10,6 @@ import AssessmentsPage from '@/screens/AssessmentsPage';
 import AuthenticationPage from '@/screens/AuthenticationPage';
 import CandidatesPage from '@/screens/CandidatesPage';
 import CreateAssessmentPage from '@/screens/CreateAssessmentPage';
-import GithubAuthCallbackPage from '@/screens/GithubAuthCallbackPage';
 import GoogleAuthCallbackPage from '@/screens/GoogleAuthCallbackPage';
 import HomePage from '@/screens/HomePage';
 import InterviewDetailPage from '@/screens/InterviewDetailPage';
@@ -38,10 +37,6 @@ function App() {
           <Route element={<UnAuthenticatedLayout />}>
             <Route path="/" element={<HomePage />} />
             <Route path="/auth" element={<AuthenticationPage />} />
-            <Route
-              path="/auth/github/callback"
-              element={<GithubAuthCallbackPage />}
-            />
             <Route
               path="/auth/google/callback"
               element={<GoogleAuthCallbackPage />}

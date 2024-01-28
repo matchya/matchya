@@ -24,6 +24,7 @@ provider:
         buildArgs:
   environment:
     ENVIRONMENT: ${self:provider.stage}
+    SERVICE_NAME: ${self:service}
     OPENAI_API_KEY: ${ssm:/secrets/${self:provider.stage}/openai_api_key}
     POSTGRES_HOST: ${ssm:/terraform/${self:provider.stage}/rds/endpoint}
     POSTGRES_PORT: ${ssm:/terraform/${self:provider.stage}/rds/port}
@@ -47,7 +48,7 @@ functions:
             origins: "http://127.0.0.1:5173"
             allowCredentials: true
           authorizer:
-            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
+            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.CookieAuthorizerId}
             type: REQUEST
 
   generate-questions:
@@ -74,7 +75,7 @@ functions:
             origins: "http://127.0.0.1:5173"
             allowCredentials: true
           authorizer:
-            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
+            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.CookieAuthorizerId}
             type: REQUEST
 
   retrieve-by-id:
@@ -91,7 +92,7 @@ functions:
             origins: "http://127.0.0.1:5173"
             allowCredentials: true
           authorizer:
-            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
+            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.CookieAuthorizerId}
             type: REQUEST
           request:
             parameters:

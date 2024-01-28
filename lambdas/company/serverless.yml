@@ -36,6 +36,7 @@ provider:
     POSTGRES_USER: ${ssm:/terraform/${self:provider.stage}/rds/db_username}
     POSTGRES_PASSWORD: ${ssm:/terraform/${self:provider.stage}/rds/db_password}
     SENTRY_DSN: ${ssm:/secrets/${self:provider.stage}/sentry_dsn/${self:service}}
+    SERVICE_NAME: ${self:service}
 
 functions:
   me:
@@ -54,7 +55,7 @@ functions:
               - "https://www.${ssm:/terraform/staging/domain_name}"
             allowCredentials: true
           authorizer:
-            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
+            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.CookieAuthorizerId}
             type: REQUEST
 
 plugins:
