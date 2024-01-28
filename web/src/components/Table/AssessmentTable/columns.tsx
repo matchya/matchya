@@ -10,11 +10,15 @@ export const columns: ColumnDef<Assessment>[] = [
     header: ({ column }) => (
       <AssessmentTableColumnHeader column={column} title="Updated At" />
     ),
-    cell: ({ row }) => (
-      <div className="min-w-[80px] max-w-[100px]">
-        {(row.getValue('updatedAt') as string).substring(0, 10)}
-      </div>
-    ),
+    cell: ({ row }) => {
+      const date = new Date(row.getValue('updatedAt') as string);
+      const formattedDate = date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      });
+      return <div className="min-w-[80px] max-w-[100px]">{formattedDate}</div>;
+    },
     enableSorting: false,
     enableHiding: false,
   },
