@@ -53,15 +53,21 @@ def handler(event, context):
             assessment_candidate_repo.insert(assessment_id=interview.assessment_id, candidate_id=candidate.id)
             interview.id = interview_repo.insert(interview.assessment_id, candidate_id=candidate.id)
             body_html_content, body_text_content = CandidateInviteEmailContentGenerator.generate(interview_id=interview.id)
-            email_id = ses_client.send_email(sender=Config.SENDER_EMAIL_ADDRESS, destinations=[candidate.email],
-                                             body_html_content=body_html_content,
-                                             body_text_content=body_text_content,
-                                             subject="You received an invitation to the assessment from Matchya")
+            ses_client.send_email(sender=Config.SENDER_EMAIL_ADDRESS, destinations=[candidate.email],
+                                  body_html_content=body_html_content,
+                                  body_text_content=body_text_content,
+                                  subject="You received an invitation to the assessment from Matchya")
             db_client.commit()
 
-        return response_generator.generate_success_response({
-            'email_id': email_id
-        })
+        payload = {
+            'candidate': {
+                'id': candidate.id,
+                'name': candidate.name,
+                'email': candidate.email
+            }
+        }
+
+        return response_generator.generate_success_response(payload)
     except (ValueError, RuntimeError) as e:
         logger.error(f'Adding a new candidate failed: {e}')
         return response_generator.generate_error_response(400, str(e))

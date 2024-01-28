@@ -66,7 +66,7 @@ const CandidateRow = ({
           onClick={sendInvitation}
           disabled={emailSent || isLoading}
         >
-          {emailSent ? 'Email Sent!' : 'Resent Email'}
+          {emailSent ? 'Email Sent!' : 'Resend Email'}
         </Button>
       )}
     </div>
@@ -97,6 +97,7 @@ const InviteCard = ({ candidates, assessmentId }: InviteCardProps) => {
       if (response.data.status === 'success') {
         setName('');
         setEmail('');
+        candidates.push(response.data.payload.candidate);
       }
     } catch (error) {
       console.log(error);
