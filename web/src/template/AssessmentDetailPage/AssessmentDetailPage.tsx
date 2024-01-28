@@ -20,8 +20,8 @@ const AssessmentDetailPageTemplate = ({
                 <h3 className="text-lg font-bold">{assessment?.name}</h3>
               )}
             </div>
-            <div className="flex flex-col-reverse lg:flex-row lg:space-x-6">
-              {!isLoading && (
+            {!isLoading && (
+              <div className="flex flex-col-reverse lg:flex-row lg:space-x-6">
                 <div className="space-y-6 flex-1">
                   {assessment?.questions?.length === 0 && (
                     <div className="flex flex-col items-center justify-center mt-20">
@@ -40,16 +40,16 @@ const AssessmentDetailPageTemplate = ({
                     />
                   ))}
                 </div>
-              )}
-              <div className="mb-6 lg:mb-0">
-                <InviteCard
-                  candidates={
-                    assessment?.candidates ? assessment?.candidates : []
-                  }
-                  assessmentId={assessment?.id}
-                />
+                <div className="mb-6 lg:mb-0">
+                  <InviteCard
+                    candidates={
+                      assessment?.candidates ? assessment?.candidates : []
+                    }
+                    assessmentId={assessment?.id}
+                  />
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
