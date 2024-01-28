@@ -17,24 +17,7 @@ const CandidatesPage = () => {
       setIsLoading(true);
       const response = await caseSensitiveAxiosInstance.get('/candidates');
       if (response.data.status === 'success') {
-        const candidates: Candidate[] = response.data.payload.candidates.map(
-          (candidate: any) => {
-            return {
-              id: candidate.id,
-              name: candidate.name,
-              email: candidate.email,
-              assessment: {
-                assessmentId: candidate.assessment.assessmentId,
-                assessmentName: candidate.assessment.assessmentName,
-                interviewId: candidate.assessment.interviewId,
-                interviewStatus: candidate.assessment.interviewStatus,
-                totalScore: candidate.assessment.totalScore,
-                createdAt: candidate.assessment.createdAt,
-              },
-            };
-          }
-        );
-        setCandidates(candidates);
+        setCandidates(response.data.payload.candidates);
       }
     } catch (error) {
       console.log(error);
