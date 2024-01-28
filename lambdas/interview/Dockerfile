@@ -11,7 +11,6 @@ RUN pip install -r requirements.txt
 COPY package.json package.json
 COPY *.py .
 COPY client/ ./client/
-COPY entity/ ./entity/
 COPY repo/ ./repo/
 COPY utils/ ./utils/
 

@@ -57,7 +57,7 @@ functions:
               - "https://www.${ssm:/terraform/${self:provider.stage}/domain_name}"
             allowCredentials: true
           authorizer:
-            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
+            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.CookieAuthorizerId}
             type: REQUEST
 
   generate-questions:
@@ -86,7 +86,7 @@ functions:
               - "https://www.${ssm:/terraform/${self:provider.stage}/domain_name}"
             allowCredentials: true
           authorizer:
-            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
+            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.CookieAuthorizerId}
             type: REQUEST
 
   retrieve-by-id:
@@ -105,7 +105,7 @@ functions:
               - "https://www.${ssm:/terraform/${self:provider.stage}/domain_name}"
             allowCredentials: true
           authorizer:
-            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
+            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.CookieAuthorizerId}
             type: REQUEST
           request:
             parameters:

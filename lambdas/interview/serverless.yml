@@ -91,7 +91,7 @@ functions:
               - "https://www.${ssm:/terraform/staging/domain_name}"
             allowCredentials: true
           authorizer:
-            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
+            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.CookieAuthorizerId}
             type: REQUEST
     timeout: 30
 
@@ -110,9 +110,6 @@ functions:
               - "https://${ssm:/terraform/staging/domain_name}"
               - "https://www.${ssm:/terraform/staging/domain_name}"
             allowCredentials: true
-          # authorizer:
-          #   authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
-          #   type: REQUEST
           request:
             parameters:
               paths:
@@ -134,7 +131,7 @@ functions:
               - "https://www.${ssm:/terraform/staging/domain_name}"
             allowCredentials: true
           authorizer:
-            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.AuthorizerId}
+            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.CookieAuthorizerId}
             type: REQUEST
           request:
             parameters:
