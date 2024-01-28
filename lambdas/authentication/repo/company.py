@@ -53,7 +53,7 @@ class CompanyRepository:
         :param body: The request body containing company data.
         """
         logger.info(f'Creating a new company record: {company_id}')
-        sql = "INSERT INTO company (id, name, email) VALUES (%s, %s, %s, %s);"
+        sql = "INSERT INTO company (id, name, email) VALUES (%s, %s, %s);"
         try:
             self.db_client.execute(sql, (company_id, body['name'], body['email']))
             logger.info('Successfully created a new company record')
