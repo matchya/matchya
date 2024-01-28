@@ -33,12 +33,19 @@ provider:
     SERVICE_NAME: ${self:service}
 
 functions:
-  authorizer:
-    name: ${self:provider.stage}-authorizer
+  authorize-cookie:
+    name: ${self:provider.stage}-authorize-cookie
     image:
       name: default
       command:
-        - authorize.handler
+        - authorize_cookie.handler
+
+  authorize-header:
+    name: ${self:provider.stage}-authorize-header
+    image:
+      name: default
+      command:
+        - authorize_header.handler
 
 resources:
   Parameters:
@@ -46,12 +53,12 @@ resources:
       Type: AWS::SSM::Parameter::Value<String>
       Default: /terraform/${self:provider.stage}/api_gateway/id
   Resources:
-    ApiGatewayAuthorizer:
+    ApiGatewayCookieAuthorizer:
       Type: AWS::ApiGateway::Authorizer
       DependsOn:
-        - AuthorizerLambdaFunction
+        - AuthorizeDashcookieLambdaFunction
       Properties:
-        Name: ${self:provider.stage}-authorizer
+        Name: ${self:provider.stage}-cookie-authorizer
         RestApiId:
           Ref: RestApiId
         AuthorizerUri:
@@ -64,18 +71,60 @@ resources:
               - Ref: AWS::Region
               - ":"
               - Ref: AWS::AccountId
-              - ":function:${self:provider.stage}-authorizer"
+              - ":function:${self:provider.stage}-authorize-cookie"
               - "/invocations"
         Type: REQUEST
         IdentitySource: method.request.header.Cookie
-    LambdaInvokePermissionForAuthorizer:
+    ApiGatewayHeaderAuthorizer:
+      Type: AWS::ApiGateway::Authorizer
+      DependsOn:
+        - AuthorizeDashheaderLambdaFunction
+      Properties:
+        Name: ${self:provider.stage}-header-authorizer
+        RestApiId:
+          Ref: RestApiId
+        AuthorizerUri:
+          Fn::Join:
+            - ""
+            - - "arn:aws:apigateway:"
+              - Ref: AWS::Region
+              - ":lambda:path/2015-03-31/functions/"
+              - "arn:aws:lambda:"
+              - Ref: AWS::Region
+              - ":"
+              - Ref: AWS::AccountId
+              - ":function:${self:provider.stage}-authorize-header"
+              - "/invocations"
+        Type: REQUEST
+        IdentitySource: method.request.header.Authorization
+    LambdaInvokePermissionForCookieAuthorizer:
       Type: "AWS::Lambda::Permission"
       DependsOn:
-        - ApiGatewayAuthorizer
-        - AuthorizerLambdaFunction
+        - ApiGatewayCookieAuthorizer
+        - AuthorizeDashcookieLambdaFunction
       Properties:
         FunctionName:
-          Fn::Sub: arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${self:provider.stage}-authorizer
+          Fn::Sub: arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${self:provider.stage}-authorize-cookie
+        Action: "lambda:InvokeFunction"
+        Principal: "apigateway.amazonaws.com"
+        SourceArn:
+          Fn::Join:
+            - ""
+            - - "arn:aws:execute-api:"
+              - Ref: AWS::Region
+              - ":"
+              - Ref: AWS::AccountId
+              - ":"
+              - Ref: RestApiId
+              - "/*/*"
+    LambdaInvokePermissionForHeaderAuthorizer:
+      Type: "AWS::Lambda::Permission"
+      DependsOn:
+        - ApiGatewayHeaderAuthorizer
+        - AuthorizeDashheaderLambdaFunction
+      Properties:
+        FunctionName:
+          Fn::Sub: arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${self:provider.stage}-authorize-header
         Action: "lambda:InvokeFunction"
         Principal: "apigateway.amazonaws.com"
         SourceArn:
@@ -89,11 +138,16 @@ resources:
               - Ref: RestApiId
               - "/*/*"
   Outputs:
-    AuthorizerId:
+    CookieAuthorizerId:
       Value:
-        Ref: ApiGatewayAuthorizer
+        Ref: ApiGatewayCookieAuthorizer
       Export:
-        Name: sls-authorizer-${self:provider.stage}-AuthorizerId
+        Name: sls-cookie-authorizer-${self:provider.stage}-AuthorizerId
+    HeaderAuthorizerId:
+      Value:
+        Ref: ApiGatewayHeaderAuthorizer
+      Export:
+        Name: sls-header-authorizer-${self:provider.stage}-AuthorizerId
 
 plugins:
   - serverless-deployment-bucket
