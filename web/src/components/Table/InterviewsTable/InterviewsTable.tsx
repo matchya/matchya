@@ -69,7 +69,7 @@ const InterviewsTable = ({ interviews }: InterviewsTableProps) => {
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (
-              <TableRow key={headerGroup.id} className='hover:bg-orange-100'>
+              <TableRow key={headerGroup.id} className='hover:bg-orange-50'>
                 {headerGroup.headers.map(header => {
                   return (
                     <TableHead key={header.id} colSpan={header.colSpan}>
