@@ -24,6 +24,7 @@ provider:
         buildArgs:
   environment:
     ENVIRONMENT: ${self:provider.stage}
+    SERVICE_NAME: ${self:service}
 
 functions:
   get-presigned-url:

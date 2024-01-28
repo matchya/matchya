@@ -7,3 +7,4 @@ class Config:
     """
     ENVIRONMENT = os.getenv('ENVIRONMENT', 'dev')
     SENTRY_DSN = os.getenv('SENTRY_DSN')
+    SERVICE_NAME = os.getenv('SERVICE_NAME')
