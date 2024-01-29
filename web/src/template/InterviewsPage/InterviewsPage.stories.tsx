@@ -18,7 +18,7 @@ export const InterviewsPage: Story = {
   render: () => (
     <>
       <Header />
-      <Component interviews={mockedInterviews} />
+      <Component interviews={mockedInterviews} isLoading={false} />
     </>
   ),
 };

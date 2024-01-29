@@ -25,7 +25,7 @@ import {
 
 import { columns } from './columns';
 
-import { Candidate } from '@/types';
+import { Assessment, Candidate } from '@/types';
 
 interface CandidatesTableProps {
   candidates: Candidate[];
@@ -63,9 +63,9 @@ const CandidatesTable = ({ candidates }: CandidatesTableProps) => {
   });
   const navigate = useNavigate();
 
-  const handleNavigateToDetail = (assessment: any) => {
-    if (!assessment || assessment.interview_status !== 'COMPLETED') return;
-    navigate(`/interviews/${assessment.interview_id}`);
+  const handleNavigateToDetail = (assessment: Assessment | undefined) => {
+    if (!assessment || assessment.interviewStatus !== 'COMPLETED') return;
+    navigate(`/interviews/${assessment.interviewId}`);
   };
 
   return (
@@ -75,7 +75,7 @@ const CandidatesTable = ({ candidates }: CandidatesTableProps) => {
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (
-              <TableRow key={headerGroup.id} className="hover:bg-orange-100">
+              <TableRow key={headerGroup.id} className="hover:bg-orange-50">
                 {headerGroup.headers.map(header => {
                   return (
                     <TableHead key={header.id} colSpan={header.colSpan}>

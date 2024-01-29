@@ -3,12 +3,14 @@ import { Assessment } from '@/types';
 
 interface AssessmentsPageTemplateProps {
   assessments: Assessment[];
+  isLoading: boolean;
   onNavigateToAssessment: () => void;
   handleNavigateToDetail: (id: string) => void;
 }
 
 const AssessmentsPageTemplate = ({
   assessments,
+  isLoading,
   onNavigateToAssessment,
   handleNavigateToDetail
 }: AssessmentsPageTemplateProps) => (
@@ -26,7 +28,7 @@ const AssessmentsPageTemplate = ({
                   Create New
                 </Button>
               </div>
-              <TestTable assessments={assessments} handleNavigateToDetail={handleNavigateToDetail} />
+              {!isLoading && <TestTable assessments={assessments} handleNavigateToDetail={handleNavigateToDetail} />}
             </div>
           </div>
         </div>

@@ -8,6 +8,7 @@ import { Assessment } from '@/types';
 const AssessmentDetailPage = () => {
   const params = useParams<{ id: string }>();
   const [assessment, setAssessment] = useState<Assessment | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     fetchAssessment();
@@ -15,16 +16,20 @@ const AssessmentDetailPage = () => {
 
   const fetchAssessment = async () => {
     try {
+      setIsLoading(true);
       const response = await axiosInstance.get(`/assessments/${params.id}`);
       if (response.data.status === 'success') {
-        setAssessment(response.data.payload.assessment);
+        const assessmentData: Assessment = response.data.payload.assessment;
+        setAssessment(assessmentData);
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  return <AssessmentDetailPageTemplate assessment={assessment} />;
+  return <AssessmentDetailPageTemplate assessment={assessment} isLoading={isLoading} />;
 };
 
 export default AssessmentDetailPage;

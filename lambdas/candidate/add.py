@@ -40,7 +40,7 @@ def handler(event, context):
         # parsing from the event
         body = parser.parse_request_body()
         origin = parser.parse_header()
-        response_generator.origin = origin
+        response_generator.origin_domain = origin
 
         # business logic
         candidate = Candidate()
@@ -77,7 +77,12 @@ def handler(event, context):
             db_client.commit()
 
         return response_generator.generate_success_response({
-            'email_id': email_id
+            'email_id': email_id,
+            'candidate': {
+                'id': candidate.id,
+                'name': candidate.name,
+                'email': candidate.email
+            }
         })
     except (ValueError, RuntimeError) as e:
         logger.error(f'Adding a new candidate failed: {e}')
