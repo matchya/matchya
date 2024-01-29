@@ -74,7 +74,6 @@ def handler(event, context):
                                              body_html_content=body_html_content,
                                              body_text_content=body_text_content,
                                              subject="You received an invitation to the assessment from Matchya")
-            db_client.commit()
 
         return response_generator.generate_success_response({
             'email_id': email_id,

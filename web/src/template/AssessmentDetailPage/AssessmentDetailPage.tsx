@@ -1,14 +1,16 @@
-import { Icons, InviteCard, QuestionCard } from '@/components';
+import { InviteCard } from '@/components';
 import { Assessment } from '@/types';
 
 interface AssessmentDetailPageTemplateProps {
   assessment: Assessment | null;
   isLoading: boolean;
+  questionsListFragment: React.ReactNode;
 }
 
 const AssessmentDetailPageTemplate = ({
   assessment,
   isLoading,
+  questionsListFragment,
 }: AssessmentDetailPageTemplateProps) => (
   <div className="h-full min-h-[calc(100vh-64px)] overflow-hidden bg-macha-200">
     <div className="w-full h-full mx-auto">
@@ -22,24 +24,7 @@ const AssessmentDetailPageTemplate = ({
             </div>
             {!isLoading && (
               <div className="flex flex-col-reverse lg:flex-row lg:space-x-6">
-                <div className="space-y-6 flex-1">
-                  {assessment?.questions?.length === 0 && (
-                    <div className="flex flex-col items-center justify-center mt-20">
-                      <p className="text-lg font-bold text-gray-500">
-                        Matchya AI is generating questions...
-                      </p>
-                      <Icons.spinner className="w-6 h-6 mt-6 spinner" />
-                    </div>
-                  )}
-                  {assessment?.questions?.map(question => (
-                    <QuestionCard
-                      key={question.id}
-                      text={question.text}
-                      keyword={question.topic}
-                      difficulty={question.difficulty}
-                    />
-                  ))}
-                </div>
+                {questionsListFragment}
                 <div className="mb-6 lg:mb-0">
                   <InviteCard
                     candidates={

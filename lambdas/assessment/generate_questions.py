@@ -47,7 +47,7 @@ def handler(event, context):
             question_repo.insert_many(questions)
             assessment_question_repo.insert(assessment_id, questions)
             metric_repo.insert_many(questions)
-            db_client.commit()
+
     except (ValueError, RuntimeError) as e:
         status_code = 400
         logger.error(f'Questions generation failed (status {str(status_code)}): {e}')

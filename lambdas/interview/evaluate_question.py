@@ -37,7 +37,7 @@ def handler(event, context):
 
         # parsing from the event
         bucket, key = parser.parse_bucket_name_and_key()
-        
+
         # business logic
         interview_id, question_id = key.split('/')[0], key.split('/')[1].split('.')[0]
         VIDEO_EXTENSION = '.webm'
@@ -54,7 +54,7 @@ def handler(event, context):
             score, feedback = evaluation_generator.generate(question, position_type, position_level, transcript)
             video_url = f'https://{bucket}.s3.amazonaws.com/{key}'
             answer_repo.store_answer_evaluation_to_db(interview_id, question_id, score, feedback, video_url)
-            db_client.commit()
+
         logger.info('Executing lambda function finished successfully')
     except (ValueError, RuntimeError) as e:
         status_code = 400

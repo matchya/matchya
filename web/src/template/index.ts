@@ -1,3 +1,4 @@
+export { default as AssessmentDetailPageTemplate } from './AssessmentDetailPage/AssessmentDetailPage';
 export { default as AuthenticationPageTemplate } from './AuthenticationPage/AuthenticationPage';
 export { default as OAuthCallbackPageTemplate } from './OAuthCallbackPage/OAuthCallbackPage';
 export { default as HomePageTemplate } from './HomePage/HomePage';
@@ -5,3 +6,4 @@ export { default as OnboardingPageTemplate } from './OnboardingPage/OnboardingPa
 export { default as InterviewsPageTemplate } from './InterviewsPage/InterviewsPage';
 export { default as InterviewRecordingPageTemplate } from './InterviewRecordingPage/InterviewRecordingPage';
 export { default as CreateAssessmentPageTemplate } from './CreateAssessmentPage/CreateAssessmentPage';
+export { default as QuestionsListTemplate } from './QuestionsList/QuestionsList';

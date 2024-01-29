@@ -21,12 +21,17 @@ class PostgresDBClient:
             self.db_conn = psycopg2.connect(host=Config.POSTGRES_HOST, database=Config.POSTGRES_DB, user=Config.POSTGRES_USER, password=Config.POSTGRES_PASSWORD)
 
     def __enter__(self):
-        logger.info('Starting DB Transaction...')
+        logger.info('Starting a new transaction...')
         self.db_cursor = self.db_conn.cursor()
         return self
 
-    def __exit__(self, *_):
-        logger.info('Closing DB Connection...')
+    def __exit__(self, exc_type, *_):
+        if exc_type is not None:
+            logger.error('An error occurred, rolling back transaction...')
+            self.db_conn.rollback()
+        else:
+            logger.info('Transaction completed successfully, committing...')
+            self.db_conn.commit()
         if self.db_cursor:
             self.db_cursor.close()
 

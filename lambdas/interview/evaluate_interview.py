@@ -51,7 +51,7 @@ def handler(event, context):
             total_score = calculate_total_score(answers)
             summary = summary_generation_client.generate(answers)
             interview_repo.update_interview(interview_id, total_score, summary)
-            db_client.commit()
+
         logger.info("Successfully evaluated an interview.")
         return response_generator.generate_success_response({
             'interview_id': interview_id

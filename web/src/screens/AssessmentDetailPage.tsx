@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { QuestionsList } from '@/fragments';
 import { axiosInstance } from '@/lib/axios';
-import AssessmentDetailPageTemplate from '@/template/AssessmentDetailPage/AssessmentDetailPage';
+import { AssessmentDetailPageTemplate } from '@/template';
 import { Assessment } from '@/types';
 
 const AssessmentDetailPage = () => {
@@ -29,7 +30,15 @@ const AssessmentDetailPage = () => {
     }
   };
 
-  return <AssessmentDetailPageTemplate assessment={assessment} isLoading={isLoading} />;
+  return (
+    <AssessmentDetailPageTemplate
+      assessment={assessment}
+      isLoading={isLoading}
+      questionsListFragment={
+        <QuestionsList initialQuestions={assessment?.questions || null} />
+      }
+    />
+  );
 };
 
 export default AssessmentDetailPage;

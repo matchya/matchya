@@ -89,7 +89,7 @@ const InterviewRecordingPageTemplate = ({
           </div>
 
           <div className="w-full flex flex-wrap justify-center items-center pt-10">
-            {question.metrics.map(metric => (
+            {question.metrics?.map(metric => (
               <div
                 key={metric.id}
                 className="p-4 w-60 h-24 bg-orange-50 m-2 overflow-y-scroll"
