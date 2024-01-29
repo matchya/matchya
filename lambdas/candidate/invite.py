@@ -1,5 +1,6 @@
 import os
 
+from client.dynamodb import DynamoDBClient
 from client.postgres import PostgresDBClient
 from client.sentry import SentryClient
 from client.ses import SESClient
@@ -7,21 +8,28 @@ from config import Config
 from entity.candidate import Candidate
 from repo.candidate import CandidateRepository
 from repo.interview import InterviewRepository
+from repo.interview_access_token import InterviewAccessTokenRepository
 from utils.email_content_creator import CandidateInviteEmailContentGenerator
 from utils.logger import Logger
 from utils.package_info import PackageInfo
 from utils.request_parser import RequestParser
 from utils.response_generator import ResponseGenerator
+from utils.token import retrieve_interview_access_token
 
 logger = Logger.configure(os.path.relpath(__file__, os.path.join(os.path.dirname(__file__), '.')))
 
 SentryClient.initialize(PackageInfo('package.json').get_version())
 postgres_client = PostgresDBClient()
+dynamodb_client = DynamoDBClient(table_name='InterviewAccessToken')
 ses_client = SESClient()
 response_generator = ResponseGenerator()
+interview_access_token_repo = InterviewAccessTokenRepository(dynamodb_client)
 
 
 def handler(event, context):
+    """
+    This lambda is responsible when the user clicks on the 'Resend Invitation' button under the list of candidates which was already invited.
+    """
     logger.info('Starting lambda execution')
     try:
         # initialize the parser
@@ -42,7 +50,10 @@ def handler(event, context):
             candidate = candidate_repo.retrieve_by_id(candidate.id)
             interview = interview_repo.retrieve_by_candidate_id(candidate.id)
 
-        body_html_content, body_text_content = CandidateInviteEmailContentGenerator.generate(interview_id=interview.id)
+        token = retrieve_interview_access_token(interview_access_token_repo, candidate_id, interview.id)
+        # send the invitation email
+        body_html_content, body_text_content = CandidateInviteEmailContentGenerator.generate(interview_id=interview.id, 
+                                                                                             interview_access_token=token)
         email_id = ses_client.send_email(sender=Config.SENDER_EMAIL_ADDRESS, destinations=[candidate.email],
                                          body_html_content=body_html_content,
                                          body_text_content=body_text_content,
