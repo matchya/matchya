@@ -40,7 +40,6 @@ def handler(event, context):
             assessment_repo = AssessmentRepository(db_client)
             assessment.id = assessment_repo.insert(company_id, assessment)
             sqs_client.publish_questions(assessment)
-            db_client.commit()
 
         return response_generator.generate_success_response({
             'assessment_id': assessment.id

@@ -52,7 +52,6 @@ def handler(event, context):
             })
             access_token = TokenGenerator.generate_company_access_token(company_id)
             access_token_repo.create_access_token_record(company_id, access_token)
-            db_client.commit()
 
         return response_generator.generate_cookie_success_response(access_token)
     except (ValueError, RuntimeError) as e:
