@@ -17,8 +17,27 @@ class ResponseGenerator:
         'Content-Type': 'application/json'
     }
 
-    @classmethod
-    def _generate_response(cls, origin_domain: str, status_code: int, body: Any, cookie=None) -> Dict[str, Any]:
+    def __init__(self):
+        self._origin_domain = None
+        self._host_domain = None
+
+    @property
+    def origin_domain(self):
+        return self._origin_domain
+
+    @origin_domain.setter
+    def origin_domain(self, value):
+        self._origin_domain = value
+
+    @property
+    def host_domain(self):
+        return self._host_domain
+
+    @host_domain.setter
+    def host_domain(self, value):
+        self._host_domain = value
+
+    def _generate_response(self, status_code: int, body: Any, cookie=None) -> Dict[str, Any]:
         """
         Generates a HTTP response object.
 
@@ -27,19 +46,18 @@ class ResponseGenerator:
         :return: A dictionary representing the HTTP response.
         """
         logger.info(f'Generating response: {status_code}, {body}')
-        headers = cls.COMMON_HEADERS.copy()
+        headers = self.COMMON_HEADERS.copy()
         if cookie:
             headers['Set-Cookie'] = cookie.output(header='', sep='')
-        if origin_domain:
-            headers['Access-Control-Allow-Origin'] = origin_domain
+        if self.origin_domain:
+            headers['Access-Control-Allow-Origin'] = self.origin_domain
         return {
             "statusCode": status_code,
             "body": body,
             "headers": headers
         }
 
-    @classmethod
-    def generate_error_response(cls, origin: str, status_code: int, message: str):
+    def generate_error_response(self, status_code: int, message: str):
         """
         Generates an error response object.
 
@@ -52,10 +70,9 @@ class ResponseGenerator:
             'status': 'error',
             'message': message
         }
-        return cls.generate_response(origin_domain=origin, status_code=status_code, body=json.dumps(body))
+        return self._generate_response(status_code=status_code, body=json.dumps(body))
 
-    @classmethod
-    def generate_success_response(cls, origin: str, host: str, access_token: str) -> Dict[str, Any]:
+    def generate_cookie_success_response(self, access_token: str) -> Dict[str, Any]:
         """
         Generates a success response with the access token.
 
@@ -66,7 +83,7 @@ class ResponseGenerator:
         cookie = Cookie.SimpleCookie()
         cookie['t'] = access_token
         cookie['t']['httponly'] = True
-        cookie['t']['domain'] = host
+        cookie['t']['domain'] = self.host_domain
         cookie['t']['path'] = '/'
         cookie['t']['samesite'] = None
         cookie['t']['secure'] = True
@@ -77,16 +94,30 @@ class ResponseGenerator:
         body = {
             'status': 'success',
         }
-        return cls._generate_response(origin_domain=origin, status_code=200, body=json.dumps(body), cookie=cookie)
+        return self._generate_response(status_code=200, body=json.dumps(body), cookie=cookie)
 
-    @classmethod
-    def generate_logout_response(cls, origin: str, host: str):
+    def generate_invitation_success_response(self, payload=None) -> Dict[str, Any]:
+        """
+        Generates a success response with the access token.
+
+        :param body: The generated access token.
+        :return: A success response containing the access token and current timestamp.
+        """
+        logger.info(f'Generating invitation success response: {payload}')
+        body = {
+            'status': 'success'
+        }
+        if payload is not None:
+            body['payload'] = payload
+        return self._generate_response(status_code=200, body=json.dumps(body))
+
+    def generate_logout_response(self):
         logger.info('Generating logout response')
         headers = {
             'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': origin,
+            'Access-Control-Allow-Origin': self.origin_domain,
             'Access-Control-Allow-Credentials': 'true',
-            'Set-Cookie': f't=; HttpOnly; Domain={host}; Path=/; Max-Age=0; SameSite=None; Secure'
+            'Set-Cookie': f't=; HttpOnly; Domain={self.host_domain}; Path=/; Max-Age=0; SameSite=None; Secure'
         }
         return {
             'statusCode': 200,

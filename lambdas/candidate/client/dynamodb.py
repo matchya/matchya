@@ -9,17 +9,18 @@ from utils.logger import Logger
 logger = Logger.configure(os.path.relpath(__file__, os.path.join(os.path.dirname(__file__), '..')))
 
 
-class DynamodbClient:
+class DynamoDBClient:
     def __init__(self, table_name):
         dynamodb = boto3.resource('dynamodb')
         self.table = dynamodb.Table(f'{Config.ENVIRONMENT}-{table_name}')
-        logger.info(f'DynamodbClient initialized with table: {self.table}')
+        logger.info(f'DynamoDBClient initialized with table: {self.table}')
 
     def retrieve(self, key):
         """
         Retrieves an item from the database.
         """
-        self.table.get_item(Key=key)
+        response = self.table.get_item(Key=key)
+        return response.get('Item', {})
 
     def insert(self, **kwargs):
         """
@@ -46,4 +47,19 @@ class DynamodbClient:
         except (BotoCoreError, ClientError) as e:
             # Log the error and re-raise
             logger.error(f"Failed to query item: {e}")
+            raise
+
+    def update(self, key, update_expression, expression_attribute_values):
+        """
+        Updates an item in the database.
+        """
+        try:
+            self.table.update_item(
+                Key=key,
+                UpdateExpression=update_expression,
+                ExpressionAttributeValues=expression_attribute_values
+            )
+        except (BotoCoreError, ClientError) as e:
+            # Log the error and re-raise
+            logger.error(f"Failed to update item: {e}")
             raise

@@ -69,6 +69,9 @@ functions:
               - "https://${ssm:/terraform/staging/domain_name}"
               - "https://www.${ssm:/terraform/staging/domain_name}"
             allowCredentials: true
+          authorizer:
+            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.HeaderAuthorizerId}
+            type: REQUEST
           request:
             parameters:
               paths:
@@ -110,6 +113,9 @@ functions:
               - "https://${ssm:/terraform/staging/domain_name}"
               - "https://www.${ssm:/terraform/staging/domain_name}"
             allowCredentials: true
+          authorizer:
+            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.HeaderAuthorizerId}
+            type: REQUEST
           request:
             parameters:
               paths:
@@ -137,22 +143,6 @@ functions:
             parameters:
               paths:
                 id: true
-
-  verify-token:
-    name: ${self:provider.stage}-interview-verify-token
-    image:
-      name: default
-      command:
-        - verify_token.handler
-    events:
-      - http:
-          path: /interviews/verify
-          method: POST
-          cors:
-            origins:
-              - "https://${ssm:/terraform/staging/domain_name}"
-              - "https://www.${ssm:/terraform/staging/domain_name}"
-            allowCredentials: true # may not need?
 
 plugins:
   - serverless-deployment-bucket

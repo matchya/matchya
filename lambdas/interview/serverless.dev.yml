@@ -60,6 +60,9 @@ functions:
           cors:
             origins: "http://127.0.0.1:5173"
             allowCredentials: true
+          authorizer:
+            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.HeaderAuthorizerId}
+            type: REQUEST
           request:
             parameters:
               paths:
@@ -97,6 +100,9 @@ functions:
           cors:
             origins: "http://127.0.0.1:5173"
             allowCredentials: true
+          authorizer:
+            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.HeaderAuthorizerId}
+            type: REQUEST
           request:
             parameters:
               paths:

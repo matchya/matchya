@@ -1,4 +1,3 @@
-from http.cookies import SimpleCookie
 import os
 
 import jwt
@@ -24,12 +23,13 @@ def handler(event, context):
     try:
         # parsing the event
         authorization_header = parser.parser_authorization_header()
-        
+        logger.info(f'Authorization header: {authorization_header}')
         # check if it is available in the interview access token table
-
+        jwt_token = authorization_header.split(' ')[1]
         # TODO: implement logic to validate if jwt token is still valid
         if jwt_token:
             decoded_payload = jwt.decode(jwt_token, Config.JWT_SECRET_KEY, algorithms=["HS256"])
+            logger.info(f'Decoded payload: {decoded_payload}')
             return iam_policy_generator.generate_policy(effect='Allow', context=decoded_payload)
     except (jwt.ExpiredSignatureError, jwt.InvalidTokenError, ValueError) as e:
         logger.error(f'Exception occurred: {e}')

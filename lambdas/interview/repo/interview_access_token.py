@@ -1,7 +1,7 @@
 
 import os
 
-from client.dynamodb import DynamodbClient
+from client.dynamodb import DynamoDBClient
 from utils.logger import Logger
 
 
@@ -9,7 +9,7 @@ logger = Logger.configure(os.path.relpath(__file__, os.path.join(os.path.dirname
 
 
 class InterviewAccessTokenRepository:
-    def __init__(self, db_client: DynamodbClient):
+    def __init__(self, db_client: DynamoDBClient):
         self.db_client = db_client
 
     def retrieve_by_token(self, token):
@@ -17,7 +17,7 @@ class InterviewAccessTokenRepository:
         Retrieves the interview access token from the database.
         """
         logger.info(f'Retrieving interview access token from database: {token}')
-        result = self.db_client.get_item(Key={'token': token})
+        result = self.db_client.retrieve(key={'token': token})
         logger.info(f'Result: {result}')
         return result.get('Item', {})
 

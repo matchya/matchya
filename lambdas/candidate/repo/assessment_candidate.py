@@ -29,3 +29,17 @@ class AssessmentCandidateRepository:
             logger.info('Successfully inserted to assessment_candidate table')
         except Exception as e:
             raise RuntimeError(f"Error registering to assessment_candidate table: {e}")
+
+    def check_exists(self, assessment_id, candidate_id):
+        """
+        Check if the candidate is already registered to the assessment.
+        """
+        logger.info(f'Checking if candidate is already registered to assessment: {assessment_id}, {candidate_id}')
+        sql = "SELECT EXISTS(SELECT 1 FROM assessment_candidate WHERE assessment_id = %s AND candidate_id = %s);"
+        try:
+            self.db_client.execute(sql, (assessment_id, candidate_id))
+            result = self.db_client.fetchone()
+            logger.info('Successfully checked if candidate is already registered to assessment')
+            return result[0]
+        except Exception as e:
+            raise RuntimeError(f"Error checking if candidate is already registered to assessment: {e}")

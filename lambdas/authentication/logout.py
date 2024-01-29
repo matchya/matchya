@@ -9,6 +9,7 @@ from utils.response_generator import ResponseGenerator
 logger = Logger.configure(os.path.relpath(__file__, os.path.join(os.path.dirname(__file__), '.')))
 
 SentryClient.initialize(PackageInfo('package.json').get_version())
+response_generator = ResponseGenerator()
 
 
 def handler(event, context):
@@ -25,5 +26,7 @@ def handler(event, context):
     # initializing the parser
     parser = RequestParser(event)
     origin, host = parser.parse_header()
+    response_generator.origin_domain = origin
+    response_generator.host_domain = host
 
-    return ResponseGenerator.generate_logout_response(origin, host)
+    return response_generator.generate_logout_response()
