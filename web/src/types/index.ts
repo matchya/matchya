@@ -21,7 +21,7 @@ export interface Answer {
   questionDifficulty: string;
   feedback: string;
   score: number;
-  videoUrl: string; 
+  videoUrl: string;
 }
 
 export interface Candidate {
@@ -41,7 +41,7 @@ export interface Assessment {
   numCandidates?: number;
   questions?: Question[];
   candidates?: Candidate[];
-  interviewId?: string; 
+  interviewId?: string;
   interviewStatus?: string;
   totalScore?: number;
   summary?: string;
@@ -50,7 +50,7 @@ export interface Assessment {
 export interface Question {
   id: string;
   text: string;
-  metrics: Metric[];
+  metrics?: Metric[];
   topic: string;
   difficulty: string;
 }

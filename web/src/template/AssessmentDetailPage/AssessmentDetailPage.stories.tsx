@@ -18,7 +18,11 @@ export const AssessmentDetailPage: Story = {
   render: () => (
     <>
       <Header />
-      <Component assessment={mockedAssessments[0]} isLoading={false} />
+      <Component
+        assessment={mockedAssessments[0]}
+        isLoading={false}
+        questionsListFragment={<div>Temp</div>}
+      />
     </>
   ),
 };

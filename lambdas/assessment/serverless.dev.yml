@@ -99,5 +99,26 @@ functions:
               paths:
                 id: true
 
+  retrieve-generated-questions-by-id:
+    name: ${self:provider.stage}-assessment-retrieve-generated-questions-by-id
+    image:
+      name: default
+      command:
+        - retrieve_generated_questions_by_id.handler
+    events:
+      - http:
+          path: /assessments/{id}/questions
+          method: GET
+          cors:
+            origins: "http://127.0.0.1:5173"
+            allowCredentials: true
+          authorizer:
+            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.CookieAuthorizerId}
+            type: REQUEST
+          request:
+            parameters:
+              paths:
+                id: true
+
 plugins:
   - serverless-deployment-bucket
