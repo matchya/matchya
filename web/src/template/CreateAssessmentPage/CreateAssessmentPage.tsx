@@ -76,6 +76,7 @@ const CreateAssessmentPageTemplate = ({
           <div className="w-full flex flex-wrap">
             {positions.map(position => (
               <div
+                key={position}
                 className="w-1/3 flex justify-start items-center my-2 cursor-pointer"
                 onClick={() => onPositionChange(position)}
               >
@@ -97,6 +98,7 @@ const CreateAssessmentPageTemplate = ({
           <div className="w-full flex flex-wrap">
             {levels.map(level => (
               <div
+                key={level}
                 className="w-1/2 flex justify-start items-center my-2 cursor-pointer"
                 onClick={() => onLevelChange(level)}
               >
@@ -147,7 +149,10 @@ const CreateAssessmentPageTemplate = ({
               </div>
               <div className="w-full flex flex-wrap">
                 {specifiedTopics.map(topic => (
-                  <div className="px-2 py-1 flex justify-start items-center my-2 cursor-pointer bg-macha-400 mx-4 rounded-2xl">
+                  <div
+                    key={topic}
+                    className="px-2 py-1 flex justify-start items-center my-2 cursor-pointer bg-macha-400 mx-4 rounded-2xl"
+                  >
                     <Icons.close
                       className="w-4 h-4 mr-2"
                       onClick={() => handleRemoveTopic(topic)}
@@ -162,9 +167,9 @@ const CreateAssessmentPageTemplate = ({
               <textarea
                 className="w-full h-32 text-black p-1 px-4 bg-orange-50 active:ring-0 focus:ring-0 border-2 text-sm"
                 placeholder={
-                  "Let us know more about your position to generate better questions for you.\n" +
-                  "ex)\n - Seeking a front-end engineer proficient in design.\n" +
-                  " - Back-end engineer with experience working for a large-scale company."
+                  'Let us know more about your position to generate better questions for you.\n' +
+                  'ex)\n - Seeking a front-end engineer proficient in design.\n' +
+                  ' - Back-end engineer with experience working for a large-scale company.'
                 }
               />
             </div>
