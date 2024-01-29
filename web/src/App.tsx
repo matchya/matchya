@@ -15,6 +15,7 @@ import HomePage from '@/screens/HomePage';
 import InterviewDetailPage from '@/screens/InterviewDetailPage';
 import InterviewRecordingPage from '@/screens/InterviewRecordingPage';
 import InterviewsPage from '@/screens/InterviewsPage';
+import InvitationAuthenticationPage from '@/screens/InvitationAuthenticationPage';
 import OnboardingPage from '@/screens/OnboardingPage';
 
 function App() {
@@ -23,7 +24,7 @@ function App() {
       <Router>
         <SentryRoutes>
           <Route element={<AuthenticatedLayout />}>
-            <Route path="/onboarding" element={<OnboardingPage />} />
+            <Route path="/dashboard" element={<OnboardingPage />} />
             <Route path="/candidates" element={<CandidatesPage />} />
             <Route path="/interviews" element={<InterviewsPage />} />
             <Route path="/interviews/:id" element={<InterviewDetailPage />} />
@@ -40,6 +41,10 @@ function App() {
             <Route
               path="/auth/google/callback"
               element={<GoogleAuthCallbackPage />}
+            />
+            <Route
+              path="/auth/invitation"
+              element={<InvitationAuthenticationPage />}
             />
             <Route
               path="/interviews/:id/record"

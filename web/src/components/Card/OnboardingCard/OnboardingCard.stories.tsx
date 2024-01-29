@@ -12,5 +12,5 @@ export default meta;
 type Story = StoryObj<typeof Component>;
 
 export const Onboarding: Story = {
-  render: () => <Component title="Step 1" link="/onboarding" />,
+  render: () => <Component title="Step 1" link="/dashboard" />,
 };

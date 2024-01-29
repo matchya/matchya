@@ -70,7 +70,7 @@ const AssessmentTable = ({ assessments, handleNavigateToDetail }: AssessmentTabl
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow
                 key={headerGroup.id}
-                className="hover:bg-orange-100"
+                className="hover:bg-orange-50"
               >
                 {headerGroup.headers.map(header => {
                   return (

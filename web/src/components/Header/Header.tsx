@@ -38,7 +38,7 @@ const Header = () => {
   return (
     <div className="border-b bg-macha-500">
       <div className="flex h-16 items-center px-4">
-        <Link to="/onboarding">
+        <Link to="/dashboard">
           <div className="flex items-center space-x-4 px-4 cursor-pointer">
             <img src={matchyaSticker} alt="logo" className="w-48" />
           </div>

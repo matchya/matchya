@@ -61,5 +61,19 @@ functions:
             origins: "http://127.0.0.1:5173"
             allowCredentials: true
 
+  invitation:
+    name: ${self:provider.stage}-authentication-invitation
+    image:
+      name: default
+      command:
+        - invitation.handler
+    events:
+      - http:
+          path: /auth/invitation
+          method: POST
+          cors:
+            origins: "http://127.0.0.1:5173"
+            allowCredentials: true
+
 plugins:
   - serverless-deployment-bucket

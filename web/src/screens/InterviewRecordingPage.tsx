@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Webcam from 'react-webcam';
 
 import { axiosInstance } from '@/lib/axios';
@@ -19,23 +19,31 @@ const InterviewRecordingPage = () => {
   const [interviewDone, setInterviewDone] = useState(false);
   const params = useParams<{ id: string }>();
   const interviewId = params.id;
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetchInterviewQuestions();
-  }, [params.id]);
+    const sessionToken = sessionStorage.getItem('sessionToken');
+    if (sessionToken) {
+      axiosInstance.defaults.headers.common['Authorization'] =
+        `Bearer ${sessionToken}`;
+      try {
+        fetchInterviewQuestions();
+      } catch (err) {
+        navigate('/404');
+      }
+    } else {
+      navigate('/404');
+    }
+  }, [params.id, navigate]);
 
   const fetchInterviewQuestions = async () => {
-    try {
-      const response = await axiosInstance.get(
-        `/interviews/${interviewId}/questions`
-      );
-      if (response.data.status === 'success') {
-        const interview = response.data.payload.interview;
-        setQuestions(interview.questions);
-        console.log(interview.questions);
-      }
-    } catch (error) {
-      console.error(error);
+    const response = await axiosInstance.get(
+      `/interviews/${interviewId}/questions`
+    );
+    if (response.data.status === 'success') {
+      const interview = response.data.payload.interview;
+      setQuestions(interview.questions);
+      console.log(interview.questions);
     }
   };
 

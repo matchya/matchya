@@ -20,6 +20,7 @@ SentryClient.initialize(PackageInfo('package.json').get_version())
 postgres_client = PostgresDBClient()
 dynamodb_client = DynamoDBClient(table_name='AccessToken')
 access_token_repo = AccessTokenRepository(dynamodb_client)
+response_generator = ResponseGenerator()
 
 
 def handler(event, context):
@@ -31,6 +32,8 @@ def handler(event, context):
         # parsing the event
         body = parser.parse_request_body()
         origin, host = parser.parse_header()
+        response_generator.origin_domain = origin
+        response_generator.host_domain = host
 
         # business logic
         token = Token(body.get('token'))
@@ -40,23 +43,23 @@ def handler(event, context):
             company_repo = CompanyRepository(db_client)
             if company_repo.company_already_exists(email):
                 company_id = company_repo.get_company_id(email)
-                access_token = TokenGenerator.generate_access_token(company_id)
-                return ResponseGenerator.generate_success_response(origin, host, access_token)
+                access_token = TokenGenerator.generate_company_access_token(company_id)
+                return response_generator.generate_cookie_success_response(access_token)
             company_id = str(uuid.uuid4())
             company_repo.create_company_record(company_id, {
                 "name": username,
                 "email": email
             })
-            access_token = TokenGenerator.generate_access_token(company_id)
+            access_token = TokenGenerator.generate_company_access_token(company_id)
             access_token_repo.create_access_token_record(company_id, access_token)
             db_client.commit()
 
-        return ResponseGenerator.generate_success_response(origin, host, access_token)
+        return response_generator.generate_cookie_success_response(access_token)
     except (ValueError, RuntimeError) as e:
         status_code = 400
         logger.error(f'Login failed (status {str(status_code)}): {e}')
-        return ResponseGenerator.generate_error_response(origin, status_code, str(e))
+        return response_generator.generate_error_response(status_code, str(e))
     except Exception as e:
         status_code = 500
         logger.error(f'Login failed (status {str(status_code)}): {e}')
-        return ResponseGenerator.generate_error_response(origin, status_code, str(e))
+        return response_generator.generate_error_response(status_code, str(e))
