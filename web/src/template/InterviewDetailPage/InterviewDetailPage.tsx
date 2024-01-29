@@ -1,7 +1,6 @@
 import ReactPlayer from 'react-player';
 import { Link } from 'react-router-dom';
 
-import interviewMock from '@/assets/interview-mock.png';
 import { Interview } from '@/types';
 
 interface InterviewDetailPageTemplateProps {
@@ -46,7 +45,7 @@ const InterviewDetailPageTemplate = ({
                   <div className="w-full flex flex-col items-center justify-center">
                     <div className="lg:flex-grow-0 lg:flex-shrink-0">
                       <ReactPlayer
-                        url={`https://dev-data-question-response-video.s3.amazonaws.com/${interview.id}/${currentAnswer.questionId}.webm`}
+                        url={currentAnswer.videoUrl}
                         controls={true}
                         className="w-full h-full max-h-[1087px] object-contain"
                       />
@@ -78,13 +77,24 @@ const InterviewDetailPageTemplate = ({
 
                     {interview.answers.map(answer => (
                       <div
-                        className="w-full flex items-center cursor-pointer hover:bg-orange-100"
+                        className={`w-full flex items-center cursor-pointer hover:bg-orange-100 my-4 px-2`}
                         key={answer.questionId}
                         onClick={() => onSelectVideo(answer)}
                       >
-                        <img src={interviewMock} className="w-1/3 pl-3" />
-                        <div className="w-2/3 p-4">
-                          <p className="text-xl font-bold">
+                        <ReactPlayer
+                          url={answer.videoUrl}
+                          controls={false}
+                          playing={false}
+                          width={200}
+                          height={'auto'}
+                        />
+                        <div className="w-2/3 p-2">
+                          <p
+                            className={`text-xl font-bold ${
+                              currentAnswer.questionId === answer.questionId &&
+                              'text-macha-500'
+                            }`}
+                          >
                             {answer.questionTopic}
                           </p>
                           <p className="text-xs">
