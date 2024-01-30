@@ -64,7 +64,7 @@ const InterviewsTable = ({ interviews }: InterviewsTableProps) => {
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
   return (
-    <div className="space-y-4 h-full overflow-y-scroll  rounded-md">
+    <div className="space-y-4 h-full overflow-y-scroll rounded-md">
       {/* <InterviewsTableToolbar table={table} /> */}
       <div className="rounded-md border">
         <Table>
