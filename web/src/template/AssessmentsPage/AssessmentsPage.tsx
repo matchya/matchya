@@ -12,7 +12,7 @@ const AssessmentsPageTemplate = ({
   assessments,
   isLoading,
   onNavigateToAssessment,
-  handleNavigateToDetail
+  handleNavigateToDetail,
 }: AssessmentsPageTemplateProps) => (
   <div className="h-full min-h-[calc(100vh-64px)] overflow-hidden">
     <div className="w-full h-full mx-auto">
@@ -24,11 +24,19 @@ const AssessmentsPageTemplate = ({
                 <div className="space-y-4">
                   <h3 className="text-4xl font-bold">Assessments</h3>
                 </div>
-                <Button onClick={onNavigateToAssessment} className='bg-orange-200 text-black shadow hover:bg-orange-300'>
+                <Button
+                  onClick={onNavigateToAssessment}
+                  className="bg-orange-200 text-black shadow hover:bg-orange-300"
+                >
                   Create New
                 </Button>
               </div>
-              {!isLoading && <TestTable assessments={assessments} handleNavigateToDetail={handleNavigateToDetail} />}
+              {!isLoading && (
+                <TestTable
+                  assessments={assessments}
+                  handleNavigateToDetail={handleNavigateToDetail}
+                />
+              )}
             </div>
           </div>
         </div>
