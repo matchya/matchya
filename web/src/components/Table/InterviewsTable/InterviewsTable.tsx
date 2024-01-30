@@ -66,7 +66,7 @@ const InterviewsTable = ({ interviews }: InterviewsTableProps) => {
   return (
     <div className="space-y-4 h-full overflow-y-scroll  rounded-md">
       {/* <InterviewsTableToolbar table={table} /> */}
-      <div className="bg-orange-50 rounded-md border">
+      <div className="rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (

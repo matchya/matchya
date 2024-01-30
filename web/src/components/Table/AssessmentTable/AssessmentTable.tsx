@@ -68,7 +68,7 @@ const AssessmentTable = ({
   return (
     <div className="space-y-4 h-full overflow-y-scroll rounded-md">
       {/* <TestTableToolbar table={table} /> */}
-      <div className="bg-orange-50 rounded-md border">
+      <div className="rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (

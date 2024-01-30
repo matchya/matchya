@@ -14,7 +14,7 @@ const AssessmentsPageTemplate = ({
   onNavigateToAssessment,
   handleNavigateToDetail
 }: AssessmentsPageTemplateProps) => (
-  <div className="h-full min-h-[calc(100vh-64px)] overflow-hidden bg-macha-200">
+  <div className="h-full min-h-[calc(100vh-64px)] overflow-hidden">
     <div className="w-full h-full mx-auto">
       <div>
         <div className="w-full h-full mx-auto">

@@ -72,7 +72,7 @@ const CandidatesTable = ({ candidates }: CandidatesTableProps) => {
   return (
     <div className="space-y-4 h-full overflow-y-scroll rounded-md">
       {/* <CandidatesTableToolbar table={table} /> */}
-      <div className="rounded-md border bg-orange-50">
+      <div className="rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (
