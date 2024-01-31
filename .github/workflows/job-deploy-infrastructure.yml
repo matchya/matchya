@@ -42,7 +42,7 @@ jobs:
         run: aws s3 cp s3://matchya-terraform/github-actions-artifacts/${{ inputs.environment }}/plans/${{ inputs.component }}.tfplan terraform/${{ inputs.component }}/${{ inputs.component }}.tfplan
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
+        uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
         run: terraform init

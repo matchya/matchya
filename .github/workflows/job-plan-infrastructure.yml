@@ -44,7 +44,7 @@ jobs:
           chmod 600 ~/.ssh/id_rsa_matchya.pub
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
+        uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
         run: terraform init
