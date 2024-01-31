@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "data_question_response_video" {
-  bucket = "${terraform.workspace}-data-question-response-video"
+  bucket = "${var.namespace}-${terraform.workspace}-data-question-response-video"
 
   lifecycle {
     create_before_destroy = true
