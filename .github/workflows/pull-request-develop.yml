@@ -33,7 +33,7 @@ jobs:
           fetch-depth: 0
 
       - name: Check Files Changed
-        uses: dorny/paths-filter@v2
+        uses: dorny/paths-filter@v3
         id: changes
         with:
           filters: |
@@ -72,7 +72,7 @@ jobs:
           fetch-depth: 0
 
       - name: Check Web Files Changed
-        uses: dorny/paths-filter@v2
+        uses: dorny/paths-filter@v3
         if: matrix.component == 'web'
         id: changes-web
         with:
@@ -81,7 +81,7 @@ jobs:
               - '${{matrix.component}}/**'
 
       - name: Check Files Changed
-        uses: dorny/paths-filter@v2
+        uses: dorny/paths-filter@v3
         if: matrix.component != 'web'
         id: changes-lambda
         with:
