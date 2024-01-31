@@ -24,6 +24,8 @@ import {
 } from '../Table';
 
 import { columns } from './columns';
+import { InterviewsTablePagination } from './InterviewsTablePagination';
+import { InterviewsTableToolbar } from './InterviewsTableToolbar';
 
 import { Interview } from '@/types';
 
@@ -63,13 +65,13 @@ const InterviewsTable = ({ interviews }: InterviewsTableProps) => {
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
   return (
-    <div className="space-y-4 h-full overflow-y-scroll  bg-orange-50 rounded-md">
-      {/* <InterviewsTableToolbar table={table} /> */}
+    <div className="space-y-4 h-full overflow-y-scroll rounded-md">
+      <InterviewsTableToolbar table={table} />
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (
-              <TableRow key={headerGroup.id} className='hover:bg-orange-50'>
+              <TableRow key={headerGroup.id} className="hover:bg-orange-50">
                 {headerGroup.headers.map(header => {
                   return (
                     <TableHead key={header.id} colSpan={header.colSpan}>
@@ -91,7 +93,7 @@ const InterviewsTable = ({ interviews }: InterviewsTableProps) => {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
-                  className='hover:bg-orange-100'
+                  className="hover:bg-orange-100"
                 >
                   {row.getVisibleCells().map(cell => (
                     <TableCell
@@ -120,7 +122,7 @@ const InterviewsTable = ({ interviews }: InterviewsTableProps) => {
           </TableBody>
         </Table>
       </div>
-      {/* <InterviewsTablePagination table={table} /> */}
+      <InterviewsTablePagination table={table} />
     </div>
   );
 };

@@ -22,6 +22,8 @@ import {
   TableRow,
 } from '../Table';
 
+import { AssessmentTablePagination } from './AssessmentTablePagination';
+import { AssessmentTableToolbar } from './AssessmentTableToolbar';
 import { columns } from './columns';
 
 import { Assessment } from '@/types';
@@ -31,7 +33,10 @@ interface AssessmentTableProps {
   handleNavigateToDetail: (id: string) => void;
 }
 
-const AssessmentTable = ({ assessments, handleNavigateToDetail }: AssessmentTableProps) => {
+const AssessmentTable = ({
+  assessments,
+  handleNavigateToDetail,
+}: AssessmentTableProps) => {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -62,16 +67,13 @@ const AssessmentTable = ({ assessments, handleNavigateToDetail }: AssessmentTabl
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
   return (
-    <div className="space-y-4 h-full overflow-y-scroll bg-orange-50 rounded-md">
-      {/* <TestTableToolbar table={table} /> */}
+    <div className="space-y-4 h-full overflow-y-scroll rounded-md">
+      <AssessmentTableToolbar table={table} />
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (
-              <TableRow
-                key={headerGroup.id}
-                className="hover:bg-orange-50"
-              >
+              <TableRow key={headerGroup.id} className="hover:bg-orange-50">
                 {headerGroup.headers.map(header => {
                   return (
                     <TableHead key={header.id} colSpan={header.colSpan}>
@@ -122,7 +124,7 @@ const AssessmentTable = ({ assessments, handleNavigateToDetail }: AssessmentTabl
           </TableBody>
         </Table>
       </div>
-      {/* <TestTablePagination table={table} /> */}
+      <AssessmentTablePagination table={table} />
     </div>
   );
 };

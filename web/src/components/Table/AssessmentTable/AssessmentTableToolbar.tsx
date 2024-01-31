@@ -3,7 +3,7 @@ import { Table } from '@tanstack/react-table';
 
 import { AssessmentTableFacetedFilter } from './AssessmentTableFacetedFilter';
 import { AssessmentTableViewOptions } from './AssessmentTableViewOptions';
-import { priorities, statuses } from './data';
+import { positionLevels, positions } from './data';
 
 import { Button, Input } from '@/components';
 
@@ -17,28 +17,33 @@ export function AssessmentTableToolbar<TData>({
   const isFiltered = table.getState().columnFilters.length > 0;
 
   return (
-    <div className="flex items-center justify-between">
+    <div className="p-1 flex items-center justify-between">
       <div className="flex flex-1 items-center space-x-2">
         <Input
-          placeholder="Filter tasks..."
-          value={(table.getColumn('title')?.getFilterValue() as string) ?? ''}
-          onChange={event =>
-            table.getColumn('title')?.setFilterValue(event.target.value)
+          placeholder="Filter by Assessment Name..."
+          value={
+            (table.getColumn('Assessment Name')?.getFilterValue() as string) ??
+            ''
           }
-          className="h-8 w-[150px] lg:w-[250px]"
+          onChange={event =>
+            table
+              .getColumn('Assessment Name')
+              ?.setFilterValue(event.target.value)
+          }
+          className="h-8 w-[250px] lg:w-[250px]"
         />
-        {table.getColumn('status') && (
+        {table.getColumn('Position') && (
           <AssessmentTableFacetedFilter
-            column={table.getColumn('status')}
-            title="Status"
-            options={statuses}
+            column={table.getColumn('Position')}
+            title="Position"
+            options={positions}
           />
         )}
-        {table.getColumn('priority') && (
+        {table.getColumn('Position Level') && (
           <AssessmentTableFacetedFilter
-            column={table.getColumn('priority')}
-            title="Priority"
-            options={priorities}
+            column={table.getColumn('Position Level')}
+            title="Position Level"
+            options={positionLevels}
           />
         )}
         {isFiltered && (

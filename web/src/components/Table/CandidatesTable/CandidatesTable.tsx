@@ -23,6 +23,8 @@ import {
   TableRow,
 } from '../Table';
 
+import { CandidatesTablePagination } from './CandidatesTablePagination';
+import { CandidatesTableToolbar } from './CandidatesTableToolbar';
 import { columns } from './columns';
 
 import { Assessment, Candidate } from '@/types';
@@ -69,8 +71,8 @@ const CandidatesTable = ({ candidates }: CandidatesTableProps) => {
   };
 
   return (
-    <div className="space-y-4 h-full overflow-y-scroll bg-orange-50 rounded-md">
-      {/* <CandidatesTableToolbar table={table} /> */}
+    <div className="space-y-4 h-full overflow-y-scroll rounded-md">
+      <CandidatesTableToolbar table={table} />
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -128,7 +130,7 @@ const CandidatesTable = ({ candidates }: CandidatesTableProps) => {
           </TableBody>
         </Table>
       </div>
-      {/* <CandidatesTablePagination table={table} /> */}
+      <CandidatesTablePagination table={table} />
     </div>
   );
 };
