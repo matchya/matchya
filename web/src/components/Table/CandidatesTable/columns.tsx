@@ -1,17 +1,20 @@
 import { ColumnDef } from '@tanstack/react-table';
 
 import { CandidatesTableColumnHeader } from './CandidatesTableColumnHeader';
+import { statuses } from './data';
 
 import { Candidate } from '@/types';
 
 export const columns: ColumnDef<Candidate>[] = [
   {
-    accessorKey: 'assessment',
+    accessorKey: 'Created Date',
     header: ({ column }) => (
-      <CandidatesTableColumnHeader column={column} title="Added at" />
+      <CandidatesTableColumnHeader column={column} title="Created Date" />
     ),
     cell: ({ row }) => {
-      const date = row.original.assessment ? new Date(row.original.assessment.createdAt) : new Date();
+      const date = row.original.assessment
+        ? new Date(row.original.assessment.createdAt)
+        : new Date();
       const formattedDate = date.toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'short',
@@ -23,42 +26,52 @@ export const columns: ColumnDef<Candidate>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'name',
+    accessorKey: 'Candidate Name',
     header: ({ column }) => (
-      <CandidatesTableColumnHeader column={column} title="Name" />
+      <CandidatesTableColumnHeader column={column} title="Candidate Name" />
     ),
     cell: ({ row }) => (
-      <div className="min-w-[100px] max-w-[500px]">
-        {`${row.original.name}`}
-      </div>
+      <div className="min-w-[100px] max-w-[500px]">{row.original.name}</div>
     ),
     enableSorting: false,
     enableHiding: false,
   },
   {
-    accessorKey: 'assessmentName',
+    accessorKey: 'Assessment Name',
     header: ({ column }) => (
-      <CandidatesTableColumnHeader column={column} title="Assessment" />
+      <CandidatesTableColumnHeader column={column} title="Assessment Name" />
     ),
     cell: ({ row }) => (
       <div className="min-w-[150px] max-w-[200px]">
         {row.original.assessment?.name}
       </div>
     ),
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
-    },
   },
   {
-    accessorKey: 'interviewStatus',
+    accessorKey: 'Interview Status',
     header: ({ column }) => (
       <CandidatesTableColumnHeader column={column} title="Status" />
     ),
-    cell: ({ row }) => (
-      <div className="w-[80px]">{row.original.assessment?.interviewStatus}</div>
-    ),
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
+    cell: ({ row }) => {
+      const status = statuses.find(
+        status => status.value === row.original.assessment?.interviewStatus
+      );
+
+      if (!status) {
+        return null;
+      }
+
+      return (
+        <div className="flex w-[100px] items-center">
+          {status.icon && (
+            <status.icon className="mr-2 h-4 w-4 text-muted-foreground" />
+          )}
+          <span>{status.label}</span>
+        </div>
+      );
+    },
+    filterFn: (row, _, value) => {
+      return value.includes(row.original.assessment?.interviewStatus);
     },
   },
 ];

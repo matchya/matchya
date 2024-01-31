@@ -17,19 +17,24 @@ export function CandidatesTableToolbar<TData>({
   const isFiltered = table.getState().columnFilters.length > 0;
 
   return (
-    <div className="flex items-center justify-between">
+    <div className="p-1 flex items-center justify-between">
       <div className="flex flex-1 items-center space-x-2">
         <Input
-          placeholder="Filter tasks..."
-          value={(table.getColumn('title')?.getFilterValue() as string) ?? ''}
-          onChange={event =>
-            table.getColumn('title')?.setFilterValue(event.target.value)
+          placeholder="Filter by Candidate Name..."
+          value={
+            (table.getColumn('Candidate Name')?.getFilterValue() as string) ??
+            ''
           }
-          className="h-8 w-[150px] lg:w-[250px]"
+          onChange={event =>
+            table
+              .getColumn('Candidate Name')
+              ?.setFilterValue(event.target.value)
+          }
+          className="h-8 w-[250px] lg:w-[250px]"
         />
-        {table.getColumn('status') && (
+        {table.getColumn('Interview Status') && (
           <CandidatesTableFacetedFilter
-            column={table.getColumn('status')}
+            column={table.getColumn('Interview Status')}
             title="Status"
             options={statuses}
           />

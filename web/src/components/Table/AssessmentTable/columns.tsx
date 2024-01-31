@@ -6,12 +6,12 @@ import { Assessment } from '@/types';
 
 export const columns: ColumnDef<Assessment>[] = [
   {
-    accessorKey: 'updatedAt',
+    accessorKey: 'Updated At',
     header: ({ column }) => (
       <AssessmentTableColumnHeader column={column} title="Updated At" />
     ),
     cell: ({ row }) => {
-      const date = new Date(row.getValue('updatedAt') as string);
+      const date = new Date(row.original.updatedAt);
       const formattedDate = date.toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'short',
@@ -19,56 +19,57 @@ export const columns: ColumnDef<Assessment>[] = [
       });
       return <div className="min-w-[80px] max-w-[100px]">{formattedDate}</div>;
     },
-    enableSorting: false,
+    enableSorting: true,
     enableHiding: false,
   },
   {
-    accessorKey: 'name',
+    accessorKey: 'Assessment Name',
     header: ({ column }) => (
-      <AssessmentTableColumnHeader column={column} title="Name" />
+      <AssessmentTableColumnHeader column={column} title="Assessment Name" />
     ),
     cell: ({ row }) => (
-      <div className="min-w-[100px] max-w-[500px]">{row.getValue('name')}</div>
+      <div className="min-w-[100px] max-w-[500px]">{row.original.name}</div>
     ),
     enableSorting: false,
     enableHiding: false,
   },
   {
-    accessorKey: 'positionType',
+    accessorKey: 'Position',
     header: ({ column }) => (
       <AssessmentTableColumnHeader column={column} title="Position" />
     ),
     cell: ({ row }) => (
       <div className="min-w-[150px] max-w-[200px]">
-        {row.getValue('positionType')}
+        {row.original.positionType}
       </div>
     ),
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
+    filterFn: (row, _, value) => {
+      return value.includes(row.original.positionType);
     },
   },
   {
-    accessorKey: 'positionLevel',
+    accessorKey: 'Position Level',
     header: ({ column }) => (
-      <AssessmentTableColumnHeader column={column} title="Level" />
+      <AssessmentTableColumnHeader column={column} title="Position Level" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue('positionLevel')}</div>
+      <div className="w-[80px]">{row.original.positionLevel}</div>
     ),
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
+    filterFn: (row, _, value) => {
+      return value.includes(row.original.positionLevel);
     },
   },
   {
-    accessorKey: 'numCandidates',
+    accessorKey: 'Number of Candidates',
     header: ({ column }) => (
-      <AssessmentTableColumnHeader column={column} title="Candidates" />
+      <AssessmentTableColumnHeader
+        column={column}
+        title="Number of Candidates"
+      />
     ),
     cell: ({ row }) => (
-      <div className="w-[30px]">{row.getValue('numCandidates')}</div>
+      <div className="w-[30px]">{row.original.numCandidates}</div>
     ),
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
-    },
+    enableSorting: true,
   },
 ];
