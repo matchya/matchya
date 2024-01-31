@@ -35,6 +35,9 @@ export const columns: ColumnDef<Assessment>[] = [
     ),
     sortingFn: (rowA, rowB) =>
       rowA.original.name!.localeCompare(rowB.original.name!),
+    filterFn: (row, _, value) => {
+      return row.original.name.toLowerCase().includes(value.toLowerCase());
+    },
     enableSorting: true,
     enableHiding: false,
   },

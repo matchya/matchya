@@ -51,7 +51,9 @@ export const columns: ColumnDef<Interview>[] = [
       </div>
     ),
     filterFn: (row, _, value) => {
-      return value.includes(row.original.assessment.name);
+      return row.original.assessment.name
+        .toLowerCase()
+        .includes(value.toLowerCase());
     },
     sortingFn: (rowA, rowB) =>
       rowA.original.assessment.name.localeCompare(

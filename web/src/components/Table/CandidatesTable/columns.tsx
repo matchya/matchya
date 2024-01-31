@@ -36,6 +36,9 @@ export const columns: ColumnDef<Candidate>[] = [
     cell: ({ row }) => (
       <div className="min-w-[100px] max-w-[500px]">{row.original.name}</div>
     ),
+    filterFn: (row, _, value) => {
+      return row.original.name.toLowerCase().includes(value.toLowerCase());
+    },
     sortingFn: (rowA, rowB) =>
       rowA.original.name!.localeCompare(rowB.original.name!),
     enableSorting: true,
