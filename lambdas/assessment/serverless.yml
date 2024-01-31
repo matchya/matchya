@@ -2,43 +2,9 @@ service: assessment
 
 frameworkVersion: "3"
 
-provider:
-  name: aws
-  runtime: python3.9
-  architecture: arm64
-  stage: ${opt:stage, 'staging'}
-  region: us-east-1
-  stackName: ${self:provider.stage}-sls-${self:service}
-  deploymentBucket:
-    name: ${self:provider.stage}-sls-assessment
-  vpc:
-    securityGroupIds:
-      - ${ssm:/terraform/${self:provider.stage}/vpc/security_group_id/lambda}
-    subnetIds:
-      - ${ssm:/terraform/${self:provider.stage}/vpc/subnet_id/private_1}
-      - ${ssm:/terraform/${self:provider.stage}/vpc/subnet_id/private_2}
-  iam:
-    role: ${ssm:/terraform/shared/iam/lambda_role_arn}
-  apiGateway:
-    restApiId: ${ssm:/terraform/${self:provider.stage}/api_gateway/id}
-    restApiRootResourceId: ${ssm:/terraform/${self:provider.stage}/api_gateway/root_resource_id}
-  ecr:
-    images:
-      default:
-        path: ./
-        file: Dockerfile
-        buildArgs:
-  environment:
-    ENVIRONMENT: ${self:provider.stage}
-    SERVICE_NAME: ${self:service}
-    OPENAI_API_KEY: ${ssm:/secrets/${self:provider.stage}/openai_api_key}
-    POSTGRES_HOST: ${ssm:/terraform/${self:provider.stage}/rds/endpoint}
-    POSTGRES_PORT: ${ssm:/terraform/${self:provider.stage}/rds/port}
-    POSTGRES_DB: ${ssm:/terraform/${self:provider.stage}/rds/db_name}
-    POSTGRES_USER: ${ssm:/terraform/${self:provider.stage}/rds/db_username}
-    POSTGRES_PASSWORD: ${ssm:/terraform/${self:provider.stage}/rds/db_password}
-    QUESTION_GENERATION_PROCESSOR_QUEUE_URL: ${ssm:/terraform/${self:provider.stage}/sqs/question_generation_processor_queue_url}
-    SENTRY_DSN: ${ssm:/secrets/${self:provider.stage}/sentry_dsn/${self:service}}
+custom: ${file(../shared/serverless.yml):custom}
+
+provider: ${file(../shared/serverless.yml):provider}
 
 functions:
   create:
@@ -51,14 +17,8 @@ functions:
       - http:
           path: /assessments
           method: POST
-          cors:
-            origins:
-              - "https://${ssm:/terraform/${self:provider.stage}/domain_name}"
-              - "https://www.${ssm:/terraform/${self:provider.stage}/domain_name}"
-            allowCredentials: true
-          authorizer:
-            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.CookieAuthorizerId}
-            type: REQUEST
+          cors: ${file(../shared/serverless.yml):cors}
+          authorizer: ${file(../shared/serverless.yml):cookie-authorizer}
 
   generate-questions:
     name: ${self:provider.stage}-assessment-generate-questions
@@ -80,14 +40,8 @@ functions:
       - http:
           path: /assessments
           method: GET
-          cors:
-            origins:
-              - "https://${ssm:/terraform/${self:provider.stage}/domain_name}"
-              - "https://www.${ssm:/terraform/${self:provider.stage}/domain_name}"
-            allowCredentials: true
-          authorizer:
-            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.CookieAuthorizerId}
-            type: REQUEST
+          cors: ${file(../shared/serverless.yml):cors}
+          authorizer: ${file(../shared/serverless.yml):cookie-authorizer}
 
   retrieve-by-id:
     name: ${self:provider.stage}-assessment-retrieve-by-id
@@ -99,14 +53,8 @@ functions:
       - http:
           path: /assessments/{id}
           method: GET
-          cors:
-            origins:
-              - "https://${ssm:/terraform/${self:provider.stage}/domain_name}"
-              - "https://www.${ssm:/terraform/${self:provider.stage}/domain_name}"
-            allowCredentials: true
-          authorizer:
-            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.CookieAuthorizerId}
-            type: REQUEST
+          cors: ${file(../shared/serverless.yml):cors}
+          authorizer: ${file(../shared/serverless.yml):cookie-authorizer}
           request:
             parameters:
               paths:
@@ -122,14 +70,8 @@ functions:
       - http:
           path: /assessments/{id}/questions
           method: GET
-          cors:
-            origins:
-              - "https://${ssm:/terraform/${self:provider.stage}/domain_name}"
-              - "https://www.${ssm:/terraform/${self:provider.stage}/domain_name}"
-            allowCredentials: true
-          authorizer:
-            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.CookieAuthorizerId}
-            type: REQUEST
+          cors: ${file(../shared/serverless.yml):cors}
+          authorizer: ${file(../shared/serverless.yml):cookie-authorizer}
           request:
             parameters:
               paths:

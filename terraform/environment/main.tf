@@ -1,4 +1,5 @@
 locals {
+  namespace = "matchya"
   app_domain_name = lookup({
     production = "app.${data.aws_ssm_parameter.route53_hosted_zone.value}",
     staging = "app.${terraform.workspace}.${data.aws_ssm_parameter.route53_hosted_zone.value}"
@@ -71,7 +72,9 @@ module "sqs" {
 module "s3" {
   source = "./modules/s3"
 
+  account_id = data.aws_caller_identity.current.account_id
   client_origin = local.app_domain_name
+  namespace = local.namespace
 }
 
 module "vpc" {

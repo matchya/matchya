@@ -21,7 +21,7 @@ jobs:
     environment: ${{ inputs.environment-label }}
     steps:
       - name: Fetch Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -30,10 +30,10 @@ jobs:
           git fetch
           git merge origin/staging
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           cache: npm
-          node-version: 18
+          node-version: 20
 
       - name: Install dependencies
         run: |

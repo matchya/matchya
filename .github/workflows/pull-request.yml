@@ -31,23 +31,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Fetch Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Check Web Files Changed
-        uses: dorny/paths-filter@v2
+        uses: dorny/paths-filter@v3
         id: changes
         with:
           filters: |
             package:
               - 'web/**'
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         if: steps.changes.outputs.package == 'true'
         with:
           cache: npm
-          node-version: 18
+          node-version: 20
 
       - name: Install dependencies
         if: steps.changes.outputs.package == 'true'

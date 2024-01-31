@@ -2,29 +2,9 @@ service: video
 
 frameworkVersion: "3"
 
-provider:
-  name: aws
-  runtime: python3.9
-  architecture: arm64
-  stage: dev
-  region: us-east-1
-  stackName: ${self:provider.stage}-sls-${self:service}
-  deploymentBucket:
-    name: ${self:provider.stage}-sls-${self:service}
-  iam:
-    role: ${ssm:/terraform/shared/iam/lambda_role_arn}
-  apiGateway:
-    restApiId: ${ssm:/terraform/${self:provider.stage}/api_gateway/id}
-    restApiRootResourceId: ${ssm:/terraform/${self:provider.stage}/api_gateway/root_resource_id}
-  ecr:
-    images:
-      default:
-        path: ./
-        file: Dockerfile
-        buildArgs:
-  environment:
-    ENVIRONMENT: ${self:provider.stage}
-    SERVICE_NAME: ${self:service}
+custom: ${file(../shared/serverless.dev.yml):custom}
+
+provider: ${file(../shared/serverless.dev.yml):provider}
 
 functions:
   get-presigned-url:
@@ -37,9 +17,7 @@ functions:
       - http:
           path: /videos/presigned-url
           method: GET
-          cors:
-            origins: "http://127.0.0.1:5173"
-            allowCredentials: true
+          cors: ${file(../shared/serverless.dev.yml):cors}
     timeout: 30
 
 plugins:

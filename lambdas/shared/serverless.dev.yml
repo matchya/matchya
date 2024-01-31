@@ -1,0 +1,47 @@
+custom:
+  namespace: matchya
+
+provider:
+  name: aws
+  runtime: python3.9
+  architecture: arm64
+  stage: dev
+  region: us-east-1
+  stackName: ${self:provider.stage}-sls-${self:service}
+  deploymentBucket:
+    name: ${self:custom.namespace}-${self:provider.stage}-sls-${self:service}
+  iam:
+    role: ${ssm:/terraform/shared/iam/lambda_role_arn}
+  apiGateway:
+    restApiId: ${ssm:/terraform/${self:provider.stage}/api_gateway/id}
+    restApiRootResourceId: ${ssm:/terraform/${self:provider.stage}/api_gateway/root_resource_id}
+  ecr:
+    images:
+      default:
+        path: ./
+        file: Dockerfile
+        buildArgs:
+  environment:
+    ENVIRONMENT: ${self:provider.stage}
+    JWT_SECRET_KEY: ${ssm:/secrets/${self:provider.stage}/jwt_secret_key}
+    LINK_BASE_URL: ${ssm:/terraform/${self:provider.stage}/domain_name}
+    SERVICE_NAME: ${self:service}
+    OPENAI_API_KEY: ${ssm:/secrets/${self:provider.stage}/openai_api_key}
+    POSTGRES_HOST: ${ssm:/terraform/${self:provider.stage}/rds/endpoint}
+    POSTGRES_PORT: ${ssm:/terraform/${self:provider.stage}/rds/port}
+    POSTGRES_DB: ${ssm:/terraform/${self:provider.stage}/rds/db_name}
+    POSTGRES_USER: ${ssm:/terraform/${self:provider.stage}/rds/db_username}
+    POSTGRES_PASSWORD: ${ssm:/terraform/${self:provider.stage}/rds/db_password}
+    QUESTION_GENERATION_PROCESSOR_QUEUE_URL: ${ssm:/terraform/${self:provider.stage}/sqs/question_generation_processor_queue_url}
+
+cors:
+  origins: "http://127.0.0.1:5173"
+  allowCredentials: true
+
+cookie-authorizer:
+  authorizerId: ${cf:${self:provider.stage}-sls-authorizer.CookieAuthorizerId}
+  type: REQUEST
+
+header-authorizer:
+  authorizerId: ${cf:${self:provider.stage}-sls-authorizer.HeaderAuthorizerId}
+  type: REQUEST
