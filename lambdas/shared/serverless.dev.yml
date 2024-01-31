@@ -26,6 +26,7 @@ provider:
     JWT_SECRET_KEY: ${ssm:/secrets/${self:provider.stage}/jwt_secret_key}
     LINK_BASE_URL: ${ssm:/terraform/${self:provider.stage}/domain_name}
     SERVICE_NAME: ${self:service}
+    NAMESPACE: matchya
     OPENAI_API_KEY: ${ssm:/secrets/${self:provider.stage}/openai_api_key}
     POSTGRES_HOST: ${ssm:/terraform/${self:provider.stage}/rds/endpoint}
     POSTGRES_PORT: ${ssm:/terraform/${self:provider.stage}/rds/port}

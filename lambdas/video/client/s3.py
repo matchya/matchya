@@ -15,7 +15,7 @@ class S3Client:
     def retrieve_presigned_metadata_for_upload(self, interview_id, question_id):
         try:
             response = self.client.generate_presigned_post(
-                Bucket=f'{Config.ENVIRONMENT}-data-question-response-video',
+                Bucket=f'{Config.NAMESPACE}-{Config.ENVIRONMENT}-data-question-response-video',
                 Key=f'{interview_id}/{question_id}.webm',
                 ExpiresIn=3600
             )

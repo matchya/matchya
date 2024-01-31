@@ -7,7 +7,6 @@ RUN pip install -r requirements.txt
 
 COPY package.json package.json
 COPY *.py .
-COPY client/ ./client/
 COPY utils/ ./utils/
 
 # actual command will be in serverless.yml
