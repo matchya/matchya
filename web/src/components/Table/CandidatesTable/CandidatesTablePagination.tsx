@@ -23,7 +23,7 @@ export function CandidatesTablePagination<TData>({
   table,
 }: CandidatesTablePaginationProps<TData>) {
   return (
-    <div className="flex items-center justify-between px-2">
+    <div className="flex items-center justify-between p-1">
       {/* When we want to select rows */}
       {/* <div className="flex-1 text-sm text-muted-foreground">
         {table.getFilteredSelectedRowModel().rows.length} of{' '}
