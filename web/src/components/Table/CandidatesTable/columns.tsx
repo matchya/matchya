@@ -22,7 +22,10 @@ export const columns: ColumnDef<Candidate>[] = [
       });
       return <div className="min-w-[80px] max-w-[100px]">{formattedDate}</div>;
     },
-    enableSorting: false,
+    sortingFn: (rowA, rowB) =>
+      new Date(rowA.original.assessment?.createdAt as string).getTime() -
+      new Date(rowB.original.assessment?.createdAt as string).getTime(),
+    enableSorting: true,
     enableHiding: false,
   },
   {
@@ -33,7 +36,9 @@ export const columns: ColumnDef<Candidate>[] = [
     cell: ({ row }) => (
       <div className="min-w-[100px] max-w-[500px]">{row.original.name}</div>
     ),
-    enableSorting: false,
+    sortingFn: (rowA, rowB) =>
+      rowA.original.name!.localeCompare(rowB.original.name!),
+    enableSorting: true,
     enableHiding: false,
   },
   {
@@ -46,6 +51,12 @@ export const columns: ColumnDef<Candidate>[] = [
         {row.original.assessment?.name}
       </div>
     ),
+    sortingFn: (rowA, rowB) =>
+      rowA.original.assessment?.name.localeCompare(
+        rowB.original.assessment?.name as string
+      ),
+    enableSorting: true,
+    enableHiding: false,
   },
   {
     accessorKey: 'Interview Status',
@@ -73,5 +84,11 @@ export const columns: ColumnDef<Candidate>[] = [
     filterFn: (row, _, value) => {
       return value.includes(row.original.assessment?.interviewStatus);
     },
+    sortingFn: (rowA, rowB) =>
+      rowA.original.assessment?.interviewStatus!.localeCompare(
+        rowB.original.assessment?.interviewStatus as string
+      ),
+    enableSorting: true,
+    enableHiding: false,
   },
 ];

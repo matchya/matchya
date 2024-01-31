@@ -11,7 +11,7 @@ export const columns: ColumnDef<Interview>[] = [
       <InterviewsTableColumnHeader column={column} title="Created Date" />
     ),
     cell: ({ row }) => {
-      const date = new Date(row.original.createdAt);
+      const date = new Date(row.original.createdAt as string);
       const formattedDate = date.toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'short',
@@ -19,7 +19,10 @@ export const columns: ColumnDef<Interview>[] = [
       });
       return <div className="min-w-[80px] max-w-[100px]">{formattedDate}</div>;
     },
-    enableSorting: false,
+    sortingFn: (rowA, rowB) =>
+      new Date(rowA.original.createdAt as string).getTime() -
+      new Date(rowB.original.createdAt as string).getTime(),
+    enableSorting: true,
     enableHiding: false,
   },
   {
@@ -32,6 +35,8 @@ export const columns: ColumnDef<Interview>[] = [
         {row.original.candidate.name}
       </div>
     ),
+    sortingFn: (rowA, rowB) =>
+      rowA.original.candidate.name.localeCompare(rowB.original.candidate.name),
     enableSorting: false,
     enableHiding: false,
   },
@@ -48,6 +53,10 @@ export const columns: ColumnDef<Interview>[] = [
     filterFn: (row, _, value) => {
       return value.includes(row.original.assessment.name);
     },
+    sortingFn: (rowA, rowB) =>
+      rowA.original.assessment.name.localeCompare(
+        rowB.original.assessment.name
+      ),
   },
   {
     accessorKey: 'Total Score',
@@ -60,5 +69,7 @@ export const columns: ColumnDef<Interview>[] = [
     filterFn: (row, _, value) => {
       return value.includes(row.original.totalScore);
     },
+    sortingFn: (rowA, rowB) =>
+      rowA.original.totalScore - rowB.original.totalScore,
   },
 ];

@@ -6,12 +6,12 @@ import { Assessment } from '@/types';
 
 export const columns: ColumnDef<Assessment>[] = [
   {
-    accessorKey: 'Updated At',
+    accessorKey: 'updatedAt',
     header: ({ column }) => (
       <AssessmentTableColumnHeader column={column} title="Updated At" />
     ),
     cell: ({ row }) => {
-      const date = new Date(row.original.updatedAt);
+      const date = new Date(row.original.updatedAt as string);
       const formattedDate = date.toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'short',
@@ -19,6 +19,9 @@ export const columns: ColumnDef<Assessment>[] = [
       });
       return <div className="min-w-[80px] max-w-[100px]">{formattedDate}</div>;
     },
+    sortingFn: (rowA, rowB) =>
+      new Date(rowA.original.updatedAt as string).getTime() -
+      new Date(rowB.original.updatedAt as string).getTime(),
     enableSorting: true,
     enableHiding: false,
   },
@@ -30,7 +33,9 @@ export const columns: ColumnDef<Assessment>[] = [
     cell: ({ row }) => (
       <div className="min-w-[100px] max-w-[500px]">{row.original.name}</div>
     ),
-    enableSorting: false,
+    sortingFn: (rowA, rowB) =>
+      rowA.original.name!.localeCompare(rowB.original.name!),
+    enableSorting: true,
     enableHiding: false,
   },
   {
@@ -46,6 +51,10 @@ export const columns: ColumnDef<Assessment>[] = [
     filterFn: (row, _, value) => {
       return value.includes(row.original.positionType);
     },
+    sortingFn: (rowA, rowB) =>
+      rowA.original.positionType!.localeCompare(rowB.original.positionType!),
+    enableSorting: true,
+    enableHiding: false,
   },
   {
     accessorKey: 'Position Level',
@@ -58,6 +67,10 @@ export const columns: ColumnDef<Assessment>[] = [
     filterFn: (row, _, value) => {
       return value.includes(row.original.positionLevel);
     },
+    sortingFn: (rowA, rowB) =>
+      rowA.original.positionLevel!.localeCompare(rowB.original.positionLevel!),
+    enableSorting: true,
+    enableHiding: false,
   },
   {
     accessorKey: 'Number of Candidates',
@@ -70,6 +83,8 @@ export const columns: ColumnDef<Assessment>[] = [
     cell: ({ row }) => (
       <div className="w-[30px]">{row.original.numCandidates}</div>
     ),
+    sortingFn: (rowA, rowB) =>
+      rowA.original.numCandidates! - rowB.original.numCandidates!,
     enableSorting: true,
   },
 ];
