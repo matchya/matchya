@@ -3,7 +3,7 @@ import { Table } from '@tanstack/react-table';
 
 import { CandidatesTableFacetedFilter } from './CandidatesTableFacetedFilter';
 import { CandidatesTableViewOptions } from './CandidatesTableViewOptions';
-import { priorities, statuses } from './data';
+import { statuses } from './data';
 
 import { Button, Input } from '@/components';
 
@@ -37,13 +37,6 @@ export function CandidatesTableToolbar<TData>({
             column={table.getColumn('Interview Status')}
             title="Status"
             options={statuses}
-          />
-        )}
-        {table.getColumn('priority') && (
-          <CandidatesTableFacetedFilter
-            column={table.getColumn('priority')}
-            title="Priority"
-            options={priorities}
           />
         )}
         {isFiltered && (
