@@ -2,34 +2,9 @@ service: company
 
 frameworkVersion: "3"
 
-provider:
-  name: aws
-  runtime: python3.9
-  architecture: arm64
-  stage: dev
-  region: us-east-1
-  stackName: ${self:provider.stage}-sls-${self:service}
-  deploymentBucket:
-    name: ${self:provider.stage}-sls-company
-  iam:
-    role: ${ssm:/terraform/shared/iam/lambda_role_arn}
-  apiGateway:
-    restApiId: ${ssm:/terraform/${self:provider.stage}/api_gateway/id}
-    restApiRootResourceId: ${ssm:/terraform/${self:provider.stage}/api_gateway/root_resource_id}
-  ecr:
-    images:
-      default:
-        path: ./
-        file: Dockerfile
-        buildArgs:
-  environment:
-    ENVIRONMENT: ${self:provider.stage}
-    POSTGRES_HOST: ${ssm:/terraform/${self:provider.stage}/rds/endpoint}
-    POSTGRES_PORT: ${ssm:/terraform/${self:provider.stage}/rds/port}
-    POSTGRES_DB: ${ssm:/terraform/${self:provider.stage}/rds/db_name}
-    POSTGRES_USER: ${ssm:/terraform/${self:provider.stage}/rds/db_username}
-    POSTGRES_PASSWORD: ${ssm:/terraform/${self:provider.stage}/rds/db_password}
-    SERVICE_NAME: ${self:service}
+custom: ${file(../shared/serverless.dev.yml):custom}
+
+provider: ${file(../shared/serverless.dev.yml):provider}
 
 functions:
   me:
@@ -42,12 +17,8 @@ functions:
       - http:
           path: /companies/me
           method: GET
-          cors:
-            origins: "http://127.0.0.1:5173"
-            allowCredentials: true
-          authorizer:
-            authorizerId: ${cf:${self:provider.stage}-sls-authorizer.CookieAuthorizerId}
-            type: REQUEST
+          cors: ${file(../shared/serverless.dev.yml):cors}
+          authorizer: ${file(../shared/serverless.dev.yml):cookie-authorizer}
 
 plugins:
   - serverless-deployment-bucket
