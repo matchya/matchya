@@ -55,7 +55,7 @@ export const columns: ColumnDef<Candidate>[] = [
       </div>
     ),
     sortingFn: (rowA, rowB) =>
-      rowA.original.assessment?.name.localeCompare(
+      (rowA.original.assessment?.name as string).localeCompare(
         rowB.original.assessment?.name as string
       ),
     enableSorting: true,
@@ -88,7 +88,7 @@ export const columns: ColumnDef<Candidate>[] = [
       return value.includes(row.original.assessment?.interviewStatus);
     },
     sortingFn: (rowA, rowB) =>
-      rowA.original.assessment?.interviewStatus!.localeCompare(
+      (rowA.original.assessment?.interviewStatus as string).localeCompare(
         rowB.original.assessment?.interviewStatus as string
       ),
     enableSorting: true,
