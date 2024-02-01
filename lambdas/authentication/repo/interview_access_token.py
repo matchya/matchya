@@ -16,7 +16,7 @@ class InterviewAccessTokenRepository:
         result = self.db_client.query(index_name='CandidateInterviewIndex',
                                       key_condition_expression=Key('candidate_id').eq(candidate_id) & Key('interview_id').eq(interview_id))
         logger.info('Successfully retrieved interview access token')
-        return result
+        return result[0]
 
     def retrieve_by_token(self, token):
         """
@@ -30,4 +30,4 @@ class InterviewAccessTokenRepository:
         Updates the status of the interview access token in the database.
         """
         logger.info(f'Updating interview access token status in database: {status}')
-        result = self.db_client.update_status(key={'token': token}, new_value=status)
+        self.db_client.update_status(key={'token': token}, new_value=status)

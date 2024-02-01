@@ -9,6 +9,7 @@ logger = Logger.configure(os.path.relpath(__file__, os.path.join(os.path.dirname
 class RequestParser:
     def __init__(self, event):
         self.event = event
+        logger.info(f'Successfully initialized request parser with event: {event}')
 
     def parse_header(self):
         """
@@ -66,6 +67,7 @@ class RequestParser:
         except json.JSONDecodeError as e:
             raise ValueError(f"Invalid JSON in request body: {e}")
 
+    # deprecate this since its same as below
     def parse_cookie_body(self):
         logger.info('Parsing cookie body')
         try:
@@ -73,6 +75,17 @@ class RequestParser:
             if not body:
                 raise ValueError('Body not included in request')
             logger.info('Successfully parsed cookie body')
+            return body
+        except json.JSONDecodeError as e:
+            raise ValueError(f"Invalid JSON in request body: {e}")
+
+    def parse_authorizer_context(self):
+        logger.info('Parsing cookie body')
+        try:
+            body = self.event.get('requestContext').get('authorizer')
+            if not body:
+                raise ValueError('Authorizer Context not included in request')
+            logger.info('Successfully parsed authorizer context')
             return body
         except json.JSONDecodeError as e:
             raise ValueError(f"Invalid JSON in request body: {e}")
