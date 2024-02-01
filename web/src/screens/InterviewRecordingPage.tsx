@@ -36,6 +36,22 @@ const InterviewRecordingPage = () => {
     }
   }, [params.id, navigate]);
 
+  useEffect(() => {
+    if (interviewDone) {
+      invalidateInterviewAccess();
+    }
+  }, [interviewDone]);
+
+  const invalidateInterviewAccess = async () => {
+    const response = await axiosInstance.post(`/auth/invitation/invalidate`);
+
+    if (response.data.status === 'success') {
+      sessionStorage.removeItem('sessionToken');
+      // navigate to the InterviewDone page
+      navigate(`/interviews/${interviewId}/completed`);
+    }
+  };
+
   const fetchInterviewQuestions = async () => {
     const response = await axiosInstance.get(
       `/interviews/${interviewId}/questions`
@@ -135,10 +151,6 @@ const InterviewRecordingPage = () => {
       console.error(error);
     }
   };
-
-  if (interviewDone) {
-    return <div>Interview Done. Thank you.</div>;
-  }
 
   return (
     <InterviewRecordingPageTemplate

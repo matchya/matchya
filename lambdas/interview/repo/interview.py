@@ -75,10 +75,13 @@ class InterviewRepository:
             LEFT JOIN metric m ON m.question_id = q.id
             WHERE i.id = '%s';
         """ % interview_id
+        logger.info(f'Retrieving candidate interview questions: {interview_id}')
         try:
             self.db_client.execute(sql)
             result = self.db_client.fetchall()
-            return self._process_interview_questions_sql_result(result)
+            processed_result = self._process_interview_questions_sql_result(result)
+            logger.info(f'Successfully retrieved candidate interview questions: {processed_result}')
+            return processed_result
         except Exception as e:
             logger.error(f'Retrieving a interview questions by interview id from db failed: {e}')
             raise RuntimeError('Failed to retrieve a interview questions by interview id from db.')
@@ -190,7 +193,7 @@ class InterviewRepository:
         }
 
         for row in result:
-            (question_id, question_text, question_topic, question_difficulty, 
+            (question_id, question_text, question_topic, question_difficulty,
              video_url, feedback, score) = row[9:]
             if question_id and video_url:
                 answer = {

@@ -20,7 +20,7 @@ class AnswerRepository:
         logger.info(f'Retrieving candidate answers from db by interview ID: {interview_id}...')
         sql = """
             SELECT 
-                answer.score, answer.feedback, question.text
+                answer.score, answer.feedback, question.text, question.id
             FROM answer
             LEFT JOIN interview ON answer.interview_id = interview.id
             LEFT JOIN question ON answer.question_id = question.id
@@ -34,9 +34,11 @@ class AnswerRepository:
                 answer = {
                     'score': row[0],
                     'feedback': row[1],
-                    'question': row[2]
+                    'question': row[2],
+                    'question_id': row[3]
                 }
                 answers.append(answer)
+            logger.info(f'Successfully retrieved candidate answers from db: {answers}')
             return answers
         except Exception as e:
             logger.error(f'Failed to retrieve candidate answers from db: {e}')
