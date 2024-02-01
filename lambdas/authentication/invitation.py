@@ -36,19 +36,10 @@ def handler(event, context):
         # business logic
         # check if the token exists in dynamodb table
         item = interview_access_token_repo.retrieve_by_token(token=token)
-        logger.info(item)
-        # check if the token is valid by checking the status to see if it is 'Active'
-        if item.get('status') != 'PENDING':
-            raise ValueError('Status is not valid')
-        # check if it passed the expiry time
-        if item.get('expiry_time') < int(time.time()):
-            raise ValueError('Token expired')
-        # invalidate the token
-        interview_access_token_repo.update_status(token=token, status='USED')
         # create jwt session token with expiry time
-        session_token = token_generator.generate_interview_session_token(candidate_id=item.get('candidate_id'), 
+        session_token = token_generator.generate_interview_session_token(candidate_id=item.get('candidate_id'),
                                                                          interview_id=item.get('interview_id'))
-        return response_generator.generate_invitation_success_response({
+        return response_generator.generate_success_response({
             'session_token': session_token
         })
     except (ValueError, RuntimeError) as e:
