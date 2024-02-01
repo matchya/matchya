@@ -43,5 +43,18 @@ functions:
           method: POST
           cors: ${file(../shared/serverless.dev.yml):cors}
 
+  invitation-invalidate:
+    name: ${self:provider.stage}-authentication-invitation-invalidate
+    image:
+      name: default
+      command:
+        - invitation_invalidate.handler
+    events:
+      - http:
+          path: /auth/invitation/invalidate
+          method: POST
+          cors: ${file(../shared/serverless.dev.yml):cors}
+          authorizer: ${file(../shared/serverless.dev.yml):header-authorizer}
+
 plugins:
   - serverless-deployment-bucket

@@ -96,14 +96,12 @@ class ResponseGenerator:
         }
         return self._generate_response(status_code=200, body=json.dumps(body), cookie=cookie)
 
-    def generate_invitation_success_response(self, payload=None) -> Dict[str, Any]:
+    def generate_success_response(self, payload=None) -> Dict[str, Any]:
         """
-        Generates a success response with the access token.
-
         :param body: The generated access token.
-        :return: A success response containing the access token and current timestamp.
+        :return: A success response
         """
-        logger.info(f'Generating invitation success response: {payload}')
+        logger.info(f'Generating success response: {payload}')
         body = {
             'status': 'success'
         }

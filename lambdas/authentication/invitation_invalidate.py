@@ -1,5 +1,4 @@
 import os
-import time
 
 from client.dynamodb import DynamoDBClient
 from client.sentry import SentryClient
@@ -21,27 +20,27 @@ interview_access_token_repo = InterviewAccessTokenRepository(dynamodb_client)
 
 
 def handler(event, context):
+    """
+    Lambda handler triggered when the candidate completes the interview.
+    Main focus of this lambda is to invalidate the interview access token so the invitation links can't be used again.
+    """
     logger.info("Starting lambda execution")
     try:
         # initialize the parser
         parser = RequestParser(event)
 
         # parsing from the event
-        body = parser.parse_request_body()
         origin, host = parser.parse_header()
+        authorizer_context = parser.parse_authorizer_context()
         response_generator.origin_domain = origin
         response_generator.host_domain = host
-        token = body.get('token')
 
         # business logic
         # check if the token exists in dynamodb table
-        item = interview_access_token_repo.retrieve_by_token(token=token)
-        # create jwt session token with expiry time
-        session_token = token_generator.generate_interview_session_token(candidate_id=item.get('candidate_id'),
-                                                                         interview_id=item.get('interview_id'))
-        return response_generator.generate_success_response({
-            'session_token': session_token
-        })
+        item = interview_access_token_repo.retrieve_by_candidate_interview_ids(candidate_id=authorizer_context['candidate_id'], interview_id=authorizer_context['interview_id'])
+        # invalidate the token
+        interview_access_token_repo.update_status(token=item['token'], status='USED')
+        return response_generator.generate_success_response()
     except (ValueError, RuntimeError) as e:
         logger.error(f'Getting final evaluation of an interview faild: {e}')
         return response_generator.generate_error_response(400, str(e))

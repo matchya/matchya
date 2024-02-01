@@ -16,7 +16,6 @@ const InterviewVerifyPage = () => {
       axiosInstance
         .post('/auth/invitation', { token: accessToken })
         .then(response => {
-          console.log('DATA: ', response.data);
           if (response.data.status === 'success') {
             sessionStorage.setItem(
               'sessionToken',

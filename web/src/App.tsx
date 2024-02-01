@@ -12,6 +12,7 @@ import CandidatesPage from '@/screens/CandidatesPage';
 import CreateAssessmentPage from '@/screens/CreateAssessmentPage';
 import GoogleAuthCallbackPage from '@/screens/GoogleAuthCallbackPage';
 import HomePage from '@/screens/HomePage';
+import InterviewCompletedPage from '@/screens/InterviewCompletedPage';
 import InterviewDetailPage from '@/screens/InterviewDetailPage';
 import InterviewRecordingPage from '@/screens/InterviewRecordingPage';
 import InterviewsPage from '@/screens/InterviewsPage';
@@ -45,6 +46,10 @@ function App() {
             <Route
               path="/auth/invitation"
               element={<InvitationAuthenticationPage />}
+            />
+            <Route
+              path="/interviews/:id/completed"
+              element={<InterviewCompletedPage />}
             />
             <Route
               path="/interviews/:id/record"
