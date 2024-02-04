@@ -30,6 +30,7 @@ const AssessmentsPageTemplate = ({
                 Create New
               </Button>
             </div>
+            
             {isLoading && (
               <div className="flex mt-48 justify-center items-center">
                 <Icons.spinner className="spinner h-8 w-8" />
