@@ -1,4 +1,4 @@
-import { CandidatesTable } from '@/components';
+import { CandidatesTable, Icons } from '@/components';
 import { Candidate } from '@/types';
 
 interface CandidatesPageTemplateProps {
@@ -22,6 +22,11 @@ const CandidatesPageTemplate = ({
                     <h3 className="text-4xl font-bold">Candidates</h3>
                   </div>
                 </div>
+                {isLoading && (
+                  <div className="flex mt-48 justify-center items-center">
+                    <Icons.spinner className="spinner h-8 w-8" />
+                  </div>
+                )}
                 {!isLoading && <CandidatesTable candidates={candidates} />}
               </div>
             </div>
