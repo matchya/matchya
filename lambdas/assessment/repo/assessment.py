@@ -31,6 +31,21 @@ class AssessmentRepository:
             """ % (assessment_id, company_id, assessment.name, assessment.position_type, assessment.position_level)
         self.db_client.execute(sql)
         return assessment_id
+    
+    def delete_by_id(self, company_id: str, assessment_id: str):
+        """
+        Soft deletes a assessment by assessment id from the database.
+
+        :param company_id: The company ID.
+        :param assessment_id: The assessment ID.
+        """
+        logger.info(f'delete_by_id: {company_id}, {assessment_id}')
+        sql = """
+            UPDATE assessment
+            SET deleted_at = NOW()
+            WHERE company_id = '%s' AND id = '%s';
+        """ % (company_id, assessment_id)
+        self.db_client.execute(sql)
 
     def retrieve_by_company_id(self, company_id):
         """
