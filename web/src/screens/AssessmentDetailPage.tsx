@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { QuestionsList } from '@/fragments';
-import { axiosInstance } from '@/lib/axios';
+import { caseSensitiveAxiosInstance } from '@/lib/axios';
 import { AssessmentDetailPageTemplate } from '@/template';
 import { Assessment } from '@/types';
 
@@ -18,7 +18,9 @@ const AssessmentDetailPage = () => {
   const fetchAssessment = async () => {
     try {
       setIsLoading(true);
-      const response = await axiosInstance.get(`/assessments/${params.id}`);
+      const response = await caseSensitiveAxiosInstance.get(
+        `/assessments/${params.id}`
+      );
       if (response.data.status === 'success') {
         const assessmentData: Assessment = response.data.payload.assessment;
         setAssessment(assessmentData);
