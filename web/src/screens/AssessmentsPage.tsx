@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { caseSensitiveAxiosInstance } from '@/lib/axios';
+import { axiosInstance, caseSensitiveAxiosInstance } from '@/lib/axios';
 import { trackEvent } from '@/lib/rudderstack';
 import AssessmentsPageTemplate from '@/template/AssessmentsPage/AssessmentsPage';
 import { Assessment } from '@/types';
@@ -45,12 +45,24 @@ const AssessmentsPage = () => {
     navigate(`/assessments/${id}`);
   };
 
+  const handleDeleteAssessment = async (id: string) => {
+    try {
+      const response = await axiosInstance.delete(`/assessments/${id}`);
+      if (response.data.status === 'success') {
+        setAssessments(assessments.filter((assessment) => assessment.id !== id));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <AssessmentsPageTemplate
       assessments={assessments}
       isLoading={isLoading}
       onNavigateToAssessment={handleNavigateToAssessment}
       handleNavigateToDetail={handleNavigateToDetail}
+      handleDeleteAssessment={handleDeleteAssessment}
     />
   );
 };
