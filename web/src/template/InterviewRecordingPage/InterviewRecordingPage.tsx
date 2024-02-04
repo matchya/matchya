@@ -22,6 +22,7 @@ const AUDIO_CONSTRAINTS: MediaTrackConstraints = {
 
 interface InterviewRecordingPageTemplateProps {
   question: Question;
+  isLoading: boolean;
   index: number;
   isRecording: boolean;
   webcamRef?: React.RefObject<Webcam>;
@@ -33,6 +34,7 @@ interface InterviewRecordingPageTemplateProps {
 
 const InterviewRecordingPageTemplate = ({
   question,
+  isLoading,
   index,
   isRecording,
   webcamRef,
@@ -41,7 +43,38 @@ const InterviewRecordingPageTemplate = ({
   onStopRecording,
   onUploadVideo,
 }: InterviewRecordingPageTemplateProps) => {
-  if (!question) return <div>Question not found</div>;
+  if (isLoading) {
+    return (
+      <>
+        <div className="w-full h-16 bg-macha-500 flex justify-between items-center px-10">
+          <div className="flex items-center space-x-4 px-4 cursor-pointer">
+            <img src={matchyaSticker} alt="logo" className="w-48" />
+          </div>
+        </div>
+        <div className="w-full h-screen bg-macha-200 flex justify-center items-center">
+          <Icons.spinner className="spinner w-10 h-10 mx-3" />
+          <p className="text-xl font-bold">Receiving Interview Questions...</p>
+        </div>
+      </>
+    );
+  }
+
+  if (!isLoading && !question) {
+    return (
+      <>
+        <div className="w-full h-16 bg-macha-500 flex justify-between items-center px-10">
+          <div className="flex items-center space-x-4 px-4 cursor-pointer">
+            <img src={matchyaSticker} alt="logo" className="w-48" />
+          </div>
+        </div>
+        <div className="w-full h-screen bg-macha-200 flex flex-col justify-center items-center">
+          <p className="text-xl font-bold">404</p>
+          <p className="text-xl font-bold">Interview not found.</p>
+        </div>
+      </>
+    );
+  }
+
   return (
     <div className="w-full h-screen bg-macha-200 flex flex-col justify-between">
       <div>
