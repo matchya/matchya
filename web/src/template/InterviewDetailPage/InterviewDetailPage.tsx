@@ -1,12 +1,12 @@
 import ReactPlayer from 'react-player';
 import { Link } from 'react-router-dom';
 
-import { Interview } from '@/types';
+import { Answer, Interview } from '@/types';
 
 interface InterviewDetailPageTemplateProps {
-  currentAnswer: any;
+  currentAnswer: Answer | null;
   interview: Interview;
-  onSelectVideo: (answer: any) => void;
+  onSelectVideo: (answer: Answer) => void;
 }
 
 const InterviewDetailPageTemplate = ({
@@ -45,7 +45,7 @@ const InterviewDetailPageTemplate = ({
                   <div className="w-full flex flex-col items-center justify-center">
                     <div className="lg:flex-grow-0 lg:flex-shrink-0">
                       <ReactPlayer
-                        url={currentAnswer.videoUrl}
+                        url={currentAnswer?.videoUrl}
                         controls={true}
                         className="w-full h-full max-h-[1087px] object-contain"
                       />
@@ -91,7 +91,7 @@ const InterviewDetailPageTemplate = ({
                         <div className="w-2/3 p-2">
                           <p
                             className={`text-xl font-bold ${
-                              currentAnswer.questionId === answer.questionId &&
+                              currentAnswer?.questionId === answer.questionId &&
                               'text-macha-500'
                             }`}
                           >
@@ -110,23 +110,23 @@ const InterviewDetailPageTemplate = ({
                     </p>
                     <div className="flex justify-around mb-2">
                       <h3 className="text-xl font-bold text-macha-800">
-                        {currentAnswer.questionTopic}
+                        {currentAnswer?.questionTopic}
                       </h3>
                       <p className="text-md">
                         Score:{' '}
                         <span className="text-xl font-bold text-macha-700 ml-1">
-                          {currentAnswer.score}
+                          {currentAnswer?.score}
                         </span>{' '}
                         / 10
                       </p>
                     </div>
                     <p className="indent-4 text-sm mb-6">
-                      {currentAnswer.questionText}
+                      {currentAnswer?.questionText}
                     </p>
                     <p className="text-2xl text-center font-bold text-black mb-4">
                       Feedback
                     </p>
-                    <p className="text-sm">{currentAnswer.feedback}</p>
+                    <p className="text-sm">{currentAnswer?.feedback}</p>
                   </div>
                 </div>
               </div>

@@ -5,11 +5,11 @@ import Template from '../template/InterviewDetailPage/InterviewDetailPage';
 
 import { caseSensitiveAxiosInstance } from '@/lib/axios';
 import { trackEvent } from '@/lib/rudderstack';
-import { Interview } from '@/types';
+import { Answer, Interview } from '@/types';
 
 function InterviewDetailPage() {
   const [interview, setInterview] = useState<Interview | null>(null);
-  const [currentAnswer, setCurrentAnswer] = useState(null);
+  const [currentAnswer, setCurrentAnswer] = useState<Answer | null>(null);
   const params = useParams<{ id: string }>();
 
   useEffect(() => {
@@ -24,9 +24,7 @@ function InterviewDetailPage() {
       if (response.data.status === 'success') {
         setInterview(response.data.payload.interview);
         if (response.data.payload.interview.answers.length > 0) {
-          setCurrentAnswer(
-            response.data.payload.interview.answers[0]
-          );
+          setCurrentAnswer(response.data.payload.interview.answers[0]);
         }
       }
     } catch (error) {
@@ -34,9 +32,9 @@ function InterviewDetailPage() {
     }
   };
 
-  const handleSelectVideo = (answer: any) => {
+  const handleSelectVideo = (answer: Answer) => {
     if (!interview || !interview.answers.length) return;
-    const id = answer.questionId
+    const id = answer.questionId;
     trackEvent({ eventName: 'select_video', properties: { id } });
     setCurrentAnswer(answer);
   };
