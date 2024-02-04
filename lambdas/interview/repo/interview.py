@@ -73,7 +73,7 @@ class InterviewRepository:
             LEFT JOIN assessment_question aq ON aq.assessment_id = a.id
             LEFT JOIN question q ON q.id = aq.question_id
             LEFT JOIN metric m ON m.question_id = q.id
-            WHERE i.id = '%s';
+            WHERE i.id = '%s' AND i.status != 'COMPLETED';
         """ % interview_id
         logger.info(f'Retrieving candidate interview questions: {interview_id}')
         try:
