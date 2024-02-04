@@ -34,7 +34,7 @@ def handler(event, context):
         topics = body.get('topics')
 
         # business logic
-        NUM_QUESTIONS = 8
+        NUM_QUESTIONS = 3
         logger.info("Getting the keywords from the position type and level...")
         keywords: list = get_random_topics_by_position_type_and_level(position_type, position_level, topics, NUM_QUESTIONS)
         questions = open_ai_client.generate_questions(keywords, position_type, position_level)
