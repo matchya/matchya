@@ -63,7 +63,7 @@ class AssessmentRepository:
             LEFT JOIN 
                 interview i ON t.id = i.assessment_id
             WHERE 
-                t.company_id = '%s'
+                t.company_id = '%s' AND t.deleted_at IS NULL
             GROUP BY 
                 t.id, t.name, t.position_type, t.position_level, t.updated_at;
         """ % company_id
@@ -106,7 +106,7 @@ class AssessmentRepository:
             LEFT JOIN assessment_candidate ON assessment.id = assessment_candidate.assessment_id
             LEFT JOIN candidate ON assessment_candidate.candidate_id = candidate.id
             LEFT JOIN interview ON interview.assessment_id = assessment.id AND interview.candidate_id = candidate.id
-            WHERE assessment.company_id = '%s' AND assessment.id = '%s'
+            WHERE assessment.company_id = '%s' AND assessment.id = '%s' AND assessment.deleted_at IS NULL
         """ % (company_id, assessment_id)
         try:
             self.db_client.execute(sql)

@@ -94,7 +94,7 @@ class CandidateRepository:
             LEFT JOIN interview as i ON i.candidate_id = c.id
             LEFT JOIN assessment as a ON a.id = i.assessment_id
             LEFT JOIN assessment_candidate AS ac ON ac.candidate_id = c.id
-            WHERE a.company_id = '%s';
+            WHERE a.company_id = '%s' AND a.deleted_at IS NULL;
             """ % company_id
         self.db_client.execute(sql, (company_id,))
         result = self.db_client.fetchall()
