@@ -11,35 +11,36 @@ const AssessmentDetailPageTemplate = ({
   assessment,
   isLoading,
   questionsListFragment,
-}: AssessmentDetailPageTemplateProps) => (
-  <div className="h-full min-h-[calc(100vh-64px)] overflow-hidden bg-macha-200">
-    <div className="w-full h-full mx-auto">
+}: AssessmentDetailPageTemplateProps) => {
+  return (
+    <div className="h-full min-h-[calc(100vh-64px)] overflow-hidden bg-macha-200">
       <div className="w-full h-full mx-auto">
-        <div className="justify-between items-center py-12">
-          <div className="px-12">
-            <div className="mb-4">
+        <div className="w-full h-full mx-auto">
+          <div className="justify-between items-center py-12">
+            <div className="px-12">
+              <div className="mb-4">
+                {!isLoading && (
+                  <h3 className="text-lg font-bold">{assessment?.name}</h3>
+                )}
+              </div>
               {!isLoading && (
-                <h3 className="text-lg font-bold">{assessment?.name}</h3>
+                <div className="flex flex-col-reverse lg:flex-row lg:space-x-6">
+                  {questionsListFragment}
+                  <div className="mb-6 lg:mb-0">
+                    <InviteCard
+                      candidates={
+                        assessment?.candidates ? assessment?.candidates : []
+                      }
+                      assessmentId={assessment?.id}
+                    />
+                  </div>
+                </div>
               )}
             </div>
-            {!isLoading && (
-              <div className="flex flex-col-reverse lg:flex-row lg:space-x-6">
-                {questionsListFragment}
-                <div className="mb-6 lg:mb-0">
-                  <InviteCard
-                    candidates={
-                      assessment?.candidates ? assessment?.candidates : []
-                    }
-                    assessmentId={assessment?.id}
-                  />
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>
     </div>
-  </div>
-);
-
+  );
+};
 export default AssessmentDetailPageTemplate;
