@@ -26,16 +26,19 @@ import { AssessmentTablePagination } from './AssessmentTablePagination';
 import { AssessmentTableToolbar } from './AssessmentTableToolbar';
 import { columns } from './columns';
 
+import { Button, Icons } from '@/components';
 import { Assessment } from '@/types';
 
 interface AssessmentTableProps {
   assessments: Assessment[];
   handleNavigateToDetail: (id: string) => void;
+  handleDeleteAssessment: (id: string) => void;
 }
 
 const AssessmentTable = ({
   assessments,
   handleNavigateToDetail,
+  handleDeleteAssessment,
 }: AssessmentTableProps) => {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
@@ -71,9 +74,9 @@ const AssessmentTable = ({
       <AssessmentTableToolbar table={table} />
       <div className="rounded-md border">
         <Table>
-          <TableHeader>
+          <TableHeader className="">
             {table.getHeaderGroups().map(headerGroup => (
-              <TableRow key={headerGroup.id} className="hover:bg-orange-50">
+              <TableRow key={headerGroup.id} className="">
                 {headerGroup.headers.map(header => {
                   return (
                     <TableHead key={header.id} colSpan={header.colSpan}>
@@ -95,7 +98,7 @@ const AssessmentTable = ({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
-                  className="hover:bg-orange-100"
+                  className="hover:bg-orange-50"
                 >
                   {row.getVisibleCells().map(cell => (
                     <TableCell
@@ -109,6 +112,16 @@ const AssessmentTable = ({
                       )}
                     </TableCell>
                   ))}
+                  {/* Delete button */}
+                  <TableCell className="cursor-pointer" onClick={() => {}}>
+                    <Button
+                      variant="ghost"
+                      className="hover:bg-orange-100"
+                      onClick={() => handleDeleteAssessment(row.original.id)}
+                    >
+                      <Icons.trash className="h-4 w-4" />
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))
             ) : (

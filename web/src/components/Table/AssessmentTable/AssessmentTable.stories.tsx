@@ -15,6 +15,10 @@ type Story = StoryObj<typeof Component>;
 
 export const Assessment: Story = {
   render: () => (
-    <Component assessments={mockedAssessments} handleNavigateToDetail={() => {}} />
+    <Component
+      assessments={mockedAssessments}
+      handleNavigateToDetail={() => {}}
+      handleDeleteAssessment={() => {}}
+    />
   ),
 };

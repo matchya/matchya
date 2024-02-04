@@ -6,6 +6,7 @@ interface AssessmentsPageTemplateProps {
   isLoading: boolean;
   onNavigateToAssessment: () => void;
   handleNavigateToDetail: (id: string) => void;
+  handleDeleteAssessment: (id: string) => void;
 }
 
 const AssessmentsPageTemplate = ({
@@ -13,6 +14,7 @@ const AssessmentsPageTemplate = ({
   isLoading,
   onNavigateToAssessment,
   handleNavigateToDetail,
+  handleDeleteAssessment
 }: AssessmentsPageTemplateProps) => (
   <div className="h-full min-h-[calc(100vh-64px)] overflow-hidden">
     <div className="w-full h-full mx-auto">
@@ -40,6 +42,7 @@ const AssessmentsPageTemplate = ({
               <TestTable
                 assessments={assessments}
                 handleNavigateToDetail={handleNavigateToDetail}
+                handleDeleteAssessment={handleDeleteAssessment}
               />
             )}
           </div>

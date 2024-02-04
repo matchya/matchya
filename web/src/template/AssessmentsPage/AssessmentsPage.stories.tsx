@@ -23,6 +23,7 @@ export const AssessmentsPage: Story = {
         isLoading={false}
         onNavigateToAssessment={() => {}}
         handleNavigateToDetail={() => {}}
+        handleDeleteAssessment={() => {}}
       />
     </>
   ),
