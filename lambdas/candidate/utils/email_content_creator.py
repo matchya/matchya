@@ -47,7 +47,7 @@ class CandidateInviteEmailContentGenerator(EmailContentGenerator):
                     font-family: Cambria, sans-serif;
                 "
             >
-                <div style="width: 33.33%; margin: 0 auto">
+                <div style="width: 300px; margin: 0 auto">
                     <img
                         style="width: 12rem; margin-top: 1.5rem; margin-bottom: 2.5rem"
                         src="https://matchya-dev-company-assets.s3.amazonaws.com/Matchya-sticker.png"
