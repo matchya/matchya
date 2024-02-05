@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 
 import {
   DropdownMenuContent,
@@ -19,9 +19,9 @@ const UserNavDropdownMenu = ({
   companyEmail = 'me@example.com',
   onLogout,
 }: UserNavProps) => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   // const navigateToSettingsPage = () => navigate('/settings');
-  const navigateToDashboardPage = () => navigate('/dashboard');
+  // const navigateToDashboardPage = () => navigate('/dashboard');
   return (
     <DropdownMenuContent className="w-56" align="end" forceMount>
       <DropdownMenuLabel className="font-normal">
@@ -34,10 +34,10 @@ const UserNavDropdownMenu = ({
       </DropdownMenuLabel>
       <DropdownMenuSeparator />
       <DropdownMenuGroup>
-        <DropdownMenuItem onClick={navigateToDashboardPage}>
-          Dashboard
+        {/* <DropdownMenuItem onClick={navigateToDashboardPage}> */}
+          {/* Dashboard */}
           {/* <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut> */}
-        </DropdownMenuItem>
+        {/* </DropdownMenuItem> */}
         {/* <DropdownMenuItem onClick={navigateToSettingsPage}> */}
         {/* Settings */}
         {/* <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut> */}

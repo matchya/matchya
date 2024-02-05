@@ -1,4 +1,6 @@
 type IconProps = React.HTMLAttributes<SVGElement>;
+import { FaPlus } from "react-icons/fa6";
+import { IoMdPersonAdd } from "react-icons/io";
 import { IoTrashOutline } from "react-icons/io5";
 
 const Icons = {
@@ -143,24 +145,6 @@ const Icons = {
       <circle cx="12" cy="12" r="10" fill="currentColor" />
     </svg>
   ),
-  triangle_down: (props: IconProps) => (
-    <svg viewBox="0 0 24 24" {...props}>
-      <path
-        fill="currentColor"
-        d="M12 2.25L1.5 21.75h21z"
-        transform="rotate(180 12 12)"
-      />
-    </svg>
-  ),
-  triangle_right: (props: IconProps) => (
-    <svg viewBox="0 0 24 24" {...props}>
-      <path
-        fill="currentColor"
-        d="M12 2.25L1.5 21.75h21z"
-        transform="rotate(90 12 12)"
-      />
-    </svg>
-  ),
   // close icon is X to close modals
   close: (props: IconProps) => (
     <svg viewBox="0 0 24 24" {...props}>
@@ -172,6 +156,12 @@ const Icons = {
   ),
   trash: (props: IconProps) => (
     <IoTrashOutline {...props} />
+  ),
+  personAdd: (props: IconProps) => (
+    <IoMdPersonAdd {...props} />
+  ),
+  plus: (props: IconProps) => (
+    <FaPlus {...props} />
   ),
 };
 
