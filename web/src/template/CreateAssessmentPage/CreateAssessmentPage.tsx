@@ -48,7 +48,7 @@ const CreateAssessmentPageTemplate = ({
   handleSubmit,
 }: CreateAssessmentPageTemplateProps) => {
   return (
-    <div className="w-full min-h-screen h-[1px] bg-matcha-30 overflow-y-scroll">
+    <div className="w-full min-h-screen h-[1px] overflow-y-scroll">
       <Link to="/assessments">
         <div className="w-full flex justify-start px-10 py-5">
           <p className="text-xl font-bold text-matcha-800">← Back</p>

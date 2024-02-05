@@ -23,7 +23,7 @@ const CandidatesPageTemplate = ({
   companyName,
 }: CandidatesPageTemplateProps) => {
   return (
-    <div className="bg-matcha-30 h-full min-h-[calc(100vh-64px)] overflow-hidden">
+    <div className="h-full min-h-[calc(100vh-64px)] overflow-hidden">
       <div className="w-full h-full mx-auto">
         <div>
           <div className="w-full h-full mx-auto">

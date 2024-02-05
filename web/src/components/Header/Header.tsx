@@ -36,7 +36,7 @@ const Header = () => {
   };
 
   return (
-    <div className="border-b bg-matcha-200">
+    <div className="border-b">
       <div className="flex h-16 items-center px-4">
         <Link to="/dashboard">
           <div className="h-full flex items-center cursor-pointer">
