@@ -8,8 +8,12 @@ provider:
   stage: ${opt:stage, 'staging'}
   region: us-east-1
   stackName: ${self:provider.stage}-sls-${self:service}
+  stackTags:
+    service: ${self:service}
+    namespace: ${self:custom.namespace}
+    stage: ${self:provider.stage}
   deploymentBucket:
-    name: ${self:custom.namespace}-${self:provider.stage}-sls-${self:service}
+    name: ${self:custom.namespace}-serverless
   vpc:
     securityGroupIds:
       - ${ssm:/terraform/${self:provider.stage}/vpc/security_group_id/lambda}

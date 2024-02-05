@@ -8,8 +8,12 @@ provider:
   stage: dev
   region: us-east-1
   stackName: ${self:provider.stage}-sls-${self:service}
+  stackTags:
+    service: ${self:service}
+    namespace: ${self:custom.namespace}
+    stage: ${self:provider.stage}
   deploymentBucket:
-    name: ${self:custom.namespace}-${self:provider.stage}-sls-${self:service}
+    name: ${self:custom.namespace}-serverless
   iam:
     role: ${ssm:/terraform/shared/iam/lambda_role_arn}
   apiGateway:
