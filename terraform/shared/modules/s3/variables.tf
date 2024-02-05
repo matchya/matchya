@@ -3,9 +3,9 @@ variable "account_id" {
   type        = string
 }
 
-variable "client_origin" {
+variable "client_origins" {
   description = "The origin of the client application"
-  type        = string
+  type        = list(string)
 }
 
 variable "namespace" {

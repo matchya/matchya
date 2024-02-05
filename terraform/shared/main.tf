@@ -1,3 +1,7 @@
+locals {
+  namespace = "matchya"
+}
+
 module "iam" {
   source = "./modules/iam"
 
@@ -30,4 +34,12 @@ module "ses" {
 
   hosted_zone_id = module.route53.main_route53_zone.id
   hosted_zone = var.hosted_zone
+}
+
+module "s3" {
+  source = "./modules/s3"
+
+  account_id = data.aws_caller_identity.current.account_id
+  client_origins = var.client_origins
+  namespace = local.namespace
 }
