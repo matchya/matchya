@@ -16,7 +16,7 @@ const InterviewDetailPageTemplate = ({
 }: InterviewDetailPageTemplateProps) => {
   console.log(interview);
   return (
-    <div className="h-[calc(100vh-64px)] overflow-y-scroll bg-macha-200">
+    <div className="h-[calc(100vh-64px)] overflow-y-scroll bg-matcha-200">
       <div className="w-full mx-auto">
         <div className="w-full mx-auto">
           <div className="justify-between items-center pt-6">
@@ -27,7 +27,7 @@ const InterviewDetailPageTemplate = ({
                     <div className="space-y-4">
                       <Link
                         to="/interviews"
-                        className="text-lg font-bold text-macha-700"
+                        className="text-lg font-bold text-matcha-700"
                       >
                         ← Back to Interviews
                       </Link>
@@ -52,12 +52,12 @@ const InterviewDetailPageTemplate = ({
                     </div>
                     <div className="w-4/5 mt-8 bg-orange-50 p-10 mx-20 rounded">
                       <div className="flex px-10 justify-around">
-                        <h3 className="text-2xl font-bold text-macha-800">
+                        <h3 className="text-2xl font-bold text-matcha-800">
                           Review By Matchya AI
                         </h3>
                         <p className="text-lg">
                           Total Score:{' '}
-                          <span className="text-2xl font-bold text-macha-700 ml-1">
+                          <span className="text-2xl font-bold text-matcha-700 ml-1">
                             {interview.totalScore}
                           </span>{' '}
                           / 10
@@ -92,7 +92,7 @@ const InterviewDetailPageTemplate = ({
                           <p
                             className={`text-xl font-bold ${
                               currentAnswer?.questionId === answer.questionId &&
-                              'text-macha-500'
+                              'text-matcha-500'
                             }`}
                           >
                             {answer.questionTopic}
@@ -109,12 +109,12 @@ const InterviewDetailPageTemplate = ({
                       Question
                     </p>
                     <div className="flex justify-around mb-2">
-                      <h3 className="text-xl font-bold text-macha-800">
+                      <h3 className="text-xl font-bold text-matcha-800">
                         {currentAnswer?.questionTopic}
                       </h3>
                       <p className="text-md">
                         Score:{' '}
-                        <span className="text-xl font-bold text-macha-700 ml-1">
+                        <span className="text-xl font-bold text-matcha-700 ml-1">
                           {currentAnswer?.score}
                         </span>{' '}
                         / 10

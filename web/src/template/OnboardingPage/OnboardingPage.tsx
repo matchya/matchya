@@ -23,7 +23,7 @@ const CandidatesPageTemplate = ({
   companyName,
 }: CandidatesPageTemplateProps) => {
   return (
-    <div className="bg-macha-200 h-full min-h-[calc(100vh-64px)] overflow-hidden">
+    <div className="bg-matcha-200 h-full min-h-[calc(100vh-64px)] overflow-hidden">
       <div className="w-full h-full mx-auto">
         <div>
           <div className="w-full h-full mx-auto">
@@ -35,7 +35,11 @@ const CandidatesPageTemplate = ({
                 </div>
                 <div className="flex flex-wrap gap-6">
                   {steps.map(({ description, link }) => (
-                    <OnboardingCard key={description} title={description} link={link} />
+                    <OnboardingCard
+                      key={description}
+                      title={description}
+                      link={link}
+                    />
                   ))}
                 </div>
               </div>

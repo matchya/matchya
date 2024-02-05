@@ -62,7 +62,7 @@ const CandidateRow = ({
         </div>
       ) : (
         <Button
-          className="bg-macha-600 hover:bg-macha-700 font-bold text-white"
+          className="bg-matcha-600 hover:bg-matcha-700 font-bold text-white"
           onClick={sendInvitation}
           disabled={emailSent || isLoading}
         >
@@ -130,7 +130,7 @@ const InviteCard = ({ candidates, assessmentId }: InviteCardProps) => {
             variant="secondary"
             onClick={handleInvite}
             disabled={isLoading}
-            className="shrink-0 bg-macha-500 hover:bg-macha-600 text-white font-bold"
+            className="shrink-0 bg-matcha-500 hover:bg-matcha-600 text-white font-bold"
           >
             Invite
           </Button>

@@ -25,7 +25,7 @@ const config: Config = {
         '19': '4.75rem',
       },
       colors: {
-        macha: {
+        matcha: {
           50: '#f6faef',
           100: '#e9f5de',
           200: '#dff9b3',
