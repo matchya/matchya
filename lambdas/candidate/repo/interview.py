@@ -56,3 +56,23 @@ class InterviewRepository:
         except Exception as e:
             logger.error(e)
             raise Exception('Interview not found')
+
+    def retrieve_company_name_by_id(self, assessment_id: str) -> str:
+        """
+        Retrieves the company name by the assessment id.
+        """
+        logger.info(f'Retrieving company name by assessment id: {assessment_id}')
+        sql = """
+            SELECT company.name
+            FROM company
+            LEFT JOIN assessment ON company.id = assessment.company_id
+            WHERE assessment.id = '%s';
+        """ % assessment_id
+        try:
+            self.db_client.execute(sql)
+            result = self.db_client.fetchone()
+            logger.info('Successfully retrieved company name')
+            return result[0]
+        except Exception as e:
+            logger.error(e)
+            raise Exception('Company name not found')
