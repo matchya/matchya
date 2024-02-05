@@ -15,8 +15,10 @@ functions:
         - evaluate_question.handler
     events:
       - s3:
-          bucket: ${self:custom.namespace}-${self:provider.stage}-data-question-response-video
+          bucket: ${self:custom.namespace}-user-data
           event: s3:ObjectCreated:*
+          rules:
+            - prefix: ${self:provider.stage}/response-recording/
           existing: true
     timeout: 300
 
