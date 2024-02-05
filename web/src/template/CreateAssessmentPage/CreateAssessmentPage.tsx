@@ -48,7 +48,7 @@ const CreateAssessmentPageTemplate = ({
   handleSubmit,
 }: CreateAssessmentPageTemplateProps) => {
   return (
-    <div className="w-full min-h-screen h-[1px] bg-matcha-200 overflow-y-scroll">
+    <div className="w-full min-h-screen h-[1px] bg-matcha-30 overflow-y-scroll">
       <Link to="/assessments">
         <div className="w-full flex justify-start px-10 py-5">
           <p className="text-xl font-bold text-matcha-800">← Back</p>
@@ -58,7 +58,7 @@ const CreateAssessmentPageTemplate = ({
         <p className="text-2xl font-bold text-black mb-4 mx-8">
           Create Assessment
         </p>
-        <div className="bg-orange-50 w-full rounded-lg my-2 mx-auto p-6 pl-8">
+        <div className="bg-white border w-full rounded-lg my-2 mx-auto p-6 pl-8">
           <p className="text-sm font-bold text-black mb-2 pl-8">
             Assessment Name
           </p>
@@ -66,10 +66,10 @@ const CreateAssessmentPageTemplate = ({
             value={testName}
             onChange={onTestNameChange}
             type="text"
-            className="w-2/3 text-matcha-800 p-1 px-4 bg-orange-50 active:ring-0 focus:ring-0"
+            className="w-2/3 text-matcha-900 border-black p-1 px-4 active:ring-0 focus:ring-0"
           />
         </div>
-        <div className="bg-orange-50 w-full rounded-lg my-2 mx-auto p-6 pl-8">
+        <div className="bg-white border w-full rounded-lg my-2 mx-auto p-6 pl-8">
           <p className="text-sm font-bold text-black mb-2 pl-8">
             Position Type
           </p>
@@ -82,7 +82,7 @@ const CreateAssessmentPageTemplate = ({
               >
                 <p
                   className={`text-lg font-bold ${
-                    selectedPosition === position && 'text-matcha-700'
+                    selectedPosition === position && 'text-matcha-400'
                   }`}
                 >
                   {position}
@@ -91,7 +91,7 @@ const CreateAssessmentPageTemplate = ({
             ))}
           </div>
         </div>
-        <div className="bg-orange-50 w-full rounded-lg my-2 mx-auto p-6 pl-8">
+        <div className="bg-white border w-full rounded-lg my-2 mx-auto p-6 pl-8">
           <p className="text-sm font-bold text-black mb-2 pl-8">
             Position Level
           </p>
@@ -104,7 +104,7 @@ const CreateAssessmentPageTemplate = ({
               >
                 <p
                   className={`text-lg font-bold ${
-                    selectedLevel === level && 'text-matcha-700'
+                    selectedLevel === level && 'text-matcha-400'
                   }`}
                 >
                   {level}
@@ -113,7 +113,7 @@ const CreateAssessmentPageTemplate = ({
             ))}
           </div>
         </div>
-        <div className="bg-orange-50 w-full rounded-lg my-2 mx-auto p-6 pl-8">
+        <div className="bg-white border w-full rounded-lg my-2 mx-auto p-6 pl-8">
           <p className="flex items-center text-sm font-bold text-black mb-2">
             {advanceSettingOpen ? (
               <Icons.triangle_down
@@ -129,7 +129,7 @@ const CreateAssessmentPageTemplate = ({
             Advanced Settings
           </p>
           {advanceSettingOpen && (
-            <div className="bg-orange-50 w-full rounded-lg my-2 mx-auto mt-4 px-4">
+            <div className="w-full rounded-lg my-2 mx-auto mt-4 px-4">
               <p className="text-sm font-bold text-black mb-2 pl-8">
                 Question Topics
               </p>
@@ -138,10 +138,10 @@ const CreateAssessmentPageTemplate = ({
                   value={topicInputValue}
                   onChange={e => setTopicInputValue(e.target.value)}
                   type="text"
-                  className="w-full relative text-matcha-800 p-1 px-4 bg-orange-50 active:ring-0 focus:ring-0 h-12"
+                  className="w-full relative text-matcha-900 border-black p-1 px-4 active:ring-0 focus:ring-0 h-12"
                 />
                 <Button
-                  className="absolute top-0 right-0 bg-matcha-700 text-matcha-50 hover:bg-matcha-800 hover:text-matcha-100 mt-1 mr-2 h-10 w-20"
+                  className="absolute top-0 right-0 bg-gray-700 font-bold border text-white hover:bg-gray-800 hover:text-white mt-1 mr-2 h-10 w-20"
                   onClick={handleAddTopics}
                 >
                   Add
@@ -165,7 +165,7 @@ const CreateAssessmentPageTemplate = ({
                 Description
               </p>
               <textarea
-                className="w-full h-32 text-black p-1 px-4 bg-orange-50 active:ring-0 focus:ring-0 border-2 text-sm"
+                className="w-full h-32 text-black p-1 px-4 border rounded border-black text-sm resize-none"
                 placeholder={
                   'Let us know more about your position to generate better questions for you.\n' +
                   'ex)\n - Seeking a front-end engineer proficient in design.\n' +
@@ -185,7 +185,7 @@ const CreateAssessmentPageTemplate = ({
             <Button
               onClick={handleSubmit}
               disabled={isLoading}
-              className="bg-lime-400 bg-orange-700 text-sm text-matcha-50 hover:bg-orange-800 hover:text-matcha-100 w-1/2 py-4 rounded-sm"
+              className="bg-lime-400 bg-orange-300 text-md text-white hover:bg-orange-400 hover:text-white py-4 px-3 rounded-sm"
             >
               Create Assessment
             </Button>

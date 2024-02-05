@@ -76,7 +76,7 @@ const InterviewRecordingPageTemplate = ({
   }
 
   return (
-    <div className="w-full h-screen bg-matcha-200 flex flex-col justify-between">
+    <div className="w-full h-screen bg-matcha-30 flex flex-col justify-between">
       <div>
         <Webcam
           className="hidden"
@@ -87,7 +87,7 @@ const InterviewRecordingPageTemplate = ({
           ref={webcamRef}
         />
         {/* Header for Candidate Assessment Page */}
-        <div className="w-full h-16 bg-matcha-500 flex justify-between items-center px-10">
+        <div className="w-full h-16 bg-matcha-200 flex justify-between items-center px-10">
           <div className="flex items-center space-x-4 px-4 cursor-pointer">
             <img src={matchyaSticker} alt="logo" className="w-48" />
           </div>
@@ -102,7 +102,7 @@ const InterviewRecordingPageTemplate = ({
         </div>
 
         {/* Time and Question count */}
-        <div className="flex items-center justify-center px-20 pt-4 border-b-4 border-matcha-700 pb-4">
+        <div className="flex items-center justify-center px-20 pt-4 border-b border-matcha-700 pb-4">
           <div className="w-1/2">
             <p className="text-2xl font-bold">3:38</p>
           </div>
@@ -125,7 +125,7 @@ const InterviewRecordingPageTemplate = ({
             {question.metrics?.map(metric => (
               <div
                 key={metric.id}
-                className="p-4 w-60 h-24 bg-orange-50 m-2 overflow-y-scroll"
+                className="p-4 w-60 h-24 bg-white border shadow m-2 overflow-y-scroll"
               >
                 <p className="text-md text-center"> {metric.name}</p>
               </div>
@@ -137,14 +137,14 @@ const InterviewRecordingPageTemplate = ({
       <div className="flex justify-center w-full items-center py-20">
         {videoFile ? (
           <Button
-            className="bg-matcha-200 hover:bg-matcha-300 text-orange-300 font-bold py-8 px-10 text-xl rounded-full border-2 border-orange-300 ml-10"
+            className="bg-transparent text-orange-300 font-bold py-8 px-10 text-xl rounded-full border-2 border-orange-300 ml-10"
             onClick={onUploadVideo}
           >
             Upload Video
           </Button>
         ) : (
           <Button
-            className="bg-matcha-200 hover:bg-matcha-300 text-orange-300 font-bold py-8 px-10 text-xl rounded-full border-2 border-orange-300"
+            className="bg-transparent hover:bg-matcha-50 text-orange-300 font-bold py-8 px-10 text-xl rounded-full border-2 border-orange-300"
             onClick={isRecording ? onStopRecording : onStartRecording}
           >
             <Icons.circle className="h-6 w-6 mr-2" />

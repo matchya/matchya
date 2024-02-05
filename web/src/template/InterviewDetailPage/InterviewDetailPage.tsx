@@ -16,7 +16,7 @@ const InterviewDetailPageTemplate = ({
 }: InterviewDetailPageTemplateProps) => {
   console.log(interview);
   return (
-    <div className="h-[calc(100vh-64px)] overflow-y-scroll bg-matcha-200">
+    <div className="h-[calc(100vh-64px)] overflow-y-scroll bg-matcha-30">
       <div className="w-full mx-auto">
         <div className="w-full mx-auto">
           <div className="justify-between items-center pt-6">
@@ -50,7 +50,7 @@ const InterviewDetailPageTemplate = ({
                         className="w-full h-full max-h-[1087px] object-contain"
                       />
                     </div>
-                    <div className="w-4/5 mt-8 bg-orange-50 p-10 mx-20 rounded">
+                    <div className="w-4/5 mt-8 bg-white border p-10 mx-20 rounded">
                       <div className="flex px-10 justify-around">
                         <h3 className="text-2xl font-bold text-matcha-800">
                           Review By Matchya AI
@@ -70,7 +70,7 @@ const InterviewDetailPageTemplate = ({
                   </div>
                 </div>
                 <div className="w-1/3 pl-6 pt-3">
-                  <div className="max-h-[60vh] overflow-y-scroll bg-orange-50 rounded-lg mb-6 pb-4">
+                  <div className="max-h-[60vh] overflow-y-scroll bg-white border rounded-lg mb-6 pb-4">
                     <p className="text-2xl pt-3 pl-3 font-bold ml-3 my-3">
                       Questions
                     </p>
@@ -104,7 +104,7 @@ const InterviewDetailPageTemplate = ({
                       </div>
                     ))}
                   </div>
-                  <div className="p-6 bg-orange-50 rounded-lg mb-12">
+                  <div className="p-6 bg-white border rounded-lg mb-12">
                     <p className="text-2xl text-center font-bold text-black mb-4">
                       Question
                     </p>
