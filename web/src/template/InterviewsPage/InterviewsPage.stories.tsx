@@ -1,13 +1,15 @@
 import { Meta, StoryObj } from '@storybook/react';
 
+import { LayoutDecorator } from '../../../.storybook/decorators';
+
 import Component from './InterviewsPage';
 
-import { Header } from '@/components';
 import { mockedInterviews } from '@/data/mock';
 
 const meta: Meta<typeof Component> = {
   title: 'Page',
   component: Component,
+  decorators: [LayoutDecorator],
 };
 
 export default meta;
@@ -15,10 +17,5 @@ export default meta;
 type Story = StoryObj<typeof Component>;
 
 export const InterviewsPage: Story = {
-  render: () => (
-    <>
-      <Header />
-      <Component interviews={mockedInterviews} isLoading={false} />
-    </>
-  ),
+  render: () => <Component interviews={mockedInterviews} isLoading={false} />,
 };
