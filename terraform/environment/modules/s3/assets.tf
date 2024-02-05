@@ -1,13 +1,13 @@
-resource "aws_s3_bucket" "company_assets" {
-  bucket = "${var.namespace}-${terraform.workspace}-company-assets"
+resource "aws_s3_bucket" "assets" {
+  bucket = "${var.namespace}-assets"
 
   lifecycle {
     create_before_destroy = true
   }
 }
 
-resource "aws_s3_bucket_public_access_block" "company_assets" {
-  bucket = aws_s3_bucket.company_assets.id
+resource "aws_s3_bucket_public_access_block" "assets" {
+  bucket = aws_s3_bucket.assets.id
 
   block_public_acls       = false
   block_public_policy     = false
@@ -15,9 +15,9 @@ resource "aws_s3_bucket_public_access_block" "company_assets" {
   restrict_public_buckets = false
 }
 
-resource "aws_s3_bucket_policy" "bucket_policy" {
-  bucket = aws_s3_bucket.company_assets.id
-  depends_on = [ aws_s3_bucket.company_assets, aws_s3_bucket_public_access_block.company_assets ]
+resource "aws_s3_bucket_policy" "assets" {
+  bucket = aws_s3_bucket.assets.id
+  depends_on = [ aws_s3_bucket.assets, aws_s3_bucket_public_access_block.assets ]
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -27,7 +27,7 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
         Effect    = "Deny"
         Principal = "*"
         Action    = "s3:PutObject"
-        Resource  = "${aws_s3_bucket.company_assets.arn}/*"
+        Resource  = "${aws_s3_bucket.assets.arn}/*"
         Condition = {
           Bool = {
             "aws:SecureTransport" = "false"
@@ -39,7 +39,7 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
         Effect    = "Allow"
         Principal = "*"
         Action    = "s3:GetObject"
-        Resource  = "${aws_s3_bucket.company_assets.arn}/*"
+        Resource  = "${aws_s3_bucket.assets.arn}/*"
       }
     ]
   })

@@ -49,7 +49,7 @@ const CandidateRow = ({
 
   return (
     <div className="flex items-between justify-between space-x-4">
-      <div className="flex items-center space-x-4">
+      <div className="flex justify-center items-center space-x-4">
         <Avatar altName={initial} imageUrl="/avatars/03.png" />
         <div>
           <p className="text-sm font-medium leading-none">{name}</p>
@@ -62,7 +62,8 @@ const CandidateRow = ({
         </div>
       ) : (
         <Button
-          className="bg-macha-600 hover:bg-macha-700 font-bold text-white"
+          variant="outline"
+          className="bg-white text-matcha-600 border-matcha-600 border hover:text-matcha-700 disabled:text-matcha-500"
           onClick={sendInvitation}
           disabled={emailSent || isLoading}
         >
@@ -107,7 +108,7 @@ const InviteCard = ({ candidates, assessmentId }: InviteCardProps) => {
   };
 
   return (
-    <Card className="bg-orange-50">
+    <Card className="h-full">
       <CardHeader>
         <CardTitle>Invite Candidates</CardTitle>
         <CardDescription>
@@ -127,17 +128,18 @@ const InviteCard = ({ candidates, assessmentId }: InviteCardProps) => {
             placeholder="Email"
           />
           <Button
-            variant="secondary"
+            variant="outline"
             onClick={handleInvite}
             disabled={isLoading}
-            className="shrink-0 bg-macha-500 hover:bg-macha-600 text-white font-bold"
+            className="shrink-0 bg-matcha-300 hover:bg-matcha-400 hover:text-white text-white font-bold"
           >
             Invite
           </Button>
         </div>
-        <Separator className="my-4" />
+        {candidates.length > 0 ? <Separator className="my-4" /> : null}
         <div className="space-y-4">
-          <h4 className="text-sm font-medium">Filter: none Sort: evaluated</h4>
+          {/* TODO: Implement filtering/sorting later */}
+          {/* <h4 className="text-sm font-medium">Filter: none Sort: evaluated</h4> */}
           <div className="grid gap-6">
             {candidates.map(candidate => (
               <CandidateRow

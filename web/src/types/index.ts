@@ -36,7 +36,7 @@ export interface Assessment {
   name: string;
   positionType?: string;
   positionLevel?: string;
-  createdAt: string;
+  createdAt?: string;
   updatedAt?: string;
   numCandidates?: number;
   questions?: Question[];

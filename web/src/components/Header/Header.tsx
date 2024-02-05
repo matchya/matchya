@@ -1,6 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
 
-import matchyaSticker from '@/assets/matchya-sticker.png';
 import {
   Avatar,
   Button,
@@ -9,6 +8,7 @@ import {
   MainNav,
   UserNavDropdownMenu,
 } from '@/components';
+import { env } from '@/config';
 import { axiosInstance } from '@/lib/axios';
 import { useCompanyStore } from '@/store/store';
 
@@ -36,11 +36,16 @@ const Header = () => {
   };
 
   return (
-    <div className="border-b bg-macha-500">
+    <div className="border-b">
       <div className="flex h-16 items-center px-4">
         <Link to="/dashboard">
-          <div className="flex items-center space-x-4 px-4 cursor-pointer">
-            <img src={matchyaSticker} alt="logo" className="w-48" />
+          <div className="h-full flex items-center cursor-pointer">
+            <img
+              src={`${env.assetsEndpoint}/matchya-logo.png`}
+              alt="logo"
+              className="w-10 h-10 relative bottom-1"
+            />
+            <h1 className="text-xl font-bold text-black">Matchya</h1>
           </div>
         </Link>
         <div className="pl-8 hidden sm:block">

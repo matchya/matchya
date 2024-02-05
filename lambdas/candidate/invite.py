@@ -49,8 +49,8 @@ def handler(event, context):
             interview_repo = InterviewRepository(db_client)
             candidate = candidate_repo.retrieve_by_id(candidate.id)
             interview = interview_repo.retrieve_by_candidate_id(candidate.id)
+            company_name = interview_repo.retrieve_company_name_by_id(interview.assessment_id)
 
-        company_name = interview_repo.retrieve_company_name_by_id(interview.assessment_id)
         token = retrieve_interview_access_token(interview_access_token_repo, candidate_id, interview.id)
         # send the invitation email
         body_html_content, body_text_content = CandidateInviteEmailContentGenerator.generate(interview_id=interview.id,

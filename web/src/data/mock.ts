@@ -1,24 +1,6 @@
-import { Assessment, Candidate, Company, Interview, Question } from '../types';
+import { Assessment, Candidate, Company, Question } from '../types';
 
-export const mockedInterviews: Interview[] = [
-  {
-    id: '1',
-    totalScore: 90,
-    summary: 'This is a summary',
-    createdAt: '2022-01-01',
-    candidate: {
-      id: '1',
-      name: 'John Doe',
-      email: '',
-    },
-    assessment: {
-      id: '1',
-      name: 'Test 1',
-      createdAt: '2022-01-01',
-    },
-    answers: [],
-  },
-];
+export * from './interview';
 
 export const mockedAssessments: Assessment[] = [
   {

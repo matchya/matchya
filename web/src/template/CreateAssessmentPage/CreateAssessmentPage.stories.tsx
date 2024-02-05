@@ -1,10 +1,13 @@
 import { Meta, StoryObj } from '@storybook/react';
 
+import { LayoutDecorator } from '../../../.storybook/decorators';
+
 import Component from './CreateAssessmentPage';
 
 const meta: Meta<typeof Component> = {
-  title: 'Template',
+  title: 'Page',
   component: Component,
+  decorators: [LayoutDecorator],
 };
 
 export default meta;
@@ -18,7 +21,7 @@ export const CreateAssessmentPage: Story = {
       selectedPosition={'Software Engineer'}
       selectedLevel={'Senior'}
       advanceSettingOpen={false}
-      topicInputValue=''
+      topicInputValue=""
       specifiedTopics={['topic1', 'topic2']}
       isLoading={false}
       onTestNameChange={() => {}}

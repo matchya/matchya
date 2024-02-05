@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import Component from './QuestionsList';
 
 const meta: Meta<typeof Component> = {
-  title: 'Template/QuestionsList',
+  title: 'Fragments/QuestionsList',
   component: Component,
 };
 

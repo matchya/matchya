@@ -74,10 +74,10 @@ const CandidatesTable = ({ candidates }: CandidatesTableProps) => {
     <div className="space-y-4 h-full overflow-y-scroll rounded-md">
       <CandidatesTableToolbar table={table} />
       <div className="rounded-md border">
-        <Table>
+        <Table className="bg-white">
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (
-              <TableRow key={headerGroup.id} className="hover:bg-orange-50">
+              <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map(header => {
                   return (
                     <TableHead key={header.id} colSpan={header.colSpan}>
@@ -99,11 +99,11 @@ const CandidatesTable = ({ candidates }: CandidatesTableProps) => {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
-                  className="hover:bg-orange-100"
+                  className="hover:bg-gray-50"
                 >
                   {row.getVisibleCells().map(cell => (
                     <TableCell
-                      className="cursor-pointer"
+                      className="cursor-pointer h-12"
                       onClick={() =>
                         handleNavigateToDetail(row.original.assessment)
                       }

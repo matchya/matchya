@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import Component from './HomePage';
 
 const meta: Meta<typeof Component> = {
-  title: 'Template',
+  title: 'Page',
   component: Component,
 };
 

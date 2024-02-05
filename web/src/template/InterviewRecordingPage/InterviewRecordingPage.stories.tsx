@@ -5,7 +5,7 @@ import Component from './InterviewRecordingPage';
 import { mockedQuestion } from '@/data/mock';
 
 const meta: Meta<typeof Component> = {
-  title: 'Template',
+  title: 'Page',
   component: Component,
 };
 

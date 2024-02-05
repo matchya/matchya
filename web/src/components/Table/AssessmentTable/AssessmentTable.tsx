@@ -73,7 +73,7 @@ const AssessmentTable = ({
     <div className="space-y-4 h-full overflow-y-scroll rounded-md">
       <AssessmentTableToolbar table={table} />
       <div className="rounded-md border">
-        <Table>
+        <Table className="bg-white">
           <TableHeader className="">
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow key={headerGroup.id} className="">
@@ -98,7 +98,7 @@ const AssessmentTable = ({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
-                  className="hover:bg-orange-50"
+                  className="hover:bg-gray-50"
                 >
                   {row.getVisibleCells().map(cell => (
                     <TableCell
@@ -116,7 +116,7 @@ const AssessmentTable = ({
                   <TableCell className="cursor-pointer" onClick={() => {}}>
                     <Button
                       variant="ghost"
-                      className="hover:bg-orange-100"
+                      className="hover:bg-gray-100"
                       onClick={() => handleDeleteAssessment(row.original.id)}
                     >
                       <Icons.trash className="h-4 w-4" />
