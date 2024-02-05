@@ -1,4 +1,4 @@
-import { InterviewsTable } from '@/components';
+import { Icons, InterviewsTable } from '@/components';
 import { Interview } from '@/types';
 
 interface InterviewsPageTemplateProps {
@@ -22,6 +22,11 @@ const InterviewsPageTemplate = ({
                     <h3 className="text-4xl font-bold">Interviews</h3>
                   </div>
                 </div>
+                {isLoading && (
+                  <div className="flex mt-48 justify-center items-center">
+                    <Icons.spinner className="spinner h-8 w-8" />
+                  </div>
+                )}
                 {!isLoading && <InterviewsTable interviews={interviews} />}
               </div>
             </div>

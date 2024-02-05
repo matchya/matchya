@@ -50,9 +50,12 @@ def handler(event, context):
             candidate = candidate_repo.retrieve_by_id(candidate.id)
             interview = interview_repo.retrieve_by_candidate_id(candidate.id)
 
+        company_name = interview_repo.retrieve_company_name_by_id(interview.assessment_id)
         token = retrieve_interview_access_token(interview_access_token_repo, candidate_id, interview.id)
         # send the invitation email
-        body_html_content, body_text_content = CandidateInviteEmailContentGenerator.generate(interview_id=interview.id, 
+        body_html_content, body_text_content = CandidateInviteEmailContentGenerator.generate(interview_id=interview.id,
+                                                                                             candidate_name=candidate.name,
+                                                                                             company_name=company_name,
                                                                                              interview_access_token=token)
         email_id = ses_client.send_email(sender=Config.SENDER_EMAIL_ADDRESS, destinations=[candidate.email],
                                          body_html_content=body_html_content,

@@ -73,7 +73,7 @@ class InterviewRepository:
             LEFT JOIN assessment_question aq ON aq.assessment_id = a.id
             LEFT JOIN question q ON q.id = aq.question_id
             LEFT JOIN metric m ON m.question_id = q.id
-            WHERE i.id = '%s';
+            WHERE i.id = '%s' AND i.status != 'COMPLETED';
         """ % interview_id
         logger.info(f'Retrieving candidate interview questions: {interview_id}')
         try:
@@ -225,7 +225,7 @@ class InterviewRepository:
             FROM interview AS i
             LEFT JOIN candidate AS c ON c.id = i.candidate_id
             LEFT JOIN assessment AS a ON a.id = i.assessment_id
-            WHERE a.company_id = '%s' AND i.status = 'COMPLETED';
+            WHERE a.company_id = '%s' AND i.status = 'COMPLETED' AND a.deleted_at IS NULL;
         """ % company_id
         self.db_client.execute(sql)
         result = self.db_client.fetchall()

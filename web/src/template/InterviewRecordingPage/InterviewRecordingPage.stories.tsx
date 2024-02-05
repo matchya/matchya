@@ -17,6 +17,7 @@ export const InterviewRecordingPage: Story = {
   render: () => (
     <Component
       question={mockedQuestion}
+      isLoading={false}
       index={0}
       isRecording={false}
       webcamRef={undefined}

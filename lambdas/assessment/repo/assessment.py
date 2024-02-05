@@ -31,6 +31,21 @@ class AssessmentRepository:
             """ % (assessment_id, company_id, assessment.name, assessment.position_type, assessment.position_level)
         self.db_client.execute(sql)
         return assessment_id
+    
+    def delete_by_id(self, company_id: str, assessment_id: str):
+        """
+        Soft deletes a assessment by assessment id from the database.
+
+        :param company_id: The company ID.
+        :param assessment_id: The assessment ID.
+        """
+        logger.info(f'delete_by_id: {company_id}, {assessment_id}')
+        sql = """
+            UPDATE assessment
+            SET deleted_at = NOW()
+            WHERE company_id = '%s' AND id = '%s';
+        """ % (company_id, assessment_id)
+        self.db_client.execute(sql)
 
     def retrieve_by_company_id(self, company_id):
         """
@@ -48,7 +63,7 @@ class AssessmentRepository:
             LEFT JOIN 
                 interview i ON t.id = i.assessment_id
             WHERE 
-                t.company_id = '%s'
+                t.company_id = '%s' AND t.deleted_at IS NULL
             GROUP BY 
                 t.id, t.name, t.position_type, t.position_level, t.updated_at;
         """ % company_id
@@ -91,7 +106,7 @@ class AssessmentRepository:
             LEFT JOIN assessment_candidate ON assessment.id = assessment_candidate.assessment_id
             LEFT JOIN candidate ON assessment_candidate.candidate_id = candidate.id
             LEFT JOIN interview ON interview.assessment_id = assessment.id AND interview.candidate_id = candidate.id
-            WHERE assessment.company_id = '%s' AND assessment.id = '%s'
+            WHERE assessment.company_id = '%s' AND assessment.id = '%s' AND assessment.deleted_at IS NULL
         """ % (company_id, assessment_id)
         try:
             self.db_client.execute(sql)

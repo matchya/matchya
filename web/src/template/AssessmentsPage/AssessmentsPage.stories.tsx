@@ -18,7 +18,13 @@ export const AssessmentsPage: Story = {
   render: () => (
     <>
       <Header />
-      <Component assessments={mockedAssessments} isLoading={false} onNavigateToAssessment={() => {}} handleNavigateToDetail={() => {}} />
+      <Component
+        assessments={mockedAssessments}
+        isLoading={false}
+        onNavigateToAssessment={() => {}}
+        handleNavigateToDetail={() => {}}
+        handleDeleteAssessment={() => {}}
+      />
     </>
   ),
 };

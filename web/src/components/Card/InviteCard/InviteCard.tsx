@@ -58,7 +58,7 @@ const CandidateRow = ({
       </div>
       {score ? (
         <div>
-          <p className="mr-10">{score.toFixed(1)}</p>
+          <p className="mr-12">{score.toFixed(1)}</p>
         </div>
       ) : (
         <Button

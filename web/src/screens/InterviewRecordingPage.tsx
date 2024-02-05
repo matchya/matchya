@@ -17,23 +17,19 @@ const InterviewRecordingPage = () => {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [questionIndex, setQuestionIndex] = useState(0);
   const [interviewDone, setInterviewDone] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const params = useParams<{ id: string }>();
   const interviewId = params.id;
   const navigate = useNavigate();
 
   useEffect(() => {
+    setIsLoading(true);
     const sessionToken = sessionStorage.getItem('sessionToken');
     if (sessionToken) {
       axiosInstance.defaults.headers.common['Authorization'] =
         `Bearer ${sessionToken}`;
-      try {
-        fetchInterviewQuestions();
-      } catch (err) {
-        navigate('/404');
-      }
-    } else {
-      navigate('/404');
-    }
+      fetchInterviewQuestions();
+    } 
   }, [params.id, navigate]);
 
   useEffect(() => {
@@ -53,13 +49,18 @@ const InterviewRecordingPage = () => {
   };
 
   const fetchInterviewQuestions = async () => {
-    const response = await axiosInstance.get(
-      `/interviews/${interviewId}/questions`
-    );
-    if (response.data.status === 'success') {
-      const interview = response.data.payload.interview;
-      setQuestions(interview.questions);
-      console.log(interview.questions);
+    try {
+      const response = await axiosInstance.get(
+        `/interviews/${interviewId}/questions`
+      );
+      if (response.data.status === 'success') {
+        const interview = response.data.payload.interview;
+        setQuestions(interview.questions);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -154,6 +155,7 @@ const InterviewRecordingPage = () => {
 
   return (
     <InterviewRecordingPageTemplate
+      isLoading={isLoading}
       question={questions[questionIndex]}
       index={questionIndex}
       isRecording={recording}
