@@ -1,3 +1,8 @@
+variable "client_origins" {
+  description = "The origins of the client applications"
+  type = list(string)
+}
+
 variable "hosted_zone" {
   description = "The hosted zone for the domain"
   type = string
