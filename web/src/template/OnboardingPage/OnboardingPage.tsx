@@ -30,12 +30,9 @@ const CandidatesPageTemplate = ({
             <div className="justify-between items-center py-4">
               <div className="px-12 pt-8">
                 <div className="mb-8 space-y-4">
-                  <h3 className="text-4xl font-bold text-matcha-900">
-                    Welcome, {companyName}
-                  </h3>
-                  <p className="text-matcha-900">Let's get started</p>
+                  <h3 className="text-4xl font-bold">Welcome, {companyName}</h3>
                 </div>
-                <div className="flex flex-wrap gap-6">
+                <div className="grid md:grid-cols-3 gap-y-3 md:gap-x-6">
                   {steps.map(({ description, link }) => (
                     <OnboardingCard
                       key={description}

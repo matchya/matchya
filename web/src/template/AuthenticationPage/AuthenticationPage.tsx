@@ -12,38 +12,19 @@ const AuthenticationPageTemplate = ({
   onGoogleLogin,
 }: AuthenticationPageTemplateProps) => (
   <div>
-    <div className="md:hidden">
-      <img
-        src="/examples/authentication-light.png"
-        width={1280}
-        height={843}
-        alt="Authentication"
-        className="block dark:hidden"
-      />
-      <img
-        src="/examples/authentication-dark.png"
-        width={1280}
-        height={843}
-        alt="Authentication"
-        className="hidden dark:block"
-      />
-      <div className="w-[1280px] h-[843px] " />
-    </div>
-    <div className="min-h-screen container relative hidden flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
-      <div className="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
-        <div className="absolute inset-0 bg-matcha-200" />
-        <div className="relative z-20 flex items-center text-lg font-medium">
-          <div className="h-full flex items-center cursor-pointer">
-            <img
-              src={`${env.assetsEndpoint}/matchya-logo.png`}
-              alt="logo"
-              className="w-10 h-10 relative bottom-1"
-            />
-            <h1 className="text-xl font-bold text-black">Matchya</h1>
-          </div>
+    <div className="min-h-screen w-full relative md:flex-col grid lg:max-w-none lg:grid-cols-2">
+      <div className="hidden bg-macha-500 relative h-full flex-col dark:border-r lg:flex"></div>
+      <div className="fixed top-8 left-8 z-20 flex items-center text-lg font-medium">
+        <div className="h-full flex items-center cursor-pointer">
+          <img
+            src={`${env.assetsEndpoint}/matchya-logo.png`}
+            alt="logo"
+            className="w-10 h-10 relative bottom-1"
+          />
+          <h1 className="text-xl font-bold text-black">Matchya</h1>
         </div>
       </div>
-      <div className="h-full bg-white flex items-center justify-center">
+      <div className="bg-matcha-200 h-full flex items-center justify-center w-full">
         <div className="lg:p-8">
           <div className="flex justify-center mb-4">
             <Badge className="bg-matcha-900">Beta</Badge>

@@ -11,14 +11,16 @@ const HomePageTemplate = ({
   return (
     <div className="w-full min-h-screen h-[1px] bg-matcha-200">
       <div className="h-full">
-        <div className="w-full bg-matcha-200 shadow-lg">
-          <div className="flex items-center h-20 cursor-pointer px-4 md:max-w-[1730px] mx-auto">
-            <img
-              src={`${env.assetsEndpoint}/matchya-logo.png`}
-              alt="logo"
-              className="w-10 h-10 relative bottom-1"
-            />
-            <h1 className="text-xl font-bold text-black">Matchya</h1>
+        <div className="w-full bg-macha-200 shadow-lg">
+          <div className="h-20 px-4 md:max-w-[1730px] mx-auto">
+            <div className="h-full flex items-center cursor-pointer">
+              <img
+                src={`${env.assetsEndpoint}/matchya-logo.png`}
+                alt="logo"
+                className="w-10 h-10 relative bottom-1"
+              />
+              <h1 className="text-xl font-bold text-black">Matchya</h1>
+            </div>
           </div>
         </div>
         <div className="bg-matcha-200 py-12">
