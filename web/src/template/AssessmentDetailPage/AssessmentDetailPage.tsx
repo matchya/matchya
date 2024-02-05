@@ -13,7 +13,7 @@ const AssessmentDetailPageTemplate = ({
   questionsListFragment,
 }: AssessmentDetailPageTemplateProps) => {
   return (
-    <div className="h-full min-h-[calc(100vh-64px)] overflow-hidden bg-matcha-200">
+    <div className="h-full min-h-[calc(100vh-64px)] overflow-hidden bg-matcha-30 text-matcha-900">
       <div className="w-full h-full mx-auto">
         <div className="w-full h-full mx-auto">
           <div className="justify-between items-center py-12">

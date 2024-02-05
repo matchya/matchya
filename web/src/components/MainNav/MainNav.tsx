@@ -5,7 +5,7 @@ const MainNav = () => {
     <div className="flex space-x-8">
       <Link
         to="/assessments"
-        className="text-sm font-bold text-matcha-900 hover:text-matcha-600"
+        className="text-sm font-bold text-matcha-800 hover:text-matcha-600"
       >
         Assessments
       </Link>
