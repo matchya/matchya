@@ -14,9 +14,9 @@ const AssessmentsPageTemplate = ({
   isLoading,
   onNavigateToAssessment,
   handleNavigateToDetail,
-  handleDeleteAssessment
+  handleDeleteAssessment,
 }: AssessmentsPageTemplateProps) => (
-  <div className="h-full min-h-[calc(100vh-64px)] overflow-hidden">
+  <div className="h-full min-h-[calc(100vh-64px)] overflow-hidden bg-matcha-30 text-matcha-900">
     <div className="w-full h-full mx-auto">
       <div className="w-full h-full mx-auto">
         <div className="justify-between items-center py-12">
@@ -27,12 +27,12 @@ const AssessmentsPageTemplate = ({
               </div>
               <Button
                 onClick={onNavigateToAssessment}
-                className="bg-orange-200 text-black shadow hover:bg-orange-300"
+                className="bg-orange-100 text-black shadow hover:bg-orange-200"
               >
                 Create New
               </Button>
             </div>
-            
+
             {isLoading && (
               <div className="flex mt-48 justify-center items-center">
                 <Icons.spinner className="spinner h-8 w-8" />

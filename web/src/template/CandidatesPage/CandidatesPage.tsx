@@ -10,8 +10,9 @@ const CandidatesPageTemplate = ({
   candidates,
   isLoading,
 }: CandidatesPageTemplateProps) => {
+  console.log(candidates)
   return (
-    <div className="h-full min-h-[calc(100vh-64px)] overflow-hidden">
+    <div className="h-full min-h-[calc(100vh-64px)] overflow-hidden bg-matcha-30">
       <div className="w-full h-full mx-auto">
         <div>
           <div className="w-full h-full mx-auto">
