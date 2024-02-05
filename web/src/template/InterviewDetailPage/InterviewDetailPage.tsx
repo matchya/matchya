@@ -1,22 +1,28 @@
+import { useState } from 'react';
 import ReactPlayer from 'react-player';
 import { Link } from 'react-router-dom';
 
+import { trackEvent } from '@/lib/rudderstack';
 import { Answer, Interview } from '@/types';
 
 interface InterviewDetailPageTemplateProps {
-  currentAnswer: Answer | null;
-  interview: Interview;
-  onSelectVideo: (answer: Answer) => void;
+  interviewData: Interview;
 }
 
 const InterviewDetailPageTemplate = ({
-  currentAnswer,
-  interview,
-  onSelectVideo,
+  interviewData,
 }: InterviewDetailPageTemplateProps) => {
-  console.log(interview);
+  const [currentAnswer, setCurrentAnswer] = useState<Answer | null>(
+    interviewData.answers[0]
+  );
+  const handleSelectVideo = (answer: Answer) => {
+    if (!interviewData || !interviewData.answers.length) return;
+    const id = answer.questionId;
+    trackEvent({ eventName: 'select_video', properties: { id } });
+    setCurrentAnswer(answer);
+  };
   return (
-    <div className="h-[calc(100vh-64px)] overflow-y-scroll bg-matcha-30">
+    <div className="h-[calc(100vh-64px)] overflow-y-scroll">
       <div className="w-full mx-auto">
         <div className="w-full mx-auto">
           <div className="justify-between items-center pt-6">
@@ -35,11 +41,11 @@ const InterviewDetailPageTemplate = ({
                   </div>
                   <div className="w-full ml-3 flex justify-around mb-3 items-center">
                     <p className="text-3xl font-bold">
-                      {interview.candidate.name}
+                      {interviewData.candidate.name}
                     </p>
                     <p className="text-2xl">
-                      {interview.assessment.name} -{' '}
-                      {interview.createdAt.substring(0, 10)}
+                      {interviewData.assessment.name} -{' '}
+                      {interviewData.createdAt.substring(0, 10)}
                     </p>
                   </div>
                   <div className="w-full flex flex-col items-center justify-center">
@@ -57,14 +63,14 @@ const InterviewDetailPageTemplate = ({
                         </h3>
                         <p className="text-lg">
                           Total Score:{' '}
-                          <span className="text-2xl font-bold text-matcha-700 ml-1">
-                            {interview.totalScore}
+                          <span className="text-2xl font-bold text-macha-700 ml-1">
+                            {interviewData.totalScore}
                           </span>{' '}
                           / 10
                         </p>
                       </div>
                       <p className="text-lg pt-3 pl-3 ml-3">
-                        {interview.summary}
+                        {interviewData.summary}
                       </p>
                     </div>
                   </div>
@@ -75,11 +81,11 @@ const InterviewDetailPageTemplate = ({
                       Questions
                     </p>
 
-                    {interview.answers.map(answer => (
+                    {interviewData.answers.map(answer => (
                       <div
                         className={`w-full flex items-center cursor-pointer hover:bg-orange-100 my-4 px-2`}
                         key={answer.questionId}
-                        onClick={() => onSelectVideo(answer)}
+                        onClick={() => handleSelectVideo(answer)}
                       >
                         <ReactPlayer
                           url={answer.videoUrl}

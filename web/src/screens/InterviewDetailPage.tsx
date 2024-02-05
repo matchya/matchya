@@ -4,12 +4,10 @@ import { useParams } from 'react-router-dom';
 import Template from '../template/InterviewDetailPage/InterviewDetailPage';
 
 import { caseSensitiveAxiosInstance } from '@/lib/axios';
-import { trackEvent } from '@/lib/rudderstack';
-import { Answer, Interview } from '@/types';
+import { Interview } from '@/types';
 
 function InterviewDetailPage() {
-  const [interview, setInterview] = useState<Interview | null>(null);
-  const [currentAnswer, setCurrentAnswer] = useState<Answer | null>(null);
+  const [interviewData, setInterviewData] = useState<Interview | null>(null);
   const params = useParams<{ id: string }>();
 
   useEffect(() => {
@@ -22,34 +20,18 @@ function InterviewDetailPage() {
         `/interviews/${params.id}/results`
       );
       if (response.data.status === 'success') {
-        setInterview(response.data.payload.interview);
-        if (response.data.payload.interview.answers.length > 0) {
-          setCurrentAnswer(response.data.payload.interview.answers[0]);
-        }
+        setInterviewData(response.data.payload.interview);
       }
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handleSelectVideo = (answer: Answer) => {
-    if (!interview || !interview.answers.length) return;
-    const id = answer.questionId;
-    trackEvent({ eventName: 'select_video', properties: { id } });
-    setCurrentAnswer(answer);
-  };
-
-  if (!interview) {
+  if (!interviewData || !interviewData.answers.length) {
     return null;
   }
 
-  return (
-    <Template
-      currentAnswer={currentAnswer}
-      interview={interview}
-      onSelectVideo={handleSelectVideo}
-    />
-  );
+  return <Template interviewData={interviewData} />;
 }
 
 export default InterviewDetailPage;

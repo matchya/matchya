@@ -4,7 +4,7 @@ import { LayoutDecorator } from '../../../.storybook/decorators';
 
 import Component from './InterviewDetailPage';
 
-import { mockedInterviews } from '@/data/mock';
+import { mockedInterview } from '@/data/mock';
 
 const meta: Meta<typeof Component> = {
   title: 'Page',
@@ -17,11 +17,5 @@ export default meta;
 type Story = StoryObj<typeof Component>;
 
 export const InterviewDetailPageTemplate: Story = {
-  render: () => (
-    <Component
-      currentAnswer={mockedInterviews[0].answers[0]}
-      interview={mockedInterviews[0]}
-      onSelectVideo={() => {}}
-    />
-  ),
+  render: () => <Component interviewData={mockedInterview} />,
 };
