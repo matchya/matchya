@@ -1,6 +1,5 @@
-import matchyaLogo from '@/assets/matchya-logo.png';
-import banner from '@/assets/matchya1.png';
 import Button from '@/components/Button/Button';
+import { env } from '@/config';
 
 interface HomePageTemplateProps {
   onNavigateToAuthentication: () => void;
@@ -15,13 +14,11 @@ const HomePageTemplate = ({
         <div className="w-full bg-matcha-200 shadow-lg">
           <div className="flex items-center h-20 cursor-pointer px-4 md:max-w-[1730px] mx-auto">
             <img
-              src={matchyaLogo}
-              alt="matchya3"
-              className="w-12 h-12 md:w-16 md:h-16 relative bottom-1"
+              src={`${env.assetsEndpoint}/matchya-logo.png`}
+              alt="logo"
+              className="w-10 h-10 relative bottom-1"
             />
-            <h1 className="text-sm md:text-xl font-bold text-black relative right-3">
-              Matchya
-            </h1>
+            <h1 className="text-xl font-bold text-black">Matchya</h1>
           </div>
         </div>
         <div className="bg-matcha-200 py-12">
@@ -42,8 +39,8 @@ const HomePageTemplate = ({
             </div>
             <div className="md:pl-12 md:w-1/2 md:flex justify-center items-center">
               <img
-                src={banner}
-                alt="banner-image"
+                src={`${env.assetsEndpoint}/matchya-hero.png`}
+                alt="hero-image"
                 className="w-full max-w-[550px] max-h-[550px]"
               />
             </div>

@@ -1,7 +1,7 @@
 import Webcam from 'react-webcam';
 
-import matchyaSticker from '@/assets/matchya-sticker.png';
 import { Button, Icons } from '@/components';
+import { env } from '@/config';
 import { Question } from '@/types';
 
 const VIDEO_CONSTRAINTS: boolean | MediaTrackConstraints | undefined = {
@@ -48,7 +48,11 @@ const InterviewRecordingPageTemplate = ({
       <>
         <div className="w-full h-16 bg-matcha-500 flex justify-between items-center px-10">
           <div className="flex items-center space-x-4 px-4 cursor-pointer">
-            <img src={matchyaSticker} alt="logo" className="w-48" />
+            <img
+              src={`${env.assetsEndpoint}/matchya-logo.png`}
+              alt="logo"
+              className="w-48"
+            />
           </div>
         </div>
         <div className="w-full h-screen bg-matcha-200 flex justify-center items-center">
@@ -64,7 +68,11 @@ const InterviewRecordingPageTemplate = ({
       <>
         <div className="w-full h-16 bg-matcha-500 flex justify-between items-center px-10">
           <div className="flex items-center space-x-4 px-4 cursor-pointer">
-            <img src={matchyaSticker} alt="logo" className="w-48" />
+            <img
+              src={`${env.assetsEndpoint}/matchya-logo.png`}
+              alt="logo"
+              className="w-48"
+            />
           </div>
         </div>
         <div className="w-full h-screen bg-matcha-200 flex flex-col justify-center items-center">
@@ -76,7 +84,7 @@ const InterviewRecordingPageTemplate = ({
   }
 
   return (
-    <div className="w-full h-screen bg-matcha-30 flex flex-col justify-between">
+    <div className="w-full h-screen flex flex-col justify-between">
       <div>
         <Webcam
           className="hidden"
@@ -87,9 +95,14 @@ const InterviewRecordingPageTemplate = ({
           ref={webcamRef}
         />
         {/* Header for Candidate Assessment Page */}
-        <div className="w-full h-16 bg-matcha-200 flex justify-between items-center px-10">
-          <div className="flex items-center space-x-4 px-4 cursor-pointer">
-            <img src={matchyaSticker} alt="logo" className="w-48" />
+        <div className="w-full h-16 bg-macha-500 flex justify-between items-center px-10">
+          <div className="h-full flex items-center cursor-pointer">
+            <img
+              src={`${env.assetsEndpoint}/matchya-logo.png`}
+              alt="logo"
+              className="w-10 h-10 relative bottom-1"
+            />
+            <h1 className="text-xl font-bold text-black">Matchya</h1>
           </div>
           <div className="flex w-1/2 justify-around">
             <div className="ml-auto flex items-center space-x-4 hidden sm:block">

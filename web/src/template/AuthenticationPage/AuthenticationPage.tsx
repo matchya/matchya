@@ -1,5 +1,5 @@
-import matchyaSticker from '@/assets/matchya-sticker.png';
 import { Badge, Button, Icons } from '@/components';
+import { env } from '@/config';
 import { cn } from '@/lib/utils';
 
 interface AuthenticationPageTemplateProps {
@@ -33,11 +33,14 @@ const AuthenticationPageTemplate = ({
       <div className="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
         <div className="absolute inset-0 bg-matcha-200" />
         <div className="relative z-20 flex items-center text-lg font-medium">
-          <img
-            src={matchyaSticker}
-            alt="Logo"
-            className="w-52 h-12 md:h-16 relative bottom-1"
-          />
+          <div className="h-full flex items-center cursor-pointer">
+            <img
+              src={`${env.assetsEndpoint}/matchya-logo.png`}
+              alt="logo"
+              className="w-10 h-10 relative bottom-1"
+            />
+            <h1 className="text-xl font-bold text-black">Matchya</h1>
+          </div>
         </div>
       </div>
       <div className="h-full bg-white flex items-center justify-center">
