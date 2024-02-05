@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-import { Input, Button } from '@/components';
+import { Input, Button, Icons } from '@/components';
 
 const positions = [
   'Software Engineer',
@@ -35,16 +35,18 @@ const CreateAssessmentPageTemplate = ({
 }: CreateAssessmentPageTemplateProps) => {
   return (
     <div className="w-full min-h-screen h-[1px] overflow-y-scroll">
-      <Link to="/assessments">
-        <div className="w-full flex justify-start px-10 py-5">
-          <p className="text-xl font-bold text-matcha-800">← Back</p>
-        </div>
-      </Link>
       <div className="w-full md:w-[768px] px-10 py-5 rounded-lg">
-        <p className="text-2xl font-bold text-black mb-4 mx-8">
-          Create Assessment
-        </p>
-        <div className="bg-white border w-full rounded-lg my-2 mx-auto p-6 pl-8">
+        <div className="flex items-center mt-2">
+          <Link to="/assessments">
+            <div className="flex justify-center items-center h-8 w-8 rounded bg-gray-300 ml-2">
+              <Icons.back className="rounded h-6 w-6 mx-auto" />
+            </div>
+          </Link>
+          <p className=" text-2xl font-bold text-black mx-8">
+            Create Assessment
+          </p>
+        </div>
+        <div className="bg-white border w-full rounded-lg my-2 mx-auto mt-6 p-6 pl-8">
           <p className="text-sm font-bold text-black mb-2 pl-8">
             Assessment Name
           </p>
@@ -68,7 +70,9 @@ const CreateAssessmentPageTemplate = ({
               >
                 <p
                   className={`text-lg font-bold ${
-                    selectedPosition === position && 'text-matcha-400'
+                    selectedPosition === position
+                      ? 'text-gray-900'
+                      : 'text-gray-400'
                   }`}
                 >
                   {position}
@@ -90,7 +94,7 @@ const CreateAssessmentPageTemplate = ({
               >
                 <p
                   className={`text-lg font-bold ${
-                    selectedLevel === level && 'text-matcha-400'
+                    selectedLevel === level ? 'text-gray-900' : 'text-gray-400'
                   }`}
                 >
                   {level}
@@ -105,7 +109,7 @@ const CreateAssessmentPageTemplate = ({
               Description
             </p>
             <textarea
-              className="w-full h-24 text-black p-1 px-4 border rounded border-black text-sm resize-none"
+              className="w-full h-24 mt-4 text-black p-1 px-4 border rounded border-black text-sm resize-none"
               placeholder={
                 'Let us know more about your position to generate better questions for you.\n' +
                 'ex)\n - Seeking a front-end engineer proficient in design.\n' +
@@ -124,7 +128,7 @@ const CreateAssessmentPageTemplate = ({
             <Button
               onClick={handleSubmit}
               disabled={isLoading}
-              className="bg-lime-400 bg-orange-300 text-md text-white hover:bg-orange-400 hover:text-white py-4 px-3 rounded-sm"
+              className="bg-matcha-400 rounded text-md text-white hover:bg-matcha-500 hover:text-white py-4 px-3 rounded-sm"
             >
               Create Assessment
             </Button>

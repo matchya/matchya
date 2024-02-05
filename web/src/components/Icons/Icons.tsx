@@ -1,6 +1,6 @@
 type IconProps = React.HTMLAttributes<SVGElement>;
 import { FaPlus } from "react-icons/fa6";
-import { IoMdPersonAdd } from "react-icons/io";
+import { IoMdPersonAdd, IoIosArrowBack } from "react-icons/io";
 import { IoTrashOutline } from "react-icons/io5";
 
 const Icons = {
@@ -162,6 +162,9 @@ const Icons = {
   ),
   plus: (props: IconProps) => (
     <FaPlus {...props} />
+  ),
+  back: (props: IconProps) => (
+    <IoIosArrowBack {...props} />
   ),
 };
 

@@ -46,16 +46,16 @@ const InterviewRecordingPageTemplate = ({
   if (isLoading) {
     return (
       <>
-        <div className="w-full h-16 bg-matcha-500 flex justify-between items-center px-10">
+        <div className="w-full h-16 bg-white flex justify-between items-center px-10 border-b">
           <div className="flex items-center space-x-4 px-4 cursor-pointer">
             <img
-              src={`${env.assetsEndpoint}/matchya-logo.png`}
+              src={`${env.assetsEndpoint}/Matchya-sticker.png`}
               alt="logo"
-              className="w-48"
+              className="w-32 mb-1"
             />
           </div>
         </div>
-        <div className="w-full h-screen bg-matcha-200 flex justify-center items-center">
+        <div className="w-full h-screen bg-white flex justify-center items-center">
           <Icons.spinner className="spinner w-10 h-10 mx-3" />
           <p className="text-xl font-bold">Receiving Interview Questions...</p>
         </div>
@@ -66,16 +66,16 @@ const InterviewRecordingPageTemplate = ({
   if (!isLoading && !question) {
     return (
       <>
-        <div className="w-full h-16 bg-matcha-500 flex justify-between items-center px-10">
+        <div className="w-full h-16 bg-white flex justify-between items-center px-10 border-b">
           <div className="flex items-center space-x-4 px-4 cursor-pointer">
             <img
-              src={`${env.assetsEndpoint}/matchya-logo.png`}
+              src={`${env.assetsEndpoint}/Matchya-sticker.png`}
               alt="logo"
-              className="w-48"
+              className="w-32 mb-2"
             />
           </div>
         </div>
-        <div className="w-full h-screen bg-matcha-200 flex flex-col justify-center items-center">
+        <div className="w-full h-screen bg-white flex flex-col justify-center items-center">
           <p className="text-xl font-bold">404</p>
           <p className="text-xl font-bold">Interview not found.</p>
         </div>
@@ -95,14 +95,13 @@ const InterviewRecordingPageTemplate = ({
           ref={webcamRef}
         />
         {/* Header for Candidate Assessment Page */}
-        <div className="w-full h-16 bg-macha-500 flex justify-between items-center px-10">
+        <div className="w-full h-16 flex justify-between items-center px-10 border-b">
           <div className="h-full flex items-center cursor-pointer">
             <img
-              src={`${env.assetsEndpoint}/matchya-logo.png`}
+              src={`${env.assetsEndpoint}/Matchya-sticker.png`}
               alt="logo"
-              className="w-10 h-10 relative bottom-1"
+              className="w-32 relative bottom-1"
             />
-            <h1 className="text-xl font-bold text-black">Matchya</h1>
           </div>
           <div className="flex w-1/2 justify-around">
             <div className="ml-auto flex items-center space-x-4 hidden sm:block">
@@ -115,7 +114,7 @@ const InterviewRecordingPageTemplate = ({
         </div>
 
         {/* Time and Question count */}
-        <div className="flex items-center justify-center px-20 pt-4 border-b border-matcha-700 pb-4">
+        <div className="flex items-center justify-center px-20 pt-4 border-matcha-700 pb-4">
           <div className="w-1/2">
             <p className="text-2xl font-bold">3:38</p>
           </div>
@@ -157,7 +156,7 @@ const InterviewRecordingPageTemplate = ({
           </Button>
         ) : (
           <Button
-            className="bg-transparent hover:bg-matcha-50 text-orange-300 font-bold py-8 px-10 text-xl rounded-full border-2 border-orange-300"
+            className="bg-transparent hover:bg-gray-50 text-orange-300 font-bold py-8 px-10 text-xl rounded-full border-2 border-orange-300"
             onClick={isRecording ? onStopRecording : onStartRecording}
           >
             <Icons.circle className="h-6 w-6 mr-2" />

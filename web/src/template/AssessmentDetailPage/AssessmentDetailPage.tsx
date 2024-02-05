@@ -19,7 +19,9 @@ const AssessmentDetailPageTemplate = ({
           <div className="justify-between items-center py-12">
             <div className="px-12">
               <div className="mb-4">
-                {!isLoading && <h3 className="text-3xl">{assessment?.name}</h3>}
+                {!isLoading && (
+                  <h3 className="text-3xl ml-4">{assessment?.name}</h3>
+                )}
               </div>
               {!isLoading && (
                 <div className="flex flex-col-reverse lg:flex-row lg:space-x-6">
