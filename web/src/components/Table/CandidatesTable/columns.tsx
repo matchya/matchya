@@ -13,7 +13,7 @@ export const columns: ColumnDef<Candidate>[] = [
     ),
     cell: ({ row }) => {
       const date = row.original.assessment
-        ? new Date(row.original.assessment.createdAt)
+        ? new Date(row.original.assessment?.createdAt as string)
         : new Date();
       const formattedDate = date.toLocaleDateString('en-US', {
         year: 'numeric',
