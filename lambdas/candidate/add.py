@@ -67,10 +67,11 @@ def handler(event, context):
             # we want to avoid having duplicate candidates in the invitation list
             assessment_candidate_repo.insert(assessment_id=interview.assessment_id, candidate_id=candidate.id)
             interview.id = interview_repo.insert(assessment_id=interview.assessment_id, candidate_id=candidate.id)
+            company_name = interview_repo.retrieve_company_name_by_id(interview.assessment_id)
             token = retrieve_interview_access_token(interview_access_token_repo, candidate.id, interview.id)
             body_html_content, body_text_content = CandidateInviteEmailContentGenerator.generate(interview_id=interview.id, 
                                                                                                  candidate_name=candidate.name,
-                                                                                                 company_name='Company Name',
+                                                                                                 company_name=company_name,
                                                                                                  interview_access_token=token)
             email_id = ses_client.send_email(sender=Config.SENDER_EMAIL_ADDRESS, destinations=[candidate.email],
                                              body_html_content=body_html_content,

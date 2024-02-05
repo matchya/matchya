@@ -53,9 +53,9 @@ class CandidateInviteEmailContentGenerator(EmailContentGenerator):
                         src="https://matchya-dev-company-assets.s3.amazonaws.com/Matchya-sticker.png"
                         alt="logo"
                     />
-                    <h1 style="font-size: 1.5rem; font-weight: bold">Hi %s</h1>
+                    <h1 style="font-size: 1.5rem; font-weight: bold">Hi {candidate_name}</h1>
                     <p style="margin-top: 1rem">
-                        You've been invited to take an assessment for %s.
+                        You've been invited to take an assessment for {company_name}.
                     </p>
                     <p style="margin-top: 1rem">
                         Our Matchya assessment focuses on system design and problem-solving
@@ -67,7 +67,7 @@ class CandidateInviteEmailContentGenerator(EmailContentGenerator):
                     <p style="margin-top: 1rem; font-weight: bold">
                         You can start the assessment by clicking below:
                     </p>
-                    <a href="%s" style="text-decoration: none">
+                    <a href="{interview_link}" style="text-decoration: none">
                         <button
                             style="
                             margin-top: 0.5rem;
@@ -101,5 +101,5 @@ class CandidateInviteEmailContentGenerator(EmailContentGenerator):
                     </p>
                 </div>
             </div>
-        """ % (candidate_name, company_name, interview_link)
+        """.format(candidate_name=candidate_name, company_name=company_name, interview_link=interview_link)
         return body
