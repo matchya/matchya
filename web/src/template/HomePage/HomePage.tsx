@@ -10,9 +10,9 @@ const HomePageTemplate = ({
   onNavigateToAuthentication,
 }: HomePageTemplateProps) => {
   return (
-    <div className="w-full min-h-screen h-[1px] bg-macha-200">
+    <div className="w-full min-h-screen h-[1px] bg-matcha-200">
       <div className="h-full">
-        <div className="w-full bg-macha-200 shadow-lg">
+        <div className="w-full bg-matcha-200 shadow-lg">
           <div className="flex items-center h-20 cursor-pointer px-4 md:max-w-[1730px] mx-auto">
             <img
               src={matchyaLogo}
@@ -24,7 +24,7 @@ const HomePageTemplate = ({
             </h1>
           </div>
         </div>
-        <div className="bg-macha-200 py-12">
+        <div className="bg-matcha-200 py-12">
           <div className="w-full px-12 md:flex max-w-[1300px] mx-auto">
             <div className="mb-8 md:mb-0 md:w-1/2 flex flex-col items-center justify-center pr-8">
               <div className="w-full mt-6 space-y-4 md:space-y-16 flex flex-col items-center md:block">
@@ -33,7 +33,7 @@ const HomePageTemplate = ({
                 </h1>
                 <Button
                   variant="outline"
-                  className="px-8 py-6 bg-macha-700 rounded border-macha-700 text-white text-md hover:bg-macha-800 hover:border-macha-800 hover:text-white"
+                  className="px-8 py-6 bg-matcha-700 rounded border-matcha-700 text-white text-md hover:bg-matcha-800 hover:border-matcha-800 hover:text-white"
                   onClick={onNavigateToAuthentication}
                 >
                   Try for free

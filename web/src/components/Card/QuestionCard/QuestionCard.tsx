@@ -15,7 +15,7 @@ interface QuestionCardProps {
 
 const QuestionCard = ({ text, keyword, difficulty }: QuestionCardProps) => {
   return (
-    <Card className="rounded-lg">
+    <Card className="rounded-lg bg-white shadow">
       <CardHeader className="grid grid-cols-[1fr_110px] items-start gap-4 space-y-0">
         <div className="space-y-1">
           <div className="flex items-center space-x-3">

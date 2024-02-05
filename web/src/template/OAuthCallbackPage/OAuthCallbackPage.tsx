@@ -11,11 +11,9 @@ const OAuthCallbackPageTemplate = ({
   onRetryLogin,
   authType,
 }: OuthCallbackPageTemplateProps) => (
-  <div className="h-screen flex justify-center items-center">
+  <div className="h-screen flex justify-center items-center bg-matcha-30">
     <div className="flex flex-col justify-center items-center mb-5">
-      {!isLoginFailed && (
-        <Icons.spinner className='spinner mb-2 h-10 w-10' />
-      )}
+      {!isLoginFailed && <Icons.spinner className="spinner mb-2 h-10 w-10" />}
       <p className="text-xl">
         {!isLoginFailed
           ? `Logging in with ${authType}...`

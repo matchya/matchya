@@ -68,10 +68,10 @@ const InterviewsTable = ({ interviews }: InterviewsTableProps) => {
     <div className="space-y-4 h-full overflow-y-scroll rounded-md">
       <InterviewsTableToolbar table={table} />
       <div className="rounded-md border">
-        <Table>
+        <Table className="bg-white">
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (
-              <TableRow key={headerGroup.id} className="hover:bg-orange-50">
+              <TableRow key={headerGroup.id} className="">
                 {headerGroup.headers.map(header => {
                   return (
                     <TableHead key={header.id} colSpan={header.colSpan}>
@@ -93,7 +93,7 @@ const InterviewsTable = ({ interviews }: InterviewsTableProps) => {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
-                  className="hover:bg-orange-100"
+                  className="hover:bg-gray-50"
                 >
                   {row.getVisibleCells().map(cell => (
                     <TableCell
