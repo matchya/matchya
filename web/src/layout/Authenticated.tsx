@@ -30,7 +30,9 @@ const Layout = () => {
   return (
     <>
       <Header />
-      <Outlet />
+      <div className="mx-auto max-w-[1280px]">
+        <Outlet />
+      </div>
     </>
   );
 };
