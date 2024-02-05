@@ -93,6 +93,12 @@ jobs:
           echo 'sendgrid_cname_5_record = "${{ vars.SENDGRID_CNAME_5_RECORD }}"' >> terraform.tfvars
           echo 'sendgrid_txt_name = "${{ vars.SENDGRID_TXT_NAME }}"' >> terraform.tfvars
           echo 'sendgrid_txt_record = "${{ vars.SENDGRID_TXT_RECORD }}"' >> terraform.tfvars
+          IFS=',' read -ra ADDR <<< "${{ vars.CLIENT_ORIGINS }}"
+          echo 'client_origins = [' >> terraform.tfvars
+          for i in "${ADDR[@]}"; do
+            echo "\"$i\"," >> terraform.tfvars
+          done
+          echo ']' >> terraform.tfvars
         working-directory: terraform/${{ inputs.component }}
 
       - name: Terraform Plan
