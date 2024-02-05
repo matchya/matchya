@@ -64,9 +64,20 @@ export const columns: ColumnDef<Assessment>[] = [
     header: ({ column }) => (
       <AssessmentTableColumnHeader column={column} title="Position Level" />
     ),
-    cell: ({ row }) => (
-      <div className="w-[80px]">{row.original.positionLevel}</div>
-    ),
+    cell: ({ row }) => {
+      const level = row.original.positionLevel;
+      const color =
+        level === 'Junior'
+          ? 'text-green-700'
+          : level === 'Mid-Level'
+            ? 'text-yellow-700'
+            : level === 'Senior'
+              ? 'text-blue-700'
+              : 'text-red-700';
+      return (
+        <div className={`w-[80px] ${color}`}>{row.original.positionLevel}</div>
+      );
+    },
     filterFn: (row, _, value) => {
       return value.includes(row.original.positionLevel);
     },

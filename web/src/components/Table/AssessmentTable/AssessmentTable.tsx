@@ -98,11 +98,11 @@ const AssessmentTable = ({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
-                  className="hover:bg-gray-50"
+                  className="cursor-pointer hover:bg-gray-50"
                 >
                   {row.getVisibleCells().map(cell => (
                     <TableCell
-                      className="cursor-pointer"
+                      className=""
                       onClick={() => handleNavigateToDetail(row.original.id)}
                       key={cell.id}
                     >
@@ -116,10 +116,10 @@ const AssessmentTable = ({
                   <TableCell className="cursor-pointer" onClick={() => {}}>
                     <Button
                       variant="ghost"
-                      className="hover:bg-gray-100"
+                      className="hover:bg-gray-50"
                       onClick={() => handleDeleteAssessment(row.original.id)}
                     >
-                      <Icons.trash className="h-4 w-4" />
+                      <Icons.trash className="h-4 w-4 rounded-md hover:bg-gray-200" />
                     </Button>
                   </TableCell>
                 </TableRow>

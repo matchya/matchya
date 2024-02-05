@@ -25,7 +25,12 @@ const AssessmentsPageTemplate = ({
               <div className="space-y-4">
                 <h3 className="text-4xl font-bold">Assessments</h3>
               </div>
-              <Button onClick={onNavigateToAssessment}>Create New</Button>
+              <Button
+                className="bg-matcha-400 hover:bg-matcha-500 text-white"
+                onClick={onNavigateToAssessment}
+              >
+                Create New
+              </Button>
             </div>
             {isLoading && (
               <div className="flex mt-48 justify-center items-center">
