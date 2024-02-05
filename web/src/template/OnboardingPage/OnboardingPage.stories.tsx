@@ -5,7 +5,7 @@ import Component from './OnboardingPage';
 import { Header } from '@/components';
 
 const meta: Meta<typeof Component> = {
-  title: 'Template',
+  title: 'Page',
   component: Component,
 };
 

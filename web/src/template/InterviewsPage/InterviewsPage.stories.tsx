@@ -6,7 +6,7 @@ import { Header } from '@/components';
 import { mockedInterviews } from '@/data/mock';
 
 const meta: Meta<typeof Component> = {
-  title: 'Template',
+  title: 'Page',
   component: Component,
 };
 
