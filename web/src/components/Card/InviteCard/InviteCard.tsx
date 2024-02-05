@@ -136,9 +136,10 @@ const InviteCard = ({ candidates, assessmentId }: InviteCardProps) => {
             Invite
           </Button>
         </div>
-        <Separator className="my-4" />
+        {candidates.length > 0 ? <Separator className="my-4" /> : null}
         <div className="space-y-4">
-          <h4 className="text-sm font-medium">Filter: none Sort: evaluated</h4>
+          {/* TODO: Implement filtering/sorting later */}
+          {/* <h4 className="text-sm font-medium">Filter: none Sort: evaluated</h4> */}
           <div className="grid gap-6">
             {candidates.map(candidate => (
               <CandidateRow
