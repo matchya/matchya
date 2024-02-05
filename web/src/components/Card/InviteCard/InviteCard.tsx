@@ -107,7 +107,7 @@ const InviteCard = ({ candidates, assessmentId }: InviteCardProps) => {
   };
 
   return (
-    <Card className="bg-orange-50">
+    <Card>
       <CardHeader>
         <CardTitle>Invite Candidates</CardTitle>
         <CardDescription>
@@ -127,17 +127,17 @@ const InviteCard = ({ candidates, assessmentId }: InviteCardProps) => {
             placeholder="Email"
           />
           <Button
-            variant="secondary"
             onClick={handleInvite}
             disabled={isLoading}
-            className="shrink-0 bg-macha-500 hover:bg-macha-600 text-white font-bold"
+            className="shrink-0 font-bold"
           >
             Invite
           </Button>
         </div>
-        <Separator className="my-4" />
+        {candidates.length > 0 ? <Separator className="my-4" /> : null}
         <div className="space-y-4">
-          <h4 className="text-sm font-medium">Filter: none Sort: evaluated</h4>
+          {/* TODO: Implement filtering/sorting later */}
+          {/* <h4 className="text-sm font-medium">Filter: none Sort: evaluated</h4> */}
           <div className="grid gap-6">
             {candidates.map(candidate => (
               <CandidateRow
