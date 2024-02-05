@@ -1,4 +1,4 @@
-import { CandidatesTable, Icons } from '@/components';
+import { Button, CandidatesTable, Icons } from '@/components';
 import { Candidate } from '@/types';
 
 interface CandidatesPageTemplateProps {
@@ -19,8 +19,15 @@ const CandidatesPageTemplate = ({
               <div className="px-12">
                 <div className="mb-8 flex justify-between items-center">
                   <div className="space-y-4">
-                    <h3 className="text-4xl font-bold">Candidates</h3>
+                    <h3 className="text-4xl font-bold">My Candidates</h3>
                   </div>
+                  <Button
+                    className="py-6 bg-matcha-400 hover:bg-matcha-500 text-white"
+                    onClick={() => {}}
+                  >
+                    <Icons.personAdd className="h-5 w-5 mr-2" />
+                    Invite Candidate
+                  </Button>
                 </div>
                 {isLoading && (
                   <div className="flex mt-48 justify-center items-center">

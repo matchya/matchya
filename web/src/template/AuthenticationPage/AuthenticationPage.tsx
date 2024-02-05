@@ -17,11 +17,10 @@ const AuthenticationPageTemplate = ({
       <div className="fixed top-8 left-8 z-20 flex items-center text-lg font-medium">
         <div className="h-full flex items-center cursor-pointer">
           <img
-            src={`${env.assetsEndpoint}/matchya-logo.png`}
+            src={`${env.assetsEndpoint}/Matchya-sticker.png`}
             alt="logo"
-            className="w-10 h-10 relative bottom-1"
+            className="h-10 relative "
           />
-          <h1 className="text-xl font-bold text-black">Matchya</h1>
         </div>
       </div>
       <div className="bg-matcha-200 h-full flex items-center justify-center w-full">

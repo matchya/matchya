@@ -26,7 +26,7 @@ const config: Config = {
       },
       colors: {
         matcha: {
-          30: '#F8FFF7',
+          30: '#FAFFF8',
           50: '#E6F6E0',
           100: '#D1F0C5',
           200: '#BBEAA9',

@@ -23,9 +23,15 @@ const AssessmentsPageTemplate = ({
           <div className="px-12">
             <div className="mb-8 flex justify-between items-center">
               <div className="space-y-4">
-                <h3 className="text-4xl font-bold">Assessments</h3>
+                <h3 className="text-4xl font-bold">My Assessments</h3>
               </div>
-              <Button onClick={onNavigateToAssessment}>Create New</Button>
+              <Button
+                className="pl-3 pr-4 py-6 bg-matcha-400 hover:bg-matcha-500 text-white"
+                onClick={onNavigateToAssessment}
+              >
+                <Icons.plus className="h-5 w-5 mx-1" />
+                Create New
+              </Button>
             </div>
             {isLoading && (
               <div className="flex mt-48 justify-center items-center">

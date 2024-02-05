@@ -78,7 +78,11 @@ export const columns: ColumnDef<Candidate>[] = [
       return (
         <div className="flex w-[100px] items-center">
           {status.icon && (
-            <status.icon className="mr-2 h-4 w-4 text-muted-foreground" />
+            <status.icon
+              className={`mr-2 h-4 w-4  ${
+                status.value === 'COMPLETED' && 'text-matcha-400'
+              }`}
+            />
           )}
           <span>{status.label}</span>
         </div>
