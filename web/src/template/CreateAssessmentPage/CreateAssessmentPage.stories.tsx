@@ -21,7 +21,7 @@ export const CreateAssessmentPage: Story = {
       selectedPosition={'Software Engineer'}
       selectedLevel={'Senior'}
       advanceSettingOpen={false}
-      topicInputValue=''
+      topicInputValue=""
       specifiedTopics={['topic1', 'topic2']}
       isLoading={false}
       onTestNameChange={() => {}}

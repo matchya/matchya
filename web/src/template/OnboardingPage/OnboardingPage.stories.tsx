@@ -15,5 +15,5 @@ export default meta;
 type Story = StoryObj<typeof Component>;
 
 export const OnboardingPage: Story = {
-  render: () => <Component companyName='Company A' />,
+  render: () => <Component companyName="Company A" />,
 };
