@@ -89,6 +89,8 @@ jobs:
             label: Interview
           - package: assessment
             label: Assessment
+          - package: video
+            label: Video
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment-label }}
     steps:
