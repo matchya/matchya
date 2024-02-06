@@ -68,8 +68,18 @@ const QuestionCard = ({ text, keyword, difficulty }: QuestionCardProps) => {
           </div>
         </div> */}
         <div className="flex space-x-2 text-sm text-muted-foreground">
-          <Badge className="bg-green-700 text-white">{keyword}</Badge>
-          <Badge className="bg-black text-white">{difficulty}</Badge>
+          <Badge className="bg-black text-white">{keyword}</Badge>
+          <Badge
+            className={`text-white ${
+              difficulty === 'easy'
+                ? 'bg-green-700'
+                : difficulty === 'medium'
+                  ? 'bg-yellow-600'
+                  : 'bg-red-700'
+            }`}
+          >
+            {difficulty}
+          </Badge>
         </div>
       </CardContent>
     </Card>

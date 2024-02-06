@@ -16,17 +16,10 @@ interface CreateAssessmentPageTemplateProps {
   testName: string;
   selectedPosition: string;
   selectedLevel: string;
-  advanceSettingOpen: boolean;
-  topicInputValue: string;
-  specifiedTopics: string[];
   isLoading: boolean;
   onTestNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onPositionChange: (value: string) => void;
   onLevelChange: (value: string) => void;
-  setAdvanceSettingOpen: (value: boolean) => void;
-  setTopicInputValue: (value: string) => void;
-  handleAddTopics: () => void;
-  handleRemoveTopic: (topic: string) => void;
   handleSubmit: () => void;
 }
 
@@ -34,31 +27,26 @@ const CreateAssessmentPageTemplate = ({
   testName,
   selectedPosition,
   selectedLevel,
-  advanceSettingOpen,
-  topicInputValue,
-  specifiedTopics,
   isLoading,
   onTestNameChange,
   onPositionChange,
   onLevelChange,
-  setAdvanceSettingOpen,
-  setTopicInputValue,
-  handleAddTopics,
-  handleRemoveTopic,
   handleSubmit,
 }: CreateAssessmentPageTemplateProps) => {
   return (
     <div className="w-full min-h-screen h-[1px] overflow-y-scroll">
-      <Link to="/assessments">
-        <div className="w-full flex justify-start px-10 py-5">
-          <p className="text-xl font-bold text-matcha-800">← Back</p>
-        </div>
-      </Link>
       <div className="w-full md:w-[768px] px-10 py-5 rounded-lg">
-        <p className="text-2xl font-bold text-black mb-4 mx-8">
-          Create Assessment
-        </p>
-        <div className="bg-white border w-full rounded-lg my-2 mx-auto p-6 pl-8">
+        <div className="flex items-center mt-2">
+          <Link to="/assessments">
+            <div className="flex justify-center items-center h-8 w-8 rounded bg-gray-300 ml-2">
+              <Icons.back className="rounded h-6 w-6 mx-auto" />
+            </div>
+          </Link>
+          <p className=" text-2xl font-bold text-black mx-8">
+            Create Assessment
+          </p>
+        </div>
+        <div className="bg-white border w-full rounded-lg my-2 mx-auto mt-6 p-6 pl-8">
           <p className="text-sm font-bold text-black mb-2 pl-8">
             Assessment Name
           </p>
@@ -82,7 +70,9 @@ const CreateAssessmentPageTemplate = ({
               >
                 <p
                   className={`text-lg font-bold ${
-                    selectedPosition === position && 'text-matcha-400'
+                    selectedPosition === position
+                      ? 'text-gray-900'
+                      : 'text-gray-400'
                   }`}
                 >
                   {position}
@@ -104,7 +94,7 @@ const CreateAssessmentPageTemplate = ({
               >
                 <p
                   className={`text-lg font-bold ${
-                    selectedLevel === level && 'text-matcha-400'
+                    selectedLevel === level ? 'text-gray-900' : 'text-gray-400'
                   }`}
                 >
                   {level}
@@ -113,67 +103,20 @@ const CreateAssessmentPageTemplate = ({
             ))}
           </div>
         </div>
-        <div className="bg-white border w-full rounded-lg my-2 mx-auto p-6 pl-8">
-          <p className="flex items-center text-sm font-bold text-black mb-2">
-            {advanceSettingOpen ? (
-              <Icons.triangle_down
-                onClick={() => setAdvanceSettingOpen(false)}
-                className="w-4 h-4 mr-2 cursor-pointer"
-              />
-            ) : (
-              <Icons.triangle_right
-                onClick={() => setAdvanceSettingOpen(true)}
-                className="w-4 h-4 mr-2 cursor-pointer"
-              />
-            )}
-            Advanced Settings
-          </p>
-          {advanceSettingOpen && (
-            <div className="w-full rounded-lg my-2 mx-auto mt-4 px-4">
-              <p className="text-sm font-bold text-black mb-2 pl-8">
-                Question Topics
-              </p>
-              <div className="relative">
-                <Input
-                  value={topicInputValue}
-                  onChange={e => setTopicInputValue(e.target.value)}
-                  type="text"
-                  className="w-full relative text-matcha-900 border-black p-1 px-4 active:ring-0 focus:ring-0 h-12"
-                />
-                <Button
-                  className="absolute top-0 right-0 bg-gray-700 font-bold border text-white hover:bg-gray-800 hover:text-white mt-1 mr-2 h-10 w-20"
-                  onClick={handleAddTopics}
-                >
-                  Add
-                </Button>
-              </div>
-              <div className="w-full flex flex-wrap">
-                {specifiedTopics.map(topic => (
-                  <div
-                    key={topic}
-                    className="px-2 py-1 flex justify-start items-center my-2 cursor-pointer bg-matcha-400 mx-4 rounded-2xl"
-                  >
-                    <Icons.close
-                      className="w-4 h-4 mr-2"
-                      onClick={() => handleRemoveTopic(topic)}
-                    />
-                    <p className="text-sm font-bold">{topic}</p>
-                  </div>
-                ))}
-              </div>
-              <p className="text-sm mt-8 font-bold text-black mb-2 pl-8">
-                Description
-              </p>
-              <textarea
-                className="w-full h-32 text-black p-1 px-4 border rounded border-black text-sm resize-none"
-                placeholder={
-                  'Let us know more about your position to generate better questions for you.\n' +
-                  'ex)\n - Seeking a front-end engineer proficient in design.\n' +
-                  ' - Back-end engineer with experience working for a large-scale company.'
-                }
-              />
-            </div>
-          )}
+        <div className="bg-white border w-full rounded-lg my-2 mx-auto ">
+          <div className="w-full rounded-lg mx-auto px-4 py-2">
+            <p className="text-sm mt-4 font-bold text-black mb-2 pl-4">
+              Description
+            </p>
+            <textarea
+              className="w-full h-24 mt-4 text-black p-1 px-4 border rounded border-black text-sm resize-none"
+              placeholder={
+                'Let us know more about your position to generate better questions for you.\n' +
+                'ex)\n - Seeking a front-end engineer proficient in design.\n' +
+                ' - Back-end engineer with experience working for a large-scale company.'
+              }
+            />
+          </div>
         </div>
         <div className="mt-4 w-full flex justify-end">
           <div className="w-1/2 flex justify-end px-4 items-center">
@@ -185,7 +128,7 @@ const CreateAssessmentPageTemplate = ({
             <Button
               onClick={handleSubmit}
               disabled={isLoading}
-              className="bg-lime-400 bg-orange-300 text-md text-white hover:bg-orange-400 hover:text-white py-4 px-3 rounded-sm"
+              className="bg-matcha-400 rounded text-md text-white hover:bg-matcha-500 hover:text-white py-4 px-3 rounded-sm"
             >
               Create Assessment
             </Button>

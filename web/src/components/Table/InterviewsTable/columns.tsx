@@ -65,9 +65,22 @@ export const columns: ColumnDef<Interview>[] = [
     header: ({ column }) => (
       <InterviewsTableColumnHeader column={column} title="Total Score" />
     ),
-    cell: ({ row }) => (
-      <div className="w-[80px]">{row.original.totalScore.toFixed(1)}</div>
-    ),
+    cell: ({ row }) => {
+      const score = row.original.totalScore;
+      const textColour =
+        score >= 8
+          ? 'text-matcha-600'
+          : score >= 6
+            ? 'text-matcha-200'
+            : score >= 4
+              ? 'text-red-300'
+              : 'text-red-700';
+      return (
+        <div className={`w-[80px] text-lg  ${textColour}`}>
+          {row.original.totalScore.toFixed(1)}
+        </div>
+      );
+    },
     filterFn: (row, _, value) => {
       return value.includes(row.original.totalScore);
     },

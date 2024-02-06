@@ -35,22 +35,23 @@ class InterviewRepository:
         except Exception as e:
             raise RuntimeError(f"Error saving to interview table: {e}")
 
-    def retrieve_by_candidate_id(self, candidate_id: str) -> Interview:
+    def retrieve_by_assessment_and_candidate_id(self, assessment_id: str, candidate_id: str) -> Interview:
         """
         Retrieves the interview id.
         """
-        logger.info(f'Retrieving interview by candidate id: {candidate_id}')
+        logger.info(f'Retrieving interview by assessment id: {assessment_id} and candidate id: {candidate_id}')
         sql = """
-            SELECT *
+            SELECT id, candidate_id, assessment_id
             FROM interview
-            WHERE interview.candidate_id = '%s';
-        """ % candidate_id
+            WHERE interview.assessment_id = '%s' AND interview.candidate_id = '%s';
+        """ % (assessment_id, candidate_id)
         try:
             self.db_client.execute(sql)
             result = self.db_client.fetchone()
             interview = Interview(assessment_id=result[1])
             interview.id = result[0]
             interview.candidate_id = result[1]
+            interview.assessment_id = result[2]
             logger.info('Successfully retrieved interview')
             return interview
         except Exception as e:
@@ -71,7 +72,6 @@ class InterviewRepository:
         try:
             self.db_client.execute(sql)
             result = self.db_client.fetchone()
-            logger.info('Successfully retrieved company name')
             return result[0]
         except Exception as e:
             logger.error(e)

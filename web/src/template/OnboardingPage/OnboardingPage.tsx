@@ -32,7 +32,7 @@ const CandidatesPageTemplate = ({
                 <div className="mb-8 space-y-4">
                   <h3 className="text-4xl font-bold">Welcome, {companyName}</h3>
                 </div>
-                <div className="grid md:grid-cols-3 gap-y-3 md:gap-x-6">
+                <div className="mt-16 gap-y-3 gap-x-6 flex flex-wrap">
                   {steps.map(({ description, link }) => (
                     <OnboardingCard
                       key={description}

@@ -20,6 +20,7 @@ interface CandidateRowProps {
   name: string;
   email: string;
   score?: number;
+  assessmentId: string | undefined;
 }
 
 const CandidateRow = ({
@@ -28,6 +29,7 @@ const CandidateRow = ({
   name,
   email,
   score,
+  assessmentId,
 }: CandidateRowProps) => {
   const [emailSent, setEmailSent] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -35,7 +37,14 @@ const CandidateRow = ({
   const sendInvitation = async () => {
     try {
       setIsLoading(true);
-      const response = await axiosInstance.post(`/candidates/invite/${id}`);
+      const data = {
+        assessment_id: assessmentId,
+        candidate_id: id,
+      };
+      const response = await axiosInstance.post(
+        `/candidates/invite`,
+        data
+      );
       if (response.data.status === 'success') {
         console.log('success');
         setEmailSent(true);
@@ -63,7 +72,7 @@ const CandidateRow = ({
       ) : (
         <Button
           variant="outline"
-          className="bg-white text-matcha-600 border-matcha-600 border hover:text-matcha-700 disabled:text-matcha-500"
+          className="bg-black text-white hover:bg-gray-800 hover:text-white font-bold px-3"
           onClick={sendInvitation}
           disabled={emailSent || isLoading}
         >
@@ -131,7 +140,7 @@ const InviteCard = ({ candidates, assessmentId }: InviteCardProps) => {
             variant="outline"
             onClick={handleInvite}
             disabled={isLoading}
-            className="shrink-0 bg-matcha-300 hover:bg-matcha-400 hover:text-white text-white font-bold"
+            className="shrink-0 bg-matcha-400 hover:bg-matcha-500 hover:text-white text-white font-bold"
           >
             Invite
           </Button>
@@ -149,6 +158,7 @@ const InviteCard = ({ candidates, assessmentId }: InviteCardProps) => {
                 name={candidate.name}
                 email={candidate.email}
                 score={candidate.assessment?.totalScore}
+                assessmentId={assessmentId}
               />
             ))}
           </div>

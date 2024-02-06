@@ -33,7 +33,7 @@ const Layout = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>; // Replace with your loading component
+    return <Header />; // Replace with your loading component
   }
 
   return (

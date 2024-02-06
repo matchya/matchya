@@ -38,14 +38,14 @@ const Header = () => {
   return (
     <div className="border-b">
       <div className="flex h-16 items-center px-4">
-        <Link to="/dashboard">
+        <Link to="/assessments">
           <div className="h-full flex items-center cursor-pointer">
             <img
-              src={`${env.assetsEndpoint}/matchya-logo.png`}
+              src={`${env.assetsEndpoint}/Matchya-sticker.png`}
               alt="logo"
-              className="w-10 h-10 relative bottom-1"
+              className="mx-12 w-32 relative mb-1"
             />
-            <h1 className="text-xl font-bold text-black">Matchya</h1>
+            {/* <h1 className="text-xl font-bold text-black">Matchya</h1> */}
           </div>
         </Link>
         <div className="pl-8 hidden sm:block">
