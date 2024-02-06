@@ -39,8 +39,8 @@ def handler(event, context):
         body = parser.parse_request_body()
         origin = parser.parse_header()
         response_generator.origin_domain = origin
-        candidate_id = parser.parse_request_parameter('id')
         assessment_id = body.get('assessment_id')
+        candidate_id = body.get('candidate_id')
 
         # business logic
         candidate = Candidate()

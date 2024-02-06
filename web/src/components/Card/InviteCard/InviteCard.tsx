@@ -39,9 +39,10 @@ const CandidateRow = ({
       setIsLoading(true);
       const data = {
         assessment_id: assessmentId,
+        candidate_id: id,
       };
       const response = await axiosInstance.post(
-        `/candidates/invite/${id}`,
+        `/candidates/invite`,
         data
       );
       if (response.data.status === 'success') {

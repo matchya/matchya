@@ -29,14 +29,10 @@ functions:
         - invite.handler
     events:
       - http:
-          path: /candidates/invite/{id}
+          path: /candidates/invite
           method: POST
           cors: ${file(../shared/serverless.dev.yml):cors}
           authorizer: ${file(../shared/serverless.dev.yml):cookie-authorizer}
-          request:
-            parameters:
-              paths:
-                id: true
     timeout: 30
 
   retrieve:
