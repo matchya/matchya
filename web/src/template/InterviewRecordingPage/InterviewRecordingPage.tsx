@@ -49,7 +49,7 @@ const InterviewRecordingPageTemplate = ({
         <div className="w-full h-16 bg-white flex justify-between items-center px-10 border-b">
           <div className="flex items-center space-x-4 px-4 cursor-pointer">
             <img
-              src={`${env.assetsEndpoint}/Matchya-sticker.png`}
+              src={`${env.assetsEndpoint}/matchya-sticker.png`}
               alt="logo"
               className="w-32 mb-1"
             />
@@ -69,7 +69,7 @@ const InterviewRecordingPageTemplate = ({
         <div className="w-full h-16 bg-white flex justify-between items-center px-10 border-b">
           <div className="flex items-center space-x-4 px-4 cursor-pointer">
             <img
-              src={`${env.assetsEndpoint}/Matchya-sticker.png`}
+              src={`${env.assetsEndpoint}/matchya-sticker.png`}
               alt="logo"
               className="w-32 mb-2"
             />
@@ -98,7 +98,7 @@ const InterviewRecordingPageTemplate = ({
         <div className="w-full h-16 flex justify-between items-center px-10 border-b">
           <div className="h-full flex items-center cursor-pointer">
             <img
-              src={`${env.assetsEndpoint}/Matchya-sticker.png`}
+              src={`${env.assetsEndpoint}/matchya-sticker.png`}
               alt="logo"
               className="w-32 relative bottom-1"
             />
