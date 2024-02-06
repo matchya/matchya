@@ -17,7 +17,7 @@ const AssessmentDetailPageTemplate = ({
       <div className="w-full h-full mx-auto">
         <div className="w-full h-full mx-auto">
           <div className="justify-between items-center py-12">
-            <div className="px-12">
+            <div className="px-4 md:px-12">
               <div className="mb-4">
                 {!isLoading && (
                   <h3 className="text-3xl ml-4">{assessment?.name}</h3>
