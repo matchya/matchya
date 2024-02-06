@@ -17,7 +17,7 @@ const AuthenticationPageTemplate = ({
       <div className="fixed top-8 left-8 z-20 flex items-center text-lg font-medium">
         <div className="h-full flex items-center cursor-pointer">
           <img
-            src={`${env.assetsEndpoint}/Matchya-sticker.png`}
+            src={`${env.assetsEndpoint}/matchya-sticker.png`}
             alt="logo"
             className="h-10 relative "
           />
