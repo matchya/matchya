@@ -39,8 +39,9 @@ def handler(event, context):
         bucket, key = parser.parse_bucket_name_and_key()
 
         # business logic
-        interview_id, question_id = key.split('/')[0], key.split('/')[1].split('.')[0]
-        VIDEO_EXTENSION = '.webm'
+        file_structure = key.split('/')  # ['environment', 'response_recording', 'webm', 'interview_id', 'question_id.webm']
+        interview_id, question_id = file_structure[3], file_structure[4].split('.')[0]
+        VIDEO_EXTENSION = '.' + file_structure[4].split('.')[1]
         video_file_path = s3_client.download_video_file_from_s3(bucket, key, file_name=interview_id + '_' + question_id + VIDEO_EXTENSION)
         audio_file_path = video_processor.extract_audio_from_video(video_file_path)
         transcript = audio_processor.transcript_from_audio(audio_file_path)
