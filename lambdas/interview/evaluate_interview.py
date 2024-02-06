@@ -28,6 +28,8 @@ def calculate_total_score(answers):
     total_score = 0
     for answer in answers:
         total_score += answer['score']
+    if len(answers) == 0:
+        return 0
     result = total_score / len(answers)
     return round(result, 2)
 
