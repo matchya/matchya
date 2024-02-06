@@ -41,7 +41,7 @@ class InterviewRepository:
         """
         logger.info(f'Retrieving interview by candidate id: {candidate_id}')
         sql = """
-            SELECT *
+            SELECT id, candidate_id, assessment_id
             FROM interview
             WHERE interview.candidate_id = '%s';
         """ % candidate_id
@@ -51,6 +51,7 @@ class InterviewRepository:
             interview = Interview(assessment_id=result[1])
             interview.id = result[0]
             interview.candidate_id = result[1]
+            interview.assessment_id = result[2]
             logger.info('Successfully retrieved interview')
             return interview
         except Exception as e:
@@ -71,7 +72,6 @@ class InterviewRepository:
         try:
             self.db_client.execute(sql)
             result = self.db_client.fetchone()
-            logger.info('Successfully retrieved company name')
             return result[0]
         except Exception as e:
             logger.error(e)
