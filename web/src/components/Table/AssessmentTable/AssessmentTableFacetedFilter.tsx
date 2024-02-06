@@ -41,8 +41,7 @@ export function AssessmentTableFacetedFilter<TData, TValue>({
     <Popover>
       <PopoverTrigger asChild>
         <Button
-          variant="outline"
-          size="sm"
+          variant="outline" 
           className="h-8 border-dashed hover:bg-gray-50"
         >
           <PlusCircledIcon className="mr-2 h-4 w-4" />

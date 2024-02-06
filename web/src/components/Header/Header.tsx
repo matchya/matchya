@@ -41,7 +41,7 @@ const Header = () => {
         <Link to="/assessments">
           <div className="h-full flex items-center cursor-pointer">
             <img
-              src={`${env.assetsEndpoint}/Matchya-sticker.png`}
+              src={`${env.assetsEndpoint}/matchya-sticker.png`}
               alt="logo"
               className="w-32 relative mb-1"
             />
