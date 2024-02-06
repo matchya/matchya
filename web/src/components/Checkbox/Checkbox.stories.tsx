@@ -1,16 +1,17 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import Component from './Checkbox';
+import DisplayingComponent from './Checkbox';
+import ShadcnComponent from './Checkbox.shadcn';
 
-const meta: Meta<typeof Component> = {
-  title: 'Component',
-  component: Component,
+const meta: Meta<typeof DisplayingComponent> = {
+  title: 'Component/Checkbox',
+  component: DisplayingComponent,
 };
 
 export default meta;
 
-type Story = StoryObj<typeof Component>;
+type Story = StoryObj<typeof DisplayingComponent>;
 
-export const Checkbox: Story = {
-  render: () => <Component />,
+export const Shadcn: Story = {
+  render: () => <ShadcnComponent />,
 };

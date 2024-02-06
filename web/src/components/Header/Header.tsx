@@ -41,11 +41,10 @@ const Header = () => {
         <Link to="/assessments">
           <div className="h-full flex items-center cursor-pointer">
             <img
-              src={`${env.assetsEndpoint}/Matchya-sticker.png`}
+              src={`${env.assetsEndpoint}/matchya-sticker.png`}
               alt="logo"
-              className="mx-12 w-32 relative mb-1"
+              className="w-32 relative mb-1"
             />
-            {/* <h1 className="text-xl font-bold text-black">Matchya</h1> */}
           </div>
         </Link>
         <div className="pl-8 hidden sm:block">

@@ -17,7 +17,7 @@ const AuthenticationPageTemplate = ({
       <div className="fixed top-8 left-8 z-20 flex items-center text-lg font-medium">
         <div className="h-full flex items-center cursor-pointer">
           <img
-            src={`${env.assetsEndpoint}/Matchya-sticker.png`}
+            src={`${env.assetsEndpoint}/matchya-sticker.png`}
             alt="logo"
             className="h-10 relative "
           />
@@ -37,7 +37,6 @@ const AuthenticationPageTemplate = ({
             <div className={cn('grid gap-6')}>
               <Button
                 variant="outline"
-                type="button"
                 disabled={isGoogleLoading}
                 onClick={onGoogleLogin}
                 className="flex gap-4 w-full py-6 mx-auto border text-black bg-white text-md hover:bg-gray-100 hover:text-black dark:bg-white dark:text-black dark:border-black dark:hover:bg-gray-100 dark:hover:text-black dark:hover:border-black"

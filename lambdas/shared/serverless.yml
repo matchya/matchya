@@ -4,7 +4,7 @@ custom:
 provider:
   name: aws
   runtime: python3.9
-  architecture: arm64
+  architecture: ${param:arch, 'x86'}
   stage: ${opt:stage, 'staging'}
   region: us-east-1
   stackName: ${self:provider.stage}-sls-${self:service}

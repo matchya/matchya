@@ -37,7 +37,6 @@ export function InterviewsTableColumnHeader<TData, TValue>({
         <DropdownMenuTrigger asChild>
           <Button
             variant="ghost"
-            size="sm"
             className="-ml-3 h-8 bg-transparent hover:bg-transparent"
           >
             <span>{title}</span>

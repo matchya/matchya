@@ -28,7 +28,7 @@ const CandidatesPageTemplate = ({
         <div>
           <div className="w-full h-full mx-auto">
             <div className="justify-between items-center py-4">
-              <div className="px-12 pt-8">
+              <div className="px-4 md:px-12 pt-8">
                 <div className="mb-8 space-y-4">
                   <h3 className="text-4xl font-bold">Welcome, {companyName}</h3>
                 </div>

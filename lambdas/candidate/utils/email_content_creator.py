@@ -50,7 +50,7 @@ class CandidateInviteEmailContentGenerator(EmailContentGenerator):
                 <div style="max-width: 600px; width: 95%; margin: 0 auto">
                     <img
                         style="width: 12rem; margin-top: 1.25rem; margin-bottom: 1.25rem"
-                        src="https://matchya-assets.s3.amazonaws.com/Matchya-sticker.png"
+                        src="https://matchya-assets.s3.amazonaws.com/matchya-sticker.png"
                         alt="logo"
                     />
                     <h1 style="font-size: 1.5rem; font-weight: bold">Hi {candidate_name}</h1>
