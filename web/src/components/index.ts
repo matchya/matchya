@@ -16,6 +16,7 @@ export { default as QuestionCard } from './Card/QuestionCard/QuestionCard';
 export { default as MultiSelect } from './MultiSelect/MultiSelect';
 export { default as Separator } from './Separator/Separator';
 export { default as TestTable } from './Table/AssessmentTable/AssessmentTable';
+export { default as Textarea } from './Textarea/Textarea';
 export { default as UserNavDropdownMenu } from './DropdownMenu/UserNavDropdownMenu/UserNavDropdownMenu';
 
 export * from './Card/Card';
@@ -24,4 +25,3 @@ export * from './Dialog/Dialog';
 export * from './DropdownMenu/DropdownMenu';
 export * from './Popover/Popover';
 export * from './Select/Select';
-export * from './Textarea/Textarea';
