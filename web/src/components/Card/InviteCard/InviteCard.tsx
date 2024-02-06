@@ -20,6 +20,7 @@ interface CandidateRowProps {
   name: string;
   email: string;
   score?: number;
+  assessmentId: string | undefined;
 }
 
 const CandidateRow = ({
@@ -28,6 +29,7 @@ const CandidateRow = ({
   name,
   email,
   score,
+  assessmentId,
 }: CandidateRowProps) => {
   const [emailSent, setEmailSent] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -35,7 +37,14 @@ const CandidateRow = ({
   const sendInvitation = async () => {
     try {
       setIsLoading(true);
-      const response = await axiosInstance.post(`/candidates/invite/${id}`);
+      const data = {
+        assessment_id: assessmentId,
+        candidate_id: id,
+      };
+      const response = await axiosInstance.post(
+        `/candidates/invite`,
+        data
+      );
       if (response.data.status === 'success') {
         console.log('success');
         setEmailSent(true);
@@ -149,6 +158,7 @@ const InviteCard = ({ candidates, assessmentId }: InviteCardProps) => {
                 name={candidate.name}
                 email={candidate.email}
                 score={candidate.assessment?.totalScore}
+                assessmentId={assessmentId}
               />
             ))}
           </div>
