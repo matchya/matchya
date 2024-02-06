@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 
-import { Input, Button, Icons } from '@/components';
+import { Input, Button } from '@/components';
+import { Separator } from '@/components';
 
 const positions = [
   'Software Engineer',
@@ -34,101 +35,85 @@ const CreateAssessmentPageTemplate = ({
   handleSubmit,
 }: CreateAssessmentPageTemplateProps) => {
   return (
-    <div className="w-full min-h-screen h-[1px] overflow-y-scroll">
-      <div className="w-full md:w-[768px] px-10 py-5 rounded-lg">
-        <div className="flex items-center mt-2">
-          <Link to="/assessments">
-            <div className="flex justify-center items-center h-8 w-8 rounded bg-gray-300 ml-2">
-              <Icons.back className="rounded h-6 w-6 mx-auto" />
-            </div>
-          </Link>
-          <p className=" text-2xl font-bold text-black mx-8">
-            Create Assessment
-          </p>
-        </div>
-        <div className="bg-white border w-full rounded-lg my-2 mx-auto mt-6 p-6 pl-8">
-          <p className="text-sm font-bold text-black mb-2 pl-8">
-            Assessment Name
-          </p>
-          <Input
-            value={testName}
-            onChange={onTestNameChange}
-            type="text"
-            className="w-2/3 text-matcha-900 border-black p-1 px-4 active:ring-0 focus:ring-0"
-          />
-        </div>
-        <div className="bg-white border w-full rounded-lg my-2 mx-auto p-6 pl-8">
-          <p className="text-sm font-bold text-black mb-2 pl-8">
-            Position Type
-          </p>
-          <div className="w-full flex flex-wrap">
-            {positions.map(position => (
-              <div
-                key={position}
-                className="w-1/3 flex justify-start items-center my-2 cursor-pointer"
-                onClick={() => onPositionChange(position)}
-              >
-                <p
-                  className={`text-lg font-bold ${
-                    selectedPosition === position
-                      ? 'text-gray-900'
-                      : 'text-gray-400'
-                  }`}
-                >
-                  {position}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="bg-white border w-full rounded-lg my-2 mx-auto p-6 pl-8">
-          <p className="text-sm font-bold text-black mb-2 pl-8">
-            Position Level
-          </p>
-          <div className="w-full flex flex-wrap">
-            {levels.map(level => (
-              <div
-                key={level}
-                className="w-1/2 flex justify-start items-center my-2 cursor-pointer"
-                onClick={() => onLevelChange(level)}
-              >
-                <p
-                  className={`text-lg font-bold ${
-                    selectedLevel === level ? 'text-gray-900' : 'text-gray-400'
-                  }`}
-                >
-                  {level}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="bg-white border w-full rounded-lg my-2 mx-auto ">
-          <div className="w-full rounded-lg mx-auto px-4 py-2">
-            <p className="text-sm mt-4 font-bold text-black mb-2 pl-4">
-              Description
-            </p>
-            <textarea
-              className="w-full h-24 mt-4 text-black p-1 px-4 border rounded border-black text-sm resize-none"
-              placeholder={
-                'Let us know more about your position to generate better questions for you.\n' +
-                'ex)\n - Seeking a front-end engineer proficient in design.\n' +
-                ' - Back-end engineer with experience working for a large-scale company.'
-              }
+    <div className="w-full min-h-screen flex h-[1px] py-12 overflow-y-scroll">
+      <div className="w-full px-4 md:px-12 mx-auto">
+        <p className="text-4xl font-bold text-black mb-6">Create Assessment</p>
+        <div>
+          <div className="mb-6">
+            <p className="text-md font-bold text-black mb-2">Assessment Name</p>
+            <Input
+              value={testName}
+              onChange={onTestNameChange}
+              type="text"
+              className="w-2/3 text-matcha-900 border-gray-200 active:ring-0 focus:ring-0"
             />
           </div>
         </div>
+        <div className="my-4">
+          <Separator />
+        </div>
+        <p className="text-md font-bold text-black mb-2">Position Type</p>
+        <div className="w-full grid grid-cols-2 md:grid-cols-3 gap-3">
+          {positions.map(position => (
+            <Button
+              className={
+                selectedPosition === position
+                  ? 'text-white bg-matcha-400 hover:bg-matchya-400'
+                  : ''
+              }
+              variant={selectedPosition === position ? 'default' : 'outline'}
+              onClick={() => onPositionChange(position)}
+            >
+              {position}
+            </Button>
+          ))}
+        </div>
+        <div className="my-4">
+          <Separator />
+        </div>
+        <div>
+          <p className="text-md font-bold text-black mb-2">Position Level</p>
+          <div className="w-full grid grid-cols-2 gap-3">
+            {levels.map(level => (
+              <Button
+                className={
+                  selectedLevel === level
+                    ? 'text-white bg-matcha-400 hover:bg-matchya-400'
+                    : ''
+                }
+                variant={selectedLevel === level ? 'default' : 'outline'}
+                onClick={() => onLevelChange(level)}
+              >
+                {level}
+              </Button>
+            ))}
+          </div>
+        </div>
+        <div className="my-4">
+          <Separator />
+        </div>
+        {/* TO BE IMPLEMENTED */}
+        {/* <div>
+          <p className="text-md font-bold text-black mb-2">Description</p>
+          <Textarea
+            className="w-full min-h-[150px] text-black px-3 py-2 border rounded border-gray-200 text-sm resize-none"
+            placeholder={
+              'Let us know more about your position to generate better questions for you.\n' +
+              'ex)\n - Seeking a front-end engineer proficient in design.\n' +
+              ' - Back-end engineer with experience working for a large-scale company.'
+            }
+            value={description}
+          />
+        </div> */}
         <div className="mt-4 w-full flex justify-end">
           <div className="w-1/2 flex justify-end px-4 items-center">
             <Link to="/assessments">
-              <p className="text-md font-bold text-black mr-6 cursor-pointer">
-                Cancel
-              </p>
+              <p className="font-bold text-black mr-6 cursor-pointer">Cancel</p>
             </Link>
             <Button
               onClick={handleSubmit}
               disabled={isLoading}
-              className="bg-matcha-400 rounded text-md text-white hover:bg-matcha-500 hover:text-white py-4 px-3 rounded-sm"
+              className="font-bold bg-matcha-400 text-white hover:bg-matcha-500 hover:text-white py-4 px-3"
             >
               Create Assessment
             </Button>
