@@ -33,7 +33,6 @@ export const Popover: Story = {
         <PopoverTrigger asChild>
           <Button
             variant="outline"
-            role="combobox"
             aria-expanded={open}
             aria-label="Select a Position"
             className={cn('w-[200px] justify-between')}
