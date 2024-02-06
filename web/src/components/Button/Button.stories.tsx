@@ -1,16 +1,16 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import Component from './Button';
+import ShadcnComponent from './Button.shadcn';
 
-const meta: Meta<typeof Component> = {
-  title: 'Component',
-  component: Component,
+const meta: Meta<typeof ShadcnComponent> = {
+  title: 'Component/Button',
+  component: ShadcnComponent,
 };
 
 export default meta;
 
-type Story = StoryObj<typeof Component>;
+type Story = StoryObj<typeof ShadcnComponent>;
 
-export const Button: Story = {
-  render: () => <Component>Hello</Component>,
+export const Shadcn: Story = {
+  render: () => <ShadcnComponent>Hello</ShadcnComponent>,
 };
