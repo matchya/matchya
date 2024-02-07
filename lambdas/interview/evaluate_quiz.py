@@ -2,7 +2,7 @@ import os
 
 from repo.answer import AnswerRepository
 from repo.assessment import AssessmentRepository
-from lambdas.interview.repo.quiz import QuizRepository
+from repo.quiz import QuizRepository
 from client.open_ai import AudioTranscriber, EvaluationGenerator
 from client.postgres import PostgresDBClient
 from client.s3 import S3Client
