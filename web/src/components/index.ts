@@ -26,3 +26,4 @@ export * from './Dialog/Dialog';
 export * from './DropdownMenu/DropdownMenu';
 export * from './Popover/Popover';
 export * from './Select/Select';
+export * from './Skeleton/Skeleton';
