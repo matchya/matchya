@@ -134,7 +134,7 @@ const InterviewRecordingPageTemplate = ({
             <p className="text-xl font-bold text-center">{quiz.context}</p>
           </div>
 
-          <div className="w-full flex flex-wrap  pt-10">
+          <div className="w-2/3 mx-auto flex flex-wrap  pt-10">
             {quiz.questions
               ?.sort((a, b) => (a.questionNumber < b.questionNumber ? -1 : 1))
               .map(question => (
