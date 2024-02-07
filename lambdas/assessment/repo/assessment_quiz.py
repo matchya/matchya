@@ -15,6 +15,8 @@ class AssessmentQuizRepository:
         :param assessment_id: Unique identifier for the assessment.
         :param quizes: The quizes to save.
         """
+        if len(quiz_ids) == 0:
+            return
         logger.info(f"insert: {assessment_id}, {quiz_ids}")
         sql = "INSERT INTO assessment_quiz (assessment_id, quiz_id) VALUES "
         try:

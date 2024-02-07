@@ -3,7 +3,7 @@ from typing import List
 # import uuid
 
 from client.postgres import PostgresDBClient
-from lambdas.assessment.entity.quiz import Quiz
+from entity.quiz import Quiz
 from utils.logger import Logger
 
 logger = Logger.configure(os.path.relpath(__file__, os.path.join(os.path.dirname(__file__), '..')))
