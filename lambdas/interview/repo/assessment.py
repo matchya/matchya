@@ -26,8 +26,11 @@ class AssessmentRepository:
         """ % interview_id
         try:
             self.db_client.execute(sql)
-            result = self.db_client.fetchall()
-            return result[0]
+            result = self.db_client.fetchone()
+            if result:
+                return result[0], result[1]
+            else:
+                raise ValueError('Interview id does not exist.')
         except Exception as e:
             logger.error(f'Failed to get the position type and level by interview id from db: {e}')
             raise RuntimeError('Failed to get the position type and level by interview id from db.')
