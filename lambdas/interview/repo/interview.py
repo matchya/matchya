@@ -193,15 +193,15 @@ class InterviewRepository:
         }
 
         for row in result:
-            (question_id, question_context, question_topic, question_subtopic, question_difficulty,
+            (quiz_id, quiz_context, quiz_topic, quiz_subtopic, quiz_difficulty,
              video_url, feedback, score) = row[9:]
-            if question_id and video_url:
+            if quiz_id and video_url:
                 answer = {
-                    'question_id': question_id,
-                    'question_context': question_context,
-                    'question_topic': question_topic,
-                    'question_subtopic': question_subtopic,
-                    'question_difficulty': question_difficulty,
+                    'quiz_id': quiz_id,
+                    'quiz_context': quiz_context,
+                    'quiz_topic': quiz_topic,
+                    'quiz_subtopic': quiz_subtopic,
+                    'quiz_difficulty': quiz_difficulty,
                     'video_url': video_url,
                     'feedback': feedback,
                     'score': score,

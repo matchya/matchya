@@ -24,7 +24,7 @@ const QuestionCard = ({ description, keyword, difficulty }: QuestionCardProps) =
             </CardTitle>
           </div>
           <CardDescription className="text-md text-black">
-            {description}
+            quiz description here..{description}
           </CardDescription>
         </div>
       </CardHeader>

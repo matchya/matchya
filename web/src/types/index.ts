@@ -15,10 +15,11 @@ export interface Interview {
 }
 
 export interface Answer {
-  questionId: string;
-  questionText: string;
-  questionTopic: string;
-  questionDifficulty: string;
+  quizId: string;
+  quizContext: string;
+  quizTopic: string;
+  quizSubtopic: string;
+  quizDifficulty: string;
   feedback: string;
   score: number;
   videoUrl: string;
