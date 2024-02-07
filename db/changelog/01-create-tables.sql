@@ -206,3 +206,7 @@ ALTER TABLE answer ADD FOREIGN KEY (quiz_id) REFERENCES quiz(id);
 --rollback ALTER TABLE answer RENAME COLUMN quiz_id TO question_id;
 --rollback ALTER TABLE answer DROP CONSTRAINT answer_quiz_id_fkey;
 --rollback ALTER TABLE answer ADD FOREIGN KEY (question_id) REFERENCES question(id);
+
+--changeset author:21
+ALTER TABLE question ADD COLUMN IF NOT EXISTS question_number int;
+--rollback ALTER TABLE question DROP COLUMN IF EXISTS question_number;
