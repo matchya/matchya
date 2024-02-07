@@ -3,12 +3,12 @@ import { Quiz } from '@/types';
 
 interface QuestionsListTemplateProps {
   isLoading: boolean;
-  quizes: Quiz[] | null;
+  quizzes: Quiz[] | null;
 }
 
 const QuestionsListTemplate = ({
   isLoading,
-  quizes,
+  quizzes,
 }: QuestionsListTemplateProps) => (
   <div className="space-y-6 flex-1">
     {isLoading ? (
@@ -18,8 +18,8 @@ const QuestionsListTemplate = ({
         </p>
         <Icons.spinner className="w-6 h-6 mt-6 spinner" />
       </div>
-    ) : quizes ? (
-      quizes.map(quiz => (
+    ) : quizzes ? (
+      quizzes.map(quiz => (
         <QuestionCard
           key={quiz.id}
           description={quiz.description}

@@ -6,10 +6,10 @@ import { QuestionsListTemplate } from '@/template';
 import { Quiz } from '@/types';
 
 interface QuestionListProps {
-  quizes: Quiz[] | null;
+  quizzes: Quiz[] | null;
 }
 
-const QuestionsList = ({ quizes }: QuestionListProps) => {
+const QuestionsList = ({ quizzes }: QuestionListProps) => {
   // const params = useParams<{ id: string }>();
   // const [isLoading, setIsLoading] = useState(true);
   // const [questions, setQuestions] = useState<Question[] | null>(
@@ -56,7 +56,7 @@ const QuestionsList = ({ quizes }: QuestionListProps) => {
   //   }
   // };
 
-  return <QuestionsListTemplate isLoading={false} quizes={quizes} />;
+  return <QuestionsListTemplate isLoading={false} quizzes={quizzes} />;
 };
 
 export default QuestionsList;

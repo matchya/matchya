@@ -44,7 +44,7 @@ def handler(event, context):
             assessment_question_repo = AssessmentQuizRepository(db_client)
             assessment.id = assessment_repo.insert(company_id, assessment)
             assessment_question_repo.insert(assessment.id, quiz_ids)
-            assessment.quizes = quiz_repo.retrieve_many_by_ids(quiz_ids)
+            assessment.quizzes = quiz_repo.retrieve_many_by_ids(quiz_ids)
 
         return response_generator.generate_success_response({
             'assessment': assessment.to_dict()

@@ -5,9 +5,9 @@ logger = Logger.configure(os.path.relpath(__file__, os.path.join(os.path.dirname
 
 
 class Assessment:
-    def __init__(self, name, position_type, position_level, quizes=[]):
+    def __init__(self, name, position_type, position_level, quizzes=[]):
         self._id = None
-        self.quizes = quizes
+        self.quizzes = quizzes
         if not name:
             raise ValueError('name is required')
         self.name = name
@@ -35,5 +35,5 @@ class Assessment:
             'name': self.name,
             'position_type': self.position_type,
             'position_level': self.position_level,
-            'quizes': [quiz.to_dict() for quiz in self.quizes]
+            'quizzes': [quiz.to_dict() for quiz in self.quizzes]
         }

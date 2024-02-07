@@ -54,15 +54,15 @@ functions:
           authorizer: ${file(../shared/serverless.yml):cookie-authorizer}
     timeout: 30
 
-  retrieve-quizes-by-id:
-    name: ${self:provider.stage}-interview-retrieve-quizes-by-id
+  retrieve-quizzes-by-id:
+    name: ${self:provider.stage}-interview-retrieve-quizzes-by-id
     image:
       name: default
       command:
         - retrieve_quizes_by_id.handler
     events:
       - http:
-          path: /interviews/{id}/quizes
+          path: /interviews/{id}/quizzes
           method: GET
           cors: ${file(../shared/serverless.yml):cors}
           authorizer: ${file(../shared/serverless.yml):header-authorizer}

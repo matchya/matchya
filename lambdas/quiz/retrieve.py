@@ -29,14 +29,14 @@ def handler(event, context):
         # business logic
         with postgres_client as db_client:
             quiz_repo = QuizRepository(db_client)
-            quizes = quiz_repo.retrieve_many()
+            quizzes = quiz_repo.retrieve_many()
 
         return response_generator.generate_success_response({
-            'quizes': [quiz.to_dict() for quiz in quizes]
+            'quizzes': [quiz.to_dict() for quiz in quizzes]
         })
     except (ValueError, RuntimeError) as e:
-        logger.error(f'Retrieving quizes failed: {e}')
+        logger.error(f'Retrieving quizzes failed: {e}')
         return response_generator.generate_error_response(400, str(e))
     except Exception as e:
-        logger.error(f'Retrieving quizes failed: {e}')
+        logger.error(f'Retrieving quizzes failed: {e}')
         return response_generator.generate_error_response(500, str(e))

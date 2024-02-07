@@ -37,7 +37,7 @@ const AssessmentDetailPage = () => {
       assessment={assessment}
       isLoading={isLoading}
       questionsListFragment={
-        <QuestionsList quizes={assessment?.quizes || null} />
+        <QuestionsList quizzes={assessment?.quizzes || null} />
       }
     />
   );

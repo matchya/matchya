@@ -15,7 +15,7 @@ functions:
         - retrieve.handler
     events:
       - http:
-          path: /quizes
+          path: /quizzes
           method: GET
           cors: ${file(../shared/serverless.yml):cors}
           authorizer: ${file(../shared/serverless.yml):cookie-authorizer}

@@ -14,18 +14,18 @@ function CreateAssessmentPage() {
   );
   const [selectedPosition, setSelectedPosition] = useState('Software Engineer');
   const [selectedLevel, setSelectedLevel] = useState('Junior');
-  const [quizes, setQuizes] = useState<Quiz[]>([]);
+  const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    fetchQuizes();
+    fetchQuizzes();
   }, []);
 
-  const fetchQuizes = async () => {
+  const fetchQuizzes = async () => {
     try {
-      const response = await caseSensitiveAxiosInstance.get('/quizes');
+      const response = await caseSensitiveAxiosInstance.get('/quizzes');
       if (response.data.status === 'success') {
-        setQuizes(response.data.payload.quizes);
+        setQuizzes(response.data.payload.quizzes);
       }
     } catch (error) {
       console.log(error);
@@ -92,7 +92,7 @@ function CreateAssessmentPage() {
   return (
     <Template
       testName={testName}
-      quizes={quizes}
+      quizzes={quizzes}
       selectedPosition={selectedPosition}
       selectedLevel={selectedLevel}
       isLoading={isLoading}

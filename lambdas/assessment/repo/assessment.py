@@ -132,15 +132,15 @@ class AssessmentRepository:
             'position_type': result[0][2],
             'position_level': result[0][3],
             'created_at': str(result[0][4]),
-            'quizes': [],
+            'quizzes': [],
             'candidates': []
         }
-        quizes = {}
+        quizzes = {}
         candidates = {}
         for row in result:
             (quiz_id, quiz_description, quiz_topic, quiz_subtopic, quiz_difficulty,
              candidate_id, candidate_name, email, status, total_score) = row[5:]
-            if quiz_id and quiz_id not in quizes:
+            if quiz_id and quiz_id not in quizzes:
                 quiz = {
                     'id': quiz_id,
                     'description': quiz_description,
@@ -148,7 +148,7 @@ class AssessmentRepository:
                     'subtopic': quiz_subtopic,
                     'difficulty': quiz_difficulty
                 }
-                quizes[quiz_id] = quiz
+                quizzes[quiz_id] = quiz
 
             if candidate_id and candidate_id not in candidates:
                 candidate = {
@@ -162,6 +162,6 @@ class AssessmentRepository:
                 }
                 candidates[candidate_id] = candidate
 
-        assessment['quizes'] = list(quizes.values())
+        assessment['quizzes'] = list(quizzes.values())
         assessment['candidates'] = list(candidates.values())
         return assessment

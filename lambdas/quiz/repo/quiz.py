@@ -18,15 +18,15 @@ class QuizRepository:
 
     def retrieve_many(self) -> List[Quiz]:
         """
-        Retrieves quizes from the database.
+        Retrieves quizzes from the database.
 
-        :return: The quizes.
+        :return: The quizzes.
         """
-        logger.info('Retrieving quizes')
+        logger.info('Retrieving quizzes')
         sql = "SELECT id, description, topic, subtopic, difficulty, created_at FROM quiz LIMIT 10;"
         self.db_client.execute(sql)
         result = self.db_client.fetchall()
-        quizes = []
+        quizzes = []
         for row in result:
             quiz = Quiz()
             quiz.id = row[0]
@@ -35,6 +35,6 @@ class QuizRepository:
             quiz.subtopic = row[3]
             quiz.difficulty = row[4]
             quiz.created_at = str(row[5])
-            quizes.append(quiz)
+            quizzes.append(quiz)
         logger.info('Successfully retrieved questions')
-        return quizes
+        return quizzes
