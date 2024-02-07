@@ -40,7 +40,7 @@ export const WithQuestions: Story = {
     </>
   ),
 };
-quizzes;
+
 export const IsLoading: Story = {
   render: () => (
     <>
