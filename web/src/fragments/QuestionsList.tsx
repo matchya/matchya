@@ -3,13 +3,13 @@
 
 // import { axiosInstance } from '@/lib/axios';
 import { QuestionsListTemplate } from '@/template';
-import { Question } from '@/types';
+import { Quiz } from '@/types';
 
 interface QuestionListProps {
-  initialQuestions: Question[] | null;
+  quizes: Quiz[] | null;
 }
 
-const QuestionsList = ({ initialQuestions }: QuestionListProps) => {
+const QuestionsList = ({ quizes }: QuestionListProps) => {
   // const params = useParams<{ id: string }>();
   // const [isLoading, setIsLoading] = useState(true);
   // const [questions, setQuestions] = useState<Question[] | null>(
@@ -56,7 +56,7 @@ const QuestionsList = ({ initialQuestions }: QuestionListProps) => {
   //   }
   // };
 
-  return <QuestionsListTemplate isLoading={false} questions={initialQuestions} />;
+  return <QuestionsListTemplate isLoading={false} quizes={quizes} />;
 };
 
 export default QuestionsList;

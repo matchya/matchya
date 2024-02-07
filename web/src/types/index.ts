@@ -39,7 +39,7 @@ export interface Assessment {
   createdAt?: string;
   updatedAt?: string;
   numCandidates?: number;
-  questions?: Question[];
+  quizes?: Quiz[];
   candidates?: Candidate[];
   interviewId?: string;
   interviewStatus?: string;
@@ -47,9 +47,10 @@ export interface Assessment {
   summary?: string;
 }
 
-export interface Question {
+export interface Quiz {
   id: string;
-  text: string;
+  context: string;
+  description: string;
   metrics?: Metric[];
   topic: string;
   difficulty: string;
