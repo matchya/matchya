@@ -28,8 +28,8 @@ class QuizRepository:
         try:
             self.db_client.execute(sql)
             result = self.db_client.fetchall()
-            question = self._process_sql_result(result)
-            return question
+            quiz = self._process_sql_result(result)
+            return quiz
         except Exception as e:
             logger.error(f'Failed to get a quiz by quiz id from db: {e}')
             raise RuntimeError('Failed to get a quiz by quiz id from db.')

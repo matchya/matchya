@@ -37,7 +37,7 @@ def handler(event, context):
             interview = interview_repo.retrieve_interview_quizes_by_id(interview_id)
             answers = answer_repo.get_candidate_answers(interview_id)
             # filter out the questions that have been answered
-            interview['questions'] = [question for question in interview['questions'] if question['id'] not in [answer['question_id'] for answer in answers]]
+            interview['quizes'] = [quiz for quiz in interview['quizes'] if quiz['id'] not in [answer['quiz_id'] for answer in answers]]
         return response_generator.generate_success_response({
             'interview': interview
         })
