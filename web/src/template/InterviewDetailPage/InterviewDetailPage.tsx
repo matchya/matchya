@@ -58,7 +58,7 @@ const InterviewDetailPageTemplate = ({
                     </div>
                     <div className="w-4/5 mt-8 bg-white border p-10 mx-20 rounded">
                       <div className="flex px-10 justify-around">
-                        <h3 className="text-2xl font-bold text-matcha-800">
+                        <h3 className="text-2xl font-bold text-matcha-500">
                           Review By Matchya AI
                         </h3>
                         <p className="text-lg">
@@ -66,7 +66,7 @@ const InterviewDetailPageTemplate = ({
                           <span className="text-2xl font-bold text-macha-700 ml-1">
                             {interviewData.totalScore}
                           </span>{' '}
-                          / 10
+                          %
                         </p>
                       </div>
                       <p className="text-lg pt-3 pl-3 ml-3">
@@ -115,7 +115,7 @@ const InterviewDetailPageTemplate = ({
                       Question
                     </p>
                     <div className="flex justify-around mb-2">
-                      <h3 className="text-xl font-bold text-matcha-800">
+                      <h3 className="text-xl font-bold text-matcha-500">
                         {currentAnswer?.quizTopic}
                       </h3>
                       <p className="text-md">
@@ -123,7 +123,7 @@ const InterviewDetailPageTemplate = ({
                         <span className="text-xl font-bold text-matcha-700 ml-1">
                           {currentAnswer?.score}
                         </span>{' '}
-                        / 10
+                        %
                       </p>
                     </div>
                     <p className="indent-4 text-sm mb-6">
