@@ -91,6 +91,8 @@ jobs:
             label: Assessment
           - package: video
             label: Video
+          - package: quiz
+            label: Quiz
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment-label }}
     steps:
