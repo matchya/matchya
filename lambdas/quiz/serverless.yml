@@ -20,5 +20,20 @@ functions:
           cors: ${file(../shared/serverless.yml):cors}
           authorizer: ${file(../shared/serverless.yml):cookie-authorizer}
 
+  evaluate:
+    name: ${self:provider.stage}-quiz-evaluate
+    image:
+      name: default
+      command:
+        - evaluate.handler
+    events:
+      - s3:
+          bucket: ${self:custom.namespace}-user-data
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: ${self:provider.stage}/response-recording/
+          existing: true
+    timeout: 300
+
 plugins:
   - serverless-deployment-bucket

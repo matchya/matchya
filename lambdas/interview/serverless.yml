@@ -7,20 +7,6 @@ custom: ${file(../shared/serverless.yml):custom}
 provider: ${file(../shared/serverless.yml):provider}
 
 functions:
-  evaluate-quiz:
-    name: ${self:provider.stage}-interview-evaluate-quiz
-    image:
-      name: default
-      command:
-        - evaluate_quiz.handler
-    events:
-      - s3:
-          bucket: ${self:custom.namespace}-user-data
-          event: s3:ObjectCreated:*
-          rules:
-            - prefix: ${self:provider.stage}/response-recording/
-          existing: true
-    timeout: 300
 
   evaluate-interview:
     name: ${self:provider.stage}-interview-evaluate-interview
