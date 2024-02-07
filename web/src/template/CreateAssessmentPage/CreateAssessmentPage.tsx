@@ -109,19 +109,8 @@ const CreateAssessmentPageTemplate = ({
           />
         </div> */}
         
-        <div className="mt-4 w-full flex justify-end">
-          <div className="w-1/2 flex justify-end px-4 items-center">
-            <Link to="/assessments">
-              <p className="font-bold text-black mr-6 cursor-pointer">Cancel</p>
-            </Link>
-            <Button
-              onClick={handleSubmit}
-              disabled={isLoading}
-              className="font-bold bg-matcha-400 text-white hover:bg-matcha-500 hover:text-white py-4 px-3"
-            >
-              Create Assessment
-            </Button>
-          </div>
+        <div className="mt-4 w-full justify-end">
+        
           <div>
             <p className="text-md font-bold text-black mb-2">Position Level</p>
             <div className="w-full grid grid-cols-2 gap-3">
@@ -173,6 +162,7 @@ const CreateAssessmentPageTemplate = ({
               </Button>
             </div>
           </div>
+          
         </div>
       </div>
       <div className="w-full px-4 md:px-12 xl:pl-8 space-y-4 pt-16">

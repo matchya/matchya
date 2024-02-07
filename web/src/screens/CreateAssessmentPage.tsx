@@ -40,8 +40,8 @@ function CreateAssessmentPage() {
         data
       );
       if (response.data.status === 'success') {
-        const id = response.data.payload.assessmentId;
-        navigate(`/assessments/${id}`);
+        const assessment = response.data.payload.assessment
+        navigate(`/assessments/${assessment.id}`);
       }
     } catch (error) {
       console.log(error);

@@ -2,8 +2,6 @@ import os
 
 from client.postgres import PostgresDBClient
 from client.sentry import SentryClient
-from client.sqs import SqsClient
-from config import Config
 from entity.assessment import Assessment
 from repo.assessment import AssessmentRepository
 from repo.quiz import QuizRepository
@@ -16,7 +14,6 @@ from utils.response_generator import ResponseGenerator
 logger = Logger.configure(os.path.relpath(__file__, os.path.join(os.path.dirname(__file__), '.')))
 
 SentryClient.initialize(PackageInfo('package.json').get_version())
-sqs_client = SqsClient(queue_url=Config.QUESTION_GENERATION_PROCESSOR_QUEUE_URL)
 postgres_client = PostgresDBClient()
 response_generator = ResponseGenerator()
 
@@ -37,6 +34,8 @@ def handler(event, context):
         # business logic
         assessment = Assessment(body.get('name'), body.get('position_type'), body.get('position_level'))
         quiz_ids = body.get('quiz_ids', [])
+
+        quiz_ids = ['123', '234', '345']  # mock data
 
         # db operations
         with postgres_client as db_client:
