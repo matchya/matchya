@@ -66,7 +66,7 @@ const InterviewDetailPageTemplate = ({
                           <span className="text-2xl font-bold text-macha-700 ml-1">
                             {interviewData.totalScore}
                           </span>{' '}
-                          / 10
+                          %
                         </p>
                       </div>
                       <p className="text-lg pt-3 pl-3 ml-3">
@@ -123,7 +123,7 @@ const InterviewDetailPageTemplate = ({
                         <span className="text-xl font-bold text-matcha-700 ml-1">
                           {currentAnswer?.score}
                         </span>{' '}
-                        / 10
+                        %
                       </p>
                     </div>
                     <p className="indent-4 text-sm mb-6">
