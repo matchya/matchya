@@ -53,8 +53,15 @@ export interface Quiz {
   context: string;
   description: string;
   metrics?: Metric[];
+  questions?: Question[];
   topic: string;
   difficulty: string;
+}
+
+export interface Question {
+  id: string;
+  text: string;
+  questionNumber: number;
 }
 
 export interface Metric {

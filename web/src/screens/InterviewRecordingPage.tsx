@@ -54,7 +54,13 @@ const InterviewRecordingPage = () => {
         `/interviews/${interviewId}/quizzes`
       );
       if (response.data.status === 'success') {
+        // caseSensitiveAxiosInstance doesn't work
         const interview = response.data.payload.interview;
+        interview.quizzes.map((quiz: any) => {
+          quiz.questions = quiz.questions.map((question: any) => {
+            return { ...question, questionNumber: question.question_number };
+          })
+        });
         setQuizes(interview.quizzes);
       }
     } catch (error) {

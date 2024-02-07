@@ -52,27 +52,27 @@ class InterviewRepository:
             logger.error(f'Failed to update interview result to db: {e}')
             raise RuntimeError('Failed to update interview result to db.')
 
-    def retrieve_interview_quizes_by_id(self, interview_id):
+    def retrieve_interview_quizzes_by_id(self, interview_id):
         """
-        Retrieves a interview questions by interview id from the database.
+        Retrieves a interview quizzes by interview id from the database.
 
         :param interview_id: The interview ID.
         :return: The interview data.
         """
-        logger.info('Retrieving a interview questions by interview id from db...')
+        logger.info('Retrieving a interview quizzes by interview id from db...')
         sql = """  
             SELECT
                 i.id, i.created_at,
                 a.id, a.name,
                 c.id, c.name, c.email,
                 quiz.id, quiz.context,
-                question.id, question.text,
+                question.id, question.text, question.question_number
             FROM interview i
             LEFT JOIN assessment a ON a.id = i.assessment_id
             LEFT JOIN candidate c ON c.id = i.candidate_id
             LEFT JOIN assessment_quiz aq ON aq.assessment_id = a.id
             LEFT JOIN quiz ON quiz.id = aq.quiz_id
-            LEFT JOIN question q ON q.quiz_id = quiz.id
+            LEFT JOIN question ON question.quiz_id = quiz.id
             WHERE i.id = '%s' AND i.status != 'COMPLETED';
         """ % interview_id
         logger.info(f'Retrieving candidate interview quizzes: {interview_id}')
@@ -113,7 +113,7 @@ class InterviewRepository:
         }
         quizzes = {}
         for row in result:
-            (quiz_id, quiz_context, question_id, question_text) = row[7:]
+            (quiz_id, quiz_context, question_id, question_text, question_number) = row[7:]
             if quiz_id and quiz_id not in quizzes:
                 quizzes[quiz_id] = {
                     'id': quiz_id,
@@ -125,6 +125,7 @@ class InterviewRepository:
                 question = {
                     'id': question_id,
                     'text': question_text,
+                    'question_number': question_number,
                 }
                 quizzes[quiz_id]['questions'][question_id] = question
 
