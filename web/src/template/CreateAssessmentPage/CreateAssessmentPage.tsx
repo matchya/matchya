@@ -13,8 +13,8 @@ import {
   Separator,
   Textarea,
 } from '@/components';
-import { mockedQuestion } from '@/data/mock';
 import { capitalize } from '@/lib/utils';
+import { Quiz } from '@/types';
 
 const positions = [
   'Software Engineer',
@@ -28,6 +28,7 @@ const levels = ['Junior', 'Mid-Level', 'Senior', 'Lead'];
 
 interface CreateAssessmentPageTemplateProps {
   testName: string;
+  quizes: Quiz[];
   selectedPosition: string;
   selectedLevel: string;
   isLoading: boolean;
@@ -39,6 +40,7 @@ interface CreateAssessmentPageTemplateProps {
 
 const CreateAssessmentPageTemplate = ({
   testName,
+  quizes,
   selectedPosition,
   selectedLevel,
   isLoading,
@@ -108,9 +110,8 @@ const CreateAssessmentPageTemplate = ({
             value={description}
           />
         </div> */}
-        
+
         <div className="mt-4 w-full justify-end">
-        
           <div>
             <p className="text-md font-bold text-black mb-2">Position Level</p>
             <div className="w-full grid grid-cols-2 gap-3">
@@ -162,7 +163,6 @@ const CreateAssessmentPageTemplate = ({
               </Button>
             </div>
           </div>
-          
         </div>
       </div>
       <div className="w-full px-4 md:px-12 xl:pl-8 space-y-4 pt-16">
@@ -195,16 +195,13 @@ const CreateAssessmentPageTemplate = ({
         </div>
         <div className="space-y-4 overflow-y-scroll">
           <LoadingCard />
-          <QuestionCard
-            description={mockedQuestion.description}
-            keyword={mockedQuestion.topic}
-            difficulty={mockedQuestion.difficulty}
-          />
-          <QuestionCard
-            description={mockedQuestion.description}
-            keyword={mockedQuestion.topic}
-            difficulty={mockedQuestion.difficulty}
-          />
+          {quizes.map(quiz => (
+            <QuestionCard
+              description={quiz.description}
+              keyword={quiz.topic}
+              difficulty={quiz.difficulty}
+            />
+          ))}
         </div>
       </div>
     </div>
