@@ -59,7 +59,7 @@ functions:
     image:
       name: default
       command:
-        - retrieve_quizes_by_id.handler
+        - retrieve_quizzes_by_id.handler
     events:
       - http:
           path: /interviews/{id}/quizzes

@@ -130,18 +130,16 @@ const InterviewRecordingPageTemplate = ({
         {/* Question */}
         <div className="flex flex-col justify-center items-center pt-10 w-2/3 mx-auto">
           <div className="px-20">
-            <p className="text-2xl font-bold text-center">{quiz.context}</p>
+            <p className="text-2xl font-bold text-center mb-4">Context</p>
+            <p className="text-xl font-bold text-center">{quiz.context}</p>
           </div>
 
-          <div className="w-full flex flex-wrap justify-center items-center pt-10">
-            {quiz.metrics?.map(metric => (
-              <div
-                key={metric.id}
-                className="p-4 w-60 h-24 bg-white border shadow m-2 overflow-y-scroll"
-              >
-                <p className="text-md text-center"> {metric.name}</p>
-              </div>
-            ))}
+          <div className="w-full flex flex-wrap  pt-10">
+            {quiz.questions
+              ?.sort((a, b) => (a.questionNumber < b.questionNumber ? -1 : 1))
+              .map(question => (
+                <p className="text-md my-4">{question.questionNumber}. {question.text}</p>
+              ))}
           </div>
         </div>
       </div>
