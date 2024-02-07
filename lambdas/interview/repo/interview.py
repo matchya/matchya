@@ -75,16 +75,16 @@ class InterviewRepository:
             LEFT JOIN question q ON q.quiz_id = quiz.id
             WHERE i.id = '%s' AND i.status != 'COMPLETED';
         """ % interview_id
-        logger.info(f'Retrieving candidate interview quizes: {interview_id}')
+        logger.info(f'Retrieving candidate interview quizzes: {interview_id}')
         try:
             self.db_client.execute(sql)
             result = self.db_client.fetchall()
             processed_result = self._process_interview_quizes_sql_result(result)
-            logger.info(f'Successfully retrieved candidate interview quizes: {processed_result}')
+            logger.info(f'Successfully retrieved candidate interview quizzes: {processed_result}')
             return processed_result
         except Exception as e:
-            logger.error(f'Retrieving a interview quizes by interview id from db failed: {e}')
-            raise RuntimeError('Failed to retrieve a interview quizes by interview id from db.')
+            logger.error(f'Retrieving a interview quizzes by interview id from db failed: {e}')
+            raise RuntimeError('Failed to retrieve a interview quizzes by interview id from db.')
 
     def _process_interview_quizes_sql_result(self, result):
         """
@@ -109,28 +109,28 @@ class InterviewRepository:
                 'name': result[0][5],
                 'email': result[0][6],
             },
-            'quizes': [],
+            'quizzes': [],
         }
-        quizes = {}
+        quizzes = {}
         for row in result:
             (quiz_id, quiz_context, question_id, question_text) = row[7:]
-            if quiz_id and quiz_id not in quizes:
-                quizes[quiz_id] = {
+            if quiz_id and quiz_id not in quizzes:
+                quizzes[quiz_id] = {
                     'id': quiz_id,
                     'context': quiz_context,
                     'questions': {},
                 }
 
-            if question_id and question_id not in quizes[quiz_id]['questions']:
+            if question_id and question_id not in quizzes[quiz_id]['questions']:
                 question = {
                     'id': question_id,
                     'text': question_text,
                 }
-                quizes[quiz_id]['questions'][question_id] = question
+                quizzes[quiz_id]['questions'][question_id] = question
 
-        for quiz_id in quizes:
-            quizes[quiz_id]['questions'] = list(quizes[quiz_id]['questions'].values())
-            interview['quizes'].append(quizes[quiz_id])
+        for quiz_id in quizzes:
+            quizzes[quiz_id]['questions'] = list(quizzes[quiz_id]['questions'].values())
+            interview['quizzes'].append(quizzes[quiz_id])
         return interview
 
     def retrieve_interview_results_by_id(self, interview_id):

@@ -10,10 +10,10 @@ class AssessmentQuizRepository:
 
     def insert(self, assessment_id: str, quiz_ids: list) -> str:
         """
-        Saves the quizes to the assessment_quiz table.
+        Saves the quizzes to the assessment_quiz table.
 
         :param assessment_id: Unique identifier for the assessment.
-        :param quizes: The quizes to save.
+        :param quizzes: The quizzes to save.
         """
         if len(quiz_ids) == 0:
             return
@@ -25,5 +25,5 @@ class AssessmentQuizRepository:
             sql = sql[:-1] + ';'
             self.db_client.execute(sql)
         except Exception as e:
-            logger.error(f"Error saving quizes to assessment_quiz table: {e}")
-            raise RuntimeError("Error saving quizes to assessment_quiz table")
+            logger.error(f"Error saving quizzes to assessment_quiz table: {e}")
+            raise RuntimeError("Error saving quizzes to assessment_quiz table")

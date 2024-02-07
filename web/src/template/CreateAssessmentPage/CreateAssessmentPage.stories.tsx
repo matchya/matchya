@@ -18,6 +18,7 @@ export const CreateAssessmentPage: Story = {
   render: () => (
     <Component
       testName={'test'}
+      quizzes={[]}
       selectedPosition={'Software Engineer'}
       selectedLevel={'Senior'}
       isLoading={false}

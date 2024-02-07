@@ -14,7 +14,7 @@ const InterviewRecordingPage = () => {
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
     null
   );
-  const [quizes, setQuizes] = useState<Quiz[]>([]);
+  const [quizzes, setQuizes] = useState<Quiz[]>([]);
   const [quizIndex, setQuizIndex] = useState(0);
   const [interviewDone, setInterviewDone] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -29,7 +29,7 @@ const InterviewRecordingPage = () => {
       axiosInstance.defaults.headers.common['Authorization'] =
         `Bearer ${sessionToken}`;
       fetchInterviewQuestions();
-    } 
+    }
   }, [params.id, navigate]);
 
   useEffect(() => {
@@ -51,11 +51,11 @@ const InterviewRecordingPage = () => {
   const fetchInterviewQuestions = async () => {
     try {
       const response = await axiosInstance.get(
-        `/interviews/${interviewId}/quizes`
+        `/interviews/${interviewId}/quizzes`
       );
       if (response.data.status === 'success') {
         const interview = response.data.payload.interview;
-        setQuizes(interview.quizes);
+        setQuizes(interview.quizzes);
       }
     } catch (error) {
       console.error(error);
@@ -77,7 +77,7 @@ const InterviewRecordingPage = () => {
 
     // Fetch the presigned POST URL from your server
     const response = await axiosInstance.get(
-      `/videos/presigned-url?interview_id=${interviewId}&question_id=${quizes[quizIndex].id}`
+      `/videos/presigned-url?interview_id=${interviewId}&question_id=${quizzes[quizIndex].id}`
     );
 
     // Use FormData to build the request
@@ -98,7 +98,7 @@ const InterviewRecordingPage = () => {
       if (uploadResponse.ok) {
         alert('Video uploaded successfully');
         setVideoFile(null);
-        if (quizIndex < quizes.length - 1) {
+        if (quizIndex < quizzes.length - 1) {
           setQuizIndex(quizIndex + 1);
         } else {
           alert('Interview completed');
@@ -116,7 +116,7 @@ const InterviewRecordingPage = () => {
   const handleStartRecording = () => {
     trackEvent({
       eventName: 'start_recording',
-      properties: { quizId: quizes[quizIndex].id },
+      properties: { quizId: quizzes[quizIndex].id },
     });
     setRecording(true);
     const options = { mimeType: 'video/webm', audioBitsPerSecond: 128000 };
@@ -136,7 +136,7 @@ const InterviewRecordingPage = () => {
   const handleStopRecording = () => {
     trackEvent({
       eventName: 'stop_recording',
-      properties: { quizId: quizes[quizIndex].id },
+      properties: { quizId: quizzes[quizIndex].id },
     });
     mediaRecorder?.stop();
     setRecording(false);
@@ -156,7 +156,7 @@ const InterviewRecordingPage = () => {
   return (
     <InterviewRecordingPageTemplate
       isLoading={isLoading}
-      quiz={quizes[quizIndex]}
+      quiz={quizzes[quizIndex]}
       index={quizIndex}
       isRecording={recording}
       webcamRef={webcamRef}

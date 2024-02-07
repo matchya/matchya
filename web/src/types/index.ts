@@ -40,7 +40,7 @@ export interface Assessment {
   createdAt?: string;
   updatedAt?: string;
   numCandidates?: number;
-  quizes?: Quiz[];
+  quizzes?: Quiz[];
   candidates?: Candidate[];
   interviewId?: string;
   interviewStatus?: string;

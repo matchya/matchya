@@ -1,17 +1,36 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Template from '../template/CreateAssessmentPage/CreateAssessmentPage';
 
 import { caseSensitiveAxiosInstance } from '@/lib/axios';
 import { trackEvent } from '@/lib/rudderstack';
+import { Quiz } from '@/types';
 
 function CreateAssessmentPage() {
   const navigate = useNavigate();
-  const [testName, setTestName] = useState('Junior Software Engineer Assessment');
+  const [testName, setTestName] = useState(
+    'Junior Software Engineer Assessment'
+  );
   const [selectedPosition, setSelectedPosition] = useState('Software Engineer');
   const [selectedLevel, setSelectedLevel] = useState('Junior');
+  const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    fetchQuizzes();
+  }, []);
+
+  const fetchQuizzes = async () => {
+    try {
+      const response = await caseSensitiveAxiosInstance.get('/quizzes');
+      if (response.data.status === 'success') {
+        setQuizzes(response.data.payload.quizzes);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleSubmit = async () => {
     trackEvent({
@@ -40,7 +59,7 @@ function CreateAssessmentPage() {
         data
       );
       if (response.data.status === 'success') {
-        const assessment = response.data.payload.assessment
+        const assessment = response.data.payload.assessment;
         navigate(`/assessments/${assessment.id}`);
       }
     } catch (error) {
@@ -73,6 +92,7 @@ function CreateAssessmentPage() {
   return (
     <Template
       testName={testName}
+      quizzes={quizzes}
       selectedPosition={selectedPosition}
       selectedLevel={selectedLevel}
       isLoading={isLoading}
