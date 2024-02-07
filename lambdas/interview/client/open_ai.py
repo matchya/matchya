@@ -80,11 +80,11 @@ class SummaryGenerator(OpenAiChatClient):
 
 
 class EvaluationGenerator(OpenAiChatClient):
-    def _get_system_and_user_message(self, question, position_type, position_level, answer):
+    def _get_system_and_user_message(self, quiz, position_type, position_level, answer):
         """
         Gets the system and user messages.
 
-        :param question: The question.
+        :param quiz: The quiz.
         :param position_type: The position type.
         :param position_level: The position level.
         """
@@ -108,11 +108,11 @@ class EvaluationGenerator(OpenAiChatClient):
         """
 
         user_message = f'Here is the question for position type {position_type} and position level {position_level}:\n'
-        user_message += f'Question: {question["text"]}\n'
-        user_message += f'Topic: {question["topic"]}\n'
-        user_message += f'Difficulty: {question["difficulty"]}\n'
+        user_message += f'Question: {quiz["context"]}\n'
+        user_message += f'Topic: {quiz["topic"]}\n'
+        user_message += f'Difficulty: {quiz["difficulty"]}\n'
         user_message += 'Metrics:\n'
-        for metric in question['metrics']:
+        for metric in quiz['metrics']:
             user_message += f'\t{metric["name"]}: {metric["scoring"]} [Weight: {metric["weight"]}]\n'
 
         user_message += f'Here is the candidate Answer: {answer}\n'

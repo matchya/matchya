@@ -2,7 +2,7 @@ import Webcam from 'react-webcam';
 
 import { Button, Icons } from '@/components';
 import { env } from '@/config';
-import { Question } from '@/types';
+import { Quiz } from '@/types';
 
 const VIDEO_CONSTRAINTS: boolean | MediaTrackConstraints | undefined = {
   width: 1280,
@@ -21,7 +21,7 @@ const AUDIO_CONSTRAINTS: MediaTrackConstraints = {
 };
 
 interface InterviewRecordingPageTemplateProps {
-  question: Question;
+  quiz: Quiz;
   isLoading: boolean;
   index: number;
   isRecording: boolean;
@@ -33,7 +33,7 @@ interface InterviewRecordingPageTemplateProps {
 }
 
 const InterviewRecordingPageTemplate = ({
-  question,
+  quiz,
   isLoading,
   index,
   isRecording,
@@ -63,7 +63,7 @@ const InterviewRecordingPageTemplate = ({
     );
   }
 
-  if (!isLoading && !question) {
+  if (!isLoading && !quiz) {
     return (
       <>
         <div className="w-full h-16 bg-white flex justify-between items-center px-10 border-b">
@@ -130,11 +130,11 @@ const InterviewRecordingPageTemplate = ({
         {/* Question */}
         <div className="flex flex-col justify-center items-center pt-10 w-2/3 mx-auto">
           <div className="px-20">
-            <p className="text-2xl font-bold text-center">{question.text}</p>
+            <p className="text-2xl font-bold text-center">{quiz.context}</p>
           </div>
 
           <div className="w-full flex flex-wrap justify-center items-center pt-10">
-            {question.metrics?.map(metric => (
+            {quiz.metrics?.map(metric => (
               <div
                 key={metric.id}
                 className="p-4 w-60 h-24 bg-white border shadow m-2 overflow-y-scroll"

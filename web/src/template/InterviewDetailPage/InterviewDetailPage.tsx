@@ -17,7 +17,7 @@ const InterviewDetailPageTemplate = ({
   );
   const handleSelectVideo = (answer: Answer) => {
     if (!interviewData || !interviewData.answers.length) return;
-    const id = answer.questionId;
+    const id = answer.quizId;
     trackEvent({ eventName: 'select_video', properties: { id } });
     setCurrentAnswer(answer);
   };
@@ -84,7 +84,7 @@ const InterviewDetailPageTemplate = ({
                     {interviewData.answers.map(answer => (
                       <div
                         className={`w-full flex items-center cursor-pointer hover:bg-orange-100 my-4 px-2`}
-                        key={answer.questionId}
+                        key={answer.quizId}
                         onClick={() => handleSelectVideo(answer)}
                       >
                         <ReactPlayer
@@ -97,14 +97,14 @@ const InterviewDetailPageTemplate = ({
                         <div className="w-2/3 p-2">
                           <p
                             className={`text-xl font-bold ${
-                              currentAnswer?.questionId === answer.questionId &&
+                              currentAnswer?.quizId === answer.quizId &&
                               'text-matcha-500'
                             }`}
                           >
-                            {answer.questionTopic}
+                            {answer.quizTopic}
                           </p>
                           <p className="text-xs">
-                            {answer.questionText.substring(0, 100) + '...'}
+                            {answer.quizContext + '...'}
                           </p>
                         </div>
                       </div>
@@ -116,7 +116,7 @@ const InterviewDetailPageTemplate = ({
                     </p>
                     <div className="flex justify-around mb-2">
                       <h3 className="text-xl font-bold text-matcha-800">
-                        {currentAnswer?.questionTopic}
+                        {currentAnswer?.quizTopic}
                       </h3>
                       <p className="text-md">
                         Score:{' '}
@@ -127,7 +127,7 @@ const InterviewDetailPageTemplate = ({
                       </p>
                     </div>
                     <p className="indent-4 text-sm mb-6">
-                      {currentAnswer?.questionText}
+                      {currentAnswer?.quizContext}
                     </p>
                     <p className="text-2xl text-center font-bold text-black mb-4">
                       Feedback

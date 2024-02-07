@@ -16,17 +16,19 @@ export const WithQuestions: Story = {
     <>
       <Component
         isLoading={false}
-        questions={[
+        quizes={[
           {
             id: '5e88efd5-760b-4adb-9d42-bbaba76cac75',
-            text: 'Explain the concept of Continuous Delivery and its benefits in software development. How does it differ from Continuous Deployment?',
+            context: 'Explain the concept of Continuous Delivery and its benefits in software development. How does it differ from Continuous Deployment?',
             topic: 'Continuous Delivery',
+            description: 'Explain the concept of Continuous Delivery and its benefits in software development. How does it differ from Continuous Deployment?',
             difficulty: 'easy',
           },
           {
             id: '23c2e832-09c6-49a0-aec4-70bfc6a31f0b',
-            text: 'Explain the concept of Hexagonal Architecture in software design. What are the key benefits of using Hexagonal Architecture?',
+            context: 'Explain the concept of Hexagonal Architecture in software design. What are the key benefits of using Hexagonal Architecture?',
             topic: 'Hexagonal Architecture',
+            description: 'Explain the concept of Hexagonal Architecture in software design. What are the key benefits of using Hexagonal Architecture?',
             difficulty: 'easy',
           },
         ]}
@@ -38,7 +40,7 @@ export const WithQuestions: Story = {
 export const IsLoading: Story = {
   render: () => (
     <>
-      <Component isLoading={true} questions={[]} />
+      <Component isLoading={true} quizes={[]} />
     </>
   ),
 };

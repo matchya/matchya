@@ -7,12 +7,12 @@ custom: ${file(../shared/serverless.yml):custom}
 provider: ${file(../shared/serverless.yml):provider}
 
 functions:
-  evaluate-question:
-    name: ${self:provider.stage}-interview-evaluate-question
+  evaluate-quiz:
+    name: ${self:provider.stage}-interview-evaluate-quiz
     image:
       name: default
       command:
-        - evaluate_question.handler
+        - evaluate_quiz.handler
     events:
       - s3:
           bucket: ${self:custom.namespace}-user-data
@@ -54,15 +54,15 @@ functions:
           authorizer: ${file(../shared/serverless.yml):cookie-authorizer}
     timeout: 30
 
-  retrieve-questions-by-id:
-    name: ${self:provider.stage}-interview-retrieve-questions-by-id
+  retrieve-quizes-by-id:
+    name: ${self:provider.stage}-interview-retrieve-quizes-by-id
     image:
       name: default
       command:
-        - retrieve_questions_by_id.handler
+        - retrieve_quizes_by_id.handler
     events:
       - http:
-          path: /interviews/{id}/questions
+          path: /interviews/{id}/quizes
           method: GET
           cors: ${file(../shared/serverless.yml):cors}
           authorizer: ${file(../shared/serverless.yml):header-authorizer}

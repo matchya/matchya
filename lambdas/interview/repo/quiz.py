@@ -6,33 +6,33 @@ from utils.logger import Logger
 logger = Logger.configure(os.path.relpath(__file__, os.path.join(os.path.dirname(__file__), '..')))
 
 
-class QuestionRepository:
+class QuizRepository:
     def __init__(self, db_client):
         self.db_client = db_client
 
-    def get_question(self, question_id):
+    def get_quiz(self, quiz_id):
         """
-        Gets a question by question id from the database.
+        Gets a quiz by quiz id from the database.
 
-        :param question_id: The question id.
+        :param quiz_id: The quiz id.
         """
-        logger.info('Getting a question by question id from db...')
+        logger.info('Getting a quiz by quiz id from db...')
         sql = """
             SELECT 
-                question.id, question.text, question.topic, question.difficulty,
+                quiz.id, quiz.context, quiz.topic, quiz.subtopic, quiz.difficulty,
                 metric.name, metric.scoring, metric.weight
-            FROM question
-            LEFT JOIN metric ON question.id = metric.question_id
-            WHERE question.id = '%s'
-        """ % question_id
+            FROM quiz
+            LEFT JOIN metric ON quiz.id = metric.quiz_id
+            WHERE quiz.id = '%s'
+        """ % quiz_id
         try:
             self.db_client.execute(sql)
             result = self.db_client.fetchall()
-            question = self._process_sql_result(result)
-            return question
+            quiz = self._process_sql_result(result)
+            return quiz
         except Exception as e:
-            logger.error(f'Failed to get a question by question id from db: {e}')
-            raise RuntimeError('Failed to get a question by question id from db.')
+            logger.error(f'Failed to get a quiz by quiz id from db: {e}')
+            raise RuntimeError('Failed to get a quiz by quiz id from db.')
 
     def _process_sql_result(self, result):
         """
@@ -41,12 +41,13 @@ class QuestionRepository:
         :param result: The SQL result.
         """
         if not result:
-            raise ValueError('Question not found.')
-        question = {
+            raise ValueError('Quiz not found.')
+        quiz = {
             'id': result[0][0],
-            'text': result[0][1],
+            'context': result[0][1],
             'topic': result[0][2],
-            'difficulty': result[0][3],
+            'subtopic': result[0][3],
+            'difficulty': result[0][4],
             'metrics': []
         }
         metrics = {}
@@ -59,5 +60,5 @@ class QuestionRepository:
                     'weight': metric_weight
                 }
                 metrics[metric_name] = metric
-                question['metrics'].append(metric)
-        return question
+                quiz['metrics'].append(metric)
+        return quiz

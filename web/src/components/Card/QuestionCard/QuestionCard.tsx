@@ -8,12 +8,12 @@ import {
 } from '../..';
 
 interface QuestionCardProps {
-  text: string;
+  description: string;
   keyword: string;
   difficulty: string;
 }
 
-const QuestionCard = ({ text, keyword, difficulty }: QuestionCardProps) => {
+const QuestionCard = ({ description, keyword, difficulty }: QuestionCardProps) => {
   return (
     <Card className="rounded-lg shadow">
       <CardHeader className="grid items-start gap-4 space-y-0">
@@ -24,7 +24,7 @@ const QuestionCard = ({ text, keyword, difficulty }: QuestionCardProps) => {
             </CardTitle>
           </div>
           <CardDescription className="text-md text-black">
-            {text}
+            quiz description here..{description}
           </CardDescription>
         </div>
       </CardHeader>

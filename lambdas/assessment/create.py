@@ -6,6 +6,8 @@ from client.sqs import SqsClient
 from config import Config
 from entity.assessment import Assessment
 from repo.assessment import AssessmentRepository
+from repo.quiz import QuizRepository
+from repo.assessment_quiz import AssessmentQuizRepository
 from utils.logger import Logger
 from utils.package_info import PackageInfo
 from utils.request_parser import RequestParser
@@ -33,16 +35,20 @@ def handler(event, context):
         response_generator.origin_domain = origin
 
         # business logic
-        assessment = Assessment(body.get('name'), body.get('position_type'), body.get('position_level'), body.get('topics'))
+        assessment = Assessment(body.get('name'), body.get('position_type'), body.get('position_level'))
+        quiz_ids = body.get('quiz_ids', [])
 
         # db operations
         with postgres_client as db_client:
             assessment_repo = AssessmentRepository(db_client)
+            quiz_repo = QuizRepository(db_client)
+            assessment_question_repo = AssessmentQuizRepository(db_client)
             assessment.id = assessment_repo.insert(company_id, assessment)
-            sqs_client.publish_questions(assessment)
+            assessment_question_repo.insert(assessment.id, quiz_ids)
+            assessment.quizes = quiz_repo.retrieve_many_by_ids(quiz_ids)
 
         return response_generator.generate_success_response({
-            'assessment_id': assessment.id
+            'assessment': assessment.to_dict()
         })
     except (ValueError, RuntimeError) as e:
         logger.error(f'Creating a new position failed: {e}')

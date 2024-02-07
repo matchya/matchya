@@ -20,10 +20,10 @@ class AnswerRepository:
         logger.info(f'Retrieving candidate answers from db by interview ID: {interview_id}...')
         sql = """
             SELECT 
-                answer.score, answer.feedback, question.text, question.id
+                answer.score, answer.feedback, quiz.id, quiz.description
             FROM answer
             LEFT JOIN interview ON answer.interview_id = interview.id
-            LEFT JOIN question ON answer.question_id = question.id
+            LEFT JOIN quiz ON answer.quiz_id = quiz.id
             WHERE interview.id = '%s'
         """ % interview_id
         try:
@@ -34,8 +34,8 @@ class AnswerRepository:
                 answer = {
                     'score': row[0],
                     'feedback': row[1],
-                    'question': row[2],
-                    'question_id': row[3]
+                    'quiz_id': row[2],
+                    'quiz_description': row[3]
                 }
                 answers.append(answer)
             logger.info(f'Successfully retrieved candidate answers from db: {answers}')
@@ -44,12 +44,12 @@ class AnswerRepository:
             logger.error(f'Failed to retrieve candidate answers from db: {e}')
             raise RuntimeError('Failed to retrieve candidate answers from db.')
 
-    def store_answer_evaluation_to_db(self, interview_id, question_id, score, feedback, video_url):
+    def store_answer_evaluation_to_db(self, interview_id, quiz_id, score, feedback, video_url):
         """
         Stores the answer evaluation to the database.
 
         :param interview_id: The interview id.
-        :param question_id: The question id.
+        :param quiz_id: The quiz id.
         :param score: The score.
         :param feedback: The feedback.
         :param video_url: The video url.
@@ -58,8 +58,8 @@ class AnswerRepository:
         # if answer is stored already, do nothing
         sql = """
             SELECT id FROM answer
-            WHERE answer.interview_id = '%s' AND answer.question_id = '%s'
-        """ % (interview_id, question_id)
+            WHERE answer.interview_id = '%s' AND answer.quiz_id = '%s'
+        """ % (interview_id, quiz_id)
         self.db_client.execute(sql)
         result = self.db_client.fetchall()
         if result:
@@ -67,9 +67,9 @@ class AnswerRepository:
 
         feedback = feedback.replace("'", "''")
         sql = """
-            INSERT INTO answer (id, interview_id, question_id, score, feedback, video_url)
+            INSERT INTO answer (id, interview_id, quiz_id, score, feedback, video_url)
             VALUES ('%s', '%s', '%s', '%s', '%s', '%s');
-        """ % (str(uuid.uuid4()), interview_id, question_id, score, feedback, video_url)
+        """ % (str(uuid.uuid4()), interview_id, quiz_id, score, feedback, video_url)
         try:
             self.db_client.execute(sql)
         except Exception as e:
