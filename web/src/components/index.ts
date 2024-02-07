@@ -11,6 +11,7 @@ export { default as Input } from './Input/Input';
 export { default as InterviewsTable } from './Table/InterviewsTable/InterviewsTable';
 export { default as InviteCard } from './Card/InviteCard/InviteCard';
 export { default as Label } from './Label/Label';
+export { default as LoadingCard } from './Card/LoadingCard/LoadingCard';
 export { default as OnboardingCard } from './Card/OnboardingCard/OnboardingCard';
 export { default as QuestionCard } from './Card/QuestionCard/QuestionCard';
 export { default as MultiSelect } from './MultiSelect/MultiSelect';
