@@ -210,3 +210,7 @@ ALTER TABLE answer ADD FOREIGN KEY (quiz_id) REFERENCES quiz(id);
 --changeset author:21
 ALTER TABLE question ADD COLUMN IF NOT EXISTS question_number int;
 --rollback ALTER TABLE question DROP COLUMN IF EXISTS question_number;
+
+--changeset author:22
+ALTER TABLE question ADD COLUMN IF NOT EXISTS criteria text;
+--rollback ALTER TABLE question DROP COLUMN IF EXISTS criteria;
