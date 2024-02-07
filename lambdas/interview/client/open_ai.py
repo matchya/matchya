@@ -46,7 +46,10 @@ class SummaryGenerator(OpenAiChatClient):
 
         user_message = 'Here is a list of the candidate answers: \n'
         for answer in answers:
-            user_message += f'Question: {answer["question"]}\n'
+            user_message += f'Context: {answer["context"]}\n'
+            user_message += 'Questions:\n'
+            for question in answer['questions']:
+                user_message += f'- {question}\n'
             user_message += f'Feedback: {answer["feedback"]}\n'
             user_message += f'Score: {answer["score"]}\n\n'
         user_message += 'Please write a summary of the candidate\'s answers and give a final evaluation.'

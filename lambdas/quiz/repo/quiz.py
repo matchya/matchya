@@ -80,7 +80,7 @@ class QuizRepository:
             'questions': []
         }
         for row in result:
-            (question_id, question_text, question_criteria) = row[4:]
+            (question_id, question_text, question_criteria) = row[5:]
 
             question = {
                 'id': question_id,
