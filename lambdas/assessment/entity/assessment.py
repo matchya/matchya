@@ -5,8 +5,9 @@ logger = Logger.configure(os.path.relpath(__file__, os.path.join(os.path.dirname
 
 
 class Assessment:
-    def __init__(self, name, position_type, position_level, topics=[]):
+    def __init__(self, name, position_type, position_level, quizes=[]):
         self._id = None
+        self.quizes = quizes
         if not name:
             raise ValueError('name is required')
         self.name = name
@@ -16,7 +17,6 @@ class Assessment:
         if not position_level:
             raise ValueError('position_level is required')
         self.position_level = position_level
-        self.topics = topics
         logger.info('Successfully initialized the assessment entity')
 
     @property
@@ -28,3 +28,12 @@ class Assessment:
         if value is None:
             raise ValueError('id cannot be None')
         self._id = value
+        
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'position_type': self.position_type,
+            'position_level': self.position_level,
+            'quizes': [quiz.to_dict() for quiz in self.quizes]
+        }

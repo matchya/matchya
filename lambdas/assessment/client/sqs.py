@@ -26,7 +26,7 @@ class SqsClient:
             raise RuntimeError(error_message)
 
     def publish_questions(self, assessment: Assessment):
-        logger.info(f"publish_questions: {assessment}")
+        logger.info(f"publish_quizes: {assessment}")
         message_body = {
             'assessment_id': assessment.id,
             'position_type': assessment.position_type,

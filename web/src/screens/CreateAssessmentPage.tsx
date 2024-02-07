@@ -20,6 +20,7 @@ function CreateAssessmentPage() {
         testName,
         selectedPosition,
         selectedLevel,
+        // quizIds: selectedQuizzes.map(quiz => quiz.id),
       },
     });
     if (testName === '' || selectedPosition === '' || selectedLevel === '') {

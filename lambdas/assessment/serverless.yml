@@ -20,15 +20,15 @@ functions:
           cors: ${file(../shared/serverless.yml):cors}
           authorizer: ${file(../shared/serverless.yml):cookie-authorizer}
 
-  generate-questions:
-    name: ${self:provider.stage}-assessment-generate-questions
-    image:
-      name: default
-      command:
-        - generate_questions.handler
-    events:
-      - sqs: ${ssm:/terraform/${self:provider.stage}/sqs/question_generation_processor_queue_arn}
-    timeout: 300
+  # generate-questions:
+  #   name: ${self:provider.stage}-assessment-generate-questions
+  #   image:
+  #     name: default
+  #     command:
+  #       - generate_questions.handler
+  #   events:
+  #     - sqs: ${ssm:/terraform/${self:provider.stage}/sqs/question_generation_processor_queue_arn}
+  #   timeout: 300
 
   retrieve:
     name: ${self:provider.stage}-assessment-retrieve
@@ -60,22 +60,22 @@ functions:
               paths:
                 id: true
 
-  retrieve-generated-questions-by-id:
-    name: ${self:provider.stage}-assessment-retrieve-generated-questions-by-id
-    image:
-      name: default
-      command:
-        - retrieve_generated_questions_by_id.handler
-    events:
-      - http:
-          path: /assessments/{id}/questions
-          method: GET
-          cors: ${file(../shared/serverless.yml):cors}
-          authorizer: ${file(../shared/serverless.yml):cookie-authorizer}
-          request:
-            parameters:
-              paths:
-                id: true
+  # retrieve-generated-questions-by-id:
+  #   name: ${self:provider.stage}-assessment-retrieve-generated-questions-by-id
+  #   image:
+  #     name: default
+  #     command:
+  #       - retrieve_generated_questions_by_id.handler
+  #   events:
+  #     - http:
+  #         path: /assessments/{id}/questions
+  #         method: GET
+  #         cors: ${file(../shared/serverless.yml):cors}
+  #         authorizer: ${file(../shared/serverless.yml):cookie-authorizer}
+  #         request:
+  #           parameters:
+  #             paths:
+  #               id: true
 
   delete-by-id:
     name: ${self:provider.stage}-assessment-delete-by-id

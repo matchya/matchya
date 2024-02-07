@@ -11,6 +11,7 @@ class OpenAiClient:
     def __init__(self):
         self.chat_client = OpenAI()
 
+    # TODO: change to context based quiz
     def _get_system_and_user_message(self, keywords: list, position_type: str, position_level: str):
         """
         Gets the system and user message from the keywords.
@@ -163,6 +164,7 @@ class OpenAiClient:
 
         return system_message, user_message
 
+    # TODO: not used
     def generate_questions(self, keywords, position_type, position_level) -> list:
         """
         Gets the questions from GPT.
