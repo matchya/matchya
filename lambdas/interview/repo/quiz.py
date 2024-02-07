@@ -20,9 +20,9 @@ class QuizRepository:
         sql = """
             SELECT 
                 quiz.id, quiz.context, quiz.topic, quiz.subtopic, quiz.difficulty,
-                metric.name, metric.scoring, metric.weight
+                question.id, question.text, question.criteria
             FROM quiz
-            LEFT JOIN metric ON quiz.id = metric.quiz_id
+            LEFT JOIN question ON quiz.id = question.quiz_id
             WHERE quiz.id = '%s'
         """ % quiz_id
         try:
@@ -48,17 +48,15 @@ class QuizRepository:
             'topic': result[0][2],
             'subtopic': result[0][3],
             'difficulty': result[0][4],
-            'metrics': []
+            'questions': []
         }
-        metrics = {}
         for row in result:
-            (metric_name, metric_scoring, metric_weight) = row[4:]
-            if metric_name not in metrics:
-                metric = {
-                    'name': metric_name,
-                    'scoring': metric_scoring,
-                    'weight': metric_weight
-                }
-                metrics[metric_name] = metric
-                quiz['metrics'].append(metric)
+            (question_id, question_text, question_criteria) = row[4:]
+           
+            question = {
+                'id': question_id,
+                'text': question_text,
+                'criteria': question_criteria
+            }
+            quiz['questions'].append(question)
         return quiz

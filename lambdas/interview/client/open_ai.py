@@ -91,35 +91,38 @@ class EvaluationGenerator(OpenAiChatClient):
         logger.info('Getting the system and user messages...')
         system_message = """
         You are tasked with evaluating a candidate's answer to a question.
-        Question has id, text, topic, difficulty, and metrics. Metrics have name, scoring, and weight.
+        Question has id, context, topic, subtopic, difficulty, questions, and their criteria.
         Based on the information provided, you must evaluate the candidate's answer.
 
-        You are going to give a score to the answer from 1 to 10, and feedback to the candidate.
-        The score is calculated based on the metrics and their weights. Each metric has a scoring from 0 to 10, and multiplied by its weight.
-        The total score is the sum of all the metrics' scores. For example, if there are 3 metrics with scores 5, 6, and 7, and weights 0.2, 0.3, and 0.5, the total score is 5 * 0.2 + 6 * 0.3 + 7 * 0.5 = 6.4.
+        You are going to give a score to the answer from 0 to 100, and feedback to the candidate.
+        The score is calculated based on the criteria and the candidate's answer.
+        Later questions have more weight than earlier questions. For example, question 3 has more weight than question 1 since they are harder.
         Return the total score in json format with feedback.
         The feedback is calculated based on the score and what the candidate wrote.
 
         Your response should be a JSON object with the following fields:
         {
-            "score": <score>, // 0 to 10 calculated based on the metrics and their weights
+            "score": <score>, // 0 to 100 calculated based on the criteria
             "feedback": <feedback> // 2-3 sentences why you gave the score you gave
         }
         """
 
-        user_message = f'Here is the question for position type {position_type} and position level {position_level}:\n'
-        user_message += f'Question: {quiz["context"]}\n'
+        user_message = f'Here is the quiz for position type {position_type} and position level {position_level}:\n'
+        user_message += f'Context: {quiz["context"]}\n'
+        user_message += 'Questions:\n'
         user_message += f'Topic: {quiz["topic"]}\n'
+        user_message += f'Subtopic: {quiz["subtopic"]}\n'
         user_message += f'Difficulty: {quiz["difficulty"]}\n'
-        user_message += 'Metrics:\n'
-        for metric in quiz['metrics']:
-            user_message += f'\t{metric["name"]}: {metric["scoring"]} [Weight: {metric["weight"]}]\n'
+        for i in range(len(quiz['questions'])):
+            question = quiz['questions'][i]
+            user_message += f'Question {i + 1}. {question["text"]}\n'
+            user_message += f'Criteria: {question["criteria"]}\n'
 
         user_message += f'Here is the candidate Answer: {answer}\n'
         user_message += 'Evaluate it, and return the score and feedback in json format.\n'
         return system_message, user_message
 
-    def generate(self, question, position_type, position_level, transcript):
+    def generate(self, quiz, position_type, position_level, transcript):
         """
         Gets the evaluation from GPT.
 
@@ -127,7 +130,7 @@ class EvaluationGenerator(OpenAiChatClient):
         :param user_message: The user message.
         """
         logger.info('Getting the evaluation from GPT...')
-        system_message, user_message = self._get_system_and_user_message(question, position_type, position_level, transcript)
+        system_message, user_message = self._get_system_and_user_message(quiz, position_type, position_level, transcript)
         try:
             completion = self.client.chat.completions.create(
                 model="gpt-3.5-turbo-1106",

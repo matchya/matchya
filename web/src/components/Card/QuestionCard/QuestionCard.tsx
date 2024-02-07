@@ -20,11 +20,11 @@ const QuestionCard = ({ description, keyword, difficulty }: QuestionCardProps) =
         <div className="space-y-1">
           <div className="flex items-center space-x-3">
             <CardTitle className="text-sm text-muted-foreground">
-              Question
+              Quiz
             </CardTitle>
           </div>
           <CardDescription className="text-md text-black">
-            quiz description here..{description}
+            {description}
           </CardDescription>
         </div>
       </CardHeader>
