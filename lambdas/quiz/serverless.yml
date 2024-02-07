@@ -1,0 +1,24 @@
+service: quiz
+
+frameworkVersion: "3"
+
+custom: ${file(../shared/serverless.yml):custom}
+
+provider: ${file(../shared/serverless.yml):provider}
+
+functions:
+  retrieve:
+    name: ${self:provider.stage}-quiz-retrieve
+    image:
+      name: default
+      command:
+        - retrieve.handler
+    events:
+      - http:
+          path: /quizes
+          method: GET
+          cors: ${file(../shared/serverless.yml):cors}
+          authorizer: ${file(../shared/serverless.yml):cookie-authorizer}
+
+plugins:
+  - serverless-deployment-bucket

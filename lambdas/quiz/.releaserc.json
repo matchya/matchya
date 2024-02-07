@@ -1,0 +1,32 @@
+{
+  "extends": "semantic-release-monorepo",
+  "plugins": [
+    [
+      "@semantic-release/commit-analyzer",
+      {
+        "releaseRules": [
+          { "type": "feat", "scope": "quiz", "release": "minor" },
+          { "type": "fix", "scope": "quiz", "release": "patch" },
+          { "type": "chore", "scope": "quiz", "release": "patch" },
+          { "type": "feat", "scope": "!quiz", "release": false },
+          { "type": "fix", "scope": "!quiz", "release": false },
+          { "type": "chore", "scope": "!quiz", "release": false }
+        ]
+      }
+    ],
+    "@semantic-release/release-notes-generator",
+    "@semantic-release/changelog",
+    [
+        "@semantic-release/npm",
+        {
+          "npmPublish": false
+        }
+    ],
+    "@semantic-release/git",
+    "@semantic-release/github"
+  ],
+  "branches": [
+    "staging"
+  ],
+  "tagFormat": "company-v${version}"
+}
