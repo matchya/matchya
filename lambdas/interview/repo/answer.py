@@ -20,26 +20,31 @@ class AnswerRepository:
         logger.info(f'Retrieving candidate answers from db by interview ID: {interview_id}...')
         sql = """
             SELECT 
-                answer.score, answer.feedback, quiz.id, quiz.description
+                answer.id, answer.score, answer.feedback, quiz.context,
+                question.text
             FROM answer
             LEFT JOIN interview ON answer.interview_id = interview.id
             LEFT JOIN quiz ON answer.quiz_id = quiz.id
+            LEFT JOIN question ON quiz.id = question.quiz_id
             WHERE interview.id = '%s'
         """ % interview_id
         try:
             self.db_client.execute(sql)
             result = self.db_client.fetchall()
-            answers = []
+            answers = {}
             for row in result:
-                answer = {
-                    'score': row[0],
-                    'feedback': row[1],
-                    'quiz_id': row[2],
-                    'quiz_description': row[3]
-                }
-                answers.append(answer)
+                if row[0] not in answers:
+                    answer = {
+                        'id': row[0],
+                        'score': row[1],
+                        'feedback': row[2],
+                        'context': row[3],
+                        'questions': []
+                    }
+                    answers[answer['id']] = answer
+                answers[row[0]]['questions'].append(row[4])
             logger.info(f'Successfully retrieved candidate answers from db: {answers}')
-            return answers
+            return list(answers.values())
         except Exception as e:
             logger.error(f'Failed to retrieve candidate answers from db: {e}')
             raise RuntimeError('Failed to retrieve candidate answers from db.')
