@@ -91,8 +91,36 @@ const CreateAssessmentPageTemplate = ({
               </Button>
             ))}
           </div>
-          <div className="my-6">
-            <Separator />
+        </div>
+        <div className="my-4">
+          <Separator />
+        </div>
+        {/* TO BE IMPLEMENTED */}
+        {/* <div>
+          <p className="text-md font-bold text-black mb-2">Description</p>
+          <Textarea
+            className="w-full min-h-[150px] text-black px-3 py-2 border rounded border-gray-200 text-sm resize-none"
+            placeholder={
+              'Let us know more about your position to generate better questions for you.\n' +
+              'ex)\n - Seeking a front-end engineer proficient in design.\n' +
+              ' - Back-end engineer with experience working for a large-scale company.'
+            }
+            value={description}
+          />
+        </div> */}
+        
+        <div className="mt-4 w-full flex justify-end">
+          <div className="w-1/2 flex justify-end px-4 items-center">
+            <Link to="/assessments">
+              <p className="font-bold text-black mr-6 cursor-pointer">Cancel</p>
+            </Link>
+            <Button
+              onClick={handleSubmit}
+              disabled={isLoading}
+              className="font-bold bg-matcha-400 text-white hover:bg-matcha-500 hover:text-white py-4 px-3"
+            >
+              Create Assessment
+            </Button>
           </div>
           <div>
             <p className="text-md font-bold text-black mb-2">Position Level</p>
@@ -178,12 +206,12 @@ const CreateAssessmentPageTemplate = ({
         <div className="space-y-4 overflow-y-scroll">
           <LoadingCard />
           <QuestionCard
-            text={mockedQuestion.text}
+            description={mockedQuestion.description}
             keyword={mockedQuestion.topic}
             difficulty={mockedQuestion.difficulty}
           />
           <QuestionCard
-            text={mockedQuestion.text}
+            description={mockedQuestion.description}
             keyword={mockedQuestion.topic}
             difficulty={mockedQuestion.difficulty}
           />
