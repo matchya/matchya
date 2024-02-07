@@ -51,7 +51,7 @@ const InterviewRecordingPage = () => {
   const fetchInterviewQuestions = async () => {
     try {
       const response = await axiosInstance.get(
-        `/interviews/${interviewId}/questions`
+        `/interviews/${interviewId}/quizes`
       );
       if (response.data.status === 'success') {
         const interview = response.data.payload.interview;
