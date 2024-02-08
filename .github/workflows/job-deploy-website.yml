@@ -41,8 +41,8 @@ jobs:
           echo "VITE_GOOGLE_CLIENT_ID=${{ secrets.VITE_GOOGLE_CLIENT_ID }}" >> web/.env
           echo "VITE_CLIENT_URL=${{ vars.VITE_CLIENT_URL }}" >> web/.env
 
-      - name: Install dependencies
-        run: npm install
+      - name: Install Package Dependencies
+        run: npm ci
         working-directory: web
 
       - name: Build
