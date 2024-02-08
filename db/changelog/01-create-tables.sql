@@ -162,3 +162,55 @@ ALTER TABLE company DROP COLUMN IF EXISTS github_access_token;
 --changeset author:17
 ALTER TABLE assessment ADD COLUMN IF NOT EXISTS deleted_at timestamp default null;
 --rollback ALTER TABLE assessment DROP COLUMN IF EXISTS deleted_at;
+
+--changeset author:18
+ALTER TABLE question RENAME TO quiz;
+ALTER TABLE quiz RENAME COLUMN text TO context;
+ALTER TABLE quiz ADD COLUMN IF NOT EXISTS subtopic varchar(255);
+ALTER TABLE quiz ADD COLUMN IF NOT EXISTS description varchar(1023);
+ALTER TABLE quiz ADD COLUMN IF NOT EXISTS is_original boolean default true;
+--rollback ALTER TABLE quiz RENAME COLUMN context TO text;
+--rollback ALTER TABLE quiz DROP COLUMN IF EXISTS subtopic;
+--rollback ALTER TABLE quiz DROP COLUMN IF EXISTS description;
+--rollback ALTER TABLE quiz DROP COLUMN IF EXISTS is_original;
+--rollback RENAME TABLE quiz TO question;
+
+--changeset author:19
+--create table called question
+CREATE TABLE IF NOT EXISTS question (
+	id varchar(255) not null PRIMARY KEY,
+	quiz_id varchar(255),
+	text varchar(1023),
+	foreign key (quiz_id) references quiz(id)
+);
+--rollback DROP TABLE IF EXISTS question;
+
+--changeset author:20
+ALTER TABLE assessment_question RENAME TO assessment_quiz;
+ALTER TABLE assessment_quiz RENAME COLUMN question_id TO quiz_id;
+ALTER TABLE assessment_quiz DROP CONSTRAINT assessment_question_question_id_fkey;
+ALTER TABLE assessment_quiz ADD FOREIGN KEY (quiz_id) REFERENCES quiz(id);
+ALTER TABLE metric RENAME COLUMN question_id TO quiz_id;
+ALTER TABLE metric DROP CONSTRAINT metric_question_id_fkey;
+ALTER TABLE metric ADD FOREIGN KEY (quiz_id) REFERENCES quiz(id);
+ALTER TABLE answer RENAME COLUMN question_id TO quiz_id;
+ALTER TABLE answer DROP CONSTRAINT answer_question_id_fkey;
+ALTER TABLE answer ADD FOREIGN KEY (quiz_id) REFERENCES quiz(id);
+--rollback ALTER TABLE assessment_quiz RENAME TO assessment_question;
+--rollback ALTER TABLE assessment_question RENAME COLUMN quiz_id TO question_id;
+--rollback ALTER TABLE assessment_question DROP CONSTRAINT assessment_quiz_quiz_id_fkey;
+--rollback ALTER TABLE assessment_question ADD FOREIGN KEY (question_id) REFERENCES question(id);
+--rollback ALTER TABLE metric RENAME COLUMN quiz_id TO question_id;
+--rollback ALTER TABLE metric DROP CONSTRAINT metric_quiz_id_fkey;
+--rollback ALTER TABLE metric ADD FOREIGN KEY (question_id) REFERENCES question(id);
+--rollback ALTER TABLE answer RENAME COLUMN quiz_id TO question_id;
+--rollback ALTER TABLE answer DROP CONSTRAINT answer_quiz_id_fkey;
+--rollback ALTER TABLE answer ADD FOREIGN KEY (question_id) REFERENCES question(id);
+
+--changeset author:21
+ALTER TABLE question ADD COLUMN IF NOT EXISTS question_number int;
+--rollback ALTER TABLE question DROP COLUMN IF EXISTS question_number;
+
+--changeset author:22
+ALTER TABLE question ADD COLUMN IF NOT EXISTS criteria text;
+--rollback ALTER TABLE question DROP COLUMN IF EXISTS criteria;

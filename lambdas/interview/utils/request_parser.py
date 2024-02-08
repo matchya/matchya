@@ -1,8 +1,6 @@
 import json
 import os
 
-import urllib
-
 from utils.logger import Logger
 
 logger = Logger.configure(os.path.relpath(__file__, os.path.join(os.path.dirname(__file__), '..')))
@@ -76,12 +74,3 @@ class RequestParser:
         except json.JSONDecodeError as e:
             raise ValueError(f"Invalid JSON in request body: {e}")
 
-    def parse_bucket_name_and_key(self):
-        """
-        Gets the bucket name and key from the event data.
-
-        :param event: The event data.
-        """
-        bucket = self.event['Records'][0]['s3']['bucket']['name']
-        key = urllib.parse.unquote_plus(self.event['Records'][0]['s3']['object']['key'], encoding='utf-8')
-        return bucket, key

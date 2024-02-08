@@ -20,6 +20,7 @@ function InterviewDetailPage() {
         `/interviews/${params.id}/results`
       );
       if (response.data.status === 'success') {
+        console.log(response.data.payload.interview)
         setInterviewData(response.data.payload.interview);
       }
     } catch (error) {

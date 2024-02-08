@@ -68,16 +68,16 @@ export const columns: ColumnDef<Interview>[] = [
     cell: ({ row }) => {
       const score = row.original.totalScore;
       const textColour =
-        score >= 8
+        score >= 80
           ? 'text-matcha-600'
-          : score >= 6
-            ? 'text-matcha-200'
-            : score >= 4
+          : score >= 60
+            ? 'text-matcha-400'
+            : score >= 40
               ? 'text-red-300'
               : 'text-red-700';
       return (
         <div className={`w-[80px] text-lg  ${textColour}`}>
-          {row.original.totalScore.toFixed(1)}
+          {row.original.totalScore.toFixed(1)} %
         </div>
       );
     },

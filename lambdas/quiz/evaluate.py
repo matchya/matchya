@@ -2,7 +2,7 @@ import os
 
 from repo.answer import AnswerRepository
 from repo.assessment import AssessmentRepository
-from repo.question import QuestionRepository
+from repo.quiz import QuizRepository
 from client.open_ai import AudioTranscriber, EvaluationGenerator
 from client.postgres import PostgresDBClient
 from client.s3 import S3Client
@@ -49,10 +49,10 @@ def handler(event, context):
         with postgres_client as db_client:
             answer_repo = AnswerRepository(db_client)
             assessment_repo = AssessmentRepository(db_client)
-            question_repo = QuestionRepository(db_client)
+            quiz_repo = QuizRepository(db_client)
             position_type, position_level = assessment_repo.get_position_type_and_level(interview_id)
-            question = question_repo.get_question(question_id)
-            score, feedback = evaluation_generator.generate(question, position_type, position_level, transcript)
+            quiz = quiz_repo.get_quiz(question_id)
+            score, feedback = evaluation_generator.generate(quiz, position_type, position_level, transcript)
             video_url = f'https://{bucket}.s3.amazonaws.com/{key}'
             answer_repo.store_answer_evaluation_to_db(interview_id, question_id, score, feedback, video_url)
 

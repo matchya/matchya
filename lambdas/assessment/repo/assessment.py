@@ -31,7 +31,7 @@ class AssessmentRepository:
             """ % (assessment_id, company_id, assessment.name, assessment.position_type, assessment.position_level)
         self.db_client.execute(sql)
         return assessment_id
-    
+
     def delete_by_id(self, company_id: str, assessment_id: str):
         """
         Soft deletes a assessment by assessment id from the database.
@@ -97,12 +97,12 @@ class AssessmentRepository:
         sql = """
             SELECT 
                 assessment.id, assessment.name, assessment.position_type, assessment.position_level, assessment.created_at, 
-                question.id, question.text, question.topic, question.difficulty,
+                quiz.id, quiz.description, quiz.topic, quiz.subtopic, quiz.difficulty,
                 candidate.id, candidate.name, candidate.email,
                 interview.status, interview.total_score
             FROM assessment
-            LEFT JOIN assessment_question ON assessment.id = assessment_question.assessment_id
-            LEFT JOIN question ON assessment_question.question_id = question.id
+            LEFT JOIN assessment_quiz ON assessment.id = assessment_quiz.assessment_id
+            LEFT JOIN quiz ON assessment_quiz.quiz_id = quiz.id
             LEFT JOIN assessment_candidate ON assessment.id = assessment_candidate.assessment_id
             LEFT JOIN candidate ON assessment_candidate.candidate_id = candidate.id
             LEFT JOIN interview ON interview.assessment_id = assessment.id AND interview.candidate_id = candidate.id
@@ -132,22 +132,23 @@ class AssessmentRepository:
             'position_type': result[0][2],
             'position_level': result[0][3],
             'created_at': str(result[0][4]),
-            'questions': [],
+            'quizzes': [],
             'candidates': []
         }
-        questions = {}
+        quizzes = {}
         candidates = {}
         for row in result:
-            (question_id, question_text, question_topic, question_difficulty,
+            (quiz_id, quiz_description, quiz_topic, quiz_subtopic, quiz_difficulty,
              candidate_id, candidate_name, email, status, total_score) = row[5:]
-            if question_id and question_id not in questions:
-                question = {
-                    'id': question_id,
-                    'text': question_text,
-                    'topic': question_topic,
-                    'difficulty': question_difficulty
+            if quiz_id and quiz_id not in quizzes:
+                quiz = {
+                    'id': quiz_id,
+                    'description': quiz_description,
+                    'topic': quiz_topic,
+                    'subtopic': quiz_subtopic,
+                    'difficulty': quiz_difficulty
                 }
-                questions[question_id] = question
+                quizzes[quiz_id] = quiz
 
             if candidate_id and candidate_id not in candidates:
                 candidate = {
@@ -161,6 +162,6 @@ class AssessmentRepository:
                 }
                 candidates[candidate_id] = candidate
 
-        assessment['questions'] = list(questions.values())
+        assessment['quizzes'] = list(quizzes.values())
         assessment['candidates'] = list(candidates.values())
         return assessment

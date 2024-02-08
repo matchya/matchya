@@ -16,8 +16,8 @@ type Story = StoryObj<typeof Component>;
 export const InterviewRecordingPage: Story = {
   render: () => (
     <Component
-      question={mockedQuestion}
-      isLoading={true}
+      quiz={mockedQuestion}
+      isLoading={false}
       index={0}
       isRecording={false}
       webcamRef={undefined}

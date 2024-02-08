@@ -1,4 +1,4 @@
-import { Assessment, Candidate, Company, Question } from '../types';
+import { Assessment, Candidate, Company, Quiz } from '../types';
 
 export * from './interview';
 
@@ -11,7 +11,7 @@ export const mockedAssessments: Assessment[] = [
     numCandidates: 5,
     createdAt: '2022-01-01',
     updatedAt: '2022-01-01',
-    questions: [],
+    quizzes: [],
     candidates: [],
   },
   {
@@ -22,14 +22,16 @@ export const mockedAssessments: Assessment[] = [
     numCandidates: 5,
     createdAt: '2022-01-01',
     updatedAt: '2022-01-01',
-    questions: [],
+    quizzes: [],
     candidates: [],
   },
 ];
 
-export const mockedQuestion: Question = {
+export const mockedQuestion: Quiz = {
   id: '1',
-  text: 'How would you optimize a Dockerfile for a web application to ensure efficient build times and image sizes? Describe the steps you would take and the rationale behind them.',
+  context:
+    'How would you optimize a Dockerfile for a web application to ensure efficient build times and image sizes? Describe the steps you would take and the rationale behind them.',
+  description: 'Optimizing Dockerfile',
   metrics: [
     {
       id: '1',

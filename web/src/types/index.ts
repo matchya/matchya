@@ -15,10 +15,11 @@ export interface Interview {
 }
 
 export interface Answer {
-  questionId: string;
-  questionText: string;
-  questionTopic: string;
-  questionDifficulty: string;
+  quizId: string;
+  quizContext: string;
+  quizTopic: string;
+  quizSubtopic: string;
+  quizDifficulty: string;
   feedback: string;
   score: number;
   videoUrl: string;
@@ -39,7 +40,7 @@ export interface Assessment {
   createdAt?: string;
   updatedAt?: string;
   numCandidates?: number;
-  questions?: Question[];
+  quizzes?: Quiz[];
   candidates?: Candidate[];
   interviewId?: string;
   interviewStatus?: string;
@@ -47,12 +48,20 @@ export interface Assessment {
   summary?: string;
 }
 
+export interface Quiz {
+  id: string;
+  context: string;
+  description: string;
+  metrics?: Metric[];
+  questions?: Question[];
+  topic: string;
+  difficulty: string;
+}
+
 export interface Question {
   id: string;
   text: string;
-  metrics?: Metric[];
-  topic: string;
-  difficulty: string;
+  questionNumber: number;
 }
 
 export interface Metric {

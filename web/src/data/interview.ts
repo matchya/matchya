@@ -17,11 +17,12 @@ export const mockedInterview: Interview = {
   },
   answers: [
     {
-      questionId: '75f18b0a-0c44-4de1-9a47-17a39cea0083',
-      questionText:
+      quizId: '75f18b0a-0c44-4de1-9a47-17a39cea0083',
+      quizContext:
         'Explain the key features and benefits of using Cypress for UI testing. How does Cypress differ from other UI testing frameworks, and what are its limitations? Provide examples of scenarios where Cypress excels and where it may not be the best choice for UI testing.',
-      questionTopic: 'Cypress',
-      questionDifficulty: 'medium',
+      quizTopic: 'Cypress',
+      quizSubtopic: 'UI Testing',
+      quizDifficulty: 'medium',
       videoUrl:
         'https://matchya-user-data.s3.amazonaws.com/dev/response-recording/webm/ccb6e4a0-7811-4767-9244-ff17c80395a4/75f18b0a-0c44-4de1-9a47-17a39cea0083.webm',
       feedback:
@@ -29,11 +30,12 @@ export const mockedInterview: Interview = {
       score: 2,
     },
     {
-      questionId: '2dc4c0b1-6582-48bf-a8cc-03f7c768fe0c',
-      questionText:
+      quizId: '2dc4c0b1-6582-48bf-a8cc-03f7c768fe0c',
+      quizContext:
         'Explain the concept of Creational Design Patterns. Provide examples of at least three different creational patterns, their use cases, and how they contribute to creating objects in a flexible and decoupled manner.',
-      questionTopic: 'Creational Patterns',
-      questionDifficulty: 'hard',
+      quizTopic: 'Creational Patterns',
+      quizSubtopic: 'Design Patterns',
+      quizDifficulty: 'hard',
       videoUrl:
         'https://matchya-user-data.s3.amazonaws.com/dev/response-recording/webm/ccb6e4a0-7811-4767-9244-ff17c80395a4/2dc4c0b1-6582-48bf-a8cc-03f7c768fe0c.webm',
       feedback:
@@ -41,11 +43,12 @@ export const mockedInterview: Interview = {
       score: 3.9,
     },
     {
-      questionId: 'd2473533-d80b-4e0d-bb53-2a179f626243',
-      questionText:
+      quizId: 'd2473533-d80b-4e0d-bb53-2a179f626243',
+      quizContext:
         'Explain the role of Agile methodologies in software development. How does Agile differ from traditional waterfall methods, and what are the key benefits and challenges of using Agile?',
-      questionTopic: 'Agile',
-      questionDifficulty: 'medium',
+      quizTopic: 'Agile',
+      quizSubtopic: 'Methodologies',
+      quizDifficulty: 'medium',
       videoUrl:
         'https://matchya-user-data.s3.amazonaws.com/dev/response-recording/webm/ccb6e4a0-7811-4767-9244-ff17c80395a4/d2473533-d80b-4e0d-bb53-2a179f626243.webm',
       feedback:
@@ -53,65 +56,18 @@ export const mockedInterview: Interview = {
       score: 0,
     },
     {
-      questionId: 'ab909d38-7c4b-44c2-b823-56aa1bf02bf9',
-      questionText:
+      quizId: 'ab909d38-7c4b-44c2-b823-56aa1bf02bf9',
+      quizContext:
         'Explain the Model-View-ViewModel (MVVM) architectural pattern. Describe the key components of MVVM and how they interact. Provide an example of how MVVM is used in a real-world application and discuss its benefits and challenges.',
-      questionTopic: 'MVVM',
-      questionDifficulty: 'hard',
+      quizTopic: 'MVVM',
+      quizSubtopic: 'Architectural Pattern',
+      quizDifficulty: 'hard',
       videoUrl:
         'https://matchya-user-data.s3.amazonaws.com/dev/response-recording/webm/ccb6e4a0-7811-4767-9244-ff17c80395a4/ab909d38-7c4b-44c2-b823-56aa1bf02bf9.webm',
       feedback:
         "The candidate's answer does not demonstrate any understanding of the MVVM architectural pattern or its key components. The answer lacks any mention of real-world examples, impact, benefits, or challenges of MVVM. It is evident that the candidate did not address the question at all, resulting in a score of 0.",
       score: 0,
-    },
-    {
-      questionId: 'f98cb061-5626-41a2-bbc5-bbc172e12207',
-      questionText:
-        'Explain the concept of Flexbox in CSS. Describe the key properties and features of Flexbox and how it differs from traditional CSS layout methods like floats and positioning. Provide examples of scenarios where Flexbox is a suitable choice for layout design.',
-      questionTopic: 'Flexbox',
-      questionDifficulty: 'easy',
-      videoUrl:
-        'https://matchya-user-data.s3.amazonaws.com/dev/response-recording/webm/ccb6e4a0-7811-4767-9244-ff17c80395a4/f98cb061-5626-41a2-bbc5-bbc172e12207.webm',
-      feedback:
-        "The candidate's answer does not demonstrate any understanding of the concept of Flexbox in CSS, its key properties, features, or its differences from traditional CSS layout methods. The answer is completely inadequate and lacks any relevant information. Therefore, the score is 0.",
-      score: 0,
-    },
-    {
-      questionId: '0fa8cce3-bb6f-4ca2-b2f3-be61b126df49',
-      questionText:
-        'Explain the concept of Database Management Systems (DBMS). Describe the key components and functionalities of a DBMS and how it differs from traditional file systems. Discuss the advantages and challenges of using a DBMS for data storage and retrieval.',
-      questionTopic: 'DBMS',
-      questionDifficulty: 'hard',
-      videoUrl:
-        'https://matchya-user-data.s3.amazonaws.com/dev/response-recording/webm/ccb6e4a0-7811-4767-9244-ff17c80395a4/0fa8cce3-bb6f-4ca2-b2f3-be61b126df49.webm',
-      feedback:
-        'The candidate demonstrates a good understanding of DBMS components and functionalities, articulates differences from traditional file systems, and provides specific examples. The analysis of advantages and challenges of using a DBMS is insightful with good depth and specific examples. The explanation of differences from traditional file systems is clear and provides specific examples and scenarios. However, there is room for improvement in providing comprehensive and detailed explanations, including deeper insights into trade-offs and best practices.',
-      score: 7.2,
-    },
-    {
-      questionId: '54a5e86e-268a-4370-b333-ccf54187ab73',
-      questionText:
-        'Explain the importance of Performance Metrics in software development. Describe at least three key performance metrics used to evaluate the performance of a web application. Discuss how these metrics impact user experience and overall application performance.',
-      questionTopic: 'Performance Metrics',
-      questionDifficulty: 'easy',
-      videoUrl:
-        'https://matchya-user-data.s3.amazonaws.com/dev/response-recording/webm/ccb6e4a0-7811-4767-9244-ff17c80395a4/54a5e86e-268a-4370-b333-ccf54187ab73.webm',
-      feedback:
-        'The candidate briefly mentions the importance of performance metrics but lacks depth and specific examples. The answer lacks a comprehensive understanding of performance metrics and their impact on user experience and overall application performance.',
-      score: 3.5,
-    },
-    {
-      questionId: 'de61b2fd-c086-4840-9b51-186271cc12c1',
-      questionText:
-        'Describe the importance of UI Testing in the software development lifecycle. Explain the key challenges and benefits of UI testing, and discuss how UI testing contributes to the overall quality of a software product.',
-      questionTopic: 'UI Testing',
-      questionDifficulty: 'medium',
-      videoUrl:
-        'https://matchya-user-data.s3.amazonaws.com/dev/response-recording/webm/ccb6e4a0-7811-4767-9244-ff17c80395a4/de61b2fd-c086-4840-9b51-186271cc12c1.webm',
-      feedback:
-        "The candidate demonstrates a good understanding of the importance of UI Testing, articulating its significance with specific examples. They also provide a good depth of discussion on the key challenges and benefits of UI Testing, explaining how it contributes to the overall quality of a software product. The explanation of UI testing's contribution to software quality is clear and includes specific examples, showing an understanding of trade-offs and complexities. However, there is room for improvement in providing comprehensive and insightful discussions with real-world scenarios to achieve a higher score.",
-      score: 7.2,
-    },
+    }
   ],
 };
 

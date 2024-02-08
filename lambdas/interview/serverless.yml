@@ -7,20 +7,6 @@ custom: ${file(../shared/serverless.yml):custom}
 provider: ${file(../shared/serverless.yml):provider}
 
 functions:
-  evaluate-question:
-    name: ${self:provider.stage}-interview-evaluate-question
-    image:
-      name: default
-      command:
-        - evaluate_question.handler
-    events:
-      - s3:
-          bucket: ${self:custom.namespace}-user-data
-          event: s3:ObjectCreated:*
-          rules:
-            - prefix: ${self:provider.stage}/response-recording/
-          existing: true
-    timeout: 300
 
   evaluate-interview:
     name: ${self:provider.stage}-interview-evaluate-interview
@@ -54,15 +40,15 @@ functions:
           authorizer: ${file(../shared/serverless.yml):cookie-authorizer}
     timeout: 30
 
-  retrieve-questions-by-id:
-    name: ${self:provider.stage}-interview-retrieve-questions-by-id
+  retrieve-quizzes-by-id:
+    name: ${self:provider.stage}-interview-retrieve-quizzes-by-id
     image:
       name: default
       command:
-        - retrieve_questions_by_id.handler
+        - retrieve_quizes_by_id.handler
     events:
       - http:
-          path: /interviews/{id}/questions
+          path: /interviews/{id}/quizzes
           method: GET
           cors: ${file(../shared/serverless.yml):cors}
           authorizer: ${file(../shared/serverless.yml):header-authorizer}

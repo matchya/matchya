@@ -52,41 +52,41 @@ class InterviewRepository:
             logger.error(f'Failed to update interview result to db: {e}')
             raise RuntimeError('Failed to update interview result to db.')
 
-    def retrieve_interview_questions_by_id(self, interview_id):
+    def retrieve_interview_quizzes_by_id(self, interview_id):
         """
-        Retrieves a interview questions by interview id from the database.
+        Retrieves a interview quizzes by interview id from the database.
 
         :param interview_id: The interview ID.
         :return: The interview data.
         """
-        logger.info('Retrieving a interview questions by interview id from db...')
+        logger.info('Retrieving a interview quizzes by interview id from db...')
         sql = """  
             SELECT
                 i.id, i.created_at,
                 a.id, a.name,
                 c.id, c.name, c.email,
-                q.id, q.text,
-                m.id, m.name
+                quiz.id, quiz.context,
+                question.id, question.text, question.question_number
             FROM interview i
             LEFT JOIN assessment a ON a.id = i.assessment_id
             LEFT JOIN candidate c ON c.id = i.candidate_id
-            LEFT JOIN assessment_question aq ON aq.assessment_id = a.id
-            LEFT JOIN question q ON q.id = aq.question_id
-            LEFT JOIN metric m ON m.question_id = q.id
+            LEFT JOIN assessment_quiz aq ON aq.assessment_id = a.id
+            LEFT JOIN quiz ON quiz.id = aq.quiz_id
+            LEFT JOIN question ON question.quiz_id = quiz.id
             WHERE i.id = '%s' AND i.status != 'COMPLETED';
         """ % interview_id
-        logger.info(f'Retrieving candidate interview questions: {interview_id}')
+        logger.info(f'Retrieving candidate interview quizzes: {interview_id}')
         try:
             self.db_client.execute(sql)
             result = self.db_client.fetchall()
-            processed_result = self._process_interview_questions_sql_result(result)
-            logger.info(f'Successfully retrieved candidate interview questions: {processed_result}')
+            processed_result = self._process_interview_quizes_sql_result(result)
+            logger.info(f'Successfully retrieved candidate interview quizzes: {processed_result}')
             return processed_result
         except Exception as e:
-            logger.error(f'Retrieving a interview questions by interview id from db failed: {e}')
-            raise RuntimeError('Failed to retrieve a interview questions by interview id from db.')
+            logger.error(f'Retrieving a interview quizzes by interview id from db failed: {e}')
+            raise RuntimeError('Failed to retrieve a interview quizzes by interview id from db.')
 
-    def _process_interview_questions_sql_result(self, result):
+    def _process_interview_quizes_sql_result(self, result):
         """
         Processes the SQL result.
 
@@ -109,28 +109,29 @@ class InterviewRepository:
                 'name': result[0][5],
                 'email': result[0][6],
             },
-            'questions': [],
+            'quizzes': [],
         }
-        questions = {}
+        quizzes = {}
         for row in result:
-            (question_id, question_text, metric_id, metric_name) = row[7:]
-            if question_id and question_id not in questions:
-                questions[question_id] = {
+            (quiz_id, quiz_context, question_id, question_text, question_number) = row[7:]
+            if quiz_id and quiz_id not in quizzes:
+                quizzes[quiz_id] = {
+                    'id': quiz_id,
+                    'context': quiz_context,
+                    'questions': {},
+                }
+
+            if question_id and question_id not in quizzes[quiz_id]['questions']:
+                question = {
                     'id': question_id,
                     'text': question_text,
-                    'metrics': {},
+                    'question_number': question_number,
                 }
+                quizzes[quiz_id]['questions'][question_id] = question
 
-            if metric_id and metric_id not in questions[question_id]['metrics']:
-                metric = {
-                    'id': metric_id,
-                    'name': metric_name,
-                }
-                questions[question_id]['metrics'][metric_id] = metric
-
-        for question_id in questions:
-            questions[question_id]['metrics'] = list(questions[question_id]['metrics'].values())
-            interview['questions'].append(questions[question_id])
+        for quiz_id in quizzes:
+            quizzes[quiz_id]['questions'] = list(quizzes[quiz_id]['questions'].values())
+            interview['quizzes'].append(quizzes[quiz_id])
         return interview
 
     def retrieve_interview_results_by_id(self, interview_id):
@@ -146,14 +147,14 @@ class InterviewRepository:
                 i.id, i.total_score, i.summary, i.created_at,
                 c.id, c.name, c.email,
                 a.id, a.name,
-                q.id, q.text, q.topic, q.difficulty, 
+                q.id, q.description, q.topic, q.subtopic, q.difficulty, 
                 ans.video_url, ans.feedback, ans.score
             FROM interview i
             LEFT JOIN assessment a ON a.id = i.assessment_id
             LEFT JOIN candidate c ON c.id = i.candidate_id
-            LEFT JOIN assessment_question aq ON aq.assessment_id = a.id
-            LEFT JOIN question q ON q.id = aq.question_id
-            LEFT JOIN answer ans ON ans.question_id = q.id
+            LEFT JOIN assessment_quiz aq ON aq.assessment_id = a.id
+            LEFT JOIN quiz q ON q.id = aq.quiz_id
+            LEFT JOIN answer ans ON ans.quiz_id = q.id
             WHERE i.id = '%s' AND i.status = 'COMPLETED';
         """ % interview_id
         try:
@@ -193,14 +194,15 @@ class InterviewRepository:
         }
 
         for row in result:
-            (question_id, question_text, question_topic, question_difficulty,
+            (quiz_id, quiz_context, quiz_topic, quiz_subtopic, quiz_difficulty,
              video_url, feedback, score) = row[9:]
-            if question_id and video_url:
+            if quiz_id and video_url:
                 answer = {
-                    'question_id': question_id,
-                    'question_text': question_text,
-                    'question_topic': question_topic,
-                    'question_difficulty': question_difficulty,
+                    'quiz_id': quiz_id,
+                    'quiz_context': quiz_context,
+                    'quiz_topic': quiz_topic,
+                    'quiz_subtopic': quiz_subtopic,
+                    'quiz_difficulty': quiz_difficulty,
                     'video_url': video_url,
                     'feedback': feedback,
                     'score': score,

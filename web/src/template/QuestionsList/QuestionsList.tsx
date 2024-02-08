@@ -1,14 +1,14 @@
 import { Icons, QuestionCard } from '@/components';
-import { Question } from '@/types';
+import { Quiz } from '@/types';
 
 interface QuestionsListTemplateProps {
   isLoading: boolean;
-  questions: Question[] | null;
+  quizzes: Quiz[] | null;
 }
 
 const QuestionsListTemplate = ({
   isLoading,
-  questions,
+  quizzes,
 }: QuestionsListTemplateProps) => (
   <div className="space-y-6 flex-1">
     {isLoading ? (
@@ -18,13 +18,13 @@ const QuestionsListTemplate = ({
         </p>
         <Icons.spinner className="w-6 h-6 mt-6 spinner" />
       </div>
-    ) : questions ? (
-      questions.map(question => (
+    ) : quizzes ? (
+      quizzes.map(quiz => (
         <QuestionCard
-          key={question.id}
-          text={question.text}
-          keyword={question.topic}
-          difficulty={question.difficulty}
+          key={quiz.id}
+          description={quiz.description}
+          keyword={quiz.topic}
+          difficulty={quiz.difficulty}
         />
       ))
     ) : null}

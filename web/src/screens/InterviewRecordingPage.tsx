@@ -5,7 +5,7 @@ import Webcam from 'react-webcam';
 import { axiosInstance } from '@/lib/axios';
 import { trackEvent } from '@/lib/rudderstack';
 import { InterviewRecordingPageTemplate } from '@/template';
-import { Question } from '@/types';
+import { Quiz } from '@/types';
 
 const InterviewRecordingPage = () => {
   const [videoFile, setVideoFile] = useState<File | null>(null);
@@ -14,8 +14,8 @@ const InterviewRecordingPage = () => {
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
     null
   );
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [questionIndex, setQuestionIndex] = useState(0);
+  const [quizzes, setQuizes] = useState<Quiz[]>([]);
+  const [quizIndex, setQuizIndex] = useState(0);
   const [interviewDone, setInterviewDone] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const params = useParams<{ id: string }>();
@@ -29,7 +29,7 @@ const InterviewRecordingPage = () => {
       axiosInstance.defaults.headers.common['Authorization'] =
         `Bearer ${sessionToken}`;
       fetchInterviewQuestions();
-    } 
+    }
   }, [params.id, navigate]);
 
   useEffect(() => {
@@ -51,11 +51,17 @@ const InterviewRecordingPage = () => {
   const fetchInterviewQuestions = async () => {
     try {
       const response = await axiosInstance.get(
-        `/interviews/${interviewId}/questions`
+        `/interviews/${interviewId}/quizzes`
       );
       if (response.data.status === 'success') {
+        // caseSensitiveAxiosInstance doesn't work
         const interview = response.data.payload.interview;
-        setQuestions(interview.questions);
+        interview.quizzes.map((quiz: any) => {
+          quiz.questions = quiz.questions.map((question: any) => {
+            return { ...question, questionNumber: question.question_number };
+          })
+        });
+        setQuizes(interview.quizzes);
       }
     } catch (error) {
       console.error(error);
@@ -77,7 +83,7 @@ const InterviewRecordingPage = () => {
 
     // Fetch the presigned POST URL from your server
     const response = await axiosInstance.get(
-      `/videos/presigned-url?interview_id=${interviewId}&question_id=${questions[questionIndex].id}`
+      `/videos/presigned-url?interview_id=${interviewId}&question_id=${quizzes[quizIndex].id}`
     );
 
     // Use FormData to build the request
@@ -98,8 +104,8 @@ const InterviewRecordingPage = () => {
       if (uploadResponse.ok) {
         alert('Video uploaded successfully');
         setVideoFile(null);
-        if (questionIndex < questions.length - 1) {
-          setQuestionIndex(questionIndex + 1);
+        if (quizIndex < quizzes.length - 1) {
+          setQuizIndex(quizIndex + 1);
         } else {
           alert('Interview completed');
           evaluateInterview();
@@ -116,7 +122,7 @@ const InterviewRecordingPage = () => {
   const handleStartRecording = () => {
     trackEvent({
       eventName: 'start_recording',
-      properties: { questionId: questions[questionIndex].id },
+      properties: { quizId: quizzes[quizIndex].id },
     });
     setRecording(true);
     const options = { mimeType: 'video/webm', audioBitsPerSecond: 128000 };
@@ -136,7 +142,7 @@ const InterviewRecordingPage = () => {
   const handleStopRecording = () => {
     trackEvent({
       eventName: 'stop_recording',
-      properties: { questionId: questions[questionIndex].id },
+      properties: { quizId: quizzes[quizIndex].id },
     });
     mediaRecorder?.stop();
     setRecording(false);
@@ -156,8 +162,8 @@ const InterviewRecordingPage = () => {
   return (
     <InterviewRecordingPageTemplate
       isLoading={isLoading}
-      question={questions[questionIndex]}
-      index={questionIndex}
+      quiz={quizzes[quizIndex]}
+      index={quizIndex}
       isRecording={recording}
       webcamRef={webcamRef}
       videoFile={videoFile}

@@ -8,23 +8,23 @@ import {
 } from '../..';
 
 interface QuestionCardProps {
-  text: string;
+  description: string;
   keyword: string;
   difficulty: string;
 }
 
-const QuestionCard = ({ text, keyword, difficulty }: QuestionCardProps) => {
+const QuestionCard = ({ description, keyword, difficulty }: QuestionCardProps) => {
   return (
     <Card className="rounded-lg shadow">
       <CardHeader className="grid items-start gap-4 space-y-0">
         <div className="space-y-1">
           <div className="flex items-center space-x-3">
             <CardTitle className="text-sm text-muted-foreground">
-              Question
+              Quiz
             </CardTitle>
           </div>
           <CardDescription className="text-md text-black">
-            {text}
+            {description}
           </CardDescription>
         </div>
       </CardHeader>

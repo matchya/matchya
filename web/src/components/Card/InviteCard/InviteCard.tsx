@@ -41,10 +41,7 @@ const CandidateRow = ({
         assessment_id: assessmentId,
         candidate_id: id,
       };
-      const response = await axiosInstance.post(
-        `/candidates/invite`,
-        data
-      );
+      const response = await axiosInstance.post(`/candidates/invite`, data);
       if (response.data.status === 'success') {
         console.log('success');
         setEmailSent(true);
@@ -67,7 +64,7 @@ const CandidateRow = ({
       </div>
       {score ? (
         <div>
-          <p className="mr-12">{score.toFixed(1)}</p>
+          <p className="mr-8 mt-2">{score.toFixed(1)} %</p>
         </div>
       ) : (
         <Button
