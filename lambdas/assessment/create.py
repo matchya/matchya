@@ -35,7 +35,7 @@ def handler(event, context):
         assessment = Assessment(body.get('name'), body.get('position_type'), body.get('position_level'))
         quiz_ids = body.get('quiz_ids', [])
 
-        quiz_ids = ['123', '234', '345']  # mock data
+        quiz_ids = ['1', '2', '3']  # mock data
 
         # db operations
         with postgres_client as db_client:

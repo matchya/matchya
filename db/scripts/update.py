@@ -59,13 +59,12 @@ def build_docker_image():
     subprocess.run(["docker", "build", "-t", "liquibase", db_dir], check=True)
 
 
-def build_request(rds_endpoint, rds_port, db_name, db_username, db_password):
-    changelog_file_name = 'master-changelog.xml'
+def build_request(rds_endpoint, rds_port, db_name, db_username, db_password, changelog_file_path):
     return [
         "docker", "run", "--network=host", "--rm",
         "liquibase",
         "--defaultsFile=/liquibase/config/liquibase.properties",
-        f"--changeLogFile={changelog_file_name}",
+        f"--changeLogFile={changelog_file_path}",
         "--url", f"jdbc:postgresql://{rds_endpoint}:{rds_port}/{db_name}",
         "--username", db_username,
         "--password", db_password
@@ -97,4 +96,4 @@ if __name__ == "__main__":
     logger.info(f'Retrieving SSM params: {kwargs}')
 
     build_docker_image()
-    run_changelog(**kwargs)
+    run_changelog(changelog_file_path='./master.xml', **kwargs)
