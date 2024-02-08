@@ -79,8 +79,8 @@ if __name__ == "__main__":
     - Runs the Liquibase changelog with the retrieved database details.
     """
     parser = argparse.ArgumentParser(description="Rollback database changes by a specified count using Liquibase.")
-    parser.add_argument("stage", type=str, help="Stage of the deployment", default='dev')
-    parser.add_argument("count", type=int, help="Number of changesets to roll back", default=1)
+    parser.add_argument("--stage", type=str, help="Stage of the deployment", default='dev')
+    parser.add_argument("--count", type=int, help="Number of changesets to roll back", default=1)
     args = parser.parse_args()
 
     kwargs = {}
@@ -91,8 +91,8 @@ if __name__ == "__main__":
     else:
         kwargs['rds_endpoint'] = get_ssm_parameter(f'/terraform/{args.stage}/rds/endpoint')
         kwargs['rds_port'] = get_ssm_parameter(f'/terraform/{args.stage}/rds/port')
-    kwargs['db_username'] = get_ssm_parameter(f'/terraform/${args.stage}/rds/db_username')
-    kwargs['db_password'] = get_ssm_parameter(f'/terraform/${args.stage}/rds/db_password')
+    kwargs['db_username'] = get_ssm_parameter(f'/terraform/{args.stage}/rds/db_username')
+    kwargs['db_password'] = get_ssm_parameter(f'/terraform/{args.stage}/rds/db_password')
     kwargs['db_name'] = args.stage
     logger.info(f'Retrieving SSM params: {kwargs}')
 
