@@ -31,11 +31,11 @@ jobs:
           cache: npm
           node-version: 20
 
-      - name: Install Serverless
-        run: npm install -g serverless
+      - name: Install Root Dependencies
+        run: npm ci
 
-      - name: Install Dependencies
-        run: npm install
+      - name: Install Package Dependencies
+        run: npm ci
         working-directory: lambdas/authentication
 
       - name: Deploy
@@ -64,11 +64,11 @@ jobs:
           cache: npm
           node-version: 20
 
-      - name: Install Serverless
-        run: npm install -g serverless
+      - name: Install Root Dependencies
+        run: npm ci
 
-      - name: Install Dependencies
-        run: npm install
+      - name: Install Package Dependencies
+        run: npm ci
         working-directory: lambdas/authorizer
 
       - name: Deploy
@@ -114,10 +114,10 @@ jobs:
           node-version: 20
 
       - name: Install Root Dependencies
-        run: npm install
+        run: npm ci
 
-      - name: Install Package Specific Dependencies
-        run: npm install
+      - name: Install Package Dependencies
+        run: npm ci
         working-directory: lambdas/${{ matrix.package }}
 
       - name: Deploy

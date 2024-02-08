@@ -49,9 +49,9 @@ jobs:
           cache: npm
           node-version: 20
 
-      - name: Install dependencies
+      - name: Install Package Dependencies
         if: steps.changes.outputs.package == 'true'
-        run: npm install
+        run: npm ci
         working-directory: web
 
       - name: Build
