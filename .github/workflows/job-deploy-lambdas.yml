@@ -121,5 +121,5 @@ jobs:
         working-directory: lambdas/${{ matrix.package }}
 
       - name: Deploy
-        run: sls deploy --stage ${{ inputs.environment }} --config serverless.yml
+        run: npx serverless deploy --stage ${{ inputs.environment }} --config serverless.yml
         working-directory: lambdas/${{ matrix.package }}
