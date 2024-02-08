@@ -26,12 +26,15 @@ const positions = [
 ];
 const levels = ['Junior', 'Mid-Level', 'Senior', 'Lead'];
 
+const difficulties = ['easy', 'medium', 'hard'];
+
 interface CreateAssessmentPageTemplateProps {
   testName: string;
   quizzes: Quiz[];
   selectedPosition: string;
   selectedLevel: string;
   isLoading: boolean;
+  isLoadingQuestionGeneration: boolean;
   onTestNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onPositionChange: (value: string) => void;
   onLevelChange: (value: string) => void;
@@ -44,20 +47,21 @@ const CreateAssessmentPageTemplate = ({
   selectedPosition,
   selectedLevel,
   isLoading,
+  isLoadingQuestionGeneration,
   onTestNameChange,
   onPositionChange,
   onLevelChange,
   handleSubmit,
 }: CreateAssessmentPageTemplateProps) => {
   return (
-    <div className="w-full min-h-screen h-[1px] overflow-y-scroll xl:flex pt-12 pb-5">
-      <div>
+    <div className="w-full h-full xl:flex py-12">
+      <div className="w-full px-4 md:px-12 xl:pl-8 ">
         <Link to="/assessments">
-          <div className="w-full flex justify-start px-10">
+          <div className="w-full flex justify-start">
             <p className="text-xl font-bold text-matcha-800">← Back</p>
           </div>
         </Link>
-        <div className="w-full xl:w-[568px] px-4 md:px-12 py-5 rounded-lg">
+        <div className="w-full xl:w-[568px] rounded-lg pt-8">
           <p className="text-4xl font-bold text-black mb-6">
             Create Assessment
           </p>
@@ -137,7 +141,7 @@ const CreateAssessmentPageTemplate = ({
           <div>
             <p className="text-md font-bold text-black mb-2">Description</p>
             <Textarea
-              className="w-full min-h-[180px] text-black px-3 py-2 border rounded border-gray-200 text-sm resize-none"
+              className="w-full min-h-[100px] text-black px-3 py-2 border rounded border-gray-200 text-sm resize-none"
               placeholder={
                 'Let us know more about your position to generate better questions for you.\n' +
                 'ex)\n - Seeking a front-end engineer proficient in design.\n' +
@@ -184,7 +188,7 @@ const CreateAssessmentPageTemplate = ({
               <SelectValue placeholder="easy" />
             </SelectTrigger>
             <SelectContent side="bottom">
-              {['easy', 'medium', 'hard'].map(difficulty => (
+              {difficulties.map(difficulty => (
                 <SelectItem key={difficulty} value={difficulty}>
                   {capitalize(difficulty)}
                 </SelectItem>
@@ -194,7 +198,7 @@ const CreateAssessmentPageTemplate = ({
           <Button>Generate with AI</Button>
         </div>
         <div className="space-y-4 overflow-y-scroll">
-          <LoadingCard />
+          {isLoadingQuestionGeneration ? <LoadingCard /> : null}
           {quizzes.map(quiz => (
             <QuestionCard
               description={quiz.description}
