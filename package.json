@@ -1,7 +1,7 @@
 {
   "name": "matchya",
   "version": "1.0.0",
-  "description": "",
+  "description": "Matchya is a platform that aims to simplify and create a bias free hiring.",
   "main": "index.js",
   "keywords": [],
   "author": "",
@@ -16,6 +16,7 @@
   "devDependencies": {
     "husky": "^8.0.3",
     "lint-staged": "^15.1.0",
-    "serverless": "^3.36.0"
+    "serverless": "^3.36.0",
+    "serverless-deployment-bucket": "^1.6.0"
   }
 }
