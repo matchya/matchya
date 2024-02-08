@@ -80,7 +80,7 @@ if __name__ == "__main__":
     - Runs the Liquibase changelog with the retrieved database details.
     """
     parser = argparse.ArgumentParser(description="Run Liquibase changelog on a database")
-    parser.add_argument("stage", type=str, help="Stage of the deployment", default='dev')
+    parser.add_argument("--stage", type=str, help="Stage of the deployment", default='dev')
     args = parser.parse_args()
 
     kwargs = {}
