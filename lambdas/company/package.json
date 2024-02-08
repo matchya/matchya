@@ -1,7 +1,7 @@
 {
   "name": "company",
   "version": "1.0.0",
-  "description": "",
+  "description": "Company Service",
   "scripts": {
     "deploy:dev": "sls deploy --config serverless.dev.yml",
     "deploy:staging": "sls deploy --param=\"arch=arm64\" --stage staging --config serverless.yml",
@@ -9,22 +9,6 @@
     "remove:staging": "sls remove --param=\"arch=arm64\" --stage staging --config serverless.yml",
     "release": "semantic-release"
   },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@semantic-release/changelog": "^6.0.3",
-    "@semantic-release/commit-analyzer": "^11.1.0",
-    "@semantic-release/git": "^10.0.1",
-    "@semantic-release/github": "^9.2.6",
-    "@semantic-release/npm": "^11.0.2",
-    "@semantic-release/release-notes-generator": "^12.1.0",
-    "serverless-deployment-bucket": "^1.6.0"
-  },
-  "devDependencies": {
-    "@semantic-release/exec": "^6.0.3",
-    "conventional-changelog-cli": "^4.1.0",
-    "conventional-changelog-custom-config": "^0.3.1",
-    "semantic-release": "^22.0.12",
-    "semantic-release-monorepo": "^7.0.5"
-  }
+  "author": "matchya",
+  "license": "ISC"
 }

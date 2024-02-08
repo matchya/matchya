@@ -113,10 +113,10 @@ jobs:
           cache: npm
           node-version: 20
 
-      - name: Install Serverless
-        run: npm install -g serverless
+      - name: Install Root Dependencies
+        run: npm install
 
-      - name: Install Dependencies
+      - name: Install Package Specific Dependencies
         run: npm install
         working-directory: lambdas/${{ matrix.package }}
 

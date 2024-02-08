@@ -1,7 +1,7 @@
 {
   "name": "video",
   "version": "1.0.0",
-  "description": "",
+  "description": "Video Service",
   "scripts": {
     "deploy:dev": "sls deploy --config serverless.dev.yml",
     "deploy:staging": "sls deploy --param=\"arch=arm64\" --stage staging --config serverless.yml",
@@ -9,10 +9,6 @@
     "remove:staging": "sls remove --param=\"arch=arm64\" --stage staging --config serverless.yml",
     "release": "semantic-release"
   },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "serverless-deployment-bucket": "^1.6.0"
-  },
-  "devDependencies": {}
+  "author": "matchya",
+  "license": "ISC"
 }
