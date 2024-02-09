@@ -29,29 +29,33 @@ const levels = ['Junior', 'Mid-Level', 'Senior', 'Lead'];
 const difficulties = ['easy', 'medium', 'hard'];
 
 interface CreateAssessmentPageTemplateProps {
-  testName: string;
+  isLoading: boolean;
+  isLoadingQuestionGeneration: boolean;
+  description: string;
   quizzes: Quiz[];
   selectedPosition: string;
   selectedLevel: string;
-  isLoading: boolean;
-  isLoadingQuestionGeneration: boolean;
+  testName: string;
+  onDescriptionChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
   onTestNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onPositionChange: (value: string) => void;
   onLevelChange: (value: string) => void;
-  handleSubmit: () => void;
+  onSubmit: () => void;
 }
 
 const CreateAssessmentPageTemplate = ({
-  testName,
+  isLoading,
+  isLoadingQuestionGeneration,
+  description,
   quizzes,
   selectedPosition,
   selectedLevel,
-  isLoading,
-  isLoadingQuestionGeneration,
+  testName,
+  onDescriptionChange,
   onTestNameChange,
   onPositionChange,
   onLevelChange,
-  handleSubmit,
+  onSubmit,
 }: CreateAssessmentPageTemplateProps) => {
   return (
     <div className="w-full h-full xl:flex py-12">
@@ -132,8 +136,8 @@ const CreateAssessmentPageTemplate = ({
                 'ex)\n - Seeking a front-end engineer proficient in design.\n' +
                 ' - Back-end engineer with experience working for a large-scale company.'
               }
-              onChange={() => {}}
-              value={''}
+              onChange={onDescriptionChange}
+              value={description}
             />
           </div>
           <div className="mt-4 w-full flex items-center justify-end">
@@ -141,7 +145,7 @@ const CreateAssessmentPageTemplate = ({
               <p className="font-bold text-black mr-6 cursor-pointer">Cancel</p>
             </Link>
             <Button
-              onClick={handleSubmit}
+              onClick={onSubmit}
               disabled={isLoading}
               className="font-bold bg-matcha-400 text-white hover:bg-matcha-500 hover:text-white py-4 px-3"
             >

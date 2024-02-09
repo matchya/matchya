@@ -14,6 +14,7 @@ function CreateAssessmentPage() {
   );
   const [selectedPosition, setSelectedPosition] = useState('Software Engineer');
   const [selectedLevel, setSelectedLevel] = useState('Junior');
+  const [description, setDescription] = useState('');
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -93,13 +94,15 @@ function CreateAssessmentPage() {
     <Template
       testName={testName}
       quizzes={quizzes}
+      description={description}
       selectedPosition={selectedPosition}
       selectedLevel={selectedLevel}
       isLoading={isLoading}
+      onDescriptionChange={e => setDescription(e.target.value)}
       onTestNameChange={e => setTestName(e.target.value)}
       onPositionChange={(value: string) => handlePositionChange(value)}
       onLevelChange={(value: string) => handleLevelChange(value)}
-      handleSubmit={handleSubmit}
+      onSubmit={handleSubmit}
       isLoadingQuestionGeneration={false}
     />
   );
