@@ -19,16 +19,18 @@ type Story = StoryObj<typeof Component>;
 export const IsGeneratingQuestion: Story = {
   render: () => (
     <Component
-      testName={'test'}
+      isLoading={false}
+      isLoadingQuestionGeneration={true}
+      description={'Test description'}
       quizzes={mockedQuizzes}
       selectedPosition={'Software Engineer'}
       selectedLevel={'Senior'}
-      isLoading={false}
-      isLoadingQuestionGeneration={true}
+      testName={'test'}
+      onDescriptionChange={() => {}}
       onTestNameChange={() => {}}
       onPositionChange={() => {}}
       onLevelChange={() => {}}
-      handleSubmit={() => {}}
+      onSubmit={() => {}}
     />
   ),
 };

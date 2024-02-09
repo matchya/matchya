@@ -3,20 +3,20 @@ class Quiz:
         self.id = id
         self.context = context
         self.created_at = str(created_at)
-        
-        if not difficulty:
+
+        if difficulty is None:
             raise ValueError('difficulty is required')
         self.difficulty = difficulty
-        if not topic:
+        if topic is None:
             raise ValueError('topic is required')
         self.topic = topic
-        if not subtopic:
+        if subtopic is None:
             raise ValueError('subtopic is required')
         self.subtopic = subtopic
-        if not description:
+        if description is None:
             raise ValueError('description is required')
         self.description = description
-        if not is_original:
+        if is_original is None:
             raise ValueError('is_original is required')
         self.is_original = is_original
 
