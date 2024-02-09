@@ -51,7 +51,7 @@ def handler(event, context):
             assessment_repo = AssessmentRepository(db_client)
             quiz_repo = QuizRepository(db_client)
             position_type, position_level = assessment_repo.get_position_type_and_level(interview_id)
-            quiz = quiz_repo.get_quiz(question_id)
+            quiz = quiz_repo.retrieve_by_id(question_id)
             score, feedback = evaluation_generator.generate(quiz, position_type, position_level, transcript)
             video_url = f'https://{bucket}.s3.amazonaws.com/{key}'
             answer_repo.store_answer_evaluation_to_db(interview_id, question_id, score, feedback, video_url)

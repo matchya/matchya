@@ -39,7 +39,7 @@ class QuizRepository:
         logger.info('Successfully retrieved questions')
         return quizzes
 
-    def get_quiz(self, quiz_id):
+    def retrieve_by_id(self, quiz_id):
         """
         Gets a quiz by quiz id from the database.
 
