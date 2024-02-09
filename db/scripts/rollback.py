@@ -14,27 +14,26 @@ This script is a Python program designed to automate the process of building a D
 """
 
 
-def build_request(rds_endpoint, rds_port, db_name, db_username, db_password):
-    changelog_file_name = 'master-changelog.xml'
+def build_request(rds_endpoint, rds_port, db_name, db_username, db_password, changelog_file_path):
     return [
         "docker", "run", "--network=host", "--rm",
         "liquibase",
         "--defaultsFile=/liquibase/config/liquibase.properties",
-        f"--changeLogFile={changelog_file_name}",
+        f"--changeLogFile={changelog_file_path}",
         "--url", f"jdbc:postgresql://{rds_endpoint}:{rds_port}/{db_name}",
         "--username", db_username,
         "--password", db_password
     ]
 
 
-def rollback_by_count(count, **kwargs):
+def rollback_by_count(changelog_file_path, count, **kwargs):
     """
     Rolls back the database changes by the specified count using Liquibase.
 
     :param count: The number of changesets to roll back.
     :param kwargs: Additional keyword arguments used in building the Liquibase request.
     """
-    request = build_request(**kwargs)
+    request = build_request(changelog_file_path=changelog_file_path, **kwargs)
     request.append('rollback-count')
     request.append('--count')
     request.append(str(count))
@@ -81,6 +80,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Rollback database changes by a specified count using Liquibase.")
     parser.add_argument("--stage", type=str, help="Stage of the deployment", default='dev')
     parser.add_argument("--count", type=int, help="Number of changesets to roll back", default=1)
+    parser.add_argument("--changelog-file-name", type=str, help="Name of the changelog file", default=None)
     args = parser.parse_args()
 
     kwargs = {}
@@ -97,4 +97,7 @@ if __name__ == "__main__":
     logger.info(f'Retrieving SSM params: {kwargs}')
 
     build_docker_image()
-    rollback_by_count(count=args.count, **kwargs)
+
+    changelog_file_path = f'./changelog/{args.changelog_file_name}' if args.changelog_file_name else './master.xml'
+    logger.info(f'Rolling back {args.count} changesets on {changelog_file_path}')
+    rollback_by_count(changelog_file_path=changelog_file_path, count=args.count, **kwargs)

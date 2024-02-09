@@ -26,12 +26,15 @@ const positions = [
 ];
 const levels = ['Junior', 'Mid-Level', 'Senior', 'Lead'];
 
+const difficulties = ['easy', 'medium', 'hard'];
+
 interface CreateAssessmentPageTemplateProps {
   testName: string;
   quizzes: Quiz[];
   selectedPosition: string;
   selectedLevel: string;
   isLoading: boolean;
+  isLoadingQuestionGeneration: boolean;
   onTestNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onPositionChange: (value: string) => void;
   onLevelChange: (value: string) => void;
@@ -44,20 +47,21 @@ const CreateAssessmentPageTemplate = ({
   selectedPosition,
   selectedLevel,
   isLoading,
+  isLoadingQuestionGeneration,
   onTestNameChange,
   onPositionChange,
   onLevelChange,
   handleSubmit,
 }: CreateAssessmentPageTemplateProps) => {
   return (
-    <div className="w-full min-h-screen h-[1px] overflow-y-scroll xl:flex pt-12 pb-5">
-      <div>
+    <div className="w-full h-full xl:flex py-12">
+      <div className="w-full px-4 md:px-12 xl:pl-8">
         <Link to="/assessments">
-          <div className="w-full flex justify-start px-10">
+          <div className="w-full flex justify-start">
             <p className="text-xl font-bold text-matcha-800">← Back</p>
           </div>
         </Link>
-        <div className="w-full xl:w-[568px] px-4 md:px-12 py-5 rounded-lg">
+        <div className="w-full xl:w-[568px] rounded-lg pt-8">
           <p className="text-4xl font-bold text-black mb-6">
             Create Assessment
           </p>
@@ -97,24 +101,10 @@ const CreateAssessmentPageTemplate = ({
         <div className="my-4">
           <Separator />
         </div>
-        {/* TO BE IMPLEMENTED */}
-        {/* <div>
-          <p className="text-md font-bold text-black mb-2">Description</p>
-          <Textarea
-            className="w-full min-h-[150px] text-black px-3 py-2 border rounded border-gray-200 text-sm resize-none"
-            placeholder={
-              'Let us know more about your position to generate better questions for you.\n' +
-              'ex)\n - Seeking a front-end engineer proficient in design.\n' +
-              ' - Back-end engineer with experience working for a large-scale company.'
-            }
-            value={description}
-          />
-        </div> */}
-
         <div className="mt-4 w-full justify-end">
           <div>
             <p className="text-md font-bold text-black mb-2">Position Level</p>
-            <div className="w-full grid grid-cols-2 gap-3">
+            <div className="w-full grid grid-cols-4 gap-3">
               {levels.map(level => (
                 <Button
                   className={
@@ -133,11 +123,10 @@ const CreateAssessmentPageTemplate = ({
           <div className="my-6">
             <Separator />
           </div>
-          {/* TO BE IMPLEMENTED */}
           <div>
             <p className="text-md font-bold text-black mb-2">Description</p>
             <Textarea
-              className="w-full min-h-[180px] text-black px-3 py-2 border rounded border-gray-200 text-sm resize-none"
+              className="w-full min-h-[100px] text-black px-3 py-2 border rounded border-gray-200 text-sm resize-none"
               placeholder={
                 'Let us know more about your position to generate better questions for you.\n' +
                 'ex)\n - Seeking a front-end engineer proficient in design.\n' +
@@ -147,25 +136,21 @@ const CreateAssessmentPageTemplate = ({
               value={''}
             />
           </div>
-          <div className="mt-4 w-full flex justify-end">
-            <div className="w-1/2 flex justify-end px-4 items-center">
-              <Link to="/assessments">
-                <p className="font-bold text-black mr-6 cursor-pointer">
-                  Cancel
-                </p>
-              </Link>
-              <Button
-                onClick={handleSubmit}
-                disabled={isLoading}
-                className="font-bold bg-matcha-400 text-white hover:bg-matcha-500 hover:text-white py-4 px-3"
-              >
-                Create Assessment
-              </Button>
-            </div>
+          <div className="mt-4 w-full flex items-center justify-end">
+            <Link to="/assessments">
+              <p className="font-bold text-black mr-6 cursor-pointer">Cancel</p>
+            </Link>
+            <Button
+              onClick={handleSubmit}
+              disabled={isLoading}
+              className="font-bold bg-matcha-400 text-white hover:bg-matcha-500 hover:text-white py-4 px-3"
+            >
+              Create Assessment
+            </Button>
           </div>
         </div>
       </div>
-      <div className="w-full px-4 md:px-12 xl:pl-8 space-y-4 pt-16">
+      <div className="w-full px-4 md:px-12 xl:pl-8 space-y-4 pt-16 pr-1">
         <div className="">
           <h3 className="text-2xl font-bold">You have selected 4 quizzes</h3>
         </div>
@@ -184,7 +169,7 @@ const CreateAssessmentPageTemplate = ({
               <SelectValue placeholder="easy" />
             </SelectTrigger>
             <SelectContent side="bottom">
-              {['easy', 'medium', 'hard'].map(difficulty => (
+              {difficulties.map(difficulty => (
                 <SelectItem key={difficulty} value={difficulty}>
                   {capitalize(difficulty)}
                 </SelectItem>
@@ -193,8 +178,8 @@ const CreateAssessmentPageTemplate = ({
           </Select>
           <Button>Generate with AI</Button>
         </div>
-        <div className="space-y-4 overflow-y-scroll">
-          <LoadingCard />
+        <div className="space-y-4 overflow-y-auto max-h-[490px]">
+          {isLoadingQuestionGeneration ? <LoadingCard /> : null}
           {quizzes.map(quiz => (
             <QuestionCard
               description={quiz.description}

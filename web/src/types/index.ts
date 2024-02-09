@@ -51,11 +51,12 @@ export interface Assessment {
 export interface Quiz {
   id: string;
   context: string;
+  subtopic: string;
   description: string;
-  metrics?: Metric[];
-  questions?: Question[];
-  topic: string;
+  isOriginal: boolean;
   difficulty: string;
+  topic: string;
+  createdAt: string;
 }
 
 export interface Question {

@@ -32,27 +32,36 @@ export const mockedQuestion: Quiz = {
   context:
     'How would you optimize a Dockerfile for a web application to ensure efficient build times and image sizes? Describe the steps you would take and the rationale behind them.',
   description: 'Optimizing Dockerfile',
-  metrics: [
-    {
-      id: '1',
-      name: 'Knowledge of Dockerfile optimization techniques',
-    },
-    {
-      id: '2',
-      name: 'Efficient image construction and management',
-    },
-    {
-      id: '3',
-      name: 'Rationale behind optimization choices',
-    },
-    {
-      id: '4',
-      name: 'Awareness of potential pitfalls and best practices.',
-    },
-  ],
   topic: 'typescript',
+  subtopic: 'docker',
+  isOriginal: true,
+  createdAt: '2024-02-08 23:02:57.478524',
   difficulty: 'medium',
 };
+
+export const mockedQuizzes: Quiz[] = [
+  mockedQuestion,
+  {
+    id: '2',
+    context: 'context here',
+    description: 'Description 2',
+    topic: 'Topic 2',
+    subtopic: 'Subtopic 2',
+    difficulty: 'Medium',
+    isOriginal: true,
+    createdAt: '2024-02-08 23:02:57.478524',
+  },
+  {
+    id: '3',
+    context: 'context here',
+    description: 'Description 3',
+    topic: 'Topic 3',
+    subtopic: 'Subtopic 3',
+    difficulty: 'Hard',
+    isOriginal: true,
+    createdAt: '2024-02-08 23:02:57.478524',
+  },
+];
 
 export const mockedSelectedCandidate: Candidate = {
   id: '1',

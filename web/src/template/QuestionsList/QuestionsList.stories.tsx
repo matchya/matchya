@@ -19,8 +19,10 @@ export const WithQuestions: Story = {
         quizzes={[
           {
             id: '5e88efd5-760b-4adb-9d42-bbaba76cac75',
-            context:
-              'Explain the concept of Continuous Delivery and its benefits in software development. How does it differ from Continuous Deployment?',
+            context: 'Context here',
+            subtopic: 'Context here',
+            isOriginal: false,
+            createdAt: 'Context here',
             topic: 'Continuous Delivery',
             description:
               'Explain the concept of Continuous Delivery and its benefits in software development. How does it differ from Continuous Deployment?',
@@ -28,8 +30,10 @@ export const WithQuestions: Story = {
           },
           {
             id: '23c2e832-09c6-49a0-aec4-70bfc6a31f0b',
-            context:
-              'Explain the concept of Hexagonal Architecture in software design. What are the key benefits of using Hexagonal Architecture?',
+            context: 'Context here',
+            subtopic: 'Context here',
+            isOriginal: false,
+            createdAt: 'Context here',
             topic: 'Hexagonal Architecture',
             description:
               'Explain the concept of Hexagonal Architecture in software design. What are the key benefits of using Hexagonal Architecture?',

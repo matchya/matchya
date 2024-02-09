@@ -4,8 +4,10 @@ import { LayoutDecorator } from '../../../.storybook/decorators';
 
 import Component from './CreateAssessmentPage';
 
+import { mockedQuizzes } from '@/data/mock';
+
 const meta: Meta<typeof Component> = {
-  title: 'Page',
+  title: 'Page/CreateAssessmentPage',
   component: Component,
   decorators: [LayoutDecorator],
 };
@@ -14,14 +16,15 @@ export default meta;
 
 type Story = StoryObj<typeof Component>;
 
-export const CreateAssessmentPage: Story = {
+export const IsGeneratingQuestion: Story = {
   render: () => (
     <Component
       testName={'test'}
-      quizzes={[]}
+      quizzes={mockedQuizzes}
       selectedPosition={'Software Engineer'}
       selectedLevel={'Senior'}
       isLoading={false}
+      isLoadingQuestionGeneration={true}
       onTestNameChange={() => {}}
       onPositionChange={() => {}}
       onLevelChange={() => {}}

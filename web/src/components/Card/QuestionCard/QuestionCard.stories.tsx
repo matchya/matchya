@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { mockedQuestion } from '../../../data/mock';
+import { mockedQuizzes } from '../../../data/mock';
 
 import Component from './QuestionCard';
 
@@ -16,9 +16,9 @@ type Story = StoryObj<typeof Component>;
 export const Question: Story = {
   render: () => (
     <Component
-      description={mockedQuestion.description}
-      keyword={mockedQuestion.topic}
-      difficulty={mockedQuestion.difficulty}
+      description={mockedQuizzes[0].description}
+      keyword={mockedQuizzes[0].topic}
+      difficulty={mockedQuizzes[0].difficulty}
     />
   ),
 };

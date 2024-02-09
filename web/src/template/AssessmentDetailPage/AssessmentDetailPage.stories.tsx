@@ -34,6 +34,9 @@ export const AssessmentDetailPage: Story = {
               description:
                 'Explain the concept of Continuous Delivery and its benefits in software development. How does it differ from Continuous Deployment?',
               difficulty: 'easy',
+              subtopic: 'docker',
+              isOriginal: true,
+              createdAt: '',
             },
             {
               id: '23c2e832-09c6-49a0-aec4-70bfc6a31f0b',
@@ -43,6 +46,9 @@ export const AssessmentDetailPage: Story = {
               description:
                 'Explain the concept of Hexagonal Architecture in software design. What are the key benefits of using Hexagonal Architecture?',
               difficulty: 'easy',
+              subtopic: 'docker',
+              isOriginal: true,
+              createdAt: '',
             },
           ]}
         />
