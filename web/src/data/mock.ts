@@ -2,33 +2,6 @@ import { Assessment, Candidate, Company, Quiz } from '../types';
 
 export * from './interview';
 
-export const mockedQuizzes: Quiz[] = [
-  {
-    id: '1',
-    description: 'Description 1',
-    topic: 'Topic 1',
-    subtopic: 'Subtopic 1',
-    difficulty: 'Easy',
-    createdAt: '2024-02-08 23:02:57.478524',
-  },
-  {
-    id: '2',
-    description: 'Description 2',
-    topic: 'Topic 2',
-    subtopic: 'Subtopic 2',
-    difficulty: 'Medium',
-    createdAt: '2024-02-08 23:02:57.478524',
-  },
-  {
-    id: '3',
-    description: 'Description 3',
-    topic: 'Topic 3',
-    subtopic: 'Subtopic 3',
-    difficulty: 'Hard',
-    createdAt: '2024-02-08 23:02:57.478524',
-  },
-];
-
 export const mockedAssessments: Assessment[] = [
   {
     id: '1',
@@ -51,6 +24,42 @@ export const mockedAssessments: Assessment[] = [
     updatedAt: '2022-01-01',
     quizzes: [],
     candidates: [],
+  },
+];
+
+export const mockedQuestion: Quiz = {
+  id: '1',
+  context:
+    'How would you optimize a Dockerfile for a web application to ensure efficient build times and image sizes? Describe the steps you would take and the rationale behind them.',
+  description: 'Optimizing Dockerfile',
+  topic: 'typescript',
+  subtopic: 'docker',
+  isOriginal: true,
+  createdAt: '2024-02-08 23:02:57.478524',
+  difficulty: 'medium',
+};
+
+export const mockedQuizzes: Quiz[] = [
+  mockedQuestion,
+  {
+    id: '2',
+    context: 'context here',
+    description: 'Description 2',
+    topic: 'Topic 2',
+    subtopic: 'Subtopic 2',
+    difficulty: 'Medium',
+    isOriginal: true,
+    createdAt: '2024-02-08 23:02:57.478524',
+  },
+  {
+    id: '3',
+    context: 'context here',
+    description: 'Description 3',
+    topic: 'Topic 3',
+    subtopic: 'Subtopic 3',
+    difficulty: 'Hard',
+    isOriginal: true,
+    createdAt: '2024-02-08 23:02:57.478524',
   },
 ];
 

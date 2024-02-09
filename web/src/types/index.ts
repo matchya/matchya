@@ -50,12 +50,13 @@ export interface Assessment {
 
 export interface Quiz {
   id: string;
+  context: string;
+  subtopic: string;
   description: string;
-  subtopic?: string;
-  questions?: Question[];
-  topic: string;
+  isOriginal: boolean;
   difficulty: string;
-  createdAt?: string;
+  topic: string;
+  createdAt: string;
 }
 
 export interface Question {

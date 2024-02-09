@@ -100,6 +100,7 @@ function CreateAssessmentPage() {
       onPositionChange={(value: string) => handlePositionChange(value)}
       onLevelChange={(value: string) => handleLevelChange(value)}
       handleSubmit={handleSubmit}
+      isLoadingQuestionGeneration={false}
     />
   );
 }
