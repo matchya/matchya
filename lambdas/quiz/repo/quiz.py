@@ -1,5 +1,6 @@
 import os
 from typing import List
+import uuid
 
 from client.postgres import PostgresDBClient
 from entity.quiz import Quiz
@@ -15,6 +16,36 @@ class QuizRepository:
 
     def __init__(self, db_client: PostgresDBClient):
         self.db_client = db_client
+        
+    def insert(self, context, topic, subtopic, difficulty, description, is_original=False, additional_criteria='', max_score=1):
+        """
+        Inserts a quiz into the database.
+
+        :param context: The context.
+        :param topic: The topic.
+        :param subtopic: The subtopic.
+        :param difficulty: The difficulty.
+        :param description: The description.
+        :param is_original: Whether the quiz is original.
+        """
+        logger.info('Inserting a quiz into db...')
+        id = str(uuid.uuid4())
+        topic = topic.replace("'", "''")
+        subtopic = subtopic.replace("'", "''")
+        context = context.replace("'", "''")
+        description = description.replace("'", "''")
+        additional_criteria = additional_criteria.replace("'", "''")
+        sql = """
+            INSERT INTO quiz (id, context, topic, subtopic, difficulty, description, is_original, additional_criteria, max_score)
+            VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')
+        """ % (id, context, topic, subtopic, difficulty, description, is_original, additional_criteria, max_score)
+        try:
+            self.db_client.execute(sql)
+            logger.info('Successfully inserted a quiz into db')
+            return id
+        except Exception as e:
+            logger.error(f'Failed to insert a quiz into db: {e}')
+            raise RuntimeError('Failed to insert a quiz into db.')
 
     def retrieve_many(self) -> List[Quiz]:
         """
