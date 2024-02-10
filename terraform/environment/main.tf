@@ -4,21 +4,33 @@ locals {
     production = "app.${data.aws_ssm_parameter.route53_hosted_zone.value}",
     staging = "app.${terraform.workspace}.${data.aws_ssm_parameter.route53_hosted_zone.value}"
   }, terraform.workspace, "http://127.0.0.1:5173")
+  api_domain_name = lookup({
+    production = "api.${data.aws_ssm_parameter.route53_hosted_zone.value}",
+    staging = "api.${terraform.workspace}.${data.aws_ssm_parameter.route53_hosted_zone.value}"
+  }, terraform.workspace, "")
 }
 
+# Handles api gateway with custom domain setup
+module "api" {
+  count = terraform.workspace == "staging" ? 1 : 0
+  source = "./modules/api"
+
+  api_domain_name = local.api_domain_name
+  client_origin = local.app_domain_name
+  hosted_zone_id = data.aws_ssm_parameter.route53_zone_id.value
+  region = data.aws_region.current.name
+}
+
+# Handles client facing application with custom domain setup
 module "app" {
   count = terraform.workspace == "staging" ? 1 : 0
   source = "./modules/app"
 
-  region = data.aws_region.current.name
   app_domain_name = local.app_domain_name
+  hosted_zone = var.hosted_zone
   hosted_zone_id = data.aws_ssm_parameter.route53_zone_id.value
-}
-
-module "apigateway" {
-  source = "./modules/apigateway"
-
-  client_origin = local.app_domain_name
+  region = data.aws_region.current.name
+  route53_zone_id = module.route53[0].route53_zone_id
 }
 
 module "dynamodb" {
@@ -60,9 +72,6 @@ module "route53" {
   source = "./modules/route53"
 
   hosted_zone = var.hosted_zone
-  app_cloudfront_distributon_url = module.app[0].cloudfront_distribution_url
-  www_app_cloudfront_distribution_url = module.app[0].www_cloudfront_distribution_url
-  app_cloudfront_distribution_zone = module.app[0].cloudfront_distribution_zone
 }
 
 module "sqs" {
