@@ -18,7 +18,8 @@ export const InterviewRecordingPage: Story = {
     <Component
       quiz={mockedQuestion}
       isLoading={false}
-      index={0}
+      progressbarCount={2}
+      totalQuizCount={4}
       isRecording={false}
       webcamRef={undefined}
       videoFile={null}

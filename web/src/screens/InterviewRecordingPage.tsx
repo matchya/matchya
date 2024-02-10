@@ -16,6 +16,9 @@ const InterviewRecordingPage = () => {
   );
   const [quizzes, setQuizes] = useState<Quiz[]>([]);
   const [quizIndex, setQuizIndex] = useState(0);
+  // we want to have a separate progress bar count because on the last question
+  // without this, it won't show the progress bar at 100% when interview is complete
+  const [progressbarCount, setProgressbarCount] = useState(0);
   const [interviewDone, setInterviewDone] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const params = useParams<{ id: string }>();
@@ -59,7 +62,7 @@ const InterviewRecordingPage = () => {
         interview.quizzes.map((quiz: any) => {
           quiz.questions = quiz.questions.map((question: any) => {
             return { ...question, questionNumber: question.question_number };
-          })
+          });
         });
         setQuizes(interview.quizzes);
       }
@@ -104,10 +107,10 @@ const InterviewRecordingPage = () => {
       if (uploadResponse.ok) {
         alert('Video uploaded successfully');
         setVideoFile(null);
+        setProgressbarCount(progressbarCount + 1);
         if (quizIndex < quizzes.length - 1) {
           setQuizIndex(quizIndex + 1);
         } else {
-          alert('Interview completed');
           evaluateInterview();
         }
       } else {
@@ -163,7 +166,8 @@ const InterviewRecordingPage = () => {
     <InterviewRecordingPageTemplate
       isLoading={isLoading}
       quiz={quizzes[quizIndex]}
-      index={quizIndex}
+      totalQuizCount={quizzes.length}
+      progressbarCount={progressbarCount}
       isRecording={recording}
       webcamRef={webcamRef}
       videoFile={videoFile}

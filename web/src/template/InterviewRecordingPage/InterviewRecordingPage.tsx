@@ -1,6 +1,6 @@
 import Webcam from 'react-webcam';
 
-import { Button, Icons } from '@/components';
+import { Button, Icons, ProgressBar } from '@/components';
 import { env } from '@/config';
 import { Quiz } from '@/types';
 
@@ -21,9 +21,10 @@ const AUDIO_CONSTRAINTS: MediaTrackConstraints = {
 };
 
 interface InterviewRecordingPageTemplateProps {
+  progressbarCount: number;
+  totalQuizCount: number;
   quiz: Quiz;
   isLoading: boolean;
-  index: number;
   isRecording: boolean;
   webcamRef?: React.RefObject<Webcam>;
   videoFile: File | null;
@@ -33,9 +34,10 @@ interface InterviewRecordingPageTemplateProps {
 }
 
 const InterviewRecordingPageTemplate = ({
+  progressbarCount,
+  totalQuizCount,
   quiz,
   isLoading,
-  index,
   isRecording,
   webcamRef,
   videoFile,
@@ -118,10 +120,11 @@ const InterviewRecordingPageTemplate = ({
           <div className="w-1/2">
             <p className="text-2xl font-bold">3:38</p>
           </div>
-          <div className="flex justify-end w-1/2">
-            <p className="text-2xl font-bold text-right">
-              Question. {index + 1}
-            </p>
+          <div className="flex justify-end">
+            <ProgressBar
+              className="w-[200px]"
+              value={(progressbarCount / totalQuizCount) * 100}
+            />
           </div>
         </div>
       </div>
