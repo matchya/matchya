@@ -214,16 +214,15 @@ class QuizGenerator(OpenAiChatClient):
             )
             content = json.loads(completion.choices[0].message.content)
             logger.info(f"Generated quiz: {content}")
-            quiz = Quiz(
-                context=content['context'],
-                topic=content['topic'],
-                subtopic=content['subtopic'],
-                difficulty=content['difficulty'],
-                description=content['description'],
-                questions=content['questions'],
-                additional_criteria=content['additional_criteria'],
-                max_score=content['max_score']
-            )
+            quiz = Quiz()
+            quiz.context = content['context']
+            quiz.topic = content['topic']
+            quiz.subtopic = content['subtopic']
+            quiz.difficulty = content['difficulty']
+            quiz.description = content['description']
+            quiz.questions = content['questions']
+            quiz.additional_criteria = content['additional_criteria']
+            quiz.max_score = content['max_score']
             return quiz
         except Exception as e:
             logger.error(f'Failed to get the quiz from GPT: {e}')

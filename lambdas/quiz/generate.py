@@ -44,7 +44,7 @@ def handler(event, context):
             quiz_repo = QuizRepository(db_client)
             question_repo = QuestionRepository(db_client)
             generated_quiz: Quiz = quiz_generator.generate(topic, difficulty, position_type, position_level, position_description)
-            generated_quiz.id = quiz_repo.insert(generated_quiz.context, generated_quiz.topic, generated_quiz.subtopic, generated_quiz.difficulty, generated_quiz.description, is_original=False)
+            generated_quiz.id = quiz_repo.insert(generated_quiz.context, generated_quiz.topic, generated_quiz.subtopic, generated_quiz.difficulty, generated_quiz.description, is_original=False, additional_criteria=generated_quiz.additional_criteria, max_score=generated_quiz.max_score)
             question_repo.insert_many(generated_quiz.questions, generated_quiz.id)
 
         return response_generator.generate_success_response({

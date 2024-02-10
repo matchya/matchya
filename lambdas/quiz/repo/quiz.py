@@ -29,14 +29,20 @@ class QuizRepository:
         :param is_original: Whether the quiz is original.
         """
         logger.info('Inserting a quiz into db...')
-        id = uuid.uuid4()
+        id = str(uuid.uuid4())
+        topic = topic.replace("'", "''")
+        subtopic = subtopic.replace("'", "''")
+        context = context.replace("'", "''")
+        description = description.replace("'", "''")
+        additional_criteria = additional_criteria.replace("'", "''")
         sql = """
-            INSERT INTO quiz (id, context, topic, subtopic, difficulty, description, is_original, addtional_criteria, max_score)
+            INSERT INTO quiz (id, context, topic, subtopic, difficulty, description, is_original, additional_criteria, max_score)
             VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')
         """ % (id, context, topic, subtopic, difficulty, description, is_original, additional_criteria, max_score)
         try:
             self.db_client.execute(sql)
             logger.info('Successfully inserted a quiz into db')
+            return id
         except Exception as e:
             logger.error(f'Failed to insert a quiz into db: {e}')
             raise RuntimeError('Failed to insert a quiz into db.')

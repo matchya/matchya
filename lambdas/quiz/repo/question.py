@@ -23,13 +23,14 @@ class QuestionRepository:
         :param quiz_id: The quiz id.
         """
         logger.info('Inserting questions into db...')
-        sql = """
-            INSERT INTO question (id, quiz_id, text, criteria)
-            VALUES ('%s', '%s', '%s', '%s')
-        """
+        if len(questions) == 0:
+            raise ValueError('No questions to insert into db.')
+        sql = "INSERT INTO question (id, quiz_id, text, criteria) VALUES "
         for question in questions:
-            id = uuid.uuid4()
-            sql += "('%s', '%s', '%s', '%s')," % (id, quiz_id, question['text'], question['criteria'])
+            id = str(uuid.uuid4())
+            text = question['text'].replace("'", "''")
+            criteria = question['criteria'].replace("'", "''")
+            sql += "('%s', '%s', '%s', '%s')," % (id, quiz_id, text, criteria)
 
         sql = sql[:-1]
         try:
