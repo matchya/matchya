@@ -35,5 +35,19 @@ functions:
           existing: true
     timeout: 300
 
+  generate:
+    name: ${self:provider.stage}-quiz-generate
+    image:
+      name: default
+      command:
+        - generate.handler
+    events:
+      - http:
+          path: /quizzes
+          method: POST
+          cors: ${file(../shared/serverless.dev.yml):cors}
+          authorizer: ${file(../shared/serverless.dev.yml):cookie-authorizer}
+    timeout: 30
+
 plugins:
   - serverless-deployment-bucket
