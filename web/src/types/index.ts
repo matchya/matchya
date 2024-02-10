@@ -15,11 +15,7 @@ export interface Interview {
 }
 
 export interface Answer {
-  quizId: string;
-  quizContext: string;
-  quizTopic: string;
-  quizSubtopic: string;
-  quizDifficulty: string;
+  quiz: Quiz;
   feedback: string;
   score: number;
   videoUrl: string;
@@ -51,11 +47,12 @@ export interface Assessment {
 export interface Quiz {
   id: string;
   context: string;
-  subtopic: string;
   description: string;
-  isOriginal: boolean;
-  difficulty: string;
   topic: string;
+  subtopic: string;
+  difficulty: string;
+  isOriginal: boolean;
+  averageScore?: number;
   createdAt: string;
 }
 
