@@ -142,20 +142,41 @@ class InterviewRepository:
         :return: The interview data.
         """
         logger.info('Retrieving a interview results by interview id from db...')
-        sql = """  
+        sql = """
+            WITH avg_scores AS (
+                SELECT
+                    quiz_id,
+                    AVG(score) AS avg_quiz_score
+                FROM answer
+                GROUP BY quiz_id
+            )
             SELECT
-                i.id, i.total_score, i.summary, i.created_at,
-                c.id, c.name, c.email,
-                a.id, a.name,
-                q.id, q.description, q.topic, q.subtopic, q.difficulty, 
-                ans.video_url, ans.feedback, ans.score
+                i.id, 
+                i.total_score, 
+                i.summary, 
+                i.created_at,
+                c.id AS candidate_id, 
+                c.name AS candidate_name, 
+                c.email,
+                a.id AS assessment_id, 
+                a.name AS assessment_name,
+                q.id AS quiz_id, 
+                q.description, 
+                q.topic, 
+                q.subtopic, 
+                q.difficulty, 
+                ans.video_url, 
+                ans.feedback, 
+                ans.score,
+                as_avg.avg_quiz_score
             FROM interview i
             LEFT JOIN assessment a ON a.id = i.assessment_id
             LEFT JOIN candidate c ON c.id = i.candidate_id
             LEFT JOIN assessment_quiz aq ON aq.assessment_id = a.id
             LEFT JOIN quiz q ON q.id = aq.quiz_id
-            LEFT JOIN answer ans ON ans.quiz_id = q.id
-            WHERE i.id = '%s' AND i.status = 'COMPLETED';
+            LEFT JOIN answer ans ON ans.quiz_id = q.id AND ans.interview_id = i.id
+            LEFT JOIN avg_scores as_avg ON as_avg.quiz_id = q.id
+            WHERE i.id = '%s' AND i.status = 'COMPLETED;
         """ % interview_id
         try:
             self.db_client.execute(sql)
@@ -194,18 +215,19 @@ class InterviewRepository:
         }
 
         for row in result:
-            (quiz_id, quiz_context, quiz_topic, quiz_subtopic, quiz_difficulty,
-             video_url, feedback, score) = row[9:]
+            (quiz_id, quiz_description, quiz_topic, quiz_subtopic, quiz_difficulty,
+             video_url, feedback, score, avg_score) = row[9:]
             if quiz_id and video_url:
                 answer = {
                     'quiz_id': quiz_id,
-                    'quiz_context': quiz_context,
+                    'quiz_description': quiz_description,
                     'quiz_topic': quiz_topic,
                     'quiz_subtopic': quiz_subtopic,
                     'quiz_difficulty': quiz_difficulty,
                     'video_url': video_url,
                     'feedback': feedback,
                     'score': score,
+                    'average_score': avg_score,
                 }
                 interview['answers'].append(answer)
 
