@@ -40,6 +40,7 @@ export interface Assessment {
   candidates?: Candidate[];
   interviewId?: string;
   interviewStatus?: string;
+  interviewCreatedAt?: string;
   totalScore?: number;
   summary?: string;
 }
