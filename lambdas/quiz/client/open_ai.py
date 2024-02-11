@@ -284,7 +284,7 @@ class SummaryGenerator(OpenAiChatClient):
 
 
 class EvaluationGenerator(OpenAiChatClient):
-    def _get_system_and_user_message(self, quiz, position_type, position_level, answer):
+    def _get_system_and_user_message(self, quiz, answer):
         """
         Gets the system and user messages.
 
@@ -299,34 +299,41 @@ class EvaluationGenerator(OpenAiChatClient):
         Based on the information provided, you must evaluate the candidate's answer.
 
         You are going to give a score to the answer from 0 to 100, and feedback to the candidate.
-        The score is calculated based on the criteria and the candidate's answer.
-        Later questions have more weight than earlier questions. For example, question 3 has more weight than question 1 since they are harder.
+        The score is calculated based on the criteria and the candidate's answer. Each question has a detailed criteria that explains how the candidate's answer will be evaluated and how many points the candidate can get for each question.
+        Also, a quiz has additional criteria that explains how the candidate's answers will be evaluated and how many additional points the candidate can get.
+        Your calculation should be based on the criteria and the candidate's answer. The sum of the all points divided by the maximum score of the quiz, multiplied by 100, will give you the score.
+        For example, if the candidate gets 10 points out of 12, the score will be (10/12)*100 = 83.33.
+        Calculate the score for each question first, then calculate the additional criteria, and then calculate the total score.
+        
         Return the total score in json format with feedback.
-        The feedback is calculated based on the score and what the candidate wrote.
+        The feedback is calculated based on the score and what the candidate did well and what the candidate could improve.
 
         Your response should be a JSON object with the following fields:
         {
-            "score": <score>, // 0 to 100 calculated based on the criteria
+            "score": <score>, // 0 to 100 float number calculated based on the criteria
             "feedback": <feedback> // 2-3 sentences why you gave the score you gave
         }
         """
 
-        user_message = f'Here is the quiz for position type {position_type} and position level {position_level}:\n'
-        user_message += f'Context: {quiz["context"]}\n'
-        user_message += 'Questions:\n'
-        user_message += f'Topic: {quiz["topic"]}\n'
+        user_message = f'Topic: {quiz["topic"]}\n'
         user_message += f'Subtopic: {quiz["subtopic"]}\n'
         user_message += f'Difficulty: {quiz["difficulty"]}\n'
+        user_message += f'The total score for the quiz is {quiz["max_score"]}\n'
+        user_message += f'Context: {quiz["context"]}\n'
+        user_message += 'Questions:\n'
         for i in range(len(quiz['questions'])):
             question = quiz['questions'][i]
             user_message += f'Question {i + 1}. {question["text"]}\n'
             user_message += f'Criteria: {question["criteria"]}\n'
 
+        user_message += f'And this is an additional criteria: {quiz["additional_criteria"]}\n'
+        
+        user_message += 'Calculate the score based on those criteria.\n'
         user_message += f'Here is the candidate Answer: {answer}\n'
         user_message += 'Evaluate it, and return the score and feedback in json format.\n'
         return system_message, user_message
 
-    def generate(self, quiz, position_type, position_level, transcript):
+    def generate(self, quiz, transcript):
         """
         Gets the evaluation from GPT.
 
@@ -334,7 +341,7 @@ class EvaluationGenerator(OpenAiChatClient):
         :param user_message: The user message.
         """
         logger.info('Getting the evaluation from GPT...')
-        system_message, user_message = self._get_system_and_user_message(quiz, position_type, position_level, transcript)
+        system_message, user_message = self._get_system_and_user_message(quiz, transcript)
         try:
             completion = self.client.chat.completions.create(
                 model="gpt-3.5-turbo-1106",
