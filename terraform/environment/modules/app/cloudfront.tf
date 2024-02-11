@@ -1,11 +1,12 @@
-resource "aws_cloudfront_distribution" "www" {
+resource "aws_cloudfront_distribution" "main" {
   depends_on = [
-    aws_s3_bucket.www,
+    aws_s3_bucket.main,
     aws_acm_certificate_validation.cert
   ]
   origin {
-    domain_name = aws_s3_bucket.www.bucket_regional_domain_name
-    origin_id   = "S3-${aws_s3_bucket.www.bucket}"
+    # domain_name              = "${var.app_domain_name}.s3-website-${var.region}.amazonaws.com"
+    domain_name = aws_s3_bucket.main.bucket_regional_domain_name
+    origin_id   = "S3-${aws_s3_bucket.main.bucket}"
 
     s3_origin_config {
       origin_access_identity = aws_cloudfront_origin_access_identity.origin_access_identity.cloudfront_access_identity_path
@@ -16,7 +17,7 @@ resource "aws_cloudfront_distribution" "www" {
   is_ipv6_enabled     = true
   default_root_object = "index.html"
 
-  aliases = [ "www.${var.app_domain_name}" ]
+  aliases = [ "${var.app_domain_name}" ]
 
   custom_error_response {
     error_code            = 403
@@ -49,7 +50,7 @@ resource "aws_cloudfront_distribution" "www" {
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD"]
     cached_methods   = ["GET", "HEAD"]
-    target_origin_id = "S3-${aws_s3_bucket.www.bucket}"
+    target_origin_id = "S3-${aws_s3_bucket.main.bucket}"
 
     forwarded_values {
       query_string = false
@@ -80,16 +81,16 @@ resource "aws_cloudfront_distribution" "www" {
   }
 }
 
-resource "aws_cloudfront_distribution" "main" {
+resource "aws_cloudfront_distribution" "www" {
    depends_on = [
-    aws_s3_bucket.main,
+    aws_s3_bucket.www,
     aws_acm_certificate_validation.cert
   ]
   enabled = true
 
   origin {
-    origin_id                = "S3-${aws_s3_bucket.main.bucket}"
-    domain_name              = "${var.app_domain_name}.s3-website-${var.region}.amazonaws.com"
+    origin_id                = "S3-${aws_s3_bucket.www.bucket}"
+    domain_name              = "www.${var.app_domain_name}.s3-website-${var.region}.amazonaws.com"
     custom_origin_config {
       http_port              = 80
       https_port             = 443
@@ -99,7 +100,7 @@ resource "aws_cloudfront_distribution" "main" {
   }
 
   default_cache_behavior {
-    target_origin_id = "S3-${aws_s3_bucket.main.bucket}"
+    target_origin_id = "S3-${aws_s3_bucket.www.bucket}"
     allowed_methods  = ["GET", "HEAD"]
     cached_methods   = ["GET", "HEAD"]
 
@@ -117,7 +118,7 @@ resource "aws_cloudfront_distribution" "main" {
     max_ttl                = 0
   }
 
-  aliases = [ var.app_domain_name ]
+  aliases = [ "www.${var.app_domain_name}" ]
 
   restrictions {
     geo_restriction {
@@ -125,7 +126,7 @@ resource "aws_cloudfront_distribution" "main" {
     }
   }
 
-  price_class = "PriceClass_200"
+  price_class = "PriceClass_100"
 
 
   viewer_certificate {
