@@ -25,6 +25,7 @@ const QuestionsListTemplate = ({
           description={quiz.description}
           keyword={quiz.topic}
           difficulty={quiz.difficulty}
+          selected={false}
         />
       ))
     ) : null}
