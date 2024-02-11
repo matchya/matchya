@@ -9,7 +9,7 @@ import { Quiz } from '@/types';
 
 function CreateAssessmentPage() {
   const navigate = useNavigate();
-  const [testName, setTestName] = useState(
+  const [assessmentName, setAssessmentName] = useState(
     'Junior Software Engineer Assessment'
   );
   const [selectedPosition, setSelectedPosition] = useState('Software Engineer');
@@ -17,6 +17,9 @@ function CreateAssessmentPage() {
   const [description, setDescription] = useState('');
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingQuestionGeneration, setIsLoadingQuestionGeneration] = useState<boolean>(false);
+  const [quizTopic, setQuizTopic] = useState<string>('');
+  const [quizDifficulty, setQuizDifficulty] = useState<string>('easy');
 
   useEffect(() => {
     fetchQuizzes();
@@ -37,20 +40,24 @@ function CreateAssessmentPage() {
     trackEvent({
       eventName: 'create_assessment',
       properties: {
-        testName,
+        assessmentName,
         selectedPosition,
         selectedLevel,
         // quizIds: selectedQuizzes.map(quiz => quiz.id),
       },
     });
-    if (testName === '' || selectedPosition === '' || selectedLevel === '') {
+    if (
+      assessmentName === '' ||
+      selectedPosition === '' ||
+      selectedLevel === ''
+    ) {
       alert('Test name is required');
       return;
     }
     try {
       setIsLoading(true);
       const data = {
-        name: testName,
+        name: assessmentName,
         positionType: selectedPosition,
         positionLevel: selectedLevel,
         topics: [],
@@ -72,38 +79,79 @@ function CreateAssessmentPage() {
 
   const handlePositionChange = (value: string) => {
     if (
-      testName === '' ||
-      testName === `${selectedLevel} ${selectedPosition} Assessment`
+      assessmentName === '' ||
+      assessmentName === `${selectedLevel} ${selectedPosition} Assessment`
     ) {
-      setTestName(`${selectedLevel} ${value} Assessment`);
+      setAssessmentName(`${selectedLevel} ${value} Assessment`);
     }
     setSelectedPosition(value);
   };
 
   const handleLevelChange = (value: string) => {
     if (
-      testName === '' ||
-      testName === `${selectedLevel} ${selectedPosition} Assessment`
+      assessmentName === '' ||
+      assessmentName === `${selectedLevel} ${selectedPosition} Assessment`
     ) {
-      setTestName(`${value} ${selectedPosition} Assessment`);
+      setAssessmentName(`${value} ${selectedPosition} Assessment`);
     }
     setSelectedLevel(value);
   };
 
+  const handleGenerateQuiz = async () => {
+    trackEvent({
+      eventName: 'generate_quiz',
+      properties: {
+        assessmentName,
+        selectedPosition,
+        selectedLevel,
+      },
+    });
+    if (quizTopic === '') {
+      alert('Please select a topic to generate quiz for');
+      return;
+    }
+    const data = {
+      positionType: selectedPosition,
+      positionLevel: selectedLevel,
+      topic: quizTopic,
+      difficulty: quizDifficulty,
+      positionDescription: description,
+    };
+    try {
+      setIsLoadingQuestionGeneration(true);
+      const response = await caseSensitiveAxiosInstance.post('/quizzes', data);
+      if (response.data.status === 'success') {
+        const newQuiz = response.data.payload.quiz;
+        const newQuizzes = [newQuiz, ...quizzes];
+        setQuizzes(newQuizzes);
+        setQuizTopic('');
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoadingQuestionGeneration(false)
+    }
+  };
+
   return (
     <Template
-      testName={testName}
+      assessmentName={assessmentName}
       quizzes={quizzes}
       description={description}
       selectedPosition={selectedPosition}
       selectedLevel={selectedLevel}
+      quizTopic={quizTopic}
+      quizDifficulty={quizDifficulty}
       isLoading={isLoading}
       onDescriptionChange={e => setDescription(e.target.value)}
-      onTestNameChange={e => setTestName(e.target.value)}
+      onAssessmentNameChange={e => setAssessmentName(e.target.value)}
       onPositionChange={(value: string) => handlePositionChange(value)}
       onLevelChange={(value: string) => handleLevelChange(value)}
+      onTopicInputChange={(value: string) => setQuizTopic(value)}
+      onDifficultyInputChange={(value: string) => setQuizDifficulty(value)}
       onSubmit={handleSubmit}
-      isLoadingQuestionGeneration={false}
+      handleGenerateQuiz={handleGenerateQuiz}
+      isLoadingQuestionGeneration={isLoadingQuestionGeneration}
     />
   );
 }

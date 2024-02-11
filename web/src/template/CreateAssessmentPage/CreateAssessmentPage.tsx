@@ -35,12 +35,17 @@ interface CreateAssessmentPageTemplateProps {
   quizzes: Quiz[];
   selectedPosition: string;
   selectedLevel: string;
-  testName: string;
+  quizTopic: string;
+  quizDifficulty: string;
+  assessmentName: string;
   onDescriptionChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  onTestNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onAssessmentNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onPositionChange: (value: string) => void;
   onLevelChange: (value: string) => void;
+  onTopicInputChange: (value: string) => void;
+  onDifficultyInputChange: (value: string) => void;
   onSubmit: () => void;
+  handleGenerateQuiz: () => void;
 }
 
 const CreateAssessmentPageTemplate = ({
@@ -50,12 +55,17 @@ const CreateAssessmentPageTemplate = ({
   quizzes,
   selectedPosition,
   selectedLevel,
-  testName,
+  quizTopic,
+  quizDifficulty,
+  assessmentName,
   onDescriptionChange,
-  onTestNameChange,
+  onAssessmentNameChange,
   onPositionChange,
   onLevelChange,
+  onTopicInputChange,
+  onDifficultyInputChange,
   onSubmit,
+  handleGenerateQuiz,
 }: CreateAssessmentPageTemplateProps) => {
   return (
     <div className="w-full h-full xl:flex py-12">
@@ -75,8 +85,8 @@ const CreateAssessmentPageTemplate = ({
                 Assessment Name
               </p>
               <Input
-                value={testName}
-                onChange={onTestNameChange}
+                value={assessmentName}
+                onChange={onAssessmentNameChange}
                 type="text"
                 className="w-2/3 text-matcha-900 border-gray-200 active:ring-0 focus:ring-0"
               />
@@ -166,9 +176,16 @@ const CreateAssessmentPageTemplate = ({
         </div>
         <div className="flex space-x-3">
           <div className="w-full">
-            <Input placeholder="Type your question topic here" />
+            <Input
+              placeholder="Type your question topic here"
+              value={quizTopic}
+              onChange={e => onTopicInputChange(e.target.value)}
+            />
           </div>
-          <Select value={`easy`} onValueChange={() => alert('yo')}>
+          <Select
+            value={quizDifficulty}
+            onValueChange={val => onDifficultyInputChange(val)}
+          >
             <SelectTrigger className="h-10 w-[150px]">
               <SelectValue placeholder="easy" />
             </SelectTrigger>
@@ -180,7 +197,7 @@ const CreateAssessmentPageTemplate = ({
               ))}
             </SelectContent>
           </Select>
-          <Button>Generate with AI</Button>
+          <Button onClick={handleGenerateQuiz}>Generate with AI</Button>
         </div>
         <div className="space-y-4 overflow-y-auto max-h-[490px]">
           {isLoadingQuestionGeneration ? <LoadingCard /> : null}
