@@ -36,6 +36,26 @@ export const AssessmentDetailPage: Story = {
               difficulty: 'easy',
               subtopic: 'docker',
               isOriginal: true,
+              questions: [
+                {
+                  id: '5e88efd5-760b-4adb-9d42-bbaba76cac75',
+                  text:
+                    'Explain the concept of Continuous Delivery and its benefits in software development. How does it differ from Continuous Deployment?',
+                  questionNumber: 1,
+                },
+                {
+                  id: '5e88efd5-760b-4adb-9d42-bbaba76cac75',
+                  text:
+                    'How does Continuous Delivery differ from Continuous Deployment?',
+                  questionNumber: 2,
+                },
+                {
+                  id: '5e88efd5-760b-4adb-9d42-bbaba76cac75',
+                  text:
+                    'What are the benefits of Continuous Delivery in software development?',
+                  questionNumber: 3,
+                },
+              ],
               createdAt: '',
             },
             {
@@ -48,6 +68,26 @@ export const AssessmentDetailPage: Story = {
               difficulty: 'easy',
               subtopic: 'docker',
               isOriginal: true,
+              questions: [
+                {
+                  id: '23c2e832-09c6-49a0-aec4-70bfc6a31f0b',
+                  text:
+                    'Explain the concept of Hexagonal Architecture in software design. What are the key benefits of using Hexagonal Architecture?',
+                  questionNumber: 1,
+                },
+                {
+                  id: '23c2e832-09c6-49a0-aec4-70bfc6a31f0b',
+                  text:
+                    'What are the key benefits of using Hexagonal Architecture?',
+                  questionNumber: 2,
+                },
+                {
+                  id: '23c2e832-09c6-49a0-aec4-70bfc6a31f0b',
+                  text:
+                    'What are the key benefits of using Hexagonal Architecture?',
+                  questionNumber: 3,
+                },
+              ],
               createdAt: '',
             },
           ]}
