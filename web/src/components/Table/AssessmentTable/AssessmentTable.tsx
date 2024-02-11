@@ -26,7 +26,7 @@ import { AssessmentTablePagination } from './AssessmentTablePagination';
 import { AssessmentTableToolbar } from './AssessmentTableToolbar';
 import { columns } from './columns';
 
-import { Button, Icons } from '@/components';
+import { DeleteAssessmentDialog } from '@/components';
 import { Assessment } from '@/types';
 
 interface AssessmentTableProps {
@@ -114,13 +114,10 @@ const AssessmentTable = ({
                   ))}
                   {/* Delete button */}
                   <TableCell className="cursor-pointer" onClick={() => {}}>
-                    <Button
-                      variant="ghost"
-                      className="hover:bg-gray-50"
-                      onClick={() => handleDeleteAssessment(row.original.id)}
-                    >
-                      <Icons.trash className="h-4 w-4 rounded-md hover:bg-gray-200" />
-                    </Button>
+                    <DeleteAssessmentDialog
+                      assessmentName={row.original.name}
+                      handleDelete={() => handleDeleteAssessment(row.original.id)}
+                    />
                   </TableCell>
                 </TableRow>
               ))
