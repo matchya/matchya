@@ -35,7 +35,7 @@ if (import.meta.env.MODE !== 'development') {
         colorScheme: 'light',
       }),
     ],
-    debug: import.meta.env.MODE === 'staging',
+    debug: false,
     release: `web@${import.meta.env.NPM_PACKAGE_VERSION}`,
     // Performance Monitoring
     tracesSampleRate: 1, //  Capture 100% of the transactions
