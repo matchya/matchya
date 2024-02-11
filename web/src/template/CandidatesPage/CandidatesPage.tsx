@@ -1,4 +1,4 @@
-import { Button, CandidatesTable, Icons } from '@/components';
+import { CandidatesTable, Icons } from '@/components';
 import { Candidate } from '@/types';
 
 interface CandidatesPageTemplateProps {
