@@ -1,17 +1,16 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import DisplayingComponent from './Badge';
-import ShadcnComponent from './Badge.shadcn';
+import Component from './Badge';
 
-const meta: Meta<typeof DisplayingComponent> = {
-  title: 'Component/Badge',
-  component: DisplayingComponent,
+const meta: Meta<typeof Component> = {
+  title: 'Component',
+  component: Component,
 };
 
 export default meta;
 
-type Story = StoryObj<typeof DisplayingComponent>;
+type Story = StoryObj<typeof Component>;
 
-export const Shadcn: Story = {
-  render: () => <ShadcnComponent>Hello</ShadcnComponent>,
+export const Badge: Story = {
+  render: () => <Component>Hello</Component>,
 };

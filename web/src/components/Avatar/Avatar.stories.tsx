@@ -1,17 +1,16 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import DisplayingComponent from './Avatar';
-import ShadcnComponent from './Avatar.shadcn';
+import Component from './Avatar';
 
-const meta: Meta<typeof DisplayingComponent> = {
-  title: 'Component/Avatar',
-  component: DisplayingComponent,
+const meta: Meta<typeof Component> = {
+  title: 'Component',
+  component: Component,
 };
 
 export default meta;
 
-type Story = StoryObj<typeof DisplayingComponent>;
+type Story = StoryObj<typeof Component>;
 
-export const Shadcn: Story = {
-  render: () => <ShadcnComponent />,
+export const Avatar: Story = {
+  render: () => <Component />,
 };

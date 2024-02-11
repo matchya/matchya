@@ -2,7 +2,6 @@
 
 import {
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -32,17 +31,17 @@ const UserNavDropdownMenu = ({
           </p>
         </div>
       </DropdownMenuLabel>
-      <DropdownMenuSeparator />
-      <DropdownMenuGroup>
-        {/* <DropdownMenuItem onClick={navigateToDashboardPage}> */}
-          {/* Dashboard */}
-          {/* <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut> */}
-        {/* </DropdownMenuItem> */}
-        {/* <DropdownMenuItem onClick={navigateToSettingsPage}> */}
-        {/* Settings */}
-        {/* <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut> */}
-        {/* </DropdownMenuItem> */}
-      </DropdownMenuGroup>
+      {/* <DropdownMenuSeparator /> */}
+      {/* <DropdownMenuGroup>
+        <DropdownMenuItem onClick={navigateToDashboardPage}>
+          Dashboard
+          <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={navigateToSettingsPage}>
+          Settings
+          <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+        </DropdownMenuItem>
+      </DropdownMenuGroup> */}
       <DropdownMenuSeparator />
       <DropdownMenuItem onClick={onLogout}>Log out</DropdownMenuItem>
     </DropdownMenuContent>
