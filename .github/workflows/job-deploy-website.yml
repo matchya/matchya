@@ -13,7 +13,6 @@ on:
 jobs:
   web:
     name: Web
-    if: inputs.environment != 'production'
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment-label }}
     steps:
