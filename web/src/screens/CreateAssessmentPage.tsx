@@ -124,12 +124,12 @@ function CreateAssessmentPage() {
         const newQuiz = response.data.payload.quiz;
         const newQuizzes = [newQuiz, ...quizzes];
         setQuizzes(newQuizzes);
+        setQuizTopic('');
       }
     } catch (error) {
       console.log(error);
     } finally {
-      setIsLoadingQuestionGeneration(false);
-      setQuizTopic('');
+      setIsLoadingQuestionGeneration(false)
     }
   };
 
