@@ -20,6 +20,23 @@ functions:
           cors: ${file(../shared/serverless.dev.yml):cors}
           authorizer: ${file(../shared/serverless.dev.yml):cookie-authorizer}
 
+  retrieve-by-id:
+    name: ${self:provider.stage}-quiz-retrieve-by-id
+    image:
+      name: default
+      command:
+        - retrieve_by_id.handler
+    events:
+      - http:
+          path: /quizzes/{id}
+          method: GET
+          cors: ${file(../shared/serverless.dev.yml):cors}
+          authorizer: ${file(../shared/serverless.dev.yml):cookie-authorizer}
+          request:
+            parameters:
+              paths:
+                id: true
+
   evaluate:
     name: ${self:provider.stage}-quiz-evaluate
     image:

@@ -40,20 +40,21 @@ export interface Assessment {
   candidates?: Candidate[];
   interviewId?: string;
   interviewStatus?: string;
+  interviewCreatedAt?: string;
   totalScore?: number;
   summary?: string;
 }
 
 export interface Quiz {
   id: string;
-  context: string;
+  context?: string;
   description: string;
   topic: string;
   subtopic: string;
   difficulty: string;
   isOriginal: boolean;
   averageScore?: number;
-  questions: Question[];
+  questions?: Question[];
   createdAt: string;
 }
 

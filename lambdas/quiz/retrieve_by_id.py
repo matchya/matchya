@@ -2,7 +2,7 @@ import os
 
 from client.postgres import PostgresDBClient
 from client.sentry import SentryClient
-from repo.assessment import AssessmentRepository
+from repo.quiz import QuizRepository
 from utils.logger import Logger
 from utils.package_info import PackageInfo
 from utils.request_parser import RequestParser
@@ -15,28 +15,30 @@ postgres_client = PostgresDBClient()
 response_generator = ResponseGenerator()
 
 
+# TODO: This lambda must handle searching for keywords and filtering based on position info
 def handler(event, context):
+    logger.info('Starting lambda execution')
+
     try:
-        logger.info('Retrieving assessment by id...')
+        logger.info('Retrieving quiz by id...')
 
         # parsing from the event
         request_parser = RequestParser(event)
         origin = request_parser.parse_header()
-        company_id = request_parser.parse_cookie_body()['company_id']
-        assessment_id = request_parser.parse_request_parameter('id')
+        quiz_id = request_parser.parse_request_parameter('id')
         response_generator.origin_domain = origin
 
-        # db operations
+        # business logic
         with postgres_client as db_client:
-            assessment_repo = AssessmentRepository(db_client)
-            assessment = assessment_repo.retrieve_by_id(company_id, assessment_id)
+            quiz_repo = QuizRepository(db_client)
+            quiz = quiz_repo.retrieve_by_id(quiz_id)
 
         return response_generator.generate_success_response({
-            'assessment': assessment
+            'quiz': quiz
         })
     except (ValueError, RuntimeError) as e:
-        logger.error(f'Retrieving a assessment failed: {e}')
+        logger.error(f'Retrieving quizzes failed: {e}')
         return response_generator.generate_error_response(400, str(e))
     except Exception as e:
-        logger.error(f'Retrieving a assessment failed: {e}')
+        logger.error(f'Retrieving quizzes failed: {e}')
         return response_generator.generate_error_response(500, str(e))

@@ -87,7 +87,7 @@ class CandidateRepository:
         logger.info(f'Retrieving candidates by company id: {company_id}')
         sql = """
             SELECT 
-                c.id, c.email, c.name, ac.created_at AS added_at,
+                c.id, c.email, c.name,
                 i.id AS i, i.total_score, i.created_at, i.status AS interview_status,
                 a.id AS assessment_id, a.name AS assessment_name
             FROM candidate AS c 
@@ -104,15 +104,14 @@ class CandidateRepository:
             candidate.id = row[0]
             candidate.email = row[1]
             candidate.name = row[2]
-            candidate.added_at = str(row[3])
-            if row[4]:
+            if row[3]:
                 candidate.assessment = {
-                    'id': row[8],
-                    'name': row[9],
-                    'interview_id': row[4],
-                    'interview_status': row[7],
-                    'total_score': row[5],
-                    'created_at': str(row[6])
+                    'id': row[7],
+                    'name': row[8],
+                    'interview_id': row[3],
+                    'interview_status': row[6],
+                    'total_score': row[4],
+                    'interview_created_at': str(row[5])
                 }
             candidates.append(candidate)
         logger.info('Successfully retrieved candidates')
