@@ -9,39 +9,6 @@ on:
         type: string
 
 jobs:
-  lambda-authentication:
-    name: Lambda Functions (Authentication)
-    runs-on: ubuntu-latest
-    environment: ${{ inputs.environment-label }}
-    steps:
-      - name: Fetch Repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-
-      - uses: actions/setup-node@v4
-        with:
-          cache: npm
-          node-version: 20
-
-      - name: Install Root Dependencies
-        run: npm ci
-
-      - name: Install Package Dependencies
-        run: npm ci
-        working-directory: lambdas/authentication
-
-      - name: Deploy
-        run: npx sls deploy --stage ${{ inputs.environment }} --config serverless.yml
-        working-directory: lambdas/authentication
-
   lambda-authorizer:
     name: Lambda Functions (Authorizer)
     runs-on: ubuntu-latest
@@ -81,6 +48,8 @@ jobs:
     strategy:
       matrix:
         include:
+          - package: authentication
+            label: Authentication
           - package: candidate
             label: Candidate
           - package: company
