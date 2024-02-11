@@ -4,7 +4,7 @@ import { LayoutDecorator } from '../../../.storybook/decorators';
 
 import Component from './InterviewDetailPage';
 
-import { mockedInterview } from '@/data/mock';
+import { mockedInterview } from '@/data';
 
 const meta: Meta<typeof Component> = {
   title: 'Page',

@@ -2,7 +2,7 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import Component from './InterviewRecordingPage';
 
-import { mockedQuestion } from '@/data/mock';
+import { mockedSelectedQuiz } from '@/data';
 
 const meta: Meta<typeof Component> = {
   title: 'Page',
@@ -16,7 +16,7 @@ type Story = StoryObj<typeof Component>;
 export const InterviewRecordingPage: Story = {
   render: () => (
     <Component
-      quiz={mockedQuestion}
+      quiz={mockedSelectedQuiz}
       isLoading={false}
       progressbarCount={2}
       totalQuizCount={4}
