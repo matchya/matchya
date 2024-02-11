@@ -41,7 +41,7 @@ const InviteCandidateDialog = ({
             assessments.find(assessment => assessment.id === assessmentId)
               ?.name || '',
           interviewStatus: 'PENDING',
-          createdAt: new Date().toISOString(), // TODO: this should be interview created at
+          createdAt: new Date().toISOString(),
         };
         addCandidate(candidate);
         setName('');
