@@ -14,7 +14,6 @@ const CandidatesPageTemplate = ({
   isLoading,
   addCandidate
 }: CandidatesPageTemplateProps) => {
-  console.log(candidates)
   return (
     <div className="h-full min-h-[calc(100vh-64px)] overflow-hidden">
       <div className="w-full h-full mx-auto">
