@@ -16,6 +16,7 @@ function CreateAssessmentPage() {
   const [selectedLevel, setSelectedLevel] = useState('Junior');
   const [description, setDescription] = useState('');
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
+  const [selectedQuizzes, setSelectedQuizzes] = useState<Quiz[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingQuestionGeneration, setIsLoadingQuestionGeneration] = useState<boolean>(false);
   const [quizTopic, setQuizTopic] = useState<string>('');
@@ -137,6 +138,7 @@ function CreateAssessmentPage() {
     <Template
       assessmentName={assessmentName}
       quizzes={quizzes}
+      selectedQuizzes={selectedQuizzes}
       description={description}
       selectedPosition={selectedPosition}
       selectedLevel={selectedLevel}
@@ -149,6 +151,7 @@ function CreateAssessmentPage() {
       onLevelChange={(value: string) => handleLevelChange(value)}
       onTopicInputChange={(value: string) => setQuizTopic(value)}
       onDifficultyInputChange={(value: string) => setQuizDifficulty(value)}
+      setSelectedQuizzes={setSelectedQuizzes}
       onSubmit={handleSubmit}
       handleGenerateQuiz={handleGenerateQuiz}
       isLoadingQuestionGeneration={isLoadingQuestionGeneration}
