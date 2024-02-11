@@ -16,7 +16,7 @@ class QuizRepository:
 
     def __init__(self, db_client: PostgresDBClient):
         self.db_client = db_client
-        
+
     def insert(self, context, topic, subtopic, difficulty, description, is_original=False, additional_criteria='', max_score=1):
         """
         Inserts a quiz into the database.
@@ -79,7 +79,7 @@ class QuizRepository:
         logger.info('Getting a quiz by quiz id from db...')
         sql = """
             SELECT 
-                quiz.id, quiz.context, quiz.topic, quiz.subtopic, quiz.difficulty,
+                quiz.id, quiz.context, quiz.topic, quiz.subtopic, quiz.difficulty, quiz.additional_criteria, quiz.max_score,
                 question.id, question.text, question.criteria
             FROM quiz
             LEFT JOIN question ON quiz.id = question.quiz_id
@@ -108,10 +108,12 @@ class QuizRepository:
             'topic': result[0][2],
             'subtopic': result[0][3],
             'difficulty': result[0][4],
+            'additional_criteria': result[0][5],
+            'max_score': result[0][6],
             'questions': []
         }
         for row in result:
-            (question_id, question_text, question_criteria) = row[5:]
+            (question_id, question_text, question_criteria) = row[7:]
 
             question = {
                 'id': question_id,
