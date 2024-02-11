@@ -26,6 +26,23 @@ export const mockedInterview: Interview = {
         difficulty: 'medium',
         isOriginal: true,
         averageScore: 3.5,
+        questions: [
+          {
+            id: '75f18b0a-0c44-4de1-9a47-17a39cea0083',
+            questionNumber: 1,
+            text: 'Explain the key features and benefits of using Cypress for UI testing. How does Cypress differ from other UI testing frameworks, and what are its limitations? Provide examples of scenarios where Cypress excels and where it may not be the best choice for UI testing.',
+          },
+          {
+            id: 'b2b3b3e8-3c0e-4e2e-9f8d-9e6d0f7f1e7a',
+            questionNumber: 2,
+            text: 'What are the key features of Cypress for UI testing? How does it differ from other UI testing frameworks, and what are its limitations?',
+          },
+          {
+            id: 'd8e4e2d7-1f4f-4b8d-9f7b-0f3e7e4d8e2d',
+            questionNumber: 3,
+            text: 'Provide examples of scenarios where Cypress excels and where it may not be the best choice for UI testing.',
+          }
+        ],
         createdAt: '2024-01-29 02:16:34.700078',
       },
       videoUrl:
@@ -45,6 +62,23 @@ export const mockedInterview: Interview = {
         difficulty: 'hard',
         isOriginal: true,
         averageScore: 3.9,
+        questions: [
+          {
+            id: '2dc4c0b1-6582-48bf-a8cc-03f7c768fe0c',
+            questionNumber: 1,
+            text: 'Explain the concept of Creational Design Patterns. Provide examples of at least three different creational patterns, their use cases, and how they contribute to creating objects in a flexible and decoupled manner.',
+          },
+          {
+            id: '6b5a6b4b-4b6a-4b6a-4b6a-4b6a4b6a4b6a',
+            questionNumber: 2,
+            text: 'What are Creational Design Patterns? Provide examples of at least three different creational patterns, their use cases, and how they contribute to creating objects in a flexible and decoupled manner.',
+          },
+          {
+            id: '4b6a4b6a-4b6a-4b6a-4b6a-4b6a4b6a4b6a',
+            questionNumber: 3,
+            text: 'Provide examples of at least three different creational patterns, their use cases, and how they contribute to creating objects in a flexible and decoupled manner.',
+          }
+        ],
         createdAt: '2024-01-29 02:16:34.700078',
       },
       videoUrl:
@@ -64,6 +98,23 @@ export const mockedInterview: Interview = {
         difficulty: 'medium',
         isOriginal: true,
         averageScore: 3.2,
+        questions: [
+          {
+            id: 'd2473533-d80b-4e0d-bb53-2a179f626243',
+            questionNumber: 1,
+            text: 'Explain the role of Agile methodologies in software development. How does Agile differ from traditional waterfall methods, and what are the key benefits and challenges of using Agile?',
+          },
+          {
+            id: '2a179f62-2a17-2a17-2a17-2a179f626243',
+            questionNumber: 2,
+            text: 'What is the role of Agile methodologies in software development? How does Agile differ from traditional waterfall methods, and what are the key benefits and challenges of using Agile?',
+          },
+          {
+            id: '2a17-2a17-2a17-2a17-2a179f626243',
+            questionNumber: 3,
+            text: 'How does Agile differ from traditional waterfall methods, and what are the key benefits and challenges of using Agile?',
+          }
+        ],
         createdAt: '2024-01-29 02:16:34.700078',
       },
       videoUrl:
@@ -83,6 +134,23 @@ export const mockedInterview: Interview = {
         difficulty: 'hard',
         isOriginal: true,
         averageScore: 3.7,
+        questions: [
+          {
+            id: 'ab909d38-7c4b-44c2-b823-56aa1bf02bf9',
+            questionNumber: 1,
+            text: 'Explain the Model-View-ViewModel (MVVM) architectural pattern. Describe the key components of MVVM and how they interact. Provide an example of how MVVM is used in a real-world application and discuss its benefits and challenges.',
+          },
+          {
+            id: '56aa1bf0-56aa-56aa-56aa-56aa1bf02bf9',
+            questionNumber: 2,
+            text: 'What is the Model-View-ViewModel (MVVM) architectural pattern? Describe the key components of MVVM and how they interact. Provide an example of how MVVM is used in a real-world application and discuss its benefits and challenges.',
+          },
+          {
+            id: '56aa-56aa-56aa-56aa-56aa1bf02bf9',
+            questionNumber: 3,
+            text: 'Provide an example of how MVVM is used in a real-world application and discuss its benefits and challenges.',
+          }
+        ],
         createdAt: '2024-01-29 02:16:34.700078',
       },
       videoUrl:
