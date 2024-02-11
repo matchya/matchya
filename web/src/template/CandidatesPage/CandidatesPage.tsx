@@ -21,13 +21,14 @@ const CandidatesPageTemplate = ({
                   <div className="space-y-4">
                     <h3 className="text-4xl font-bold">My Candidates</h3>
                   </div>
-                  <Button
+                  {/* CURRENTLY NOT USING */}
+                  {/* <Button
                     className="py-6 bg-matcha-400 hover:bg-matcha-500 text-white"
                     onClick={() => {}}
                   >
                     <Icons.personAdd className="h-5 w-5 mr-2" />
                     Invite Candidate
-                  </Button>
+                  </Button> */}
                 </div>
                 {isLoading && (
                   <div className="flex mt-48 justify-center items-center">
