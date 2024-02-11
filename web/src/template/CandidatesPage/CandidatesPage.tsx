@@ -1,15 +1,20 @@
-import { CandidatesTable, Icons } from '@/components';
-import { Candidate } from '@/types';
+import { CandidatesTable, Icons, InviteCandidateDialog } from '@/components';
+import { Assessment, Candidate } from '@/types';
 
 interface CandidatesPageTemplateProps {
   candidates: Candidate[];
+  assessments: Assessment[];
   isLoading: boolean;
+  addCandidate: (candidate: Candidate) => void;
 }
 
 const CandidatesPageTemplate = ({
   candidates,
+  assessments,
   isLoading,
+  addCandidate
 }: CandidatesPageTemplateProps) => {
+  console.log(candidates)
   return (
     <div className="h-full min-h-[calc(100vh-64px)] overflow-hidden">
       <div className="w-full h-full mx-auto">
@@ -21,14 +26,7 @@ const CandidatesPageTemplate = ({
                   <div className="space-y-4">
                     <h3 className="text-4xl font-bold">My Candidates</h3>
                   </div>
-                  {/* CURRENTLY NOT USING */}
-                  {/* <Button
-                    className="py-6 bg-matcha-400 hover:bg-matcha-500 text-white"
-                    onClick={() => {}}
-                  >
-                    <Icons.personAdd className="h-5 w-5 mr-2" />
-                    Invite Candidate
-                  </Button> */}
+                  <InviteCandidateDialog addCandidate={addCandidate} assessments={assessments} />
                 </div>
                 {isLoading && (
                   <div className="flex mt-48 justify-center items-center">

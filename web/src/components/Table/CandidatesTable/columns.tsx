@@ -12,6 +12,7 @@ export const columns: ColumnDef<Candidate>[] = [
       <CandidatesTableColumnHeader column={column} title="Created Date" />
     ),
     cell: ({ row }) => {
+      // TODO: Here, this should be interview created at
       const date = row.original.assessment
         ? new Date(row.original.assessment?.createdAt as string)
         : new Date();
