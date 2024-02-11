@@ -8,18 +8,16 @@ import {
   QuizDetailsDialog,
 } from '../..';
 
+import { Quiz } from '@/types';
+
 interface QuestionCardProps {
-  description: string;
-  keyword: string;
-  difficulty: string;
+  quiz: Quiz
   selected: boolean;
   onClick?: () => void;
 }
 
 const QuestionCard = ({
-  description,
-  keyword,
-  difficulty,
+  quiz,
   selected,
   onClick,
 }: QuestionCardProps) => {
@@ -43,29 +41,29 @@ const QuestionCard = ({
                 e.stopPropagation();
               }}
             >
-              <QuizDetailsDialog />
+              <QuizDetailsDialog quiz={quiz} />
             </div>
           </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
         <CardDescription className="text-md text-black">
-          {description}
+          {quiz.description}
         </CardDescription>
         <div className="flex space-x-2 text-sm text-muted-foreground">
           <Badge className="bg-black hover:bg-black text-white">
-            {keyword}
+            {quiz.topic}
           </Badge>
           <Badge
             className={`text-white ${
-              difficulty === 'Easy' || difficulty === 'easy'
+              quiz.difficulty === 'Easy' || quiz.difficulty === 'easy'
                 ? 'bg-green-700 hover:bg-green-700'
-                : difficulty === 'Medium' || difficulty === 'medium'
+                : quiz.difficulty === 'Medium' || quiz.difficulty === 'medium'
                   ? 'bg-yellow-600 hover:bg-yellow-600'
                   : 'bg-red-700 hover:bg-red-700'
             }`}
           >
-            {difficulty}
+            {quiz.difficulty}
           </Badge>
         </div>
       </CardContent>
