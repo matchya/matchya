@@ -19,6 +19,7 @@ export const Question: Story = {
       description={mockedQuizzes[0].description}
       keyword={mockedQuizzes[0].topic}
       difficulty={mockedQuizzes[0].difficulty}
+      selected={false}
     />
   ),
 };

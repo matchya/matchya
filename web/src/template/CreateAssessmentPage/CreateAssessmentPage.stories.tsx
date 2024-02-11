@@ -23,6 +23,7 @@ export const IsGeneratingQuestion: Story = {
       isLoadingQuestionGeneration={true}
       description={'Test description'}
       quizzes={mockedQuizzes}
+      selectedQuizzes={[]}
       selectedPosition={'Software Engineer'}
       selectedLevel={'Senior'}
       quizTopic={'React'}
@@ -34,6 +35,7 @@ export const IsGeneratingQuestion: Story = {
       onLevelChange={() => {}}
       onTopicInputChange={() => {}}
       onDifficultyInputChange={() => {}}
+      setSelectedQuizzes={() => {}}
       onSubmit={() => {}}
       handleGenerateQuiz={() => {}}
     />

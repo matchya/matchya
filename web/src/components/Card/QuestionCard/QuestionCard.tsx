@@ -11,11 +11,24 @@ interface QuestionCardProps {
   description: string;
   keyword: string;
   difficulty: string;
+  selected: boolean;
+  onClick?: () => void;
 }
 
-const QuestionCard = ({ description, keyword, difficulty }: QuestionCardProps) => {
+const QuestionCard = ({
+  description,
+  keyword,
+  difficulty,
+  selected,
+  onClick,
+}: QuestionCardProps) => {
   return (
-    <Card className="rounded-lg shadow">
+    <Card
+      className={`rounded-lg shadow  ${
+        selected ? 'border-matcha-400 bg-matcha-30' : 'bg-white'
+      }`}
+      onClick={onClick}
+    >
       <CardHeader className="grid items-start gap-4 space-y-0">
         <div className="space-y-1">
           <div className="flex items-center space-x-3">
