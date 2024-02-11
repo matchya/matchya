@@ -17,6 +17,7 @@ function CreateAssessmentPage() {
   const [description, setDescription] = useState('');
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingQuestionGeneration, setIsLoadingQuestionGeneration] = useState<boolean>(false);
   const [quizTopic, setQuizTopic] = useState<string>('');
   const [quizDifficulty, setQuizDifficulty] = useState<string>('easy');
 
@@ -45,7 +46,11 @@ function CreateAssessmentPage() {
         // quizIds: selectedQuizzes.map(quiz => quiz.id),
       },
     });
-    if (assessmentName === '' || selectedPosition === '' || selectedLevel === '') {
+    if (
+      assessmentName === '' ||
+      selectedPosition === '' ||
+      selectedLevel === ''
+    ) {
       alert('Test name is required');
       return;
     }
@@ -105,8 +110,27 @@ function CreateAssessmentPage() {
       alert('Please select a topic to generate quiz for');
       return;
     }
-    console.log(quizTopic, quizDifficulty, selectedPosition, selectedLevel, description);
-  }
+    const data = {
+      positionType: selectedPosition,
+      positionLevel: selectedLevel,
+      topic: quizTopic,
+      difficulty: quizDifficulty,
+      positionDescription: description,
+    };
+    try {
+      setIsLoadingQuestionGeneration(true);
+      const response = await caseSensitiveAxiosInstance.post('/quizzes', data);
+      if (response.data.status === 'success') {
+        const newQuiz = response.data.payload.quiz;
+        const newQuizzes = [newQuiz, ...quizzes];
+        setQuizzes(newQuizzes);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoadingQuestionGeneration(false);
+    }
+  };
 
   return (
     <Template
@@ -126,7 +150,7 @@ function CreateAssessmentPage() {
       onDifficultyInputChange={(value: string) => setQuizDifficulty(value)}
       onSubmit={handleSubmit}
       handleGenerateQuiz={handleGenerateQuiz}
-      isLoadingQuestionGeneration={false}
+      isLoadingQuestionGeneration={isLoadingQuestionGeneration}
     />
   );
 }
