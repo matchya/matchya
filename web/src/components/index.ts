@@ -6,6 +6,7 @@ export { default as Checkbox } from './Checkbox/Checkbox';
 export { default as CreateAccountCard } from './Card/CreateAccountCard/CreateAccountCard';
 export { default as DeleteAssessmentDialog } from './Dialog/DeleteAssessmentDialog/DeleteAssessmentDialog';
 export { default as InviteCandidateDialog } from './Dialog/InviteCandidateDialog/InviteCandidateDialog';
+export { default as QuizDetailsDialog } from './Dialog/QuizDetailsDialog/QuizDetailsDialog';
 export { default as Header } from './Header/Header';
 export { default as MainNav } from './MainNav/MainNav';
 export { default as Icons } from './Icons/Icons';

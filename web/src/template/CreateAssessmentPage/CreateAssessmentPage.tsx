@@ -207,9 +207,7 @@ const CreateAssessmentPageTemplate = ({
           {isLoadingQuestionGeneration ? <LoadingCard /> : null}
           {quizzes.map(quiz => (
             <QuestionCard
-              description={quiz.description}
-              keyword={quiz.topic}
-              difficulty={quiz.difficulty}
+              quiz={quiz}
               selected={selectedQuizzes.some(q => q.id === quiz.id)}
               onClick={() => {
                 if (selectedQuizzes.some(q => q.id === quiz.id)) {
