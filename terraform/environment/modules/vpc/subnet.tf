@@ -30,6 +30,7 @@ resource "aws_subnet" "public_1" {
   availability_zone = "us-east-1a"
   tags = {
     Name = "${terraform.workspace}-public-1"
+    Environment = "${terraform.workspace}"
   }
 }
 
@@ -41,6 +42,7 @@ resource "aws_subnet" "public_2" {
   availability_zone = "us-east-1b"
   tags = {
     Name = "${terraform.workspace}-public-2"
+    Environment = "${terraform.workspace}"
   }
 }
 
@@ -50,7 +52,8 @@ resource "aws_subnet" "private_1" {
   cidr_block = local.target_cidr_blocks["private-1"]
   availability_zone = "us-east-1a"
   tags = {
-    Name = "${terraform.workspace}-private-1"
+    Name = "private-1"
+    Environment = "${terraform.workspace}"
   }
 }
 
@@ -60,7 +63,8 @@ resource "aws_subnet" "private_2" {
   cidr_block = local.target_cidr_blocks["private-2"]
   availability_zone = "us-east-1b"
   tags = {
-    Name = "${terraform.workspace}-private-2"
+    Name = "private-2"
+    Environment = "${terraform.workspace}"
   }
 }
 

@@ -2,7 +2,7 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import Component from './InterviewsTable';
 
-import { mockedInterviews } from '@/data/mock';
+import { mockedInterviews } from '@/data';
 
 const meta: Meta<typeof Component> = {
   title: 'Component/Table',

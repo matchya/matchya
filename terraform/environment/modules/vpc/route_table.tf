@@ -9,7 +9,8 @@ resource "aws_route_table" "public" {
   }
 
   tags = {
-    Name = "${terraform.workspace}-route-table-public"
+    Name = "public"
+    Environment = "${terraform.workspace}"
   }
 }
 
@@ -36,7 +37,8 @@ resource "aws_route_table" "private" {
   }
 
   tags = {
-    Name = "${terraform.workspace}-route-table-private"
+    Name = "private"
+    Environment = "${terraform.workspace}"
   }
 }
 

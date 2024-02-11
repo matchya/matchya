@@ -125,3 +125,9 @@ CREATE TABLE IF NOT EXISTS question (
     foreign key (quiz_id) references quiz(id)
 );
 --rollback DROP TABLE IF EXISTS question;
+
+--changeset author:12
+ALTER TABLE quiz
+ADD COLUMN additional_criteria text,
+ADD COLUMN max_score float;
+--rollback ALTER TABLE quiz DROP COLUMN additional_criteria, DROP COLUMN max_score;

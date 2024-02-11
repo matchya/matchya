@@ -4,7 +4,8 @@ resource "aws_eip" "bastion" {
   instance = aws_instance.bastion[0].id
 
   tags = {
-    Name = "${terraform.workspace}-bastion-host"
+    Name = "bastion-host"
+    Environment = "${terraform.workspace}"
   }
 }
 
@@ -12,6 +13,7 @@ resource "aws_eip" "nat" {
   count = terraform.workspace != "dev" ? 1 : 0
 
   tags = {
-    Name = "${terraform.workspace}-nat-gateway"
+    Name = "nat-gateway"
+    Environment = "${terraform.workspace}"
   }
 }

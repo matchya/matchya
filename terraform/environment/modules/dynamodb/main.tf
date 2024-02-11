@@ -10,6 +10,10 @@ resource "aws_dynamodb_table" "access_token" {
     name = "token_id"
     type = "S"
   }
+
+  tags = {
+    Environment = "${terraform.workspace}"
+  }
 }
 
 resource "aws_dynamodb_table" "interview_access_token" {
@@ -42,5 +46,9 @@ resource "aws_dynamodb_table" "interview_access_token" {
     write_capacity     = 10
     read_capacity      = 10
     projection_type    = "ALL"
+  }
+
+  tags = {
+    Environment = "${terraform.workspace}"
   }
 }

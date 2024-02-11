@@ -15,6 +15,10 @@ resource "aws_db_instance" "insecure" {
   publicly_accessible = true
 
   vpc_security_group_ids = [var.rds_postgres_insecure_security_group[0].id]
+
+  tags = {
+    Environment = "${terraform.workspace}"
+  }
 }
 
 # Staging/Production environment
@@ -39,6 +43,10 @@ resource "aws_db_instance" "secure" {
   vpc_security_group_ids = [var.rds_postgres_secure_security_group[0].id]
   db_subnet_group_name   = aws_db_subnet_group.secure[0].name
   final_snapshot_identifier = "${terraform.workspace}-final-snapshot-${formatdate("YYYY-MM-DD-hh-mm-ss", timestamp())}"
+
+  tags = {
+    Environment = "${terraform.workspace}"
+  }
 }
 
 resource "aws_db_subnet_group" "secure" {

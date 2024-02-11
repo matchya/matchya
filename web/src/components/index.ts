@@ -19,6 +19,7 @@ export { default as Separator } from './Separator/Separator';
 export { default as TestTable } from './Table/AssessmentTable/AssessmentTable';
 export { default as Textarea } from './Textarea/Textarea';
 export { default as UserNavDropdownMenu } from './DropdownMenu/UserNavDropdownMenu/UserNavDropdownMenu';
+export { default as ProgressBar } from './ProgressBar/ProgressBar';
 
 export * from './Card/Card';
 export * from './Command/Command';

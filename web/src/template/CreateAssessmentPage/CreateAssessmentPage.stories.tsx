@@ -4,7 +4,7 @@ import { LayoutDecorator } from '../../../.storybook/decorators';
 
 import Component from './CreateAssessmentPage';
 
-import { mockedQuizzes } from '@/data/mock';
+import { mockedQuizzes } from '@/data';
 
 const meta: Meta<typeof Component> = {
   title: 'Page/CreateAssessmentPage',
@@ -25,12 +25,17 @@ export const IsGeneratingQuestion: Story = {
       quizzes={mockedQuizzes}
       selectedPosition={'Software Engineer'}
       selectedLevel={'Senior'}
-      testName={'test'}
+      quizTopic={'React'}
+      quizDifficulty={'easy'}
+      assessmentName={'test'}
       onDescriptionChange={() => {}}
-      onTestNameChange={() => {}}
+      onAssessmentNameChange={() => {}}
       onPositionChange={() => {}}
       onLevelChange={() => {}}
+      onTopicInputChange={() => {}}
+      onDifficultyInputChange={() => {}}
       onSubmit={() => {}}
+      handleGenerateQuiz={() => {}}
     />
   ),
 };

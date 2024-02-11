@@ -4,7 +4,7 @@ import { StoreApi, createStore } from 'zustand';
 import { StoreProviderProps } from './interface';
 
 import { apiEndpoint } from '@/config/env';
-import { mockedCompanyInfo } from '@/data/mock';
+import { mockedCompanyInfo } from '@/data';
 import { caseSensitiveAxiosInstance } from '@/lib/axios';
 import { identifyUser } from '@/lib/rudderstack';
 

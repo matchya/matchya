@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { mockedQuizzes } from '../../../data/mock';
+import { mockedQuizzes } from '../../../data';
 
 import Component from './QuestionCard';
 

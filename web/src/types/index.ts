@@ -53,6 +53,7 @@ export interface Quiz {
   difficulty: string;
   isOriginal: boolean;
   averageScore?: number;
+  questions: Question[];
   createdAt: string;
 }
 
