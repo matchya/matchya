@@ -1,10 +1,13 @@
 import { Meta, StoryObj } from '@storybook/react';
 
+import { LayoutDecorator } from '../../../.storybook/decorators';
+
 import Component from './OnboardingPage';
 
 const meta: Meta<typeof Component> = {
-  title: 'Template',
+  title: 'Page',
   component: Component,
+  decorators: [LayoutDecorator],
 };
 
 export default meta;
@@ -12,12 +15,5 @@ export default meta;
 type Story = StoryObj<typeof Component>;
 
 export const OnboardingPage: Story = {
-  render: () => (
-    <Component
-      email={''}
-      setEmail={() => {}}
-      onSubmit={() => {}}
-      scrollDown={() => {}}
-    />
-  ),
+  render: () => <Component companyName="Company A" />,
 };

@@ -10,25 +10,29 @@ on:
         type: string
         required: true
       environment:
-        description: "Environment to deploy"
+        description: Environment to deploy to in lowercase.
         type: string
         required: true
         default: "staging"
+      environment-label:
+        description: Environment to deploy to in capitalized.
+        type: string
+        required: true
 
 jobs:
   run:
     name: ${{ inputs.label }}
     runs-on: ubuntu-latest
     permissions: write-all
-    environment: ${{ inputs.environment }}
+    environment: ${{ inputs.environment-label }}
     steps:
       - name: Fetch Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -38,7 +42,7 @@ jobs:
         run: aws s3 cp s3://matchya-terraform/github-actions-artifacts/${{ inputs.environment }}/plans/${{ inputs.component }}.tfplan terraform/${{ inputs.component }}/${{ inputs.component }}.tfplan
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
+        uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
         run: terraform init

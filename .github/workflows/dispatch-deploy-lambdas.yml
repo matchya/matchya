@@ -1,0 +1,22 @@
+name: Manually Deploy Lambdas
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment to deploy to in lowercase."
+        required: true
+        default: "staging"
+      environment-label:
+        description: "Environment to deploy to in capitalized."
+        required: true
+        default: "Staging"
+
+jobs:
+  deploy-lambdas:
+    name: Deployment
+    uses: ./.github/workflows/job-deploy-lambdas.yml
+    with:
+      environment: ${{ inputs.environment }}
+      environment-label: ${{ inputs.environment-label }}
+    secrets: inherit

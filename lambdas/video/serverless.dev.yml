@@ -1,0 +1,24 @@
+service: video
+
+frameworkVersion: "3"
+
+custom: ${file(../shared/serverless.dev.yml):custom}
+
+provider: ${file(../shared/serverless.dev.yml):provider}
+
+functions:
+  get-presigned-url:
+    name: ${self:provider.stage}-${self:service}-get-presigned-url
+    image:
+      name: default
+      command:
+        - get_presigned_url.handler
+    events:
+      - http:
+          path: /videos/presigned-url
+          method: GET
+          cors: ${file(../shared/serverless.dev.yml):cors}
+    timeout: 30
+
+plugins:
+  - serverless-deployment-bucket

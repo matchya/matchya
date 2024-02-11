@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import { Header } from '@/components';
@@ -8,16 +8,22 @@ const Layout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { id, me } = useCompanyStore();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (id) return;
+    if (id) {
+      setLoading(false);
+      return;
+    }
     getAuthStatus();
   }, [location.pathname]);
 
   const getAuthStatus = async () => {
     try {
       await me();
+      setLoading(false);
     } catch (error) {
+      console.log(error);
       navigateToAuth();
     }
   };
@@ -26,10 +32,16 @@ const Layout = () => {
     navigate('/auth');
   };
 
+  if (loading) {
+    return <Header />; // Replace with your loading component
+  }
+
   return (
     <>
       <Header />
-      <Outlet />
+      <div className="mx-auto max-w-[1280px]">
+        <Outlet />
+      </div>
     </>
   );
 };

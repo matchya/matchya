@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import {
   Avatar,
@@ -8,7 +8,8 @@ import {
   MainNav,
   UserNavDropdownMenu,
 } from '@/components';
-import { axiosInstance } from '@/lib/client';
+import { env } from '@/config';
+import { axiosInstance } from '@/lib/axios';
 import { useCompanyStore } from '@/store/store';
 
 const Header = () => {
@@ -35,12 +36,21 @@ const Header = () => {
   };
 
   return (
-    <div className="border-b bg-macha-500">
+    <div className="border-b">
       <div className="flex h-16 items-center px-4">
-        <div className="pl-8">
+        <Link to="/assessments">
+          <div className="h-full flex items-center cursor-pointer">
+            <img
+              src={`${env.assetsEndpoint}/matchya-sticker.png`}
+              alt="logo"
+              className="w-32 relative mb-1"
+            />
+          </div>
+        </Link>
+        <div className="pl-8 hidden sm:block">
           <MainNav />
         </div>
-        <div className="ml-auto flex items-center space-x-4">
+        <div className="ml-auto flex items-center space-x-4 hidden sm:block">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-8 w-8 rounded-full">

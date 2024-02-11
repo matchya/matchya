@@ -2,70 +2,70 @@ export interface Company {
   id: string;
   name: string;
   email: string;
-  github_username: string;
-  repository_names: string[];
-  positions: Position[];
+}
+
+export interface Interview {
+  id: string;
+  totalScore: number;
+  summary: string;
+  createdAt: string;
+  assessment: Assessment;
+  candidate: Candidate;
+  answers: Answer[];
+}
+
+export interface Answer {
+  quiz: Quiz;
+  feedback: string;
+  score: number;
+  videoUrl: string;
 }
 
 export interface Candidate {
   id: string;
-  first_name: string;
-  last_name: string;
+  name: string;
   email: string;
-  github_username: string;
-  total_score: number;
-  summary: string;
-  status: string;
-  created_at: string;
-  assessments: Assessment[];
+  assessment?: Assessment;
 }
 
 export interface Assessment {
-  criterion: Criterion;
-  score: number;
-  reason: string;
-}
-
-export interface Criterion {
-  id: string;
-  message: string;
-  keywords: string[];
-  created_at: string;
-}
-
-export interface Position {
   id: string;
   name: string;
-  checklist_status: string;
-  checklist: Checklist;
-  candidates: Candidate[];
+  positionType?: string;
+  positionLevel?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  numCandidates?: number;
+  quizzes?: Quiz[];
+  candidates?: Candidate[];
+  interviewId?: string;
+  interviewStatus?: string;
+  totalScore?: number;
+  summary?: string;
+}
+
+export interface Quiz {
+  id: string;
+  context: string;
+  description: string;
+  topic: string;
+  subtopic: string;
+  difficulty: string;
+  isOriginal: boolean;
+  averageScore?: number;
   questions: Question[];
-}
-
-export interface Checklist {
-  id: string;
-  repository_names: string[];
-  criteria: Criterion[];
-}
-
-export interface Score {
-  name: string;
-  value: number;
-  details: string;
-  evaluations: Evaluation[];
-}
-
-export interface Evaluation {
-  criteria: string;
-  score: number;
-  reason: string;
+  createdAt: string;
 }
 
 export interface Question {
-  question: string;
-  metrics: string[];
-  keyword: string;
-  difficulty: string;
+  id: string;
+  text: string;
+  questionNumber: number;
+}
+
+export interface Metric {
+  id: string;
+  name: string;
 }
 
 export interface CustomError {

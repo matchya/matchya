@@ -1,111 +1,46 @@
-import logging
+import os
 
-import psycopg2
+from client.postgres import PostgresDBClient
+from client.sentry import SentryClient
+from entity.company import Company
+from repo.company import CompanyRepository
+from utils.logger import Logger
+from utils.package_info import PackageInfo
+from utils.request_parser import RequestParser
+from utils.response_generator import ResponseGenerator
 
-from config import Config
+logger = Logger.configure(os.path.relpath(__file__, os.path.join(os.path.dirname(__file__), '.')))
 
-from utils.request import parse_header, parse_cookie_body
-from utils.response import generate_success_response, generate_error_response
-
-# Logger
-logger = logging.getLogger('company me')
-logger.setLevel(logging.INFO)
-
-formatter = logging.Formatter('[%(levelname)s]:%(funcName)s:%(lineno)d:%(message)s')
-
-if not logger.handlers:
-    ch = logging.StreamHandler()
-    ch.setFormatter(formatter)
-    logger.addHandler(ch)
-
-logger.propagate = False
-
-# Postgres
-db_conn = None
-db_cursor = None
-
-
-def connect_to_db():
-    """
-    Reconnects to the database.
-    """
-    logger.info("Connecting to the db...")
-    global db_conn
-    global db_cursor
-    if not db_conn or db_conn.closed:
-        db_conn = psycopg2.connect(host=Config.POSTGRES_HOST, database=Config.POSTGRES_DB, user=Config.POSTGRES_USER, password=Config.POSTGRES_PASSWORD)
-    db_cursor = db_conn.cursor()
-
-
-def get_company_by_id(company_id):
-    """
-    Retrieves the company for a given company_id from the database.
-
-    :param company_id: Unique identifier for the company.
-    :return: Company object for the given company_id.
-    """
-    logger.info("Getting the company by id...")
-    try:
-        db_cursor.execute(f"SELECT id, name, email FROM company WHERE id = '{company_id}'")
-        result = db_cursor.fetchone()
-        if not result:
-            raise ValueError(f"Company not found for id: {company_id}")
-        company = {
-            "id": result[0],
-            "name": result[1],
-            "email": result[2]
-        }
-        return company
-    except Exception as e:
-        raise RuntimeError(f"Failed to retrieve company: {e}")
-
-
-def get_repositories_by_company_id(company_id):
-    """
-    Retrieves the repositories for a given company_id from the database.
-
-    :param company_id: Unique identifier for the company.
-    :return: List of repositories for the given company_id.
-    """
-    logger.info("Getting the repositories by company id...")
-    try:
-        db_cursor.execute(f"SELECT repository_name FROM company_repository WHERE company_id = '{company_id}'")
-        result = db_cursor.fetchall()
-        if not result:
-            return []
-        repositories = [item[0] for item in result]
-        return repositories
-    except Exception as e:
-        raise RuntimeError(f"Failed to retrieve repositories: {e}")
+SentryClient.initialize(PackageInfo('package.json').get_version())
+postgres_client = PostgresDBClient()
+response_generator = ResponseGenerator()
 
 
 def handler(event, context):
-    logger.info(event)
+    logger.info("Start the lambda execution")
     try:
-        connect_to_db()
-        logger.info(f"Receiving an event... {event}")
-        origin = parse_header(event)
-        cookie_body = parse_cookie_body(event)
-        company_id = cookie_body.get('company_id')
+        # initializing the parser
+        parser = RequestParser(event)
 
-        company = get_company_by_id(company_id)
-        repositories = get_repositories_by_company_id(company_id)
-        body = {
+        # parsing the event
+        origin = parser.parse_header()
+        cookie_body = parser.parse_cookie_body()
+        response_generator.origin_domain = origin
+
+        entity = Company(id=cookie_body.get('company_id'))
+        with postgres_client as db_client:
+            company_repo = CompanyRepository(db_client)
+            company = company_repo.get_company_by_id(entity.id)
+        return response_generator.generate_success_response({
             "id": company["id"],
             "name": company["name"],
             "email": company["email"],
-            "repository_names": repositories
-        }
-        logger.info(f"Retrieved company successfully: {body}")
-        return generate_success_response(origin, body)
+        })
     except (ValueError, RuntimeError) as e:
         status_code = 400
         logger.error(f"Failed to retrieve company ({str(status_code)}): {e}")
-        return generate_error_response(origin, status_code, str(e))
+        return response_generator.generate_error_response(status_code, str(e))
     except Exception as e:
         status_code = 500
         logger.error(f"Failed to retrieve company ({str(status_code)}): {e}")
-        return generate_error_response(origin, status_code, str(e))
-    finally:
-        if db_conn:
-            db_conn.close()
+        return response_generator.generate_error_response(status_code, str(e))

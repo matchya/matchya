@@ -1,0 +1,24 @@
+service: company
+
+frameworkVersion: "3"
+
+custom: ${file(../shared/serverless.dev.yml):custom}
+
+provider: ${file(../shared/serverless.dev.yml):provider}
+
+functions:
+  me:
+    name: ${self:provider.stage}-company-me
+    image:
+      name: default
+      command:
+        - me.handler
+    events:
+      - http:
+          path: /companies/me
+          method: GET
+          cors: ${file(../shared/serverless.dev.yml):cors}
+          authorizer: ${file(../shared/serverless.dev.yml):cookie-authorizer}
+
+plugins:
+  - serverless-deployment-bucket

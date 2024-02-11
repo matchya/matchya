@@ -1,0 +1,8 @@
+.serverless
+node_modules
+Dockerfile
+package-lock.json
+serverless.yml
+serverless.dev.yml
+.releaserc.json
+changelog.config.js

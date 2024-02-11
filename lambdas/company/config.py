@@ -12,6 +12,8 @@ class Config:
     POSTGRES_DB = os.getenv('POSTGRES_DB')
     POSTGRES_USER = os.getenv('POSTGRES_USER')
     POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
+    SENTRY_DSN = os.getenv('SENTRY_DSN')
+    SERVICE_NAME = os.getenv('SERVICE_NAME')
 
     @classmethod
     def validate(cls):
@@ -21,7 +23,7 @@ class Config:
         """
         required_variables = [
             'POSTGRES_HOST', 'POSTGRES_PORT', 'POSTGRES_DB',
-            'POSTGRES_USER', 'POSTGRES_PASSWORD'
+            'POSTGRES_USER', 'POSTGRES_PASSWORD', 'SERVICE_NAME'
         ]
         missing_variables = [variable for variable in required_variables if not getattr(cls, variable)]
 

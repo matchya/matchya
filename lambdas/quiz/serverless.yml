@@ -1,0 +1,53 @@
+service: quiz
+
+frameworkVersion: "3"
+
+custom: ${file(../shared/serverless.yml):custom}
+
+provider: ${file(../shared/serverless.yml):provider}
+
+functions:
+  retrieve:
+    name: ${self:provider.stage}-quiz-retrieve
+    image:
+      name: default
+      command:
+        - retrieve.handler
+    events:
+      - http:
+          path: /quizzes
+          method: GET
+          cors: ${file(../shared/serverless.yml):cors}
+          authorizer: ${file(../shared/serverless.yml):cookie-authorizer}
+
+  evaluate:
+    name: ${self:provider.stage}-quiz-evaluate
+    image:
+      name: default
+      command:
+        - evaluate.handler
+    events:
+      - s3:
+          bucket: ${self:custom.namespace}-user-data
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: ${self:provider.stage}/response-recording/
+          existing: true
+    timeout: 300
+
+  generate:
+    name: ${self:provider.stage}-quiz-generate
+    image:
+      name: default
+      command:
+        - generate.handler
+    events:
+      - http:
+          path: /quizzes
+          method: POST
+          cors: ${file(../shared/serverless.dev.yml):cors}
+          authorizer: ${file(../shared/serverless.dev.yml):cookie-authorizer}
+    timeout: 30
+
+plugins:
+  - serverless-deployment-bucket

@@ -26,3 +26,26 @@ export function capitalize(str: string): string {
   );
   return capitalizedWords.join(' ');
 }
+
+/**
+ * This function converts the keys of an object to a specified case.
+ * @param obj
+ * @param convertFunc
+ * @returns The object with the keys converted to the specified case
+ */
+export function convertKeys(
+  obj: object,
+  convertFunc: (str: string) => string
+): object {
+  if (Array.isArray(obj)) {
+    return obj.map(v => convertKeys(v, convertFunc));
+  } else if (obj !== null && obj.constructor === Object) {
+    return Object.fromEntries(
+      Object.entries(obj).map(([k, v]) => [
+        convertFunc(k),
+        convertKeys(v, convertFunc),
+      ])
+    );
+  }
+  return obj;
+}

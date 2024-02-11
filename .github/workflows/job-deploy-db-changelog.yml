@@ -1,0 +1,50 @@
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      environment-label:
+        required: true
+        type: string
+
+jobs:
+  run:
+    name: DB Changelog
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment-label }}
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Setup SSH Key
+        run: |
+          mkdir -p ~/.ssh/
+          echo "${{ secrets.SSH_PUBLIC_KEY }}" > ~/.ssh/id_rsa_matchya.pub
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa_matchya
+          chmod 600 ~/.ssh/id_rsa_matchya
+          chmod 600 ~/.ssh/id_rsa_matchya.pub
+          ssh-keyscan -v -H ${{ secrets.SSH_HOST_IP_BASTION }} >> ~/.ssh/known_hosts
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+        working-directory: db
+
+      - name: Update Changelog
+        run: |
+          make create-ssh-tunnel environment=${{ inputs.environment }}
+          python db/scripts/update.py --stage ${{ inputs.environment }}
+          make close-ssh-tunnel environment=${{ inputs.environment }}

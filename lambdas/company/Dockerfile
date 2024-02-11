@@ -8,7 +8,11 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 
 # Copy the necessary files and directories to the container
+COPY package.json package.json
 COPY *.py .
+COPY client/ ./client/
+COPY entity/ ./entity/
+COPY repo/ ./repo/
 COPY utils/ ./utils/
 
 # Set the CMD to your handler (this will be overwritten by Lambda)

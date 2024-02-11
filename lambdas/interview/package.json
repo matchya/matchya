@@ -1,0 +1,13 @@
+{
+  "name": "interview",
+  "version": "1.0.0",
+  "description": "Interview Service",
+  "scripts": {
+    "deploy:dev": "sls deploy --config serverless.dev.yml",
+    "deploy:staging": "sls deploy --param=\"arch=arm64\" --stage staging --config serverless.yml",
+    "remove:dev": "sls remove --config serverless.dev.yml",
+    "remove:staging": "sls remove --param=\"arch=arm64\" --stage staging --config serverless.yml"
+  },
+  "author": "matchya",
+  "license": "ISC"
+}

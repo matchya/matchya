@@ -1,5 +1,8 @@
+import os
 import subprocess
 import logging
+import argparse
+import sys
 
 import boto3
 
@@ -48,16 +51,20 @@ def build_docker_image():
     - The image is tagged as 'liquibase'.
     - Assumes that a Dockerfile is present in the current directory.
     """
-    subprocess.run(["docker", "build", "-t", "liquibase", ".."], check=True)
+    # Get the root directory of your project
+    root_dir = os.path.dirname(os.path.dirname(os.path.abspath(sys.argv[0])))
+
+    # Construct the absolute path to the 'db' directory
+    db_dir = os.path.join(root_dir)
+    subprocess.run(["docker", "build", "-t", "liquibase", db_dir], check=True)
 
 
-def build_request(rds_endpoint, rds_port, db_name, db_username, db_password):
-    changelog_file_name = 'master-changelog.xml'
+def build_request(rds_endpoint, rds_port, db_name, db_username, db_password, changelog_file_path):
     return [
-        "docker", "run", "--rm",
+        "docker", "run", "--network=host", "--rm",
         "liquibase",
         "--defaultsFile=/liquibase/config/liquibase.properties",
-        f"--changeLogFile={changelog_file_name}",
+        f"--changeLogFile={changelog_file_path}",
         "--url", f"jdbc:postgresql://{rds_endpoint}:{rds_port}/{db_name}",
         "--username", db_username,
         "--password", db_password
@@ -71,14 +78,22 @@ if __name__ == "__main__":
     - Builds the Docker image.
     - Runs the Liquibase changelog with the retrieved database details.
     """
-    kwargs = {}
-    kwargs['rds_endpoint'] = get_ssm_parameter('/terraform/dev/rds/endpoint')
-    kwargs['rds_port'] = get_ssm_parameter('/terraform/dev/rds/port')
-    kwargs['db_username'] = get_ssm_parameter('/terraform/dev/rds/db_username')
-    kwargs['db_password'] = get_ssm_parameter('/terraform/dev/rds/db_password')
-    kwargs['db_name'] = get_ssm_parameter('/terraform/dev/rds/db_name')
+    parser = argparse.ArgumentParser(description="Run Liquibase changelog on a database")
+    parser.add_argument("--stage", type=str, help="Stage of the deployment", default='dev')
+    args = parser.parse_args()
 
+    kwargs = {}
+    if args.stage != 'dev':
+        # if this is on the ci/cd pipeline
+        kwargs['rds_endpoint'] = 'localhost' if os.environ.get('CI') else 'host.docker.internal'
+        kwargs['rds_port'] = 5433
+    else:
+        kwargs['rds_endpoint'] = get_ssm_parameter(f'/terraform/{args.stage}/rds/endpoint')
+        kwargs['rds_port'] = get_ssm_parameter(f'/terraform/{args.stage}/rds/port')
+    kwargs['db_username'] = get_ssm_parameter(f'/terraform/{args.stage}/rds/db_username')
+    kwargs['db_password'] = get_ssm_parameter(f'/terraform/{args.stage}/rds/db_password')
+    kwargs['db_name'] = args.stage
     logger.info(f'Retrieving SSM params: {kwargs}')
 
     build_docker_image()
-    run_changelog(**kwargs)
+    run_changelog(changelog_file_path='./master.xml', **kwargs)

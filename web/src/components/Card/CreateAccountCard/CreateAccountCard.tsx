@@ -6,25 +6,22 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-  Icons,
   Input,
   Label,
 } from '@/components';
 
 interface CreateAccountProps {
+  password: string;
+  email: string;
+  handleCreateAccount: () => void;
   handleInputChange: (
     field: string,
     event: React.ChangeEvent<HTMLInputElement>
   ) => void;
-  handleGithubAuthentication: () => void;
-  handleCreateAccount: () => void;
-  password: string;
-  email: string;
 }
 
 const CreateAccountCard = ({
   handleInputChange,
-  handleGithubAuthentication,
   handleCreateAccount,
   password,
   email,
@@ -38,22 +35,6 @@ const CreateAccountCard = ({
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
-        <div className="grid grid-cols-1 gap-6">
-          <Button onClick={handleGithubAuthentication} variant="outline">
-            <Icons.gitHub className="mr-2 h-4 w-4" />
-            Github
-          </Button>
-        </div>
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">
-              Or continue with
-            </span>
-          </div>
-        </div>
         <div className="grid gap-2">
           <Label htmlFor="email">Email</Label>
           <Input

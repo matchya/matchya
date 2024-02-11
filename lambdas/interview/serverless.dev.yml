@@ -1,0 +1,78 @@
+service: interview
+
+frameworkVersion: "3"
+
+custom: ${file(../shared/serverless.dev.yml):custom}
+
+provider: ${file(../shared/serverless.dev.yml):provider}
+
+functions:
+
+  evaluate-interview:
+    name: ${self:provider.stage}-interview-evaluate-interview
+    image:
+      name: default
+      command:
+        - evaluate_interview.handler
+    events:
+      - http:
+          path: /interviews/{id}
+          method: POST
+          cors: ${file(../shared/serverless.dev.yml):cors}
+          authorizer: ${file(../shared/serverless.dev.yml):header-authorizer}
+          request:
+            parameters:
+              paths:
+                id: true
+    timeout: 30
+
+  retrieve:
+    name: ${self:provider.stage}-interview-retrieve
+    image:
+      name: default
+      command:
+        - retrieve.handler
+    events:
+      - http:
+          path: /interviews
+          method: GET
+          cors: ${file(../shared/serverless.dev.yml):cors}
+          authorizer: ${file(../shared/serverless.dev.yml):cookie-authorizer}
+    timeout: 30
+
+  retrieve-quizzes-by-id:
+    name: ${self:provider.stage}-interview-retrieve-quizzes-by-id
+    image:
+      name: default
+      command:
+        - retrieve_quizzes_by_id.handler
+    events:
+      - http:
+          path: /interviews/{id}/quizzes
+          method: GET
+          cors: ${file(../shared/serverless.dev.yml):cors}
+          authorizer: ${file(../shared/serverless.dev.yml):header-authorizer}
+          request:
+            parameters:
+              paths:
+                id: true
+
+  retrieve-results-by-id:
+    name: ${self:provider.stage}-interview-retrieve-results-by-id
+    image:
+      name: default
+      command:
+        - retrieve_results_by_id.handler
+    events:
+      - http:
+          path: /interviews/{id}/results
+          method: GET
+          cors: ${file(../shared/serverless.dev.yml):cors}
+          authorizer: ${file(../shared/serverless.dev.yml):cookie-authorizer}
+          request:
+            parameters:
+              paths:
+                id: true
+
+plugins:
+  - serverless-deployment-bucket

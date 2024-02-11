@@ -1,44 +1,62 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 
+import SentryRoutes from './lib/sentry';
 import { StoreProvider } from './store';
 
 import AuthenticatedLayout from '@/layout/Authenticated';
 import UnAuthenticatedLayout from '@/layout/UnAuthenticated';
+import AssessmentDetailPage from '@/screens/AssessmentDetailPage';
+import AssessmentsPage from '@/screens/AssessmentsPage';
 import AuthenticationPage from '@/screens/AuthenticationPage';
 import CandidatesPage from '@/screens/CandidatesPage';
-import DashboardPage from '@/screens/DashboardPage';
-import GithubAuthCallbackPage from '@/screens/GithubAuthCallbackPage';
+import CreateAssessmentPage from '@/screens/CreateAssessmentPage';
 import GoogleAuthCallbackPage from '@/screens/GoogleAuthCallbackPage';
-// import HomePage from '@/screens/HomePage';
+import HomePage from '@/screens/HomePage';
+import InterviewCompletedPage from '@/screens/InterviewCompletedPage';
+import InterviewDetailPage from '@/screens/InterviewDetailPage';
+import InterviewRecordingPage from '@/screens/InterviewRecordingPage';
+import InterviewsPage from '@/screens/InterviewsPage';
+import InvitationAuthenticationPage from '@/screens/InvitationAuthenticationPage';
 import OnboardingPage from '@/screens/OnboardingPage';
-import PositionSetupPage from '@/screens/PositionSetupPage';
-// import SettingsPage from '@/screens/SettingsPage';
 
 function App() {
   return (
     <StoreProvider>
       <Router>
-        <Routes>
+        <SentryRoutes>
           <Route element={<AuthenticatedLayout />}>
-            <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path="/position-setup" element={<PositionSetupPage />} />
+            <Route path="/dashboard" element={<OnboardingPage />} />
             <Route path="/candidates" element={<CandidatesPage />} />
-            {/* <Route path="/settings" element={<SettingsPage />} /> */}
+            <Route path="/interviews" element={<InterviewsPage />} />
+            <Route path="/interviews/:id" element={<InterviewDetailPage />} />
+            <Route path="/assessments" element={<AssessmentsPage />} />
+            <Route
+              path="/assessments/create"
+              element={<CreateAssessmentPage />}
+            />
+            <Route path="/assessments/:id" element={<AssessmentDetailPage />} />
           </Route>
           <Route element={<UnAuthenticatedLayout />}>
-            {/* <Route path="/" element={<HomePage />} /> */}
-            <Route path="/" element={<OnboardingPage />} />
+            <Route path="/" element={<HomePage />} />
             <Route path="/auth" element={<AuthenticationPage />} />
-            <Route
-              path="/auth/github/callback"
-              element={<GithubAuthCallbackPage />}
-            />
             <Route
               path="/auth/google/callback"
               element={<GoogleAuthCallbackPage />}
             />
+            <Route
+              path="/auth/invitation"
+              element={<InvitationAuthenticationPage />}
+            />
+            <Route
+              path="/interviews/:id/completed"
+              element={<InterviewCompletedPage />}
+            />
+            <Route
+              path="/interviews/:id/record"
+              element={<InterviewRecordingPage />}
+            />
           </Route>
-        </Routes>
+        </SentryRoutes>
       </Router>
     </StoreProvider>
   );

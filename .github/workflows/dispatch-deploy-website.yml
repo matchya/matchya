@@ -4,13 +4,19 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: "Environment to deploy to"
+        description: "Environment to deploy to in lowercase."
         required: true
         default: "staging"
+      environment-label:
+        description: "Environment to deploy to in capitalized."
+        required: true
+        default: "Staging"
 
 jobs:
-  s3:
-    name: Deploy to S3
+  deploy-website:
+    name: Deployment
     uses: ./.github/workflows/job-deploy-website.yml
     with:
       environment: ${{ inputs.environment }}
+      environment-label: ${{ inputs.environment-label }}
+    secrets: inherit

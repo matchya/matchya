@@ -18,12 +18,12 @@ jobs:
       infra-changed: ${{ steps.check.outputs.infra-changed }}
     steps:
       - name: Fetch Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Check Infrastructure Files Changed
-        uses: dorny/paths-filter@v2
+        uses: dorny/paths-filter@v3
         id: changes-infrastructure
         with:
           filters: |
@@ -40,7 +40,8 @@ jobs:
     if: needs.check-infrastructure-changes.outputs.infra-changed == 'true'
     uses: ./.github/workflows/job-plan-infrastructure.yml
     with:
-      environment: Staging
+      environment: staging
+      environment-label: Staging
       component: shared
       label: Shared Infrastructure
     secrets: inherit
@@ -50,7 +51,8 @@ jobs:
     needs: [plan-infrastructure-shared]
     uses: ./.github/workflows/job-plan-infrastructure.yml
     with:
-      environment: Staging
+      environment: staging
+      environment-label: Staging
       component: environment
       label: Environment Infrastructure
     secrets: inherit
@@ -61,15 +63,23 @@ jobs:
     strategy:
       matrix:
         component:
-          ["authentication", "authorizer", "checklist", "company", "position"]
+          [
+            "authentication",
+            "authorizer",
+            "assessment",
+            "candidate",
+            "company",
+            "interview",
+            "quiz"
+          ]
     steps:
       - name: Fetch Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Check Web Files Changed
-        uses: dorny/paths-filter@v2
+        uses: dorny/paths-filter@v3
         if: matrix.component == 'web'
         id: changes-web
         with:
@@ -78,7 +88,7 @@ jobs:
               - '${{matrix.component}}/**'
 
       - name: Check Files Changed (Lambdas)
-        uses: dorny/paths-filter@v2
+        uses: dorny/paths-filter@v3
         if: matrix.component != 'web'
         id: changes-lambda
         with:

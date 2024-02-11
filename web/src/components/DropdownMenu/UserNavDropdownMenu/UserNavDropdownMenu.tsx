@@ -1,8 +1,7 @@
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 
 import {
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -19,9 +18,9 @@ const UserNavDropdownMenu = ({
   companyEmail = 'me@example.com',
   onLogout,
 }: UserNavProps) => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   // const navigateToSettingsPage = () => navigate('/settings');
-  const navigateToDashboardPage = () => navigate('/dashboard');
+  // const navigateToDashboardPage = () => navigate('/dashboard');
   return (
     <DropdownMenuContent className="w-56" align="end" forceMount>
       <DropdownMenuLabel className="font-normal">
@@ -32,17 +31,17 @@ const UserNavDropdownMenu = ({
           </p>
         </div>
       </DropdownMenuLabel>
-      <DropdownMenuSeparator />
-      <DropdownMenuGroup>
+      {/* <DropdownMenuSeparator /> */}
+      {/* <DropdownMenuGroup>
         <DropdownMenuItem onClick={navigateToDashboardPage}>
           Dashboard
-          {/* <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut> */}
+          <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
         </DropdownMenuItem>
-        {/* <DropdownMenuItem onClick={navigateToSettingsPage}> */}
-        {/* Settings */}
-        {/* <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut> */}
-        {/* </DropdownMenuItem> */}
-      </DropdownMenuGroup>
+        <DropdownMenuItem onClick={navigateToSettingsPage}>
+          Settings
+          <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+        </DropdownMenuItem>
+      </DropdownMenuGroup> */}
       <DropdownMenuSeparator />
       <DropdownMenuItem onClick={onLogout}>Log out</DropdownMenuItem>
     </DropdownMenuContent>

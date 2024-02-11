@@ -1,0 +1,53 @@
+service: candidate
+
+frameworkVersion: "3"
+
+custom: ${file(../shared/serverless.dev.yml):custom}
+
+provider: ${file(../shared/serverless.dev.yml):provider}
+
+functions:
+  add:
+    name: ${self:provider.stage}-candidate-add
+    image:
+      name: default
+      command:
+        - add.handler
+    events:
+      - http:
+          path: /candidates
+          method: POST
+          cors: ${file(../shared/serverless.dev.yml):cors}
+          authorizer: ${file(../shared/serverless.dev.yml):cookie-authorizer}
+    timeout: 30
+
+  invite:
+    name: ${self:provider.stage}-candidate-invite
+    image:
+      name: default
+      command:
+        - invite.handler
+    events:
+      - http:
+          path: /candidates/invite
+          method: POST
+          cors: ${file(../shared/serverless.dev.yml):cors}
+          authorizer: ${file(../shared/serverless.dev.yml):cookie-authorizer}
+    timeout: 30
+
+  retrieve:
+    name: ${self:provider.stage}-candidate-retrieve
+    image:
+      name: default
+      command:
+        - retrieve.handler
+    events:
+      - http:
+          path: /candidates
+          method: GET
+          cors: ${file(../shared/serverless.dev.yml):cors}
+          authorizer: ${file(../shared/serverless.dev.yml):cookie-authorizer}
+    timeout: 30
+
+plugins:
+  - serverless-deployment-bucket

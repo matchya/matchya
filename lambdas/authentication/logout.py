@@ -1,20 +1,15 @@
-import json
-import logging
+import os
 
-from utils.request import parse_header
+from client.sentry import SentryClient
+from utils.logger import Logger
+from utils.package_info import PackageInfo
+from utils.request_parser import RequestParser
+from utils.response_generator import ResponseGenerator
 
-# Logger
-logger = logging.getLogger('login')
-logger.setLevel(logging.INFO)
+logger = Logger.configure(os.path.relpath(__file__, os.path.join(os.path.dirname(__file__), '.')))
 
-formatter = logging.Formatter('[%(levelname)s]:%(funcName)s:%(lineno)d:%(message)s')
-
-if not logger.handlers:
-    ch = logging.StreamHandler()
-    ch.setFormatter(formatter)
-    logger.addHandler(ch)
-
-logger.propagate = False
+SentryClient.initialize(PackageInfo('package.json').get_version())
+response_generator = ResponseGenerator()
 
 
 def handler(event, context):
@@ -26,21 +21,12 @@ def handler(event, context):
     :return: A dictionary with a status code and the body of the response.
              The response body contains a message indicating successful logout.
     """
-    logger.info(event)
+    logger.info("Starting the lambda execution")
 
-    logger.info('Parsing the header...')
-    origin, host = parse_header(event)
+    # initializing the parser
+    parser = RequestParser(event)
+    origin, host = parser.parse_header()
+    response_generator.origin_domain = origin
+    response_generator.host_domain = host
 
-    headers = {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': origin,
-        'Access-Control-Allow-Credentials': 'true',
-        'Set-Cookie': f't=; HttpOnly; Domain={host}; Path=/; Max-Age=0; SameSite=None; Secure'
-    }
-
-    response = {
-        'statusCode': 200,
-        'headers': headers,
-        'body': json.dumps({'status': 'success'})
-    }
-    return response
+    return response_generator.generate_logout_response()

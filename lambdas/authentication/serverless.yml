@@ -2,36 +2,9 @@ service: authentication
 
 frameworkVersion: "3"
 
-provider:
-  name: aws
-  runtime: python3.9
-  architecture: arm64
-  stage: dev
-  region: us-east-1
-  deploymentBucket:
-    name: ${self:provider.stage}-sls-authentication
-  iam:
-    role: ${ssm:/terraform/shared/iam/lambda_role_arn}
-  apiGateway:
-    restApiId: ${ssm:/terraform/${self:provider.stage}/api_gateway/id}
-    restApiRootResourceId: ${ssm:/terraform/${self:provider.stage}/api_gateway/root_resource_id}
-  ecr:
-    images:
-      default:
-        path: ./
-        file: Dockerfile
-        buildArgs:
-  environment:
-    ENVIRONMENT: ${self:provider.stage}
-    JWT_SECRET_KEY: ${ssm:/secrets/${self:provider.stage}/jwt_secret_key}
-    POSTGRES_HOST: ${ssm:/terraform/${self:provider.stage}/rds/endpoint}
-    POSTGRES_PORT: ${ssm:/terraform/${self:provider.stage}/rds/port}
-    POSTGRES_DB: ${ssm:/terraform/${self:provider.stage}/rds/db_name}
-    POSTGRES_USER: ${ssm:/terraform/${self:provider.stage}/rds/db_username}
-    POSTGRES_PASSWORD: ${ssm:/terraform/${self:provider.stage}/rds/db_password}
-    GITHUB_CLIENT_ID: ${ssm:/secrets/${self:provider.stage}/github_client_id}
-    GITHUB_CLIENT_SECRET: ${ssm:/secrets/${self:provider.stage}/github_client_secret}
-    GITHUB_FERNET_KEY: ${ssm:/secrets/${self:provider.stage}/github_fernet_key}
+custom: ${file(../shared/serverless.yml):custom}
+
+provider: ${file(../shared/serverless.yml):provider}
 
 functions:
   logout:
@@ -44,33 +17,7 @@ functions:
       - http:
           path: /logout
           method: POST
-          cors:
-            origins:
-              - https://www.matchyaa.com
-              - https://matchyaa.com
-              - https://www.staging.matchyaa.com
-              - https://staging.matchyaa.com
-              - http://127.0.0.1:5173
-            allowCredentials: true
-
-  github:
-    name: ${self:provider.stage}-authentication-github
-    image:
-      name: default
-      command:
-        - github.handler
-    events:
-      - http:
-          path: /login/github
-          method: POST
-          cors:
-            origins:
-              - https://www.matchyaa.com
-              - https://matchyaa.com
-              - https://www.staging.matchyaa.com
-              - https://staging.matchyaa.com
-              - http://127.0.0.1:5173
-            allowCredentials: true
+          cors: ${file(../shared/serverless.yml):cors}
 
   google:
     name: ${self:provider.stage}-authentication-google
@@ -82,14 +29,32 @@ functions:
       - http:
           path: /login/google
           method: POST
-          cors:
-            origins:
-              - https://www.matchyaa.com
-              - https://matchyaa.com
-              - https://www.staging.matchyaa.com
-              - https://staging.matchyaa.com
-              - http://127.0.0.1:5173
-            allowCredentials: true
+          cors: ${file(../shared/serverless.yml):cors}
+
+  invitation:
+    name: ${self:provider.stage}-authentication-invitation
+    image:
+      name: default
+      command:
+        - invitation.handler
+    events:
+      - http:
+          path: /auth/invitation
+          method: POST
+          cors: ${file(../shared/serverless.yml):cors}
+
+  invitation-invalidate:
+    name: ${self:provider.stage}-authentication-invitation-invalidate
+    image:
+      name: default
+      command:
+        - invitation_invalidate.handler
+    events:
+      - http:
+          path: /auth/invitation/invalidate
+          method: POST
+          cors: ${file(../shared/serverless.yml):cors}
+          authorizer: ${file(../shared/serverless.yml):header-authorizer}
 
 plugins:
   - serverless-deployment-bucket

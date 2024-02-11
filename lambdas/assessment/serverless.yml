@@ -1,0 +1,71 @@
+service: assessment
+
+frameworkVersion: "3"
+
+custom: ${file(../shared/serverless.yml):custom}
+
+provider: ${file(../shared/serverless.yml):provider}
+
+functions:
+  create:
+    name: ${self:provider.stage}-assessment-create
+    image:
+      name: default
+      command:
+        - create.handler
+    events:
+      - http:
+          path: /assessments
+          method: POST
+          cors: ${file(../shared/serverless.yml):cors}
+          authorizer: ${file(../shared/serverless.yml):cookie-authorizer}
+
+  retrieve:
+    name: ${self:provider.stage}-assessment-retrieve
+    image:
+      name: default
+      command:
+        - retrieve.handler
+    events:
+      - http:
+          path: /assessments
+          method: GET
+          cors: ${file(../shared/serverless.yml):cors}
+          authorizer: ${file(../shared/serverless.yml):cookie-authorizer}
+
+  retrieve-by-id:
+    name: ${self:provider.stage}-assessment-retrieve-by-id
+    image:
+      name: default
+      command:
+        - retrieve_by_id.handler
+    events:
+      - http:
+          path: /assessments/{id}
+          method: GET
+          cors: ${file(../shared/serverless.yml):cors}
+          authorizer: ${file(../shared/serverless.yml):cookie-authorizer}
+          request:
+            parameters:
+              paths:
+                id: true
+
+  delete-by-id:
+    name: ${self:provider.stage}-assessment-delete-by-id
+    image:
+      name: default
+      command:
+        - delete_by_id.handler
+    events:
+      - http:
+          path: /assessments/{id}
+          method: DELETE
+          cors: ${file(../shared/serverless.yml):cors}
+          authorizer: ${file(../shared/serverless.yml):cookie-authorizer}
+          request:
+            parameters:
+              paths:
+                id: true
+
+plugins:
+  - serverless-deployment-bucket

@@ -2,7 +2,11 @@ on:
   workflow_call:
     inputs:
       environment:
-        description: "Environment to deploy to"
+        description: Environment to deploy to in lowercase.
+        required: true
+        type: string
+      environment-label:
+        description: Environment to deploy to in capitalized.
         required: true
         type: string
       component:
@@ -18,29 +22,29 @@ jobs:
   run:
     name: ${{ inputs.label }}
     runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
+    environment: ${{ inputs.environment-label }}
     steps:
       - name: Fetch Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Setup SSH Key (Shared)
-        if: inputs.component == 'shared'
+      - name: Setup SSH Key (Environment)
+        if: inputs.component == 'environment'
         run: |
           mkdir -p ~/.ssh
-          echo "${{ vars.SSH_PUBLIC_KEY }}" > ~/.ssh/id_rsa_matchya.pub
+          echo "${{ secrets.SSH_PUBLIC_KEY }}" > ~/.ssh/id_rsa_matchya.pub
           chmod 600 ~/.ssh/id_rsa_matchya.pub
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
+        uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
         run: terraform init
@@ -55,23 +59,46 @@ jobs:
       - name: Set Terraform Variables (Environment)
         if: inputs.component == 'environment'
         run: |
-          echo 'namespace = "${{ secrets.TF_NAMESPACE}}"' >> terraform.tfvars
+          echo 'hosted_zone = "${{ vars.TF_HOSTED_ZONE }}"' > terraform.tfvars
           echo 'db_username = "${{ secrets.TF_DB_USERNAME }}"' >> terraform.tfvars
-          echo 'db_password = "${{ secrets.TF_DB_PASSWORD}}"' >> terraform.tfvars
-          echo 'client_origin = "${{ vars.TF_CLIENT_ORIGIN }}"' >> terraform.tfvars
+          echo 'db_password = "${{ secrets.TF_DB_PASSWORD }}"' >> terraform.tfvars
         working-directory: terraform/${{ inputs.component }}
 
       - name: Set Terraform Variables (Shared)
         if: inputs.component == 'shared'
         run: |
-          echo 'domain_name = {' > terraform.tfvars
-          echo '  "prod": "${{ vars.TF_PRODUCTION_DOMAIN_NAME }}",' >> terraform.tfvars
-          echo '  "staging": "${{ vars.TF_STAGING_DOMAIN_NAME }}"' >> terraform.tfvars
-          echo '}' >> terraform.tfvars
-          echo 'vercel_records = {' >> terraform.tfvars
-          echo '  "a": "${{ vars.TF_A_VERCEL_RECORDS }}",' >> terraform.tfvars
-          echo '  "cname": "${{ vars.TF_CNAME_VERCEL_RECORDS }}"' >> terraform.tfvars
-          echo '}' >> terraform.tfvars
+          IFS=',' read -ra google_workspace_records_mx <<< "${{ vars.GOOGLE_WORKSPACE_RECORDS_MX }}"
+          echo 'hosted_zone = "${{ vars.TF_HOSTED_ZONE }}"' > terraform.tfvars
+          echo 'google_workspace_records = { "mx" = [' >> terraform.tfvars
+          for record in "${google_workspace_records_mx[@]}"; do
+            echo "\"$record\"," >> terraform.tfvars
+          done
+          echo '] }' >> terraform.tfvars
+          IFS=',' read -ra webflow_records_a <<< "${{ vars.WEBFLOW_RECORDS_A }}"
+          echo 'webflow_records = { "txt" = ["${{ vars.WEBFLOW_RECORDS_TXT }}"], "a" = [' >> terraform.tfvars
+          for record in "${webflow_records_a[@]}"; do
+            echo "\"$record\"," >> terraform.tfvars
+          done
+          echo '] }' >> terraform.tfvars
+          echo 'www_webflow_records = { "cname" = ["${{ vars.WWW_WEBFLOW_RECORDS_CNAME }}"] }' >> terraform.tfvars
+          echo 'sendgrid_cname_1_name = "${{ vars.SENDGRID_CNAME_1_NAME }}"' >> terraform.tfvars
+          echo 'sendgrid_cname_1_record = "${{ vars.SENDGRID_CNAME_1_RECORD }}"' >> terraform.tfvars
+          echo 'sendgrid_cname_2_name = "${{ vars.SENDGRID_CNAME_2_NAME }}"' >> terraform.tfvars
+          echo 'sendgrid_cname_2_record = "${{ vars.SENDGRID_CNAME_2_RECORD }}"' >> terraform.tfvars
+          echo 'sendgrid_cname_3_name = "${{ vars.SENDGRID_CNAME_3_NAME }}"' >> terraform.tfvars
+          echo 'sendgrid_cname_3_record = "${{ vars.SENDGRID_CNAME_3_RECORD }}"' >> terraform.tfvars
+          echo 'sendgrid_cname_4_name = "${{ vars.SENDGRID_CNAME_4_NAME }}"' >> terraform.tfvars
+          echo 'sendgrid_cname_4_record = "${{ vars.SENDGRID_CNAME_4_RECORD }}"' >> terraform.tfvars
+          echo 'sendgrid_cname_5_name = "${{ vars.SENDGRID_CNAME_5_NAME }}"' >> terraform.tfvars
+          echo 'sendgrid_cname_5_record = "${{ vars.SENDGRID_CNAME_5_RECORD }}"' >> terraform.tfvars
+          echo 'sendgrid_txt_name = "${{ vars.SENDGRID_TXT_NAME }}"' >> terraform.tfvars
+          echo 'sendgrid_txt_record = "${{ vars.SENDGRID_TXT_RECORD }}"' >> terraform.tfvars
+          IFS=',' read -ra ADDR <<< "${{ vars.CLIENT_ORIGINS }}"
+          echo 'client_origins = [' >> terraform.tfvars
+          for i in "${ADDR[@]}"; do
+            echo "\"$i\"," >> terraform.tfvars
+          done
+          echo ']' >> terraform.tfvars
         working-directory: terraform/${{ inputs.component }}
 
       - name: Terraform Plan

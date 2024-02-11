@@ -4,9 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: "Environment to deploy to"
+        description: "Environment to deploy to in lowercase."
         required: true
         default: "staging"
+      environment-label:
+        description: "Environment to deploy to in capitalized."
+        required: true
+        default: "Staging"
 
 jobs:
   plan-shared:
@@ -14,6 +18,7 @@ jobs:
     uses: ./.github/workflows/job-plan-infrastructure.yml
     with:
       environment: ${{ inputs.environment }}
+      environment-label: ${{ inputs.environment-label }}
       component: shared
       label: Shared Infrastructure
     secrets: inherit
@@ -25,27 +30,30 @@ jobs:
     needs: [plan-shared]
     with:
       environment: ${{ inputs.environment }}
+      environment-label: ${{ inputs.environment-label }}
       component: environment
       label: Environment Infrastructure
     secrets: inherit
 
   deploy-shared:
-    name: Deploy
+    name: Deployment
     uses: ./.github/workflows/job-deploy-infrastructure.yml
     needs: [plan-shared]
     with:
       environment: ${{ inputs.environment }}
+      environment-label: ${{ inputs.environment-label }}
       component: shared
       label: Shared Infrastructure
     secrets: inherit
 
   deploy-environment:
-    name: Deploy
+    name: Deployment
     if: inputs.environment != 'production'
     uses: ./.github/workflows/job-deploy-infrastructure.yml
-    needs: [plan-environment]
+    needs: [deploy-shared, plan-environment]
     with:
       environment: ${{ inputs.environment }}
+      environment-label: ${{ inputs.environment-label }}
       component: environment
       label: Environment Infrastructure
     secrets: inherit

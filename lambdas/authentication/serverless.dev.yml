@@ -1,0 +1,60 @@
+service: authentication
+
+frameworkVersion: "3"
+
+custom: ${file(../shared/serverless.dev.yml):custom}
+
+provider: ${file(../shared/serverless.dev.yml):provider}
+
+functions:
+  logout:
+    name: ${self:provider.stage}-authentication-logout
+    image:
+      name: default
+      command:
+        - logout.handler
+    events:
+      - http:
+          path: /logout
+          method: POST
+          cors: ${file(../shared/serverless.dev.yml):cors}
+
+  google:
+    name: ${self:provider.stage}-authentication-google
+    image:
+      name: default
+      command:
+        - google.handler
+    events:
+      - http:
+          path: /login/google
+          method: POST
+          cors: ${file(../shared/serverless.dev.yml):cors}
+
+  invitation:
+    name: ${self:provider.stage}-authentication-invitation
+    image:
+      name: default
+      command:
+        - invitation.handler
+    events:
+      - http:
+          path: /auth/invitation
+          method: POST
+          cors: ${file(../shared/serverless.dev.yml):cors}
+
+  invitation-invalidate:
+    name: ${self:provider.stage}-authentication-invitation-invalidate
+    image:
+      name: default
+      command:
+        - invitation_invalidate.handler
+    events:
+      - http:
+          path: /auth/invitation/invalidate
+          method: POST
+          cors: ${file(../shared/serverless.dev.yml):cors}
+          authorizer: ${file(../shared/serverless.dev.yml):header-authorizer}
+
+plugins:
+  - serverless-deployment-bucket

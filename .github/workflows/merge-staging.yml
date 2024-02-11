@@ -6,9 +6,128 @@ on:
       - staging
 
 jobs:
-  cleanup:
+  check-infrastructure-changes:
     if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop')
+    name: Check Infrastructure Changes
+    runs-on: ubuntu-latest
+    outputs:
+      infra-changed: ${{ steps.check.outputs.infra-changed }}
+    steps:
+      - name: Fetch Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Check if files have changed
+        id: files
+        run: |
+          if git diff --quiet HEAD^ HEAD -- ./terraform
+          then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Set output
+        id: check
+        run: echo "infra-changed=${{ steps.files.outputs.changed }}" >> $GITHUB_OUTPUT
+
+  check-web-changes:
+    if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop')
+    name: Check Web Changes
+    runs-on: ubuntu-latest
+    outputs:
+      web-changed: ${{ steps.check.outputs.web-changed }}
+    steps:
+      - name: Fetch Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Check if files have changed
+        id: files
+        run: |
+          if git diff --quiet HEAD^ HEAD -- ./web
+          then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Set output
+        id: check
+        run: echo "web-changed=${{ steps.files.outputs.changed }}" >> $GITHUB_OUTPUT
+
+  check-lambda-changes:
+    if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop')
+    name: Check Lambda Changes
+    runs-on: ubuntu-latest
+    outputs:
+      lambdas-changed: ${{ steps.check.outputs.lambdas-changed }}
+    steps:
+      - name: Fetch Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Check if files have changed
+        id: files
+        run: |
+          if git diff --quiet HEAD^ HEAD -- ./lambdas
+          then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Set output
+        id: check
+        run: echo "lambdas-changed=${{ steps.files.outputs.changed }}" >> $GITHUB_OUTPUT
+
+  check-db-changes:
+    if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop')
+    name: Check DB Changes
+    runs-on: ubuntu-latest
+    outputs:
+      db-changed: ${{ steps.check.outputs.db-changed }}
+    steps:
+      - name: Fetch Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Check files have changed
+        id: files
+        run: |
+          if git diff --quiet HEAD^ HEAD -- ./db
+          then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Set output
+        id: check
+        run: echo "db-changed=${{ steps.files.outputs.changed }}" >> $GITHUB_OUTPUT
+
+  cleanup:
+    if: >-
+      contains(github.event.head_commit.message, 'Merge pull request') &&
+      contains(github.event.head_commit.message, 'develop') &&
+      (
+        needs.check-infrastructure-changes.outputs.infra-changed == 'true' ||
+        needs.check-web-changes.outputs.web-changed == 'true' ||
+        needs.check-lambda-changes.outputs.lambdas-changed == 'true' ||
+        needs.check-db-changes.outputs.db-changed == 'true'
+      )
     name: Clean Deployment History
+    needs:
+      [
+        check-infrastructure-changes,
+        check-web-changes,
+        check-lambda-changes,
+        check-db-changes,
+      ]
     runs-on: ubuntu-latest
     permissions: write-all
     steps:
@@ -19,30 +138,6 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
           onlyRemoveDeployments: true
 
-  check-infrastructure-changes:
-    if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop')
-    name: Check Infrastructure Changes
-    runs-on: ubuntu-latest
-    outputs:
-      infra-changed: ${{ steps.check.outputs.infra-changed }}
-    steps:
-      - name: Fetch Repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: Check Infrastructure Files Changed
-        uses: dorny/paths-filter@v2
-        id: changes-infrastructure
-        with:
-          filters: |
-            package:
-              - 'terraform/**'
-
-      - name: Set output
-        id: check
-        run: echo "infra-changed=${{ steps.changes-infrastructure.outputs.package }}" >> $GITHUB_OUTPUT
-
   deploy-terraform-shared:
     if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop') && needs.check-infrastructure-changes.outputs.infra-changed == 'true'
     name: Deployment
@@ -50,30 +145,53 @@ jobs:
     needs: [check-infrastructure-changes]
     uses: ./.github/workflows/job-deploy-infrastructure.yml
     with:
-      label: Shared Infrastructure
       component: shared
-      environment: Staging
+      environment: staging
+      environment-label: Staging
+      label: Shared Infrastructure
     secrets: inherit
 
   deploy-terraform-environment:
-    if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop')
+    if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop') && needs.check-infrastructure-changes.outputs.infra-changed == 'true'
     name: Deployment
     permissions: write-all
-    needs: [deploy-terraform-shared]
+    needs: [deploy-terraform-shared, check-infrastructure-changes]
     uses: ./.github/workflows/job-deploy-infrastructure.yml
     with:
-      label: Environment Infrastructure
       component: environment
-      environment: Staging
+      environment: staging
+      environment-label: Staging
+      label: Environment Infrastructure
     secrets: inherit
 
   deploy-website:
-    if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop')
+    if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop') && needs.check-web-changes.outputs.web-changed == 'true'
     name: Deployment
-    needs: [cleanup]
+    needs: [check-web-changes]
     uses: ./.github/workflows/job-deploy-website.yml
     with:
-      environment: Staging
+      environment: staging
+      environment-label: Staging
+    secrets: inherit
+
+  deploy-lambdas:
+    if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop') && needs.check-lambda-changes.outputs.lambdas-changed == 'true'
+    name: Deployment
+    needs: [check-lambda-changes]
+    uses: ./.github/workflows/job-deploy-lambdas.yml
+    with:
+      environment: staging
+      environment-label: Staging
+    secrets: inherit
+
+  deploy-db-changelog:
+    if: contains(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop') && needs.check-db-changes.outputs.db-changed == 'true'
+    name: Deployment
+    needs: [check-db-changes]
+    uses: ./.github/workflows/job-deploy-db-changelog.yml
+    with:
+      environment: staging
+      environment-label: Staging
     secrets: inherit
 
   # create-release-web:

@@ -2,6 +2,11 @@ on:
   workflow_call:
     inputs:
       environment:
+        description: Environment to deploy to in lowercase.
+        required: true
+        type: string
+      environment-label:
+        description: Environment to deploy to in capitalized.
         required: true
         type: string
 
@@ -10,20 +15,20 @@ jobs:
     name: Web
     if: inputs.environment != 'production'
     runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
+    environment: ${{ inputs.environment-label }}
     steps:
       - name: Fetch Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           cache: npm
-          node-version: 18
+          node-version: 20
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -31,13 +36,54 @@ jobs:
 
       - name: Fetch environment variables and create .env in web folder
         run: |
-          echo "VITE_API_URL=${{ vars.VITE_API_URL }}" >> web/.env
+          echo "VITE_API_URL=${{ vars.VITE_API_URL }}" > web/.env
           echo "VITE_GITHUB_CLIENT_ID=${{ secrets.VITE_GITHUB_CLIENT_ID }}" >> web/.env
+          echo "VITE_GOOGLE_CLIENT_ID=${{ secrets.VITE_GOOGLE_CLIENT_ID }}" >> web/.env
           echo "VITE_CLIENT_URL=${{ vars.VITE_CLIENT_URL }}" >> web/.env
 
-      - name: Set execute permissions for deploy script
-        run: chmod +x scripts/deploy_to_s3.sh
-      - name: Deploy to S3
-        shell: bash
+      - name: Install Package Dependencies
+        run: npm ci
+        working-directory: web
+
+      - name: Build
+        run: npm run build -- --mode ${{ inputs.environment }}
+        env:
+          RUDDERSTACK_DATA_PLANE_URL: ${{ secrets.RUDDERSTACK_DATA_PLANE_URL }}
+          RUDDERSTACK_WRITE_KEY: ${{ secrets.RUDDERSTACK_WRITE_KEY }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          SENTRY_ENVIRONMENT: ${{ inputs.environment }}
+          SENTRY_ORG: ${{ vars.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
+        working-directory: web
+
+      - name: Fetch App Domain Name
+        id: fetch_app_domain_name
         run: |
-          cd scripts && ./deploy_to_s3.sh --bucket-name ${{ vars.S3_WEBSITE_BUCKET_NAME }} --environment ${{ inputs.environment }}
+          echo "Starting fetching App Domain Name..."
+          app_domain_name=$(aws ssm get-parameter --name "/terraform/${{ inputs.environment }}/domain_name" --query "Parameter.Value" --output text)
+          echo "app_domain_name=$app_domain_name" >> $GITHUB_OUTPUT
+          echo "App Domain Name found: $app_domain_name"
+
+      - name: Deploy to S3
+        run: |
+          echo "Starting deployment to S3..."
+          aws s3 sync dist/ s3://www.${{ steps.fetch_app_domain_name.outputs.app_domain_name }}
+          echo "Deployment to S3 completed."
+        working-directory: web
+
+      - name: Get the distribution id for Cloudfront
+        id: get_distribution_id
+        run: |
+          distribution_id=$(aws ssm get-parameter --name "/terraform/${{ inputs.environment }}/www.${{ steps.fetch_app_domain_name.outputs.app_domain_name }}/cloudfront_distribution_id" --query "Parameter.Value" --output text)
+          echo "distribution_id=$distribution_id" >> $GITHUB_OUTPUT
+          echo "Distribution Id found: $distribution_id"
+
+      - name: Invalidate Cloudfront cache
+        run: |
+          echo "Starting CloudFront cache invalidation..."
+          if ! aws cloudfront create-invalidation --distribution-id ${{ steps.get_distribution_id.outputs.distribution_id }} --paths "/*" > /dev/null 2>&1; then
+              echo "CloudFront cache invalidation failed."
+              exit 1
+          fi
+          echo "CloudFront cache invalidation was successful."

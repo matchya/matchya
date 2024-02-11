@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import Component from './OAuthCallbackPage';
 
 const meta: Meta<typeof Component> = {
-  title: 'Template',
+  title: 'Page',
   component: Component,
 };
 
@@ -16,7 +16,7 @@ export const OAuthCallbackPage: Story = {
     <Component
       isLoginFailed={false}
       onRetryLogin={() => {}}
-      authType="GitHub"
+      authType="Google"
     />
   ),
 };

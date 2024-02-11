@@ -1,5 +1,6 @@
-variable "namespace" {
-    type = string
+variable "hosted_zone" {
+  description = "The hosted zone for the domain"
+  type = string
 }
 
 variable "db_username" {
@@ -8,9 +9,4 @@ variable "db_username" {
 
 variable "db_password" {
   type = string
-}
-
-variable "client_origin" {
-  type = string
-  default = "http://127.0.0.1:5173"
 }
