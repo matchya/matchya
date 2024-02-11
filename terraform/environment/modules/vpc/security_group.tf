@@ -45,13 +45,13 @@ resource "aws_security_group" "lambda" {
 
 
   tags = {
-    Name = "${terraform.workspace}-lambda"
+    Name = "lambda"
+    Environment = "${terraform.workspace}"
   }
 }
 
 resource "aws_security_group" "rds_postgres_insecure" {
   count = terraform.workspace == "dev" ? 1 : 0
-  name = "${terraform.workspace}-rds-postgres"
   description = "Security group for RDS instance"
   vpc_id      = terraform.workspace == "dev" ? data.aws_vpc.default.id : aws_vpc.main[0].id
 
@@ -70,14 +70,14 @@ resource "aws_security_group" "rds_postgres_insecure" {
   }
 
   tags = {
-    Name = "${terraform.workspace}-rds-postgres"
+    Name = "rds-postgres-insecure"
+    Environment = "${terraform.workspace}"
   }
 }
 
 # testing new one inside vpc
 resource "aws_security_group" "rds_postgres_secure" {
   count = terraform.workspace != "dev" ? 1 : 0
-  name = "${terraform.workspace}-rds-postgres"
   description = "Security group for RDS Postgres database"
   vpc_id      = terraform.workspace == "dev" ? data.aws_vpc.default.id : aws_vpc.main[0].id
 
@@ -103,12 +103,12 @@ resource "aws_security_group" "rds_postgres_secure" {
   }
 
   tags = {
-    Name = "${terraform.workspace}-rds-postgres"
+    Name = "rds-postgres-secure"
+    Environment = "${terraform.workspace}"
   }
 }
 
 resource "aws_security_group" "ec2_public" {
-  name = "${terraform.workspace}-ec2-public"
   description = "Security group for EC2 Public Bastion Host. Used to access private resources within VPC."
   vpc_id      = terraform.workspace == "dev" ? data.aws_vpc.default.id : aws_vpc.main[0].id
 
@@ -161,13 +161,13 @@ resource "aws_security_group" "ec2_public" {
   }
 
   tags = {
-    "Name" = "${terraform.workspace}-ec2-public"
+    Name = "ec2-public"
+    Environment = "${terraform.workspace}"
   }
 }
 
 resource "aws_security_group" "vpc_endpoint" {
   count = terraform.workspace != "dev" ? 1 : 0
-  name = "${terraform.workspace}-vpc-endpoint"
   description = "Security group for VPC Endpoint"
   vpc_id      = aws_vpc.main[0].id
 
@@ -186,6 +186,7 @@ resource "aws_security_group" "vpc_endpoint" {
   }
 
   tags = {
-    "Name" = "${terraform.workspace}-vpc-endpoint"
+    Name = "vpc-endpoint"
+    Environment = "${terraform.workspace}"
   }
 }

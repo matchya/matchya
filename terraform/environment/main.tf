@@ -10,9 +10,9 @@ locals {
   }, terraform.workspace, "")
 }
 
-# Handles api gateway with custom domain setup
+# # Handles api gateway with custom domain setup
 module "api" {
-  count = terraform.workspace == "staging" ? 1 : 0
+  count = terraform.workspace != "dev" ? 1 : 0
   source = "./modules/api"
 
   api_domain_name = local.api_domain_name
@@ -21,9 +21,9 @@ module "api" {
   region = data.aws_region.current.name
 }
 
-# Handles client facing application with custom domain setup
+# # Handles client facing application with custom domain setup
 module "app" {
-  count = terraform.workspace == "staging" ? 1 : 0
+  count = terraform.workspace != "dev" ? 1 : 0
   source = "./modules/app"
 
   app_domain_name = local.app_domain_name
@@ -42,12 +42,6 @@ module "ec2" {
 
   public_ec2_security_group = module.vpc.public_ec2_security_group
   public_subnet_1 = module.vpc.public_subnet_1
-}
-
-module "iam" {
-  source = "../shared/modules/iam"
-
-  create_new = false
 }
 
 module "rds" {

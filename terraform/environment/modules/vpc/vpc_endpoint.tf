@@ -11,7 +11,8 @@ resource "aws_vpc_endpoint" "rds" {
   subnet_ids         = [aws_subnet.private_1[0].id, aws_subnet.private_2[0].id]
 
   tags = {
-    Name = "${terraform.workspace}-rds"
+    Name = "rds"
+    Environment = "${terraform.workspace}"
   }
 }
 
@@ -20,7 +21,8 @@ resource "aws_vpc_endpoint" "s3" {
   service_name = "com.amazonaws.${var.region}.s3"
 
   tags = {
-    Name: "${terraform.workspace}-s3"
+    Name = "s3"
+    Environment = "${terraform.workspace}"
   }
 }
 
@@ -29,6 +31,7 @@ resource "aws_vpc_endpoint" "dynamodb" {
   service_name = "com.amazonaws.${var.region}.dynamodb"
 
   tags = {
-    Name: "${terraform.workspace}-dynamodb"
+    Name = "dynamodb"
+    Environment = "${terraform.workspace}"
   }
 }

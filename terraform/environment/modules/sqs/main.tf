@@ -5,6 +5,10 @@ resource "aws_sqs_queue" "checklist_generation_processor_queue" {
   message_retention_seconds = 86400
   receive_wait_time_seconds = 10
   visibility_timeout_seconds = 300
+
+  tags = {
+    Environment = "${terraform.workspace}"
+  }
 }
 
 resource "aws_sqs_queue" "checklist_evaluation_processor_queue" {
@@ -14,6 +18,10 @@ resource "aws_sqs_queue" "checklist_evaluation_processor_queue" {
   message_retention_seconds = 86400
   receive_wait_time_seconds = 10
   visibility_timeout_seconds = 300
+
+  tags = {
+    Environment = "${terraform.workspace}"
+  }
 }
 
 resource "aws_sqs_queue" "question_generation_processor_queue" {
@@ -23,4 +31,8 @@ resource "aws_sqs_queue" "question_generation_processor_queue" {
   message_retention_seconds = 86400
   receive_wait_time_seconds = 10
   visibility_timeout_seconds = 300
+
+  tags = {
+    Environment = "${terraform.workspace}"
+  }
 }

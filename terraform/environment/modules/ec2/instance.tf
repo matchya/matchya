@@ -15,6 +15,7 @@ resource "aws_instance" "bastion" {
   }
 
   tags = {
-    Name = "${terraform.workspace}-bastion-host"
+    Name = "bastion-host"
+    Environment = "${terraform.workspace}"
   }
 }

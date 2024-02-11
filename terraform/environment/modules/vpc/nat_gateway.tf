@@ -4,6 +4,6 @@ resource "aws_nat_gateway" "nat" {
   subnet_id     = aws_subnet.public_1[0].id
 
   tags = {
-    Name = "${terraform.workspace}-nat-gateway"
+    Environment = "${terraform.workspace}"
   }
 }
