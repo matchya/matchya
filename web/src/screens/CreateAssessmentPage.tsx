@@ -129,6 +129,7 @@ function CreateAssessmentPage() {
       console.log(error);
     } finally {
       setIsLoadingQuestionGeneration(false);
+      setQuizTopic('');
     }
   };
 
