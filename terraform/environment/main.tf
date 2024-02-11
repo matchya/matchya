@@ -12,7 +12,6 @@ locals {
 
 # # Handles api gateway with custom domain setup
 module "api" {
-  count = terraform.workspace != "dev" ? 1 : 0
   source = "./modules/api"
 
   api_domain_name = local.api_domain_name

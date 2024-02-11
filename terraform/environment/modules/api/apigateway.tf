@@ -26,15 +26,17 @@ resource "aws_api_gateway_integration" "health_get" {
 resource "aws_api_gateway_deployment" "default" {
   depends_on  = [aws_api_gateway_integration.health_get]
   rest_api_id = aws_api_gateway_rest_api.default.id
-  stage_name  = "default"
+  stage_name  = terraform.workspace != "dev" ? "default" : "dev"
 }
 
 resource "aws_api_gateway_domain_name" "default" {
-  certificate_arn = aws_acm_certificate_validation.api.certificate_arn
+  count = terraform.workspace != "dev" ? 1 : 0
+  certificate_arn = aws_acm_certificate_validation.api[0].certificate_arn
   domain_name     = var.api_domain_name
 }
 
 resource "aws_api_gateway_base_path_mapping" "default" {
+  count = terraform.workspace != "dev" ? 1 : 0
   depends_on = [
     aws_api_gateway_domain_name.default,
     aws_api_gateway_rest_api.default,
@@ -43,7 +45,7 @@ resource "aws_api_gateway_base_path_mapping" "default" {
 
   api_id      = aws_api_gateway_rest_api.default.id
   stage_name  = "default"
-  domain_name = aws_api_gateway_domain_name.default.domain_name
+  domain_name = aws_api_gateway_domain_name.default[0].domain_name
 }
 
 resource "aws_api_gateway_gateway_response" "default_4xx" {
