@@ -44,7 +44,7 @@ function CreateAssessmentPage() {
         assessmentName,
         selectedPosition,
         selectedLevel,
-        // quizIds: selectedQuizzes.map(quiz => quiz.id),
+        quizIds: selectedQuizzes.map(quiz => quiz.id),
       },
     });
     if (
@@ -61,7 +61,7 @@ function CreateAssessmentPage() {
         name: assessmentName,
         positionType: selectedPosition,
         positionLevel: selectedLevel,
-        topics: [],
+        quizIds: selectedQuizzes.map(quiz => quiz.id),
       };
       const response = await caseSensitiveAxiosInstance.post(
         '/assessments',

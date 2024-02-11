@@ -33,7 +33,7 @@ def handler(event, context):
 
         # business logic
         assessment = Assessment(body.get('name'), body.get('position_type'), body.get('position_level'))
-        quiz_ids = body.get('quiz_ids', ['1', '2', '3'])
+        quiz_ids = body.get('quiz_ids')
 
         # db operations
         with postgres_client as db_client:
