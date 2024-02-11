@@ -9,7 +9,6 @@ class Candidate:
         self._id = None
         self._name = None
         self._email = None
-        self._added_at = None
         self._assessment = None
 
     @property
@@ -43,16 +42,6 @@ class Candidate:
         self._email = value
 
     @property
-    def added_at(self):
-        return self._added_at
-
-    @added_at.setter
-    def added_at(self, value):
-        if value is None:
-            raise ValueError('added_at cannot be None')
-        self._added_at = value
-
-    @property
     def assessment(self):
         return self._assessment
 
@@ -67,11 +56,8 @@ class Candidate:
             'id': self._id,
             'name': self._name,
             'email': self._email,
-            'added_at': self._added_at,
             'assessment': self._assessment,
         }
-        if self._added_at:
-            result['added_at'] = str(self._added_at)
         if self._assessment:
             result['assessment'] = self._assessment
         return result

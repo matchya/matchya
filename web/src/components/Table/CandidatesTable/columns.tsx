@@ -12,8 +12,9 @@ export const columns: ColumnDef<Candidate>[] = [
       <CandidatesTableColumnHeader column={column} title="Created Date" />
     ),
     cell: ({ row }) => {
+      // TODO: Here, this should be interview created at
       const date = row.original.assessment
-        ? new Date(row.original.assessment?.createdAt as string)
+        ? new Date(row.original.assessment?.interviewCreatedAt as string)
         : new Date();
       const formattedDate = date.toLocaleDateString('en-US', {
         year: 'numeric',
@@ -23,8 +24,12 @@ export const columns: ColumnDef<Candidate>[] = [
       return <div className="min-w-[80px] max-w-[100px]">{formattedDate}</div>;
     },
     sortingFn: (rowA, rowB) =>
-      new Date(rowA.original.assessment?.createdAt as string).getTime() -
-      new Date(rowB.original.assessment?.createdAt as string).getTime(),
+      new Date(
+        rowA.original.assessment?.interviewCreatedAt as string
+      ).getTime() -
+      new Date(
+        rowB.original.assessment?.interviewCreatedAt as string
+      ).getTime(),
     enableSorting: true,
     enableHiding: false,
   },

@@ -33,6 +33,7 @@ interface CreateAssessmentPageTemplateProps {
   isLoadingQuestionGeneration: boolean;
   description: string;
   quizzes: Quiz[];
+  selectedQuizzes: Quiz[];
   selectedPosition: string;
   selectedLevel: string;
   quizTopic: string;
@@ -44,6 +45,7 @@ interface CreateAssessmentPageTemplateProps {
   onLevelChange: (value: string) => void;
   onTopicInputChange: (value: string) => void;
   onDifficultyInputChange: (value: string) => void;
+  setSelectedQuizzes: (quizzes: Quiz[]) => void;
   onSubmit: () => void;
   handleGenerateQuiz: () => void;
 }
@@ -53,6 +55,7 @@ const CreateAssessmentPageTemplate = ({
   isLoadingQuestionGeneration,
   description,
   quizzes,
+  selectedQuizzes,
   selectedPosition,
   selectedLevel,
   quizTopic,
@@ -64,6 +67,7 @@ const CreateAssessmentPageTemplate = ({
   onLevelChange,
   onTopicInputChange,
   onDifficultyInputChange,
+  setSelectedQuizzes,
   onSubmit,
   handleGenerateQuiz,
 }: CreateAssessmentPageTemplateProps) => {
@@ -166,7 +170,7 @@ const CreateAssessmentPageTemplate = ({
       </div>
       <div className="w-full px-4 md:px-12 xl:pl-8 space-y-4 pt-16 pr-1">
         <div className="">
-          <h3 className="text-2xl font-bold">You have selected 4 quizzes</h3>
+          <h3 className="text-2xl font-bold">You have selected {selectedQuizzes.length} quizzes</h3>
         </div>
         <div className="flex w-full space-x-3 my-2">
           <div className="w-full">
@@ -203,9 +207,17 @@ const CreateAssessmentPageTemplate = ({
           {isLoadingQuestionGeneration ? <LoadingCard /> : null}
           {quizzes.map(quiz => (
             <QuestionCard
-              description={quiz.description}
-              keyword={quiz.topic}
-              difficulty={quiz.difficulty}
+              quiz={quiz}
+              selected={selectedQuizzes.some(q => q.id === quiz.id)}
+              onClick={() => {
+                if (selectedQuizzes.some(q => q.id === quiz.id)) {
+                  setSelectedQuizzes(
+                    selectedQuizzes.filter(q => q.id !== quiz.id),
+                  );
+                } else {
+                  setSelectedQuizzes([...selectedQuizzes, quiz]);
+                }
+              }}
             />
           ))}
         </div>

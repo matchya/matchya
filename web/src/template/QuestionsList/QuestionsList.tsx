@@ -22,9 +22,8 @@ const QuestionsListTemplate = ({
       quizzes.map(quiz => (
         <QuestionCard
           key={quiz.id}
-          description={quiz.description}
-          keyword={quiz.topic}
-          difficulty={quiz.difficulty}
+          quiz={quiz}
+          selected={false}
         />
       ))
     ) : null}
