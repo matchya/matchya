@@ -211,6 +211,9 @@ const CreateAssessmentPageTemplate = ({
         </div>
         <div className="space-y-4 overflow-y-auto max-h-[490px]">
           {isLoadingQuestionGeneration ? <LoadingCard /> : null}
+          {quizzes.length === 0 ? (
+            <p className="text-lg font-bold text-black">No quizzes found</p>
+          ) : null}
           {quizzes.map(quiz => (
             <QuestionCard
               quiz={quiz}
