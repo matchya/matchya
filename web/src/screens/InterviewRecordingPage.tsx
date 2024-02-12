@@ -59,14 +59,14 @@ const InterviewRecordingPage = () => {
       );
       if (response.data.status === 'success') {
         // caseSensitiveAxiosInstance doesn't work
-        const theInterview = response.data.payload.interview;
-        theInterview.quizzes.forEach((quiz: any) => {
+        const interviewPayload = response.data.payload.interview;
+        interviewPayload.quizzes.forEach((quiz: any) => {
           quiz.questions = quiz.questions.map((question: any) => {
             return { ...question, questionNumber: question.question_number };
           });
         });
-        setQuizes(theInterview.quizzes);
-        setInterview(theInterview);
+        setQuizes(interviewPayload.quizzes);
+        setInterview(interviewPayload);
       }
     } catch (error) {
       console.error(error);

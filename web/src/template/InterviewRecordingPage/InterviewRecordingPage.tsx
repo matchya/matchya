@@ -24,7 +24,7 @@ interface InterviewRecordingPageTemplateProps {
   progressbarCount: number;
   totalQuizCount: number;
   quiz: Quiz;
-  interview: Interview | undefined;
+  interview?: Interview;
   isLoading: boolean;
   isRecording: boolean;
   webcamRef?: React.RefObject<Webcam>;
