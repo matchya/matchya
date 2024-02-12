@@ -4,7 +4,7 @@ import { LayoutDecorator } from '../../../.storybook/decorators';
 
 import Component from './CandidatesPage';
 
-import { mockedCandidates } from '@/data';
+import { mockedAssessments, mockedCandidates } from '@/data';
 
 const meta: Meta<typeof Component> = {
   title: 'Page',
@@ -17,5 +17,5 @@ export default meta;
 type Story = StoryObj<typeof Component>;
 
 export const CandidatesPage: Story = {
-  render: () => <Component candidates={mockedCandidates} isLoading={false} />,
+  render: () => <Component candidates={mockedCandidates} assessments={mockedAssessments} isLoading={false} addCandidate={() => {}} />,
 };

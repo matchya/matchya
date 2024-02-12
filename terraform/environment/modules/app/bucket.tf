@@ -12,18 +12,21 @@ resource "aws_s3_bucket" "main" {
 resource "aws_s3_bucket_public_access_block" "main" {
   bucket = aws_s3_bucket.main.id
 
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
 }
 
 resource "aws_s3_bucket_website_configuration" "main" {
   bucket = aws_s3_bucket.main.id
 
-  redirect_all_requests_to {
-    protocol = "https"
-    host_name = "www.${var.app_domain_name}"
+  index_document {
+    suffix = "index.html"
+  }
+
+  error_document {
+    key = "index.html"
   }
 }
 
@@ -33,18 +36,9 @@ resource "aws_s3_bucket" "www" {
   force_destroy = true
 }
 
-resource "aws_s3_bucket_public_access_block" "www" {
-  bucket = aws_s3_bucket.www.id
-
-  block_public_acls       = false
-  block_public_policy     = false
-  ignore_public_acls      = false
-  restrict_public_buckets = false
-}
-
-resource "aws_s3_bucket_policy" "www" {
-  depends_on = [aws_s3_bucket_public_access_block.www]
-  bucket = aws_s3_bucket.www.id
+resource "aws_s3_bucket_policy" "main" {
+  depends_on = [aws_s3_bucket_public_access_block.main]
+  bucket = aws_s3_bucket.main.id
 
   policy = jsonencode({
     Version = "2012-10-17",
@@ -52,21 +46,27 @@ resource "aws_s3_bucket_policy" "www" {
       {
         Action    = ["s3:GetObject"],
         Effect    = "Allow",
-        Resource  = ["arn:aws:s3:::${"www.${var.app_domain_name}"}/*"],
+        Resource  = ["arn:aws:s3:::${"${var.app_domain_name}"}/*"],
         Principal = "*"
       },
     ],
   })
 }
 
+resource "aws_s3_bucket_public_access_block" "www" {
+  bucket = aws_s3_bucket.www.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
 resource "aws_s3_bucket_website_configuration" "www" {
   bucket = aws_s3_bucket.www.id
 
-  index_document {
-    suffix = "index.html"
-  }
-
-  error_document {
-    key = "index.html"
+  redirect_all_requests_to {
+    protocol = "https"
+    host_name = var.app_domain_name
   }
 }
