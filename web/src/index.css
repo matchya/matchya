@@ -46,3 +46,7 @@
     stroke-dashoffset: -124;
   }
 }
+
+video {
+  border-radius: 0.5rem;
+}
