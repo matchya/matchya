@@ -17,6 +17,8 @@ export const InterviewRecordingPage: Story = {
   render: () => (
     <Component
       quiz={mockedSelectedQuiz}
+      quizStarted={false}
+      startQuiz={() => {}}
       isLoading={false}
       progressbarCount={2}
       totalQuizCount={4}

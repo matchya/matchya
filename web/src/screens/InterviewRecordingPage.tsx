@@ -16,6 +16,7 @@ const InterviewRecordingPage = () => {
   );
   const [quizzes, setQuizes] = useState<Quiz[]>([]);
   const [quizIndex, setQuizIndex] = useState(0);
+  const [quizStarted, setQuizStarted] = useState<boolean>(false);
   // we want to have a separate progress bar count because on the last question
   // without this, it won't show the progress bar at 100% when interview is complete
   const [progressbarCount, setProgressbarCount] = useState(0);
@@ -165,6 +166,8 @@ const InterviewRecordingPage = () => {
   return (
     <InterviewRecordingPageTemplate
       isLoading={isLoading}
+      quizStarted={quizStarted}
+      startQuiz={() => setQuizStarted(true)}
       quiz={quizzes[quizIndex]}
       totalQuizCount={quizzes.length}
       progressbarCount={progressbarCount}
