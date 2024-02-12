@@ -1,7 +1,7 @@
 resource "aws_ssm_parameter" "cloudfront_distribution_id" {
-  name  = "/terraform/${terraform.workspace}/www.${var.app_domain_name}/cloudfront_distribution_id"
+  name  = "/terraform/${terraform.workspace}/${var.app_domain_name}/cloudfront_distribution_id"
   type  = "String"
-  value = aws_cloudfront_distribution.www.id
+  value = aws_cloudfront_distribution.main.id
 }
 
 resource "aws_ssm_parameter" "cloud_distribution_url" {
