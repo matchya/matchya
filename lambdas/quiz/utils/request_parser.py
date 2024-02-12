@@ -85,3 +85,8 @@ class RequestParser:
         bucket = self.event['Records'][0]['s3']['bucket']['name']
         key = urllib.parse.unquote_plus(self.event['Records'][0]['s3']['object']['key'], encoding='utf-8')
         return bucket, key
+
+    def parser_query_string_parameters(self):
+        logger.info('Parsing query string parameters')
+        query = self.event.get('queryStringParameters', {}).get('query', None)
+        return query

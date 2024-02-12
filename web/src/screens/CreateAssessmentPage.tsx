@@ -21,6 +21,7 @@ function CreateAssessmentPage() {
   const [isLoadingQuestionGeneration, setIsLoadingQuestionGeneration] = useState<boolean>(false);
   const [quizTopic, setQuizTopic] = useState<string>('');
   const [quizDifficulty, setQuizDifficulty] = useState<string>('easy');
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
   useEffect(() => {
     fetchQuizzes();
@@ -28,7 +29,8 @@ function CreateAssessmentPage() {
 
   const fetchQuizzes = async () => {
     try {
-      const response = await caseSensitiveAxiosInstance.get('/quizzes');
+      const query = searchQuery.replace(' ', '+');
+      const response = await caseSensitiveAxiosInstance.get(`/quizzes?query=${query}`);
       if (response.data.status === 'success') {
         setQuizzes(response.data.payload.quizzes);
       }
@@ -144,6 +146,7 @@ function CreateAssessmentPage() {
       selectedLevel={selectedLevel}
       quizTopic={quizTopic}
       quizDifficulty={quizDifficulty}
+      searchQuery={searchQuery}
       isLoading={isLoading}
       onDescriptionChange={e => setDescription(e.target.value)}
       onAssessmentNameChange={e => setAssessmentName(e.target.value)}
@@ -152,7 +155,9 @@ function CreateAssessmentPage() {
       onTopicInputChange={(value: string) => setQuizTopic(value)}
       onDifficultyInputChange={(value: string) => setQuizDifficulty(value)}
       setSelectedQuizzes={setSelectedQuizzes}
+      setSearchQuery={setSearchQuery}
       onSubmit={handleSubmit}
+      onSearch={fetchQuizzes}
       handleGenerateQuiz={handleGenerateQuiz}
       isLoadingQuestionGeneration={isLoadingQuestionGeneration}
     />
