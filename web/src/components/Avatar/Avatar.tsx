@@ -1,8 +1,8 @@
 import * as AvatarPrimitive from '@radix-ui/react-avatar';
 import * as React from 'react';
 
+import { Skeleton } from '@/components';
 import { cn } from '@/lib/utils';
-import { Skeleton } from '..';
 
 const AvatarWrapper = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Root>,
