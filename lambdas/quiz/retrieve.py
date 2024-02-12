@@ -23,13 +23,14 @@ def handler(event, context):
         parser = RequestParser(event)
 
         # parsing from the event
+        query = parser.parser_query_string_parameters()
         origin = parser.parse_header()
         response_generator.origin_domain = origin
 
         # business logic
         with postgres_client as db_client:
             quiz_repo = QuizRepository(db_client)
-            quizzes = quiz_repo.retrieve_many()
+            quizzes = quiz_repo.retrieve_many(query=query)
 
         return response_generator.generate_success_response({
             'quizzes': [quiz.to_dict() for quiz in quizzes]
