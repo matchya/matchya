@@ -119,9 +119,7 @@ const InterviewRecordingPageTemplate = ({
             </div>
             <div className="ml-auto flex items-center space-x-4 hidden sm:block">
               <p className="text-lg">
-                {interview?.assessment.name
-                  ? interview?.assessment.name
-                  : 'Assessment'}
+                {interview?.assessment.name ?? 'Assessment'}
               </p>
             </div>
           </div>
