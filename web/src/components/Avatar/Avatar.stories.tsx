@@ -12,5 +12,5 @@ export default meta;
 type Story = StoryObj<typeof Component>;
 
 export const Avatar: Story = {
-  render: () => <Component />,
+  render: () => <Component altName="KO" />,
 };

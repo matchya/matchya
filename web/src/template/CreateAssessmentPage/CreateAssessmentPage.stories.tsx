@@ -28,6 +28,7 @@ export const IsGeneratingQuestion: Story = {
       selectedLevel={'Senior'}
       quizTopic={'React'}
       quizDifficulty={'easy'}
+      searchQuery={'React'}
       assessmentName={'test'}
       onDescriptionChange={() => {}}
       onAssessmentNameChange={() => {}}
@@ -36,6 +37,8 @@ export const IsGeneratingQuestion: Story = {
       onTopicInputChange={() => {}}
       onDifficultyInputChange={() => {}}
       setSelectedQuizzes={() => {}}
+      setSearchQuery={() => {}}
+      onSearch={() => {}}
       onSubmit={() => {}}
       handleGenerateQuiz={() => {}}
     />

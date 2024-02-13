@@ -1,6 +1,7 @@
 import * as AvatarPrimitive from '@radix-ui/react-avatar';
 import * as React from 'react';
 
+import { Skeleton } from '@/components';
 import { cn } from '@/lib/utils';
 
 const AvatarWrapper = React.forwardRef<
@@ -45,10 +46,24 @@ const AvatarFallback = React.forwardRef<
 ));
 AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName;
 
-const Avatar = ({ altName = 'KO', imageUrl = '/avatars/01.png', size = 8 }) => (
+interface AvatarProps {
+  altName: string;
+  imageUrl?: string;
+  size?: number;
+}
+
+const Avatar = ({
+  altName,
+  imageUrl = '/avatars/01.png',
+  size = 8,
+}: AvatarProps) => (
   <AvatarWrapper className={`h-${size} w-${size}`}>
     <AvatarImage src={imageUrl} alt="@shadcn" />
-    <AvatarFallback>{altName}</AvatarFallback>
+    {altName ? (
+      <AvatarFallback>{altName}</AvatarFallback>
+    ) : (
+      <Skeleton className={`w-${size}`} />
+    )}
   </AvatarWrapper>
 );
 
