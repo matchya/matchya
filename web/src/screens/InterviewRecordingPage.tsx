@@ -53,6 +53,7 @@ const InterviewRecordingPage = () => {
       if (response.data.status === 'success') {
         // caseSensitiveAxiosInstance doesn't work
         const interviewPayload = response.data.payload.interview;
+        console.log('interviewPayload', response.data);
         interviewPayload.quizzes.forEach((quiz: any) => {
           quiz.questions = quiz.questions.map((question: any) => {
             return { ...question, questionNumber: question.question_number };
