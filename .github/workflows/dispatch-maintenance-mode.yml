@@ -52,6 +52,14 @@ jobs:
           with open('recordset.json', 'r+') as file:
               data = json.load(file)
               data[0]['AliasTarget']['DNSName'] = os.getenv('CLOUD_DISTRIBUTION_URL')
+              data = {
+                'Changes': [
+                    {
+                        'Action': 'UPSERT',
+                        'ResourceRecordSet': data[0]
+                    }
+                ]
+              }
               file.seek(0)
               json.dump(data, file, indent=2)
               file.truncate()
