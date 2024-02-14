@@ -1,0 +1,59 @@
+name: Manually Switch Maintenance/Live Mode
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Enter or Exit maintenance mode"
+        required: true
+        default: "enter"
+
+jobs:
+  update-record:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Update Route53 record
+        env:
+          MODE: ${{ inputs.mode }}
+        run: |
+          production_url="app.matchya.ai."
+          # Should get the hosted zone id via ssm param
+          hosted_zone_id=$(aws ssm get-parameter --name /terraform/shared/route53/zone_id --query "Parameter.Value" --output text)
+          echo hosted_zone_id
+
+          if [ "$MODE" == "enter" ]; then
+            # get the cloud distribution url of the maintenance page
+            cloud_distribution_url=$(aws ssm get-parameter --name /terraform/shared/cloudfront/url/page-maintenance.app.matchya.ai --query "Parameter.Value" --output text)
+          else:
+            # get the cloud distribution url of the production app
+            cloud_distribution_url=$(aws ssm get-parameter --name /terraform/production/cloudfront/url/app.matchya.ai --query "Parameter.Value" --output text)
+          fi
+
+          # Get the current record set
+          aws route53 list-resource-record-sets --hosted-zone-id $hosted_zone_id --query "ResourceRecordSets[?Name==$production_url]" > recordset.json
+
+          # Edit the recordset.json file to change the AliasTarget to the new CloudFront distribution URL
+          python -c "
+            import json
+            import os
+            with open('recordset.json', 'r+') as file:
+                data = json.load(file)
+                data[0]['AliasTarget']['DNSName'] = os.getenv('CLOUD_DISTRIBUTION_URL')
+                file.seek(0)
+                json.dump(data, file, indent=2)
+                file.truncate()
+          " CLOUD_DISTRIBUTION_URL=$cloud_distribution_url
+
+          # Update the record set
+          aws route53 change-resource-record-sets --hosted-zone-id $hosted_zone_id --change-batch file://recordset.json
