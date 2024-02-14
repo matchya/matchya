@@ -20,14 +20,13 @@ export const InterviewRecordingPage: Story = {
       quizStarted={false}
       startQuiz={() => {}}
       isLoading={false}
+      isUploading={false}
       progressbarCount={2}
       totalQuizCount={4}
       isRecording={false}
       webcamRef={undefined}
-      videoFile={null}
       onStartRecording={() => {}}
       onStopRecording={() => {}}
-      // onUploadVideo={() => {}}
     />
   ),
 };
