@@ -27,7 +27,7 @@ const InterviewDetailPageTemplate = ({
         <div className="justify-between items-center py-12">
           <div className="px-4 md:px-12">
             <div className="w-full space-y-8">
-              <div className="grid lg:grid-cols-2 lg:mb-0">
+              <div className="lg:flex lg:mb-0">
                 <div className="items-center lg:pr-4 lg:relative lg:top-[5px] mb-6 lg:mb-0">
                   <div className="mb-4 flex justify-between items-center">
                     <div className="space-y-4">
@@ -47,7 +47,7 @@ const InterviewDetailPageTemplate = ({
                     {interviewData.assessment.name} -{' '}
                     {interviewData.createdAt.substring(0, 10)}
                   </p>
-                  <div className="lg:flex-grow-0 lg:flex-shrink-0">
+                  <div className="lg:flex-grow-0 lg:flex-shrink-0 mb-4">
                     <ReactPlayer
                       url={currentAnswer?.videoUrl}
                       controls={true}
@@ -55,13 +55,32 @@ const InterviewDetailPageTemplate = ({
                       height={'auto'}
                     />
                   </div>
+                  <div className="space-y-2 pr-4 lg:ml-0 mb-8 lg:mb-0">
+                    <p className="text-lg font-bold">Question</p>
+                    <div className="flex justify-between items-center mb-2">
+                      <h3 className="text-matcha-500">
+                        {currentAnswer?.quiz.topic}
+                      </h3>
+                      <p className="text-md">
+                        Score:{' '}
+                        <span className="text-matcha-700">
+                          {currentAnswer?.score}
+                        </span>{' '}
+                        %
+                      </p>
+                    </div>
+                    <p className="text-sm mb-6">
+                      {currentAnswer?.quiz.description}
+                    </p>
+                    <p className="text-sm">{currentAnswer?.feedback}</p>
+                  </div>
                 </div>
                 <div className="lg:pl-4 w-full">
-                  <div className="overflow-hidden w-full rounded border border-gray-200">
-                    <div className="p-3">
+                  <div className="overflow-hidden w-full rounded-lg border border-gray-200">
+                    <div className="p-3 border-b border-gray-200">
                       <p className="text-2xl font-bold">Questions</p>
                     </div>
-                    <div className="max-h-[150px] lg:max-h-none overflow-y-scroll">
+                    <div className=" h-full max-h-[300px] lg:max-h-[600px] overflow-y-scroll">
                       {interviewData.answers.map(answer => (
                         <div
                           className={`w-full flex cursor-pointer hover:bg-orange-100 p-3`}
@@ -94,39 +113,20 @@ const InterviewDetailPageTemplate = ({
                   </div>
                 </div>
               </div>
-              <div className="grid lg:grid-cols-2">
-                <div className="space-y-2 pr-4 lg:ml-0 mb-8 lg:mb-0">
-                  <p className="text-lg font-bold">Question</p>
-                  <div className="flex justify-between items-center mb-2">
-                    <h3 className="text-matcha-500">
-                      {currentAnswer?.quiz.topic}
-                    </h3>
-                    <p className="text-md">
-                      Score:{' '}
-                      <span className="text-matcha-700">
-                        {currentAnswer?.score}
-                      </span>{' '}
-                      %
-                    </p>
-                  </div>
-                  <p className="text-sm mb-6">
-                    {currentAnswer?.quiz.description}
+              <div className="bg-white rounded space-y-3">
+                <div className="space-y-1">
+                  <h3 className="text-matcha-500 text-2xl font-bold">
+                    Review By Matchya AI
+                  </h3>
+                  <p className="text-xl">
+                    Total Score:{' '}
+                    <span className="text-macha-700">
+                      {interviewData.totalScore}
+                    </span>{' '}
+                    %
                   </p>
-                  <p className="text-sm">{currentAnswer?.feedback}</p>
                 </div>
-                <div className="bg-white rounded space-y-3 lg:pl-4">
-                  <div className="space-y-1">
-                    <h3 className="text-matcha-500">Review By Matchya AI</h3>
-                    <p className="text-xl font-bold">
-                      Total Score:{' '}
-                      <span className="text-macha-700">
-                        {interviewData.totalScore}
-                      </span>{' '}
-                      %
-                    </p>
-                  </div>
-                  <p className="text-md">{interviewData.summary}</p>
-                </div>
+                <p className="text-md">{interviewData.summary}</p>
               </div>
             </div>
           </div>

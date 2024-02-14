@@ -5,7 +5,7 @@ import Webcam from 'react-webcam';
 import { axiosInstance } from '@/lib/axios';
 import { trackEvent } from '@/lib/rudderstack';
 import { InterviewRecordingPageTemplate } from '@/template';
-import { Quiz } from '@/types';
+import { Quiz, Interview } from '@/types';
 
 const InterviewRecordingPage = () => {
   const webcamRef = useRef<Webcam | null>(null);
@@ -14,6 +14,7 @@ const InterviewRecordingPage = () => {
     null
   );
   const [isUploading, setIsUploading] = useState(false);
+  const [interview, setInterview] = useState<Interview>();
   const [quizzes, setQuizes] = useState<Quiz[]>([]);
   const [quizIndex, setQuizIndex] = useState(0);
   const [quizStarted, setQuizStarted] = useState<boolean>(false);
@@ -51,13 +52,14 @@ const InterviewRecordingPage = () => {
       );
       if (response.data.status === 'success') {
         // caseSensitiveAxiosInstance doesn't work
-        const interview = response.data.payload.interview;
-        interview.quizzes.map((quiz: any) => {
+        const interviewPayload = response.data.payload.interview;
+        interviewPayload.quizzes.forEach((quiz: any) => {
           quiz.questions = quiz.questions.map((question: any) => {
             return { ...question, questionNumber: question.question_number };
           });
         });
-        setQuizes(interview.quizzes);
+        setQuizes(interviewPayload.quizzes);
+        setInterview(interviewPayload);
       }
     } catch (error) {
       console.error(error);
@@ -159,6 +161,7 @@ const InterviewRecordingPage = () => {
       quizStarted={quizStarted}
       startQuiz={() => setQuizStarted(true)}
       quiz={quizzes[quizIndex]}
+      interview={interview}
       totalQuizCount={quizzes.length}
       progressbarCount={progressbarCount}
       isRecording={recording}

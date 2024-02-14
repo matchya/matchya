@@ -116,6 +116,7 @@ const CreateAssessmentPageTemplate = ({
                 }
                 variant={selectedPosition === position ? 'default' : 'outline'}
                 onClick={() => onPositionChange(position)}
+                key={position}
               >
                 {position}
               </Button>
@@ -138,6 +139,7 @@ const CreateAssessmentPageTemplate = ({
                   }
                   variant={selectedLevel === level ? 'default' : 'outline'}
                   onClick={() => onLevelChange(level)}
+                  key={level}
                 >
                   {level}
                 </Button>
@@ -176,11 +178,18 @@ const CreateAssessmentPageTemplate = ({
       </div>
       <div className="w-full px-4 md:px-12 xl:pl-8 space-y-4 pt-16 pr-1">
         <div className="">
-          <h3 className="text-2xl font-bold">You have selected {selectedQuizzes.length} quizzes</h3>
+          <h3 className="text-2xl font-bold">
+            You have selected {selectedQuizzes.length} quizzes
+          </h3>
         </div>
         <div className="flex w-full space-x-3 my-2">
           <div className="w-full">
-            <Input placeholder="Ex.Python" className="w-full" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+            <Input
+              placeholder="Ex.Python"
+              className="w-full"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+            />
           </div>
           <Button onClick={onSearch}>Search</Button>
         </div>
@@ -221,7 +230,7 @@ const CreateAssessmentPageTemplate = ({
               onClick={() => {
                 if (selectedQuizzes.some(q => q.id === quiz.id)) {
                   setSelectedQuizzes(
-                    selectedQuizzes.filter(q => q.id !== quiz.id),
+                    selectedQuizzes.filter(q => q.id !== quiz.id)
                   );
                 } else {
                   setSelectedQuizzes([...selectedQuizzes, quiz]);

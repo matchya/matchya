@@ -2,7 +2,7 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import Component from './InterviewRecordingPage';
 
-import { mockedSelectedQuiz } from '@/data';
+import { mockedSelectedQuiz, mockedInterview } from '@/data';
 
 const meta: Meta<typeof Component> = {
   title: 'Page',
@@ -19,6 +19,7 @@ export const InterviewRecordingPage: Story = {
       quiz={mockedSelectedQuiz}
       quizStarted={false}
       startQuiz={() => {}}
+      interview={mockedInterview}
       isLoading={false}
       isUploading={false}
       progressbarCount={2}

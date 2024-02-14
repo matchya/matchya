@@ -5,7 +5,7 @@ import InterviewLoading from './InterviewLoading';
 
 import { Button, Icons, ProgressBar } from '@/components';
 import { env } from '@/config';
-import { Quiz } from '@/types';
+import { Quiz, Interview } from '@/types';
 
 const VIDEO_CONSTRAINTS: boolean | MediaTrackConstraints | undefined = {
   width: 1280,
@@ -29,6 +29,7 @@ interface InterviewRecordingPageTemplateProps {
   quiz: Quiz;
   quizStarted: boolean;
   startQuiz: () => void;
+  interview?: Interview;
   isLoading: boolean;
   isUploading: boolean;
   isRecording: boolean;
@@ -43,6 +44,7 @@ const InterviewRecordingPageTemplate = ({
   quiz,
   quizStarted,
   startQuiz,
+  interview,
   isLoading,
   isUploading,
   isRecording,
@@ -81,6 +83,46 @@ const InterviewRecordingPageTemplate = ({
           className="w-[200px]"
           value={(progressbarCount / totalQuizCount) * 100}
         />
+        {/* Header for Candidate Assessment Page */}
+        <div className="w-full h-16 flex justify-between items-center px-10 border-b">
+          <div className="h-full flex items-center cursor-pointer">
+            <img
+              src={`${env.assetsEndpoint}/matchya-sticker.png`}
+              alt="logo"
+              className="w-32 relative bottom-1"
+            />
+          </div>
+          <div className="flex w-1/2 justify-around">
+            <div className="ml-auto flex items-center space-x-4 hidden sm:block">
+              <p className="text-lg">
+                Welcome
+                {interview?.candidate.name
+                  ? `, ${interview.candidate.name}`
+                  : ''}
+                !
+              </p>
+            </div>
+            <div className="ml-auto flex items-center space-x-4 hidden sm:block">
+              <p className="text-lg">
+                {interview?.assessment.name ?? 'Assessment'}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Time and Question count */}
+        <div className="flex items-center justify-center px-20 pt-4 border-matcha-700 pb-4">
+          <div className="w-1/2">
+            {/* TODO: implement a functional timer later */}
+            {/* <p className="text-2xl font-bold">3:38</p> */}
+          </div>
+          <div className="flex justify-end">
+            <ProgressBar
+              className="w-[200px]"
+              value={(progressbarCount / totalQuizCount) * 100}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
