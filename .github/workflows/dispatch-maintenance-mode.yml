@@ -1,4 +1,4 @@
-name: Update Route53 Record
+name: Manually Switch Maintenance/Live Mode
 
 on:
   workflow_dispatch:
