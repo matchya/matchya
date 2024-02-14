@@ -52,7 +52,6 @@ const InterviewRecordingPageTemplate = ({
   onStartRecording,
   onStopRecording,
 }: InterviewRecordingPageTemplateProps) => {
-
   const UnauthorizedHeaderWithData = () => (
     <div className="w-full h-16 flex justify-between items-center px-10 border-b">
       <div className="h-full flex items-center cursor-pointer">
@@ -64,10 +63,15 @@ const InterviewRecordingPageTemplate = ({
       </div>
       <div className="flex w-1/2 justify-around">
         <div className="ml-auto flex items-center space-x-4 hidden sm:block">
-          <p className="text-lg">Welcome, Takeshi Hashimoto</p>
+          <p className="text-lg">
+            Welcome
+            {interview?.candidate.name ? `, ${interview.candidate.name}` : ''}!
+          </p>
         </div>
         <div className="ml-auto flex items-center space-x-4 hidden sm:block">
-          <p className="text-lg">Matchya - SWE Test</p>
+          <p className="text-lg">
+            {interview?.assessment.name ?? 'Assessment'}
+          </p>
         </div>
       </div>
     </div>
@@ -79,37 +83,6 @@ const InterviewRecordingPageTemplate = ({
         <p className="text-2xl font-bold">3:38</p>
       </div>
       <div className="flex justify-end">
-        <ProgressBar
-          className="w-[200px]"
-          value={(progressbarCount / totalQuizCount) * 100}
-        />
-        {/* Header for Candidate Assessment Page */}
-        <div className="w-full h-16 flex justify-between items-center px-10 border-b">
-          <div className="h-full flex items-center cursor-pointer">
-            <img
-              src={`${env.assetsEndpoint}/matchya-sticker.png`}
-              alt="logo"
-              className="w-32 relative bottom-1"
-            />
-          </div>
-          <div className="flex w-1/2 justify-around">
-            <div className="ml-auto flex items-center space-x-4 hidden sm:block">
-              <p className="text-lg">
-                Welcome
-                {interview?.candidate.name
-                  ? `, ${interview.candidate.name}`
-                  : ''}
-                !
-              </p>
-            </div>
-            <div className="ml-auto flex items-center space-x-4 hidden sm:block">
-              <p className="text-lg">
-                {interview?.assessment.name ?? 'Assessment'}
-              </p>
-            </div>
-          </div>
-        </div>
-
         {/* Time and Question count */}
         <div className="flex items-center justify-center px-20 pt-4 border-matcha-700 pb-4">
           <div className="w-1/2">
@@ -132,7 +105,9 @@ const InterviewRecordingPageTemplate = ({
       <div>
         <div className="flex flex-col justify-center items-center pt-4 w-2/3 mx-auto">
           <div className="px-20">
-            <p className="text-3xl font-bold text-center mb-4">Question {progressbarCount + 1}</p>
+            <p className="text-3xl font-bold text-center mb-4">
+              Question {progressbarCount + 1}
+            </p>
             <p className="text-2xl font-bold text-center mb-4">Context</p>
             <p className="text-xl font-bold text-center">{quiz.context}</p>
           </div>
@@ -159,7 +134,7 @@ const InterviewRecordingPageTemplate = ({
             onClick={isRecording ? onStopRecording : onStartRecording}
           >
             <Icons.circle className="h-6 w-6 mr-2" />
-            
+
             {isRecording ? 'Stop Recording' : 'Start Recording'}
           </Button>
         )}
