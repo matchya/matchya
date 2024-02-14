@@ -9,7 +9,7 @@ on:
         default: "enter"
 
 jobs:
-  update-record:
+  run:
     runs-on: ubuntu-latest
 
     steps:
