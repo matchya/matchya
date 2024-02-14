@@ -43,7 +43,7 @@ jobs:
           echo $cloud_distribution_url
 
           # Get the current record set
-          aws route53 list-resource-record-sets --hosted-zone-id $hosted_zone_id --query "ResourceRecordSets[?Name==$production_url]" > recordset.json
+          aws route53 list-resource-record-sets --hosted-zone-id $hosted_zone_id --query "ResourceRecordSets[?Name=='$production_url']" > recordset.json
 
           # Edit the recordset.json file to change the AliasTarget to the new CloudFront distribution URL
           python -c "
