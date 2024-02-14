@@ -1,5 +1,6 @@
 locals {
   namespace = "matchya"
+  maintenance_page_domain_name = "page-maintenance.app.matchya.ai"
 }
 
 module "iam" {
@@ -42,4 +43,11 @@ module "s3" {
   account_id = data.aws_caller_identity.current.account_id
   client_origins = var.client_origins
   namespace = local.namespace
+}
+
+module "page_maintenance" {
+  source = "./modules/page_maintenance"
+
+  hosted_zone_id = module.route53.main_route53_zone.id
+  maintenance_page_domain_name = local.maintenance_page_domain_name
 }
