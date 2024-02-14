@@ -47,14 +47,19 @@ class QuizRepository:
             logger.error(f'Failed to insert a quiz into db: {e}')
             raise RuntimeError('Failed to insert a quiz into db.')
 
-    def retrieve_many(self) -> List[Quiz]:
+    def retrieve_many(self, query='') -> List[Quiz]:
         """
         Retrieves quizzes from the database.
 
         :return: The quizzes.
         """
         logger.info('Retrieving quizzes')
-        sql = "SELECT id, description, topic, subtopic, difficulty, created_at FROM quiz LIMIT 10;"
+        sql = """
+            SELECT id, description, topic, subtopic, difficulty, created_at 
+            FROM quiz 
+            WHERE context ILIKE '%%%s%%' OR description ILIKE '%%%s%%'
+            LIMIT 10;
+        """ % (query, query)
         self.db_client.execute(sql)
         result = self.db_client.fetchall()
         quizzes = []

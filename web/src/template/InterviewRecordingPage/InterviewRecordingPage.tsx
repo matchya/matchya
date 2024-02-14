@@ -2,7 +2,7 @@ import Webcam from 'react-webcam';
 
 import { Button, Icons, ProgressBar } from '@/components';
 import { env } from '@/config';
-import { Quiz } from '@/types';
+import { Quiz, Interview } from '@/types';
 
 const VIDEO_CONSTRAINTS: boolean | MediaTrackConstraints | undefined = {
   width: 1280,
@@ -24,6 +24,7 @@ interface InterviewRecordingPageTemplateProps {
   progressbarCount: number;
   totalQuizCount: number;
   quiz: Quiz;
+  interview?: Interview;
   isLoading: boolean;
   isRecording: boolean;
   webcamRef?: React.RefObject<Webcam>;
@@ -37,6 +38,7 @@ const InterviewRecordingPageTemplate = ({
   progressbarCount,
   totalQuizCount,
   quiz,
+  interview,
   isLoading,
   isRecording,
   webcamRef,
@@ -107,10 +109,18 @@ const InterviewRecordingPageTemplate = ({
           </div>
           <div className="flex w-1/2 justify-around">
             <div className="ml-auto flex items-center space-x-4 hidden sm:block">
-              <p className="text-lg">Welcome, Takeshi Hashimoto</p>
+              <p className="text-lg">
+                Welcome
+                {interview?.candidate.name
+                  ? `, ${interview.candidate.name}`
+                  : ''}
+                !
+              </p>
             </div>
             <div className="ml-auto flex items-center space-x-4 hidden sm:block">
-              <p className="text-lg">Apple - SWE Test</p>
+              <p className="text-lg">
+                {interview?.assessment.name ?? 'Assessment'}
+              </p>
             </div>
           </div>
         </div>
@@ -118,7 +128,8 @@ const InterviewRecordingPageTemplate = ({
         {/* Time and Question count */}
         <div className="flex items-center justify-center px-20 pt-4 border-matcha-700 pb-4">
           <div className="w-1/2">
-            <p className="text-2xl font-bold">3:38</p>
+            {/* TODO: implement a functional timer later */}
+            {/* <p className="text-2xl font-bold">3:38</p> */}
           </div>
           <div className="flex justify-end">
             <ProgressBar
