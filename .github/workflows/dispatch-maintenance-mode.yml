@@ -47,14 +47,14 @@ jobs:
 
           # Edit the recordset.json file to change the AliasTarget to the new CloudFront distribution URL
           python -c "
-              import json
-              import os
-              with open('recordset.json', 'r+') as file:
-                  data = json.load(file)
-                  data[0]['AliasTarget']['DNSName'] = os.getenv('CLOUD_DISTRIBUTION_URL')
-                  file.seek(0)
-                  json.dump(data, file, indent=2)
-                  file.truncate()
+          import json
+          import os
+          with open('recordset.json', 'r+') as file:
+              data = json.load(file)
+              data[0]['AliasTarget']['DNSName'] = os.getenv('CLOUD_DISTRIBUTION_URL')
+              file.seek(0)
+              json.dump(data, file, indent=2)
+              file.truncate()
           " CLOUD_DISTRIBUTION_URL=$cloud_distribution_url
 
           # Update the record set
