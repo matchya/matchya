@@ -30,12 +30,11 @@ interface InterviewRecordingPageTemplateProps {
   quizStarted: boolean;
   startQuiz: () => void;
   isLoading: boolean;
+  isUploading: boolean;
   isRecording: boolean;
   webcamRef?: React.RefObject<Webcam>;
-  videoFile: File | null;
   onStartRecording: () => void;
   onStopRecording: () => void;
-  onUploadVideo: () => void;
 }
 
 const InterviewRecordingPageTemplate = ({
@@ -45,14 +44,12 @@ const InterviewRecordingPageTemplate = ({
   quizStarted,
   startQuiz,
   isLoading,
+  isUploading,
   isRecording,
   webcamRef,
-  videoFile,
   onStartRecording,
   onStopRecording,
-  onUploadVideo,
 }: InterviewRecordingPageTemplateProps) => {
-  // const [webcamOn, setWebcamOn] = useState(false);
 
   const UnauthorizedHeaderWithData = () => (
     <div className="w-full h-16 flex justify-between items-center px-10 border-b">
@@ -68,7 +65,7 @@ const InterviewRecordingPageTemplate = ({
           <p className="text-lg">Welcome, Takeshi Hashimoto</p>
         </div>
         <div className="ml-auto flex items-center space-x-4 hidden sm:block">
-          <p className="text-lg">Apple - SWE Test</p>
+          <p className="text-lg">Matchya - SWE Test</p>
         </div>
       </div>
     </div>
@@ -91,8 +88,9 @@ const InterviewRecordingPageTemplate = ({
   const InterviewBody = () => (
     <>
       <div>
-        <div className="flex flex-col justify-center items-center pt-10 w-2/3 mx-auto">
+        <div className="flex flex-col justify-center items-center pt-4 w-2/3 mx-auto">
           <div className="px-20">
+            <p className="text-3xl font-bold text-center mb-4">Question {progressbarCount + 1}</p>
             <p className="text-2xl font-bold text-center mb-4">Context</p>
             <p className="text-xl font-bold text-center">{quiz.context}</p>
           </div>
@@ -109,12 +107,9 @@ const InterviewRecordingPageTemplate = ({
         </div>
       </div>
       <div className="flex justify-center w-full items-center py-20">
-        {videoFile ? (
-          <Button
-            className="bg-transparent text-orange-300 font-bold py-8 px-10 text-xl rounded-full border-2 border-orange-300 ml-10"
-            onClick={onUploadVideo}
-          >
-            Upload Video
+        {isUploading ? (
+          <Button className="bg-transparent hover:bg-gray-50 text-orange-300 font-bold py-8 px-10 text-xl rounded-full border-2 border-orange-300">
+            <Icons.spinner className="h-6 w-6 mr-2 spinner" />
           </Button>
         ) : (
           <Button
@@ -122,6 +117,7 @@ const InterviewRecordingPageTemplate = ({
             onClick={isRecording ? onStopRecording : onStartRecording}
           >
             <Icons.circle className="h-6 w-6 mr-2" />
+            
             {isRecording ? 'Stop Recording' : 'Start Recording'}
           </Button>
         )}

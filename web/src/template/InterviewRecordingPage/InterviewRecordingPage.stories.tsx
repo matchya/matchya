@@ -27,7 +27,7 @@ export const InterviewRecordingPage: Story = {
       videoFile={null}
       onStartRecording={() => {}}
       onStopRecording={() => {}}
-      onUploadVideo={() => {}}
+      // onUploadVideo={() => {}}
     />
   ),
 };
