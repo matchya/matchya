@@ -1,11 +1,9 @@
 import React from 'react';
 
+import InterviewCompletedPageTemplate from '@/template/InterviewCompletedPage/InterviewCompletedPage';
+
 const InterviewCompletedPage: React.FC = () => {
-  return (
-    <div>
-      <h1>Interview Completed</h1>
-    </div>
-  );
+  return <InterviewCompletedPageTemplate />;
 };
 
 export default InterviewCompletedPage;
