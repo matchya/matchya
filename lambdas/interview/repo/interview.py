@@ -149,6 +149,15 @@ class InterviewRepository:
                     AVG(score) AS avg_quiz_score
                 FROM answer
                 GROUP BY quiz_id
+            ),
+            assessment_scores AS (
+                SELECT
+                    assessment_id,
+                    AVG(total_score) AS avg_assessment_score,
+                    MAX(total_score) AS top_assessment_score
+                FROM interview
+                WHERE status = 'COMPLETED'
+                GROUP BY assessment_id
             )
             SELECT
                 i.id, 
@@ -160,6 +169,8 @@ class InterviewRepository:
                 c.email,
                 a.id AS assessment_id, 
                 a.name AS assessment_name,
+                ass_scores.avg_assessment_score,
+                ass_scores.top_assessment_score,
                 q.id AS quiz_id, 
                 q.description, 
                 q.topic, 
@@ -176,6 +187,7 @@ class InterviewRepository:
             LEFT JOIN quiz q ON q.id = aq.quiz_id
             LEFT JOIN answer ans ON ans.quiz_id = q.id AND ans.interview_id = i.id
             LEFT JOIN avg_scores as_avg ON as_avg.quiz_id = q.id
+            LEFT JOIN assessment_scores ass_scores ON ass_scores.assessment_id = a.id
             WHERE i.id = '%s' AND i.status = 'COMPLETED';
         """ % interview_id
         try:
@@ -210,13 +222,15 @@ class InterviewRepository:
             'assessment': {
                 'id': result[0][7],
                 'name': result[0][8],
+                'average_score': result[0][9],
+                'top_score': result[0][10],
             },
             'answers': [],
         }
 
         for row in result:
             (quiz_id, quiz_description, quiz_topic, quiz_subtopic, quiz_difficulty,
-             video_url, feedback, score, avg_score) = row[9:]
+             video_url, feedback, score, avg_score) = row[11:]
             if quiz_id and video_url:
                 answer = {
                     'quiz': {

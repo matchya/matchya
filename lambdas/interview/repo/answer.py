@@ -20,7 +20,8 @@ class AnswerRepository:
         logger.info(f'Retrieving candidate answers from db by interview ID: {interview_id}...')
         sql = """
             SELECT 
-                answer.id, answer.score, answer.feedback, quiz.context,
+                answer.id, answer.score, answer.feedback,
+                quiz.context, quiz.id,
                 question.text
             FROM answer
             LEFT JOIN interview ON answer.interview_id = interview.id
@@ -39,10 +40,11 @@ class AnswerRepository:
                         'score': row[1],
                         'feedback': row[2],
                         'context': row[3],
+                        'quiz_id': row[4],
                         'questions': []
                     }
                     answers[answer['id']] = answer
-                answers[row[0]]['questions'].append(row[4])
+                answers[row[0]]['questions'].append(row[5])
             logger.info(f'Successfully retrieved candidate answers from db: {answers}')
             return list(answers.values())
         except Exception as e:

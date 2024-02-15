@@ -8,19 +8,19 @@ import { InterviewRecordingPageTemplate } from '@/template';
 import { Quiz, Interview } from '@/types';
 
 const InterviewRecordingPage = () => {
-  const [videoFile, setVideoFile] = useState<File | null>(null);
   const webcamRef = useRef<Webcam | null>(null);
   const [recording, setRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
     null
   );
+  const [isUploading, setIsUploading] = useState(false);
   const [interview, setInterview] = useState<Interview>();
   const [quizzes, setQuizes] = useState<Quiz[]>([]);
   const [quizIndex, setQuizIndex] = useState(0);
+  const [quizStarted, setQuizStarted] = useState<boolean>(false);
   // we want to have a separate progress bar count because on the last question
   // without this, it won't show the progress bar at 100% when interview is complete
   const [progressbarCount, setProgressbarCount] = useState(0);
-  const [interviewDone, setInterviewDone] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const params = useParams<{ id: string }>();
   const interviewId = params.id;
@@ -36,18 +36,11 @@ const InterviewRecordingPage = () => {
     }
   }, [params.id, navigate]);
 
-  useEffect(() => {
-    if (interviewDone) {
-      invalidateInterviewAccess();
-    }
-  }, [interviewDone]);
-
   const invalidateInterviewAccess = async () => {
     const response = await axiosInstance.post(`/auth/invitation/invalidate`);
 
     if (response.data.status === 'success') {
       sessionStorage.removeItem('sessionToken');
-      // navigate to the InterviewDone page
       navigate(`/interviews/${interviewId}/completed`);
     }
   };
@@ -75,12 +68,8 @@ const InterviewRecordingPage = () => {
     }
   };
 
-  const handleVideoCapture = (blob: Blob) => {
+  const handleUploadVideo = async (blob: Blob) => {
     const videoFile = new File([blob], 'video.webm', { type: 'video/webm' });
-    setVideoFile(videoFile);
-  };
-
-  const handleUploadVideo = async () => {
     if (!videoFile) {
       alert('No video to upload');
       return;
@@ -107,13 +96,12 @@ const InterviewRecordingPage = () => {
       });
 
       if (uploadResponse.ok) {
-        alert('Video uploaded successfully');
-        setVideoFile(null);
         setProgressbarCount(progressbarCount + 1);
         if (quizIndex < quizzes.length - 1) {
+          console.log('quizIndex', quizIndex);
           setQuizIndex(quizIndex + 1);
         } else {
-          evaluateInterview();
+          await evaluateInterview();
         }
       } else {
         alert('Upload failed');
@@ -135,16 +123,18 @@ const InterviewRecordingPage = () => {
       (webcamRef.current as Webcam).stream as MediaStream,
       options
     );
-    recorder.ondataavailable = event => {
+    recorder.ondataavailable = async (event) => {
       if (event.data && event.data.size > 0) {
-        handleVideoCapture(event.data);
+        setIsUploading(true);
+        await handleUploadVideo(event.data);
+        setIsUploading(false);
       }
     };
     recorder.start();
     setMediaRecorder(recorder);
   };
 
-  const handleStopRecording = () => {
+  const handleStopRecording = async () => {
     trackEvent({
       eventName: 'stop_recording',
       properties: { quizId: quizzes[quizIndex].id },
@@ -157,7 +147,7 @@ const InterviewRecordingPage = () => {
     try {
       const response = await axiosInstance.post(`/interviews/${interviewId}`);
       if (response.data.status === 'success') {
-        setInterviewDone(true);
+        await invalidateInterviewAccess();
       }
     } catch (error) {
       console.error(error);
@@ -167,16 +157,17 @@ const InterviewRecordingPage = () => {
   return (
     <InterviewRecordingPageTemplate
       isLoading={isLoading}
+      isUploading={isUploading}
+      quizStarted={quizStarted}
+      startQuiz={() => setQuizStarted(true)}
       quiz={quizzes[quizIndex]}
       interview={interview}
       totalQuizCount={quizzes.length}
       progressbarCount={progressbarCount}
       isRecording={recording}
       webcamRef={webcamRef}
-      videoFile={videoFile}
       onStartRecording={handleStartRecording}
       onStopRecording={handleStopRecording}
-      onUploadVideo={handleUploadVideo}
     />
   );
 };

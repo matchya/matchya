@@ -1,9 +1,25 @@
 type IconProps = React.HTMLAttributes<SVGElement>;
-import { FaPlus } from "react-icons/fa6";
-import { IoMdPersonAdd, IoIosArrowBack } from "react-icons/io";
-import { IoTrashOutline } from "react-icons/io5";
+import { FaPlus } from 'react-icons/fa6';
+import { IoMdPersonAdd, IoIosArrowBack } from 'react-icons/io';
+import { IoTrashOutline } from 'react-icons/io5';
 
 const Icons = {
+  check: (props: IconProps) => (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  ),
   logo: (props: IconProps) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" {...props}>
       <rect width="256" height="256" fill="none" />
@@ -154,18 +170,10 @@ const Icons = {
       />
     </svg>
   ),
-  trash: (props: IconProps) => (
-    <IoTrashOutline {...props} />
-  ),
-  personAdd: (props: IconProps) => (
-    <IoMdPersonAdd {...props} />
-  ),
-  plus: (props: IconProps) => (
-    <FaPlus {...props} />
-  ),
-  back: (props: IconProps) => (
-    <IoIosArrowBack {...props} />
-  ),
+  trash: (props: IconProps) => <IoTrashOutline {...props} />,
+  personAdd: (props: IconProps) => <IoMdPersonAdd {...props} />,
+  plus: (props: IconProps) => <FaPlus {...props} />,
+  back: (props: IconProps) => <IoIosArrowBack {...props} />,
 };
 
 export default Icons;
