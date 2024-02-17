@@ -8,6 +8,10 @@ on:
         required: true
         default: "enter"
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   run:
     runs-on: ubuntu-latest
