@@ -6,7 +6,7 @@ locals {
 module "iam" {
   source = "./modules/iam"
 
-  create_new = true
+  account_id = data.aws_caller_identity.current.account_id
 }
 
 module "route53" {

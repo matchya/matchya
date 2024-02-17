@@ -5,10 +5,13 @@ resource "aws_iam_role" "github_actions_user_role" {
     Version = "2012-10-17",
     Statement = [
       {
-        Action = "sts:AssumeRole",
+        Action = [
+          "sts:AssumeRole",
+          "sts:TagSession"
+        ],
         Effect = "Allow",
         Principal = {
-          AWS = aws_iam_user.github_actions.arn
+          AWS = "arn:aws:iam::${var.account_id}:root"
         },
       },
     ]

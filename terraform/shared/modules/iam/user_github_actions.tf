@@ -15,16 +15,12 @@ resource "aws_iam_policy" "github_actions" {
     Statement = [
       {
         Action = [
-          "sts:*",
+          "sts:AssumeRole",
+          "sts:TagSession",
         ],
         Effect = "Allow",
-        Resource = "*"
-      },
-      {
-        Action = "iam:*",
-        Effect = "Allow",
-        Resource = "*",
-      },
+        Resource = aws_iam_role.github_actions_user_role.arn,
+      }
     ],
   })
 }
