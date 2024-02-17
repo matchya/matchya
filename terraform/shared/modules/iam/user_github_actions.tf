@@ -16,11 +16,20 @@ resource "aws_iam_policy" "github_actions" {
       {
         Action = [
           "sts:AssumeRole",
-          "sts:TagSession",
-          "iam:PassRole"
+          "sts:TagSession"
         ],
         Effect = "Allow",
         Resource = aws_iam_role.github_actions_user_role.arn
+      },
+      {
+        Action = "iam:PassRole",
+        Effect = "Allow",
+        Resource = aws_iam_role.github_actions_user_role.arn,
+        Condition = {
+          StringEquals = {
+            "iam:PassedToService" = "sts.amazonaws.com"
+          }
+        }
       },
     ],
   })
