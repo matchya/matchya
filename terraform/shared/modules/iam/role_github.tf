@@ -29,6 +29,7 @@ resource "aws_iam_policy" "deploy_infrastructure_policy" {
         "Effect" = "Allow",
         "Action" = [
           "ssm:GetParameter",
+          "ssm:DescribeParameters"
         ],
         "Resource" = "*"
       },
@@ -100,6 +101,8 @@ resource "aws_iam_policy" "deploy_infrastructure_policy" {
           "iam:GetRole",
           "iam:GetPolicy",
           "iam:GetPolicyVersion",
+          "iam:ListRolePolicies",
+          "iam:ListAccessKeys"
         ],
         "Resource" = "*"
       }
