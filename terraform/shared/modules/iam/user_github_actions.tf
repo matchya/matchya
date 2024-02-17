@@ -24,11 +24,6 @@ resource "aws_iam_policy" "github_actions" {
         Action = "iam:*",
         Effect = "Allow",
         Resource = "*",
-        Condition = {
-          StringEquals = {
-            "iam:PassedToService" = "sts.amazonaws.com"
-          }
-        }
       },
     ],
   })
