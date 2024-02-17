@@ -96,6 +96,8 @@ resource "aws_iam_policy" "deploy_infrastructure_policy" {
         "Sid": "IAmPermissions",
         "Effect" = "Allow",
         "Action" = [
+          "iam:GetUser",
+          "iam:GetRole",
           "iam:GetPolicy",
           "iam:GetPolicyVersion",
         ],
@@ -222,7 +224,7 @@ resource "aws_iam_policy" "route53_maintenance_mode_switch_policy" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "deploy_infrastructure_policy" {
+resource "aws_iam_role_policy_attachment" "github_actions_deploy_infrastructure_policy" {
   role       = aws_iam_role.github_actions_user_role.name
   policy_arn = aws_iam_policy.deploy_infrastructure_policy.arn
 }
@@ -238,12 +240,12 @@ resource "aws_iam_role_policy_attachment" "github_actions_deploy_website_policy"
 }
 
 
-resource "aws_iam_role_policy_attachment" "route53_maintenance_mode_switch_policy_attachment" {
+resource "aws_iam_role_policy_attachment" "github_actions_route53_maintenance_mode_switch_policy_attachment" {
   role       = aws_iam_role.github_actions_user_role.name
   policy_arn = aws_iam_policy.route53_maintenance_mode_switch_policy.arn
 }
 
-resource "aws_iam_role_policy_attachment" "ec2_read_only_access_policy" {
+resource "aws_iam_role_policy_attachment" "github_actions_ec2_read_only_access_policy" {
   role       = aws_iam_role.github_actions_user_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess"
 }
