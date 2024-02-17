@@ -25,6 +25,8 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
+          role-to-assume: ${{ secrets.USER_ROLE_TO_ASSUME }}
+          role-duration-seconds: 3600
 
       - uses: actions/setup-node@v4
         with:
@@ -76,6 +78,8 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
+          role-to-assume: ${{ secrets.USER_ROLE_TO_ASSUME }}
+          role-duration-seconds: 3600
 
       - uses: actions/setup-node@v4
         with:
