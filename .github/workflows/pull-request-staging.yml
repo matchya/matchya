@@ -2,17 +2,17 @@ name: PR Pipeline (Staging)
 
 on:
   pull_request:
-    branches:
-      - staging
-    types:
-      - opened
-      - reopened
-      - synchronize
-      - edited
+    # branches:
+    #   - staging
+    # types:
+    #   - opened
+    #   - reopened
+    #   - synchronize
+    #   - edited
 
 permissions:
   id-token: write
-  contents: read
+  contents: write
 
 jobs:
   check-infrastructure-changes:
