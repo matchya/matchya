@@ -98,7 +98,6 @@ const InterviewRecordingPage = () => {
       if (uploadResponse.ok) {
         setProgressbarCount(progressbarCount + 1);
         if (quizIndex < quizzes.length - 1) {
-          console.log('quizIndex', quizIndex);
           setQuizIndex(quizIndex + 1);
         } else {
           await evaluateInterview();
