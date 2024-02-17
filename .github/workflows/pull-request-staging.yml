@@ -2,13 +2,13 @@ name: PR Pipeline (Staging)
 
 on:
   pull_request:
-    branches:
-      - staging
-    types:
-      - opened
-      - reopened
-      - synchronize
-      - edited
+    # branches:
+    #   - staging
+    # types:
+    #   - opened
+    #   - reopened
+    #   - synchronize
+    #   - edited
 
 jobs:
   check-infrastructure-changes:
@@ -70,7 +70,7 @@ jobs:
             "candidate",
             "company",
             "interview",
-            "quiz"
+            "quiz",
           ]
     steps:
       - name: Fetch Repository

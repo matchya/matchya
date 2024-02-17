@@ -14,7 +14,11 @@ resource "aws_iam_policy" "github_actions" {
     Version = "2012-10-17",
     Statement = [
       {
-        Action = "sts:*",
+        Action = [
+          "sts:AssumeRole",
+          "sts:TagSession",
+          "iam:PassRole"
+        ],
         Effect = "Allow",
         Resource = aws_iam_role.github_actions_user_role.arn
       },
