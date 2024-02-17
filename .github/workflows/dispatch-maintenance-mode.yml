@@ -8,9 +8,7 @@ on:
         required: true
         default: "enter"
 
-permissions:
-  id-token: write
-  contents: read
+permissions: write-all
 
 jobs:
   run:
