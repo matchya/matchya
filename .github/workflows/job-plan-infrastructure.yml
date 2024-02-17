@@ -18,6 +18,10 @@ on:
         required: true
         type: string
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   run:
     name: ${{ inputs.label }}
