@@ -5,10 +5,13 @@ resource "aws_iam_role" "github_actions_user_role" {
     Version = "2012-10-17",
     Statement = [
       {
-        Action = "sts:AssumeRole",
+        Action = [
+          "sts:AssumeRole",
+          "sts:TagSession"
+        ],
         Effect = "Allow",
         Principal = {
-          AWS = aws_iam_user.github_actions.arn
+          AWS = "arn:aws:iam::${var.account_id}:root"
         },
       },
     ]
@@ -21,6 +24,17 @@ resource "aws_iam_policy" "deploy_infrastructure_policy" {
   policy = jsonencode({
     "Version" = "2012-10-17",
     "Statement" = [
+      {
+        "Sid"    = "SSMParameterStorePermissions",
+        "Effect" = "Allow",
+        "Action" = [
+          "ssm:GetParameter",
+          "ssm:GetParameters",
+          "ssm:DescribeParameters",
+          "ssm:ListTagsForResource"
+        ],
+        "Resource" = "*"
+      },
       {
         "Sid"    = "DynamoDBPermissions",
         "Effect" = "Allow",
@@ -78,6 +92,21 @@ resource "aws_iam_policy" "deploy_infrastructure_policy" {
         "Action" = [
           "ec2:CreateVpcEndpoint",
           "ec2:CreateTags"
+        ],
+        "Resource" = "*"
+      },
+      {
+        "Sid": "IAmPermissions",
+        "Effect" = "Allow",
+        "Action" = [
+          "iam:GetUser",
+          "iam:GetRole",
+          "iam:GetPolicy",
+          "iam:GetPolicyVersion",
+          "iam:ListRolePolicies",
+          "iam:ListAccessKeys",
+          "iam:ListAttachedRolePolicies",
+          "iam:ListEntitiesForPolicy"
         ],
         "Resource" = "*"
       }
@@ -202,7 +231,7 @@ resource "aws_iam_policy" "route53_maintenance_mode_switch_policy" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "deploy_infrastructure_policy" {
+resource "aws_iam_role_policy_attachment" "github_actions_deploy_infrastructure_policy" {
   role       = aws_iam_role.github_actions_user_role.name
   policy_arn = aws_iam_policy.deploy_infrastructure_policy.arn
 }
@@ -218,12 +247,12 @@ resource "aws_iam_role_policy_attachment" "github_actions_deploy_website_policy"
 }
 
 
-resource "aws_iam_role_policy_attachment" "route53_maintenance_mode_switch_policy_attachment" {
+resource "aws_iam_role_policy_attachment" "github_actions_route53_maintenance_mode_switch_policy_attachment" {
   role       = aws_iam_role.github_actions_user_role.name
   policy_arn = aws_iam_policy.route53_maintenance_mode_switch_policy.arn
 }
 
-resource "aws_iam_role_policy_attachment" "ec2_read_only_access_policy" {
+resource "aws_iam_role_policy_attachment" "github_actions_ec2_read_only_access_policy" {
   role       = aws_iam_role.github_actions_user_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess"
 }

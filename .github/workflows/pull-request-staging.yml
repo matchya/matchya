@@ -10,6 +10,10 @@ on:
       - synchronize
       - edited
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   check-infrastructure-changes:
     name: Check Infrastructure Changes
@@ -70,7 +74,7 @@ jobs:
             "candidate",
             "company",
             "interview",
-            "quiz"
+            "quiz",
           ]
     steps:
       - name: Fetch Repository

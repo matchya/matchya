@@ -12,6 +12,10 @@ on:
         required: true
         default: "Staging"
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   deploy-db-changelog:
     name: Deployment
