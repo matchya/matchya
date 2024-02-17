@@ -25,6 +25,14 @@ resource "aws_iam_policy" "deploy_infrastructure_policy" {
     "Version" = "2012-10-17",
     "Statement" = [
       {
+        "Sid"    = "SSMParameterStorePermissions",
+        "Effect" = "Allow",
+        "Action" = [
+          "ssm:GetParameter",
+        ],
+        "Resource" = "*"
+      },
+      {
         "Sid"    = "DynamoDBPermissions",
         "Effect" = "Allow",
         "Action" = [
@@ -88,7 +96,8 @@ resource "aws_iam_policy" "deploy_infrastructure_policy" {
         "Sid": "IAmPermissions",
         "Effect" = "Allow",
         "Action" = [
-          "iam:GetPolicy"
+          "iam:GetPolicy",
+          "iam:GetPolicyVersion",
         ],
         "Resource" = "*"
       }
