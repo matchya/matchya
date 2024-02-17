@@ -16,8 +16,8 @@ resource "aws_s3_bucket_public_access_block" "assets" {
 }
 
 resource "aws_s3_bucket_policy" "assets" {
-  bucket = aws_s3_bucket.assets.id
-  depends_on = [ aws_s3_bucket.assets, aws_s3_bucket_public_access_block.assets ]
+  bucket     = aws_s3_bucket.assets.id
+  depends_on = [aws_s3_bucket.assets, aws_s3_bucket_public_access_block.assets]
 
   policy = jsonencode({
     Version = "2012-10-17"

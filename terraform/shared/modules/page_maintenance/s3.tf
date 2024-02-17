@@ -34,7 +34,7 @@ resource "aws_s3_bucket_website_configuration" "page_maintenance" {
 
 resource "aws_s3_bucket_policy" "page_maintenance" {
   depends_on = [aws_s3_bucket_public_access_block.page_maintenance]
-  bucket = aws_s3_bucket.page_maintenance.id
+  bucket     = aws_s3_bucket.page_maintenance.id
 
   policy = jsonencode({
     Version = "2012-10-17",
