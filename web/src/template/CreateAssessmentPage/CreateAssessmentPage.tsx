@@ -231,6 +231,7 @@ const CreateAssessmentPageTemplate = ({
             ) : null}
             {quizzes.map(quiz => (
               <QuestionCard
+                key={quiz.id}
                 quiz={quiz}
                 selected={selectedQuizzes.some(q => q.id === quiz.id)}
                 onClick={() => {
