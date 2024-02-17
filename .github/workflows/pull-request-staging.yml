@@ -10,6 +10,10 @@ on:
     #   - synchronize
     #   - edited
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   check-infrastructure-changes:
     name: Check Infrastructure Changes
@@ -37,9 +41,6 @@ jobs:
   plan-infrastructure-shared:
     name: Plan
     needs: [check-infrastructure-changes]
-    permissions:
-      id-token: write
-      contents: read
     if: needs.check-infrastructure-changes.outputs.infra-changed == 'true'
     uses: ./.github/workflows/job-plan-infrastructure.yml
     with:
@@ -52,9 +53,6 @@ jobs:
   plan-terraform-environment:
     name: Plan
     needs: [plan-infrastructure-shared]
-    permissions:
-      id-token: write
-      contents: read
     uses: ./.github/workflows/job-plan-infrastructure.yml
     with:
       environment: staging

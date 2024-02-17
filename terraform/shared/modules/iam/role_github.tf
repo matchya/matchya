@@ -83,6 +83,14 @@ resource "aws_iam_policy" "deploy_infrastructure_policy" {
           "ec2:CreateTags"
         ],
         "Resource" = "*"
+      },
+      {
+        "Sid": "IAmPermissions",
+        "Effect" = "Allow",
+        "Action" = [
+          "iam:GetPolicy"
+        ],
+        "Resource" = "*"
       }
     ]
   })
