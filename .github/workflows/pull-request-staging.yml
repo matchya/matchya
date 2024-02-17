@@ -10,9 +10,7 @@ on:
     #   - synchronize
     #   - edited
 
-permissions:
-  id-token: write
-  contents: write
+permissions: write-all
 
 jobs:
   check-infrastructure-changes:
