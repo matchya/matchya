@@ -22,6 +22,9 @@ jobs:
   run:
     name: ${{ inputs.label }}
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     environment: ${{ inputs.environment-label }}
     steps:
       - name: Fetch Repository
