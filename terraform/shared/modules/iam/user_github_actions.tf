@@ -19,7 +19,7 @@ resource "aws_iam_policy" "github_actions" {
           "sts:TagSession"
         ],
         Effect = "Allow",
-        Resource = aws_iam_role.github_actions_user_role.arn
+        Resource = "*"
       },
       {
         Action = "iam:PassRole",
