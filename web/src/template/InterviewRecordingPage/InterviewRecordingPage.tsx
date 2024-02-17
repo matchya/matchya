@@ -157,8 +157,20 @@ const InterviewRecordingPageTemplate = ({
     );
   }
 
+  if (totalQuizCount <= progressbarCount) {
+    return (
+      // Loading screen
+      <div className="w-full h-screen flex justify-center items-center">
+        <div className="flex flex-col items-center">
+          <Icons.spinner className="h-12 w-12 mb-4 spinner" />
+          <p className="text-xl font-bold">Processing...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="w-full h-screen flex flex-col justify-between">
+    <div className="w-full flex flex-col justify-between">
       <UnauthorizedHeaderWithData />
       <BodyHeader />
       <Webcam
