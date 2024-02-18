@@ -72,7 +72,7 @@ class SummaryGenerator(OpenAiChatClient):
                     {"role": "system", "content": system_message},
                     {"role": "user", "content": user_message}
                 ],
-                temperature=self.temperature
+                temperature=0.75
             )
             content = json.loads(completion.choices[0].message.content)
             logger.info(f"Summary: {content['summary']}")
