@@ -102,6 +102,7 @@ resource "aws_iam_policy" "deploy_infrastructure_policy" {
           "iam:GetUser",
           "iam:GetRole",
           "iam:GetPolicy",
+          "iam:GetRolePolicy",
           "iam:GetPolicyVersion",
           "iam:ListRolePolicies",
           "iam:ListAccessKeys",
