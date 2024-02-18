@@ -52,15 +52,22 @@ class QuizGenerator(OpenAiChatClient):
             8. You write additional criteria for the quiz. The additional criteria should explain how the candidate's answers will be evaluated and how many additional points the candidate can get.
             9. You write the maximum score for the quiz. The maximum score should be the sum of the points for each question and the additional criteria.
             
+            - The context should be a brief description of the situation and it should align with the difficulty level.
+            - The three questions should have different levels: Basic, Intermediate, and Advanced. The questions should be related to the subtopic and the difficulty level.
+            - If the difficulty level is "Easy", the questions should be basic and should evaluate the candidate's foundational knowledge.
+            - If the difficulty level is "Medium", the questions should be intermediate and should evaluate the candidate's expertise and problem-solving skills.
+            - If the difficulty level is "Hard", the questions should be advanced and should evaluate the candidate's expertise and problem-solving skills in depth.
+            
             Your response is expected to be this json format, I will give you two examples. But you only need to return one:
             1. {
-                "context": "You are a backend engineer starting to work with Python for developing web APIs. Your tasks involve creating simple yet efficient APIs for web applications that communicate with databases and other web services. You need to ensure your APIs are well-structured, follow best practices, and are maintainable over time.",
+                "context": "You are a junior backend engineer starting to work with Python for developing web APIs. Your tasks involve creating simple yet efficient APIs for web applications that communicate with databases and other web services. You need to ensure your APIs are well-structured, follow best practices, and are maintainable over time.",
                 "topic": "Python",
                 "subtopic": "API Development",
                 "difficulty": "Easy",
                 "description": "This quiz evaluates the candidate's foundational knowledge in developing APIs with Python, covering basics such as HTTP methods, status codes, RESTful principles, and the use of popular Python frameworks for API development.",
                 "questions": [
                     {
+                        "level": "Basic",
                         "text": "What are the common HTTP methods used in RESTful API development, and what is the primary purpose of each?",
                         "criteria": "1 Point: Lists one or two HTTP methods without describing their purposes. \
                                     2 Points: Lists most common HTTP methods (GET, POST, PUT, DELETE) with a brief description of their purpose. \
@@ -68,6 +75,7 @@ class QuizGenerator(OpenAiChatClient):
                                     Total Possible Points: 3"
                     },
                     {
+                        "level": "Intermediate",
                         "text": "Explain what a status code is in the context of HTTP responses and name three common status codes along with their meanings.",
                         "criteria": "1 Point: Provides a basic definition of what a status code is without naming any specific codes. \
                                     2 Points: Names three common status codes (e.g., 200 OK, 404 Not Found, 500 Internal Server Error) with a brief explanation of their meanings. \
@@ -75,6 +83,7 @@ class QuizGenerator(OpenAiChatClient):
                                     Total Possible Points: 3"
                     },
                     {
+                        "level": "Advanced",
                         "text": "Describe the Flask framework and its use in Python API development.",
                         "criteria": "1 Point: Mentions that Flask is a Python framework without further detail. \
                                     2 Points: Describes Flask as a micro web framework for Python and briefly mentions its use in API development. \
@@ -97,6 +106,7 @@ class QuizGenerator(OpenAiChatClient):
                 "description": "This quiz evaluates the candidate's expertise and problem-solving skills in optimizing AWS infrastructure costs without compromising application performance and reliability, a frequent challenge for cloud engineers.",
                 "questions" [
                     {
+                        "level": "Basic",
                         "text": "What is the primary responsibility of a cloud engineer in the context of AWS cost optimization for a large-scale web application?",
                         "criteria": "1 Point: Mentions the concept of cost optimization in a general context. \
                                      2 Points: Identifies that the optimization pertains to AWS infrastructure. \
@@ -106,6 +116,7 @@ class QuizGenerator(OpenAiChatClient):
                                      Total Possible Points: 5"
                     },
                     {
+                        "level": "Intermediate",
                         "text": "Can you outline three specific cost optimization techniques or best practices that a cloud engineer might employ to reduce expenses in an AWS infrastructure supporting a complex web application?",
                         "criteria": "1 Point: For each technique mentioned in a general context without specificity to AWS or web applications. \
                                      2 Points: For each AWS-specific cost optimization technique identified, even if detail is minimal. \
@@ -114,6 +125,7 @@ class QuizGenerator(OpenAiChatClient):
                                      Total Possible Points: 9 (3 techniques × 3 points each, + 1 bonus point per technique for detail or examples)"
                     },
                     {
+                        "level": "Advanced",
                         "text": When dealing with a multi-tiered AWS architecture for a large-scale web application, discuss the trade-offs and considerations involved in implementing spot instances versus reserved instances as part of a comprehensive cost optimization strategy.",
                         "criteria": "1-2 Points: Basic recognition of either Spot or Reserved Instances without detailed analysis.
                                      3-4 Points: Identifies both options with a superficial comparison.
@@ -136,7 +148,7 @@ class QuizGenerator(OpenAiChatClient):
             }
             
             3. {
-                "context": "You are a backend engineer tasked with designing, deploying, and managing a scalable and efficient microservices architecture for a large-scale web application. The current architecture involves multiple services, and there are concerns about complexity, inter-service communication, and maintaining high availability. Your goal is to implement a strategy that ensures the microservices architecture is scalable, resilient, and maintainable, while also facilitating continuous integration and delivery.",
+                "context": "You are a senior backend engineer tasked with designing, deploying, and managing a scalable and efficient microservices architecture for a large-scale web application. The current architecture involves multiple services, and there are concerns about complexity, inter-service communication, and maintaining high availability. Your goal is to implement a strategy that ensures the microservices architecture is scalable, resilient, and maintainable, while also facilitating continuous integration and delivery.",
                 "topic": "Microservices",
                 "subtopic": "Architecture design and management",
                 "difficulty": "Hard",
@@ -210,7 +222,7 @@ class QuizGenerator(OpenAiChatClient):
                     {"role": "system", "content": system_message},
                     {"role": "user", "content": user_message}
                 ],
-                temperature=self.temperature
+                temperature=0.75
             )
             content = json.loads(completion.choices[0].message.content)
             logger.info(f"Generated quiz: {content}")
@@ -273,7 +285,7 @@ class SummaryGenerator(OpenAiChatClient):
                     {"role": "system", "content": system_message},
                     {"role": "user", "content": user_message}
                 ],
-                temperature=self.temperature
+                temperature=0.5
             )
             content = json.loads(completion.choices[0].message.content)
             logger.info(f"Summary: {content['summary']}")
@@ -327,7 +339,7 @@ class EvaluationGenerator(OpenAiChatClient):
             user_message += f'Criteria: {question["criteria"]}\n'
 
         user_message += f'And this is an additional criteria: {quiz["additional_criteria"]}\n'
-        
+
         user_message += 'Calculate the score based on those criteria.\n'
         user_message += f'Here is the candidate Answer: {answer}\n'
         user_message += 'Evaluate it, and return the score and feedback in json format.\n'
@@ -350,7 +362,7 @@ class EvaluationGenerator(OpenAiChatClient):
                     {"role": "system", "content": system_message},
                     {"role": "user", "content": user_message}
                 ],
-                temperature=0.5
+                temperature=0.01
             )
             content = json.loads(completion.choices[0].message.content)
             logger.info(f"Candidate's answer evaluation: {content['score']}, {content['feedback']}")
