@@ -1,5 +1,5 @@
 resource "aws_ses_domain_identity" "main" {
-  domain = "${var.hosted_zone}"
+  domain = var.hosted_zone
 }
 
 resource "aws_ses_domain_dkim" "main" {

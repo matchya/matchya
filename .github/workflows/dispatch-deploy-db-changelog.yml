@@ -12,6 +12,8 @@ on:
         required: true
         default: "Staging"
 
+permissions: write-all
+
 jobs:
   deploy-db-changelog:
     name: Deployment

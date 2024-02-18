@@ -8,8 +8,8 @@ resource "aws_acm_certificate" "wildcard" {
 }
 
 resource "aws_route53_record" "cert_validation" {
-  depends_on = [ aws_acm_certificate.wildcard ]
-  allow_overwrite         = true
+  depends_on      = [aws_acm_certificate.wildcard]
+  allow_overwrite = true
   for_each = {
     for dvo in aws_acm_certificate.wildcard.domain_validation_options : dvo.domain_name => {
       name   = dvo.resource_record_name

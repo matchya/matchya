@@ -1,3 +1,3 @@
-variable "create_new" {
-  type = bool
+variable "account_id" {
+  type = string
 }

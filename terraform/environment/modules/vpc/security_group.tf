@@ -1,5 +1,5 @@
 resource "aws_security_group" "lambda" {
-  name = "${terraform.workspace}-lambda"
+  name        = "${terraform.workspace}-lambda"
   description = "Security group for Serverless functions"
   vpc_id      = terraform.workspace == "dev" ? data.aws_vpc.default.id : aws_vpc.main[0].id
 
@@ -45,13 +45,13 @@ resource "aws_security_group" "lambda" {
 
 
   tags = {
-    Name = "lambda"
+    Name        = "lambda"
     Environment = "${terraform.workspace}"
   }
 }
 
 resource "aws_security_group" "rds_postgres_insecure" {
-  count = terraform.workspace == "dev" ? 1 : 0
+  count       = terraform.workspace == "dev" ? 1 : 0
   description = "Security group for RDS instance"
   vpc_id      = terraform.workspace == "dev" ? data.aws_vpc.default.id : aws_vpc.main[0].id
 
@@ -70,14 +70,14 @@ resource "aws_security_group" "rds_postgres_insecure" {
   }
 
   tags = {
-    Name = "rds-postgres-insecure"
+    Name        = "rds-postgres-insecure"
     Environment = "${terraform.workspace}"
   }
 }
 
 # testing new one inside vpc
 resource "aws_security_group" "rds_postgres_secure" {
-  count = terraform.workspace != "dev" ? 1 : 0
+  count       = terraform.workspace != "dev" ? 1 : 0
   description = "Security group for RDS Postgres database"
   vpc_id      = terraform.workspace == "dev" ? data.aws_vpc.default.id : aws_vpc.main[0].id
 
@@ -103,7 +103,7 @@ resource "aws_security_group" "rds_postgres_secure" {
   }
 
   tags = {
-    Name = "rds-postgres-secure"
+    Name        = "rds-postgres-secure"
     Environment = "${terraform.workspace}"
   }
 }
@@ -161,13 +161,13 @@ resource "aws_security_group" "ec2_public" {
   }
 
   tags = {
-    Name = "ec2-public"
+    Name        = "ec2-public"
     Environment = "${terraform.workspace}"
   }
 }
 
 resource "aws_security_group" "vpc_endpoint" {
-  count = terraform.workspace != "dev" ? 1 : 0
+  count       = terraform.workspace != "dev" ? 1 : 0
   description = "Security group for VPC Endpoint"
   vpc_id      = aws_vpc.main[0].id
 
@@ -186,7 +186,7 @@ resource "aws_security_group" "vpc_endpoint" {
   }
 
   tags = {
-    Name = "vpc-endpoint"
+    Name        = "vpc-endpoint"
     Environment = "${terraform.workspace}"
   }
 }

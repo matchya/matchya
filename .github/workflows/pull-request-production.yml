@@ -10,6 +10,8 @@ on:
       - synchronize
       - edited
 
+permissions: write-all
+
 jobs:
   check-infrastructure-changes:
     name: Check Infrastructure Changes
