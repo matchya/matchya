@@ -224,7 +224,7 @@ const CreateAssessmentPageTemplate = ({
         </div>
         <div className="h-full relative">
           {/* <div className="space-y-4 overflow-y-auto max-h-[490px] absolute"> */}
-          <div className="space-y-4 overflow-y-auto h-full absolute">
+          <div className="w-full space-y-4 overflow-y-auto h-full absolute">
             {isLoadingQuestionGeneration ? <LoadingCard /> : null}
             {quizzes.length === 0 ? (
               <p className="text-lg font-bold text-black">No quizzes found</p>

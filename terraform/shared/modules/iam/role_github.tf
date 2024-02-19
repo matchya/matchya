@@ -106,7 +106,9 @@ resource "aws_iam_policy" "deploy_infrastructure_policy" {
           "iam:ListRolePolicies",
           "iam:ListAccessKeys",
           "iam:ListAttachedRolePolicies",
-          "iam:ListEntitiesForPolicy"
+          "iam:ListEntitiesForPolicy",
+          "iam:ListPolicyVersions",
+          "iam:CreateRole"
         ],
         "Resource" = "*"
       }
@@ -120,6 +122,20 @@ resource "aws_iam_policy" "deploy_lambda_policy" {
   policy = jsonencode({
     "Version" = "2012-10-17",
     "Statement" = [
+      {
+        "Sid" = "IAMPermissions",
+        "Effect" = "Allow",
+        "Action" = [
+          "iam:CreateRole",
+          "iam:AttachRolePolicy",
+          "iam:GetRolePolicy",
+          "iam:PutRolePolicy",
+          "iam:PassRole",
+          "iam:CreatePolicyVersion",
+          "iam:DeletePolicyVersion",
+        ],
+        "Resource" = "*"
+      },
       {
         "Sid"    = "LambdaPermissions",
         "Effect" = "Allow",
