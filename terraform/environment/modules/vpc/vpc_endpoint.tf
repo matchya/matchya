@@ -1,7 +1,7 @@
 resource "aws_vpc_endpoint" "rds" {
   # will just use nat gateway for now to save money
-  count = 0
-  depends_on = [ aws_security_group.vpc_endpoint ]
+  count               = 0
+  depends_on          = [aws_security_group.vpc_endpoint]
   vpc_id              = aws_vpc.main[0].id
   service_name        = "com.amazonaws.us-east-1.rds"
   vpc_endpoint_type   = "Interface"
@@ -11,27 +11,27 @@ resource "aws_vpc_endpoint" "rds" {
   subnet_ids         = [aws_subnet.private_1[0].id, aws_subnet.private_2[0].id]
 
   tags = {
-    Name = "rds"
+    Name        = "rds"
     Environment = "${terraform.workspace}"
   }
 }
 
 resource "aws_vpc_endpoint" "s3" {
-  vpc_id              = terraform.workspace != "dev" ? aws_vpc.main[0].id : data.aws_vpc.default.id
+  vpc_id       = terraform.workspace != "dev" ? aws_vpc.main[0].id : data.aws_vpc.default.id
   service_name = "com.amazonaws.${var.region}.s3"
 
   tags = {
-    Name = "s3"
+    Name        = "s3"
     Environment = "${terraform.workspace}"
   }
 }
 
 resource "aws_vpc_endpoint" "dynamodb" {
-  vpc_id              = terraform.workspace != "dev" ? aws_vpc.main[0].id : data.aws_vpc.default.id
+  vpc_id       = terraform.workspace != "dev" ? aws_vpc.main[0].id : data.aws_vpc.default.id
   service_name = "com.amazonaws.${var.region}.dynamodb"
 
   tags = {
-    Name = "dynamodb"
+    Name        = "dynamodb"
     Environment = "${terraform.workspace}"
   }
 }

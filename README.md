@@ -130,3 +130,9 @@ make close-ssh-tunnel
 ```
 
 This command will stop the SSH tunnel that's running in the background.
+
+## Python Linting
+
+To ensure consistent code style and catch potential errors, we use linting with the help of the `autopep8` library. To set up linting and formatting on save in Visual Studio Code, install the `ms-python.python` extension in Visual Studio Code. This extension provides Python language support and integrates with various Python tools.
+
+Once the installation is done, you're all good! We currently have the formatter configuration under `.vscode/settings.json`. The linting will happen on save.

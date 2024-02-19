@@ -38,7 +38,7 @@ resource "aws_s3_bucket" "www" {
 
 resource "aws_s3_bucket_policy" "main" {
   depends_on = [aws_s3_bucket_public_access_block.main]
-  bucket = aws_s3_bucket.main.id
+  bucket     = aws_s3_bucket.main.id
 
   policy = jsonencode({
     Version = "2012-10-17",
@@ -66,7 +66,7 @@ resource "aws_s3_bucket_website_configuration" "www" {
   bucket = aws_s3_bucket.www.id
 
   redirect_all_requests_to {
-    protocol = "https"
+    protocol  = "https"
     host_name = var.app_domain_name
   }
 }

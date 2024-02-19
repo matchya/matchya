@@ -17,7 +17,7 @@ resource "aws_cloudfront_distribution" "main" {
   is_ipv6_enabled     = true
   default_root_object = "index.html"
 
-  aliases = [ "${var.app_domain_name}" ]
+  aliases = ["${var.app_domain_name}"]
 
   custom_error_response {
     error_code            = 403
@@ -75,22 +75,22 @@ resource "aws_cloudfront_distribution" "main" {
   }
 
   viewer_certificate {
-    acm_certificate_arn            = aws_acm_certificate.app.arn
-    ssl_support_method             = "sni-only"
-    minimum_protocol_version       = "TLSv1.2_2018"
+    acm_certificate_arn      = aws_acm_certificate.app.arn
+    ssl_support_method       = "sni-only"
+    minimum_protocol_version = "TLSv1.2_2018"
   }
 }
 
 resource "aws_cloudfront_distribution" "www" {
-   depends_on = [
+  depends_on = [
     aws_s3_bucket.www,
     aws_acm_certificate_validation.cert
   ]
   enabled = true
 
   origin {
-    origin_id                = "S3-${aws_s3_bucket.www.bucket}"
-    domain_name              = "www.${var.app_domain_name}.s3-website-${var.region}.amazonaws.com"
+    origin_id   = "S3-${aws_s3_bucket.www.bucket}"
+    domain_name = "www.${var.app_domain_name}.s3-website-${var.region}.amazonaws.com"
     custom_origin_config {
       http_port              = 80
       https_port             = 443
@@ -118,7 +118,7 @@ resource "aws_cloudfront_distribution" "www" {
     max_ttl                = 0
   }
 
-  aliases = [ "www.${var.app_domain_name}" ]
+  aliases = ["www.${var.app_domain_name}"]
 
   restrictions {
     geo_restriction {
@@ -130,9 +130,9 @@ resource "aws_cloudfront_distribution" "www" {
 
 
   viewer_certificate {
-    acm_certificate_arn            = aws_acm_certificate.app.arn
-    ssl_support_method             = "sni-only"
-    minimum_protocol_version       = "TLSv1.2_2018"
+    acm_certificate_arn      = aws_acm_certificate.app.arn
+    ssl_support_method       = "sni-only"
+    minimum_protocol_version = "TLSv1.2_2018"
   }
 }
 

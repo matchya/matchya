@@ -10,6 +10,8 @@ on:
       - synchronize
       - edited
 
+permissions: write-all
+
 jobs:
   check-infrastructure-changes:
     name: Check Infrastructure Changes
@@ -70,7 +72,7 @@ jobs:
             "candidate",
             "company",
             "interview",
-            "quiz"
+            "quiz",
           ]
     steps:
       - name: Fetch Repository

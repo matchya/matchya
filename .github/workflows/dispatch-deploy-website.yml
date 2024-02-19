@@ -12,6 +12,8 @@ on:
         required: true
         default: "Staging"
 
+permissions: write-all
+
 jobs:
   deploy-website:
     name: Deployment

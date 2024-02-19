@@ -1,5 +1,5 @@
 resource "aws_api_gateway_rest_api" "default" {
-  name        = "${terraform.workspace}"
+  name = terraform.workspace
 }
 
 resource "aws_api_gateway_resource" "health" {
@@ -30,7 +30,7 @@ resource "aws_api_gateway_deployment" "default" {
 }
 
 resource "aws_api_gateway_domain_name" "default" {
-  count = terraform.workspace != "dev" ? 1 : 0
+  count           = terraform.workspace != "dev" ? 1 : 0
   certificate_arn = aws_acm_certificate_validation.api[0].certificate_arn
   domain_name     = var.api_domain_name
 }
@@ -49,40 +49,40 @@ resource "aws_api_gateway_base_path_mapping" "default" {
 }
 
 resource "aws_api_gateway_gateway_response" "default_4xx" {
-  rest_api_id    = aws_api_gateway_rest_api.default.id
-  response_type  = "DEFAULT_4XX"
+  rest_api_id   = aws_api_gateway_rest_api.default.id
+  response_type = "DEFAULT_4XX"
 
   response_templates = {
     "application/json" = "{\"message\":$context.error.messageString}"
   }
 
   response_parameters = {
-    "gatewayresponse.header.Access-Control-Allow-Origin" = "'${var.client_origin}'"
+    "gatewayresponse.header.Access-Control-Allow-Origin"  = "'${var.client_origin}'"
     "gatewayresponse.header.Access-Control-Allow-Headers" = "'*'"
     "gatewayresponse.header.Access-Control-Allow-Methods" = "'GET,POST,OPTIONS'"
-    "gatewayresponse.header.Access-Control-Allow-Credentials": "'true'"
+    "gatewayresponse.header.Access-Control-Allow-Credentials" : "'true'"
   }
 }
 
 resource "aws_api_gateway_gateway_response" "default_5xx" {
-  rest_api_id    = aws_api_gateway_rest_api.default.id
-  response_type  = "DEFAULT_5XX"
+  rest_api_id   = aws_api_gateway_rest_api.default.id
+  response_type = "DEFAULT_5XX"
 
   response_templates = {
     "application/json" = "{\"message\":$context.error.messageString}"
   }
 
   response_parameters = {
-    "gatewayresponse.header.Access-Control-Allow-Origin" = "'${var.client_origin}'"
+    "gatewayresponse.header.Access-Control-Allow-Origin"  = "'${var.client_origin}'"
     "gatewayresponse.header.Access-Control-Allow-Headers" = "'*'"
     "gatewayresponse.header.Access-Control-Allow-Methods" = "'GET,POST,OPTIONS'"
-    "gatewayresponse.header.Access-Control-Allow-Credentials": "'true'"
+    "gatewayresponse.header.Access-Control-Allow-Credentials" : "'true'"
   }
 }
 
 resource "aws_api_gateway_gateway_response" "unauthorized_response" {
-  rest_api_id    = aws_api_gateway_rest_api.default.id
-  response_type  = "UNAUTHORIZED"
+  rest_api_id   = aws_api_gateway_rest_api.default.id
+  response_type = "UNAUTHORIZED"
 
   response_templates = {
     "application/json" = "{\"message\":$context.error.messageString}"
@@ -90,9 +90,9 @@ resource "aws_api_gateway_gateway_response" "unauthorized_response" {
   status_code = "401"
 
   response_parameters = {
-    "gatewayresponse.header.Access-Control-Allow-Origin" = "'${var.client_origin}'"
+    "gatewayresponse.header.Access-Control-Allow-Origin"  = "'${var.client_origin}'"
     "gatewayresponse.header.Access-Control-Allow-Headers" = "'*'"
     "gatewayresponse.header.Access-Control-Allow-Methods" = "'GET,POST,OPTIONS'"
-    "gatewayresponse.header.Access-Control-Allow-Credentials": "'true'"
+    "gatewayresponse.header.Access-Control-Allow-Credentials" : "'true'"
   }
 }

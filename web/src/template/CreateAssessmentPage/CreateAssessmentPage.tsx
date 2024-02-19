@@ -162,25 +162,29 @@ const CreateAssessmentPageTemplate = ({
               value={description}
             />
           </div>
-          <div className="mt-4 w-full flex items-center justify-end">
+          {/* <div className="mt-4 w-full flex items-center justify-end">
             <Link to="/assessments">
               <p className="font-bold text-black mr-6 cursor-pointer">Cancel</p>
             </Link>
             <Button
               onClick={onSubmit}
-              disabled={isLoading}
+              disabled={isLoading || selectedQuizzes.length == 0}
               className="font-bold bg-matcha-400 text-white hover:bg-matcha-500 hover:text-white py-4 px-3"
             >
               Create Assessment
             </Button>
-          </div>
+          </div> */}
         </div>
       </div>
-      <div className="w-full px-4 md:px-12 xl:pl-8 space-y-4 pt-16 pr-1">
+      <div className="w-full px-4 md:px-12 xl:pl-8 space-y-4 pt-16 pr-1 flex flex-col">
         <div className="">
           <h3 className="text-2xl font-bold">
             You have selected {selectedQuizzes.length} quizzes
           </h3>
+          <p>
+            Quizzes provide contexts to your questions. An assessment can
+            contain multiple quizzes and a quiz can contain multiple questions.
+          </p>
         </div>
         <div className="flex w-full space-x-3 my-2">
           <div className="w-full">
@@ -218,26 +222,42 @@ const CreateAssessmentPageTemplate = ({
           </Select>
           <Button onClick={handleGenerateQuiz}>Generate with AI</Button>
         </div>
-        <div className="space-y-4 overflow-y-auto max-h-[490px]">
-          {isLoadingQuestionGeneration ? <LoadingCard /> : null}
-          {quizzes.length === 0 ? (
-            <p className="text-lg font-bold text-black">No quizzes found</p>
-          ) : null}
-          {quizzes.map(quiz => (
-            <QuestionCard
-              quiz={quiz}
-              selected={selectedQuizzes.some(q => q.id === quiz.id)}
-              onClick={() => {
-                if (selectedQuizzes.some(q => q.id === quiz.id)) {
-                  setSelectedQuizzes(
-                    selectedQuizzes.filter(q => q.id !== quiz.id)
-                  );
-                } else {
-                  setSelectedQuizzes([...selectedQuizzes, quiz]);
-                }
-              }}
-            />
-          ))}
+        <div className="h-full relative">
+          {/* <div className="space-y-4 overflow-y-auto max-h-[490px] absolute"> */}
+          <div className="space-y-4 overflow-y-auto h-full absolute">
+            {isLoadingQuestionGeneration ? <LoadingCard /> : null}
+            {quizzes.length === 0 ? (
+              <p className="text-lg font-bold text-black">No quizzes found</p>
+            ) : null}
+            {quizzes.map(quiz => (
+              <QuestionCard
+                key={quiz.id}
+                quiz={quiz}
+                selected={selectedQuizzes.some(q => q.id === quiz.id)}
+                onClick={() => {
+                  if (selectedQuizzes.some(q => q.id === quiz.id)) {
+                    setSelectedQuizzes(
+                      selectedQuizzes.filter(q => q.id !== quiz.id)
+                    );
+                  } else {
+                    setSelectedQuizzes([...selectedQuizzes, quiz]);
+                  }
+                }}
+              />
+            ))}
+          </div>
+        </div>
+        <div className="mt-4 w-full flex items-center justify-end">
+          <Link to="/assessments">
+            <p className="font-bold text-black mr-6 cursor-pointer">Cancel</p>
+          </Link>
+          <Button
+            onClick={onSubmit}
+            disabled={isLoading || selectedQuizzes.length == 0}
+            className="font-bold bg-matcha-400 text-white hover:bg-matcha-500 hover:text-white py-4 px-3"
+          >
+            Create Assessment
+          </Button>
         </div>
       </div>
     </div>
