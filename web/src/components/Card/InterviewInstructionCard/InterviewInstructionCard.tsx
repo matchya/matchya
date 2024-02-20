@@ -25,7 +25,7 @@ const InterviewInstructionCard = ({
         </CardTitle>
         <CardDescription className="text-center mt-4 px-20 text-black">
           Matchya is a skill assessment platform to measure your skills more
-          efficiently and more accurately. From now onm you are going to answer
+          efficiently and more accurately. From now on, you are going to answer
           some questions created by the company using a webcam.
         </CardDescription>
       </CardHeader>
