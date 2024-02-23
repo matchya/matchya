@@ -8,6 +8,7 @@ locals {
     production = "api.${data.aws_ssm_parameter.route53_hosted_zone.value}",
     staging    = "api.${terraform.workspace}.${data.aws_ssm_parameter.route53_hosted_zone.value}"
   }, terraform.workspace, "")
+  is_release_environment = terraform.workspace == "production"
 }
 
 # # Handles api gateway with custom domain setup
@@ -18,11 +19,12 @@ module "api" {
   client_origin   = local.app_domain_name
   hosted_zone_id  = data.aws_ssm_parameter.route53_zone_id.value
   region          = data.aws_region.current.name
+  is_release_environment = local.is_release_environment
 }
 
 # # Handles client facing application with custom domain setup
 module "app" {
-  count  = terraform.workspace != "dev" ? 1 : 0
+  count  = local.is_release_environment ? 1 : 0
   source = "./modules/app"
 
   app_domain_name = local.app_domain_name
@@ -41,6 +43,7 @@ module "ec2" {
 
   public_ec2_security_group = module.vpc.public_ec2_security_group
   public_subnet_1           = module.vpc.public_subnet_1
+  is_release_environment = local.is_release_environment
 }
 
 module "rds" {
@@ -58,10 +61,11 @@ module "rds" {
 
   region     = data.aws_region.current.name
   account_id = data.aws_caller_identity.current.account_id
+  is_release_environment = local.is_release_environment
 }
 
 module "route53" {
-  count  = terraform.workspace != "dev" ? 1 : 0
+  count  = local.is_release_environment ? 1 : 0
   source = "./modules/route53"
 
   hosted_zone = var.hosted_zone
@@ -76,4 +80,5 @@ module "vpc" {
 
   nat_eip_id = module.ec2.nat_eip_id
   region     = data.aws_region.current.name
+  is_release_environment = local.is_release_environment
 }

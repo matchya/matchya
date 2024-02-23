@@ -14,7 +14,7 @@ resource "aws_db_instance" "insecure" {
   skip_final_snapshot  = true
   publicly_accessible  = true
 
-  vpc_security_group_ids = [var.rds_postgres_insecure_security_group[0].id]
+  vpc_security_group_ids = terraform.workspace == "dev" ? [var.rds_postgres_insecure_security_group[0].id] : []
 
   tags = {
     Environment = "${terraform.workspace}"
@@ -23,7 +23,7 @@ resource "aws_db_instance" "insecure" {
 
 # Staging/Production environment
 resource "aws_db_instance" "secure" {
-  count                      = terraform.workspace != "dev" ? 1 : 0
+  count                      = var.is_release_environment ? 1 : 0
   db_name                    = terraform.workspace
   identifier                 = terraform.workspace
   allocated_storage          = 20
@@ -50,7 +50,7 @@ resource "aws_db_instance" "secure" {
 }
 
 resource "aws_db_subnet_group" "secure" {
-  count      = terraform.workspace != "dev" ? 1 : 0
+  count      = var.is_release_environment ? 1 : 0
   name       = terraform.workspace
   subnet_ids = [var.private_subnet_1[0].id, var.private_subnet_2[0].id]
 }

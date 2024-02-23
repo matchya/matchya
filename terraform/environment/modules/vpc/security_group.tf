@@ -1,7 +1,7 @@
 resource "aws_security_group" "lambda" {
   name        = "${terraform.workspace}-lambda"
   description = "Security group for Serverless functions"
-  vpc_id      = terraform.workspace == "dev" ? data.aws_vpc.default.id : aws_vpc.main[0].id
+  vpc_id      = var.is_release_environment ? aws_vpc.main[0].id : data.aws_vpc.default.id
 
   ingress {
     from_port        = 0
@@ -77,7 +77,7 @@ resource "aws_security_group" "rds_postgres_insecure" {
 
 # testing new one inside vpc
 resource "aws_security_group" "rds_postgres_secure" {
-  count       = terraform.workspace != "dev" ? 1 : 0
+  count       = var.is_release_environment ? 1 : 0
   description = "Security group for RDS Postgres database"
   vpc_id      = terraform.workspace == "dev" ? data.aws_vpc.default.id : aws_vpc.main[0].id
 
@@ -109,6 +109,7 @@ resource "aws_security_group" "rds_postgres_secure" {
 }
 
 resource "aws_security_group" "ec2_public" {
+  count = var.is_release_environment ? 1 : 0
   description = "Security group for EC2 Public Bastion Host. Used to access private resources within VPC."
   vpc_id      = terraform.workspace == "dev" ? data.aws_vpc.default.id : aws_vpc.main[0].id
 
@@ -167,7 +168,7 @@ resource "aws_security_group" "ec2_public" {
 }
 
 resource "aws_security_group" "vpc_endpoint" {
-  count       = terraform.workspace != "dev" ? 1 : 0
+  count       = var.is_release_environment ? 1 : 0
   description = "Security group for VPC Endpoint"
   vpc_id      = aws_vpc.main[0].id
 

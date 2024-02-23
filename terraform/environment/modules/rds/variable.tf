@@ -37,3 +37,7 @@ variable "region" {
 variable "account_id" {
   type = string
 }
+
+variable "is_release_environment" {
+  type = bool
+}

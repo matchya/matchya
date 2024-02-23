@@ -12,7 +12,7 @@ data "aws_vpc" "default" {
 }
 
 resource "aws_vpc" "main" {
-  count                = terraform.workspace != "dev" ? 1 : 0
+  count                = var.is_release_environment ? 1 : 0
   cidr_block           = local.cidr_block
   enable_dns_hostnames = true
   tags = {

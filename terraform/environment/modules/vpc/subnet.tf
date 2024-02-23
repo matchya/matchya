@@ -23,7 +23,7 @@ locals {
 }
 
 resource "aws_subnet" "public_1" {
-  count                   = terraform.workspace != "dev" ? 1 : 0
+  count                   = var.is_release_environment ? 1 : 0
   vpc_id                  = aws_vpc.main[0].id
   cidr_block              = local.target_cidr_blocks["public-1"]
   map_public_ip_on_launch = true
@@ -35,7 +35,7 @@ resource "aws_subnet" "public_1" {
 }
 
 resource "aws_subnet" "public_2" {
-  count                   = terraform.workspace != "dev" ? 1 : 0
+  count                   = var.is_release_environment ? 1 : 0
   vpc_id                  = aws_vpc.main[0].id
   cidr_block              = local.target_cidr_blocks["public-2"]
   map_public_ip_on_launch = true
@@ -47,7 +47,7 @@ resource "aws_subnet" "public_2" {
 }
 
 resource "aws_subnet" "private_1" {
-  count             = terraform.workspace != "dev" ? 1 : 0
+  count             = var.is_release_environment ? 1 : 0
   vpc_id            = aws_vpc.main[0].id
   cidr_block        = local.target_cidr_blocks["private-1"]
   availability_zone = "us-east-1a"
@@ -58,7 +58,7 @@ resource "aws_subnet" "private_1" {
 }
 
 resource "aws_subnet" "private_2" {
-  count             = terraform.workspace != "dev" ? 1 : 0
+  count             = var.is_release_environment ? 1 : 0
   vpc_id            = aws_vpc.main[0].id
   cidr_block        = local.target_cidr_blocks["private-2"]
   availability_zone = "us-east-1b"

@@ -1,5 +1,5 @@
 resource "aws_instance" "bastion" {
-  count                       = terraform.workspace != "dev" ? 1 : 0
+  count                       = var.is_release_environment ? 1 : 0
   ami                         = "ami-007855ac798b5175e"
   instance_type               = "t2.micro"
   key_name                    = aws_key_pair.bastion[0].key_name

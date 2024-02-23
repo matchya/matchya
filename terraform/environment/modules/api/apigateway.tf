@@ -30,13 +30,13 @@ resource "aws_api_gateway_deployment" "default" {
 }
 
 resource "aws_api_gateway_domain_name" "default" {
-  count           = terraform.workspace != "dev" ? 1 : 0
+  count           = var.is_release_environment ? 1 : 0
   certificate_arn = aws_acm_certificate_validation.api[0].certificate_arn
   domain_name     = var.api_domain_name
 }
 
 resource "aws_api_gateway_base_path_mapping" "default" {
-  count = terraform.workspace != "dev" ? 1 : 0
+  count = var.is_release_environment ? 1 : 0
   depends_on = [
     aws_api_gateway_domain_name.default,
     aws_api_gateway_rest_api.default,
