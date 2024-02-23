@@ -1,9 +1,10 @@
 name: Merge Pipeline (Staging)
 
 on:
-  push:
-    branches:
-      - staging
+  workflow_dispatch:
+  # push:
+  #   branches:
+  #     - staging
 
 jobs:
   check-infrastructure-changes:
