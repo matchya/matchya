@@ -1,9 +1,10 @@
 name: Merge Pipeline (Production)
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+  # push:
+  #   branches:
+  #     - main
 
 jobs:
   check-infrastructure-changes:
