@@ -76,13 +76,6 @@ jobs:
             echo "\"$record\"," >> terraform.tfvars
           done
           echo '] }' >> terraform.tfvars
-          IFS=',' read -ra webflow_records_a <<< "${{ vars.WEBFLOW_RECORDS_A }}"
-          echo 'webflow_records = { "txt" = ["${{ vars.WEBFLOW_RECORDS_TXT }}"], "a" = [' >> terraform.tfvars
-          for record in "${webflow_records_a[@]}"; do
-            echo "\"$record\"," >> terraform.tfvars
-          done
-          echo '] }' >> terraform.tfvars
-          echo 'www_webflow_records = { "cname" = ["${{ vars.WWW_WEBFLOW_RECORDS_CNAME }}"] }' >> terraform.tfvars
           echo 'sendgrid_cname_1_name = "${{ vars.SENDGRID_CNAME_1_NAME }}"' >> terraform.tfvars
           echo 'sendgrid_cname_1_record = "${{ vars.SENDGRID_CNAME_1_RECORD }}"' >> terraform.tfvars
           echo 'sendgrid_cname_2_name = "${{ vars.SENDGRID_CNAME_2_NAME }}"' >> terraform.tfvars
