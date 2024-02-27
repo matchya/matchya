@@ -14,8 +14,6 @@ module "route53" {
 
   hosted_zone              = var.hosted_zone
   google_workspace_records = var.google_workspace_records
-  webflow_records          = var.webflow_records
-  www_webflow_records      = var.www_webflow_records
   sendgrid_cname_1_name    = var.sendgrid_cname_1_name
   sendgrid_cname_1_record  = var.sendgrid_cname_1_record
   sendgrid_cname_2_name    = var.sendgrid_cname_2_name

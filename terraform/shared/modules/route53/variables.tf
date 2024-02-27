@@ -8,16 +8,6 @@ variable "google_workspace_records" {
   type        = map(list(string))
 }
 
-variable "webflow_records" {
-  description = "Map of webflow records"
-  type        = map(list(string))
-}
-
-variable "www_webflow_records" {
-  description = "Map of www webflow records"
-  type        = map(list(string))
-}
-
 variable "sendgrid_cname_1_name" {
   description = "The name of the first sendgrid cname record"
   type        = string
