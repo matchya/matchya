@@ -57,7 +57,3 @@ resource "aws_route53_record" "sendgrid_txt" {
   ttl     = 300
   records = [var.sendgrid_txt_record]
 }
-
-data "aws_route53_zone" "main" {
-  name = var.hosted_zone
-}
