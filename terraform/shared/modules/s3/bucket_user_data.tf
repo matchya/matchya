@@ -1,5 +1,6 @@
 resource "aws_s3_bucket" "user_data" {
   bucket = "${var.namespace}-user-data"
+  force_destroy = true
 
   lifecycle {
     create_before_destroy = true

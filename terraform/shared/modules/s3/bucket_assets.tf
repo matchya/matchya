@@ -1,5 +1,6 @@
 resource "aws_s3_bucket" "assets" {
   bucket = "${var.namespace}-assets"
+  force_destroy = true
 
   lifecycle {
     create_before_destroy = true
