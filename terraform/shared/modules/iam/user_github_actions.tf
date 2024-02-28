@@ -1,5 +1,6 @@
 resource "aws_iam_user" "github_actions" {
   name = "github"
+  force_destroy = true
 }
 
 resource "aws_iam_access_key" "github_actions" {
